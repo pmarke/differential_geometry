@@ -1,0 +1,7 @@
+function Tau = wedge(tau)
+
+tau = [ssm(tau(3)), tau(1:2); zeros(3,1)];
+
+
+end
+

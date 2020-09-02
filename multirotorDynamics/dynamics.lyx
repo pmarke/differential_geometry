@@ -1,0 +1,912 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass IEEEtran
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_package amsmath 2
+\use_package amssymb 2
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 1in
+\topmargin 1in
+\rightmargin 1in
+\bottommargin 1in
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Multirotor Dynamics
+\end_layout
+
+\begin_layout Section*
+Introduction
+\end_layout
+
+\begin_layout Section*
+Notation
+\end_layout
+
+\begin_layout Section*
+Dynamics
+\end_layout
+
+\begin_layout Standard
+A multirotor evolves on 
+\begin_inset Formula $SE\left(3\right)$
+\end_inset
+
+ and has the corresponding Lie algebra 
+\begin_inset Formula $\mathfrak{se}\left(3\right)$
+\end_inset
+
+.
+ Together they form a tangent bundle.
+ An element of the Lie group 
+\begin_inset Formula $\mathcal{X}\in SE\left(3\right)$
+\end_inset
+
+ is 
+\begin_inset Formula 
+\[
+\mathcal{X}=\begin{bmatrix}R_{b}^{i} & P_{b/i}^{i}\\
+0 & 1
+\end{bmatrix}
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $R_{b}^{i}\in SO\left(3\right)$
+\end_inset
+
+ is the rotation from 
+\begin_inset Formula $\mathcal{F}^{b}$
+\end_inset
+
+ to 
+\begin_inset Formula $\mathcal{F}^{i}$
+\end_inset
+
+ and 
+\begin_inset Formula $P_{b/i}^{i}\in\mathbb{R}^{3}$
+\end_inset
+
+ is the position of the multirotor w.r.t.
+ 
+\begin_inset Formula $\mathcal{O}^{i}$
+\end_inset
+
+ expressed in 
+\begin_inset Formula $\mathcal{F}^{i}$
+\end_inset
+
+.
+ The generalized velocities of 
+\begin_inset Formula $SE\left(3\right)$
+\end_inset
+
+ are obtained by differentiating the identity
+\begin_inset Formula 
+\begin{align*}
+\frac{d}{dt}\mathcal{X}^{-1}\mathcal{X} & =I\\
+-\dot{\mathcal{X}}^{-1}\mathcal{X} & =\mathcal{X}^{-1}\dot{\mathcal{X}}
+\end{align*}
+
+\end_inset
+
+and taking the right hand term 
+\begin_inset Formula 
+\begin{gather*}
+\mathcal{X}^{-1}\dot{\mathcal{X}}\\
+\begin{bmatrix}R_{b}^{i^{\top}} & -R_{b}^{i^{\top}}P_{b/i}^{i}\\
+0 & 1
+\end{bmatrix}\begin{bmatrix}R_{b}^{i}\left[\omega_{b/i}^{b}\right]_{\times} & \dot{P}_{b/i}^{i}\\
+0 & 0
+\end{bmatrix}\\
+\begin{bmatrix}\left[\omega_{b/i}^{b}\right]_{\times} & R_{b}^{i^{\top}}\dot{P}_{b/i}^{i}\\
+0 & 0
+\end{bmatrix}\\
+\begin{bmatrix}\left[\omega_{b/i}^{b}\right]_{\times} & \dot{P}_{b/i}^{b}\\
+0 & 0
+\end{bmatrix}\\
+\begin{bmatrix}\left[\omega_{b/i}^{b}\right]_{\times} & v_{b/i}^{b}\\
+0 & 0
+\end{bmatrix}
+\end{gather*}
+
+\end_inset
+
+ where 
+\begin_inset Formula $\omega_{b/i}^{b}\mathbb{R}^{3}$
+\end_inset
+
+ and 
+\begin_inset Formula $v_{b/i}^{b}\in\mathbb{R}^{3}$
+\end_inset
+
+ are the angular velocity and linear velocity of the sUAS w.r.t.
+ 
+\begin_inset Formula $O^{i}$
+\end_inset
+
+ expressed in 
+\begin_inset Formula $\mathcal{F}^{b}$
+\end_inset
+
+.
+ The generalized velocities of 
+\begin_inset Formula $SE\left(3\right)$
+\end_inset
+
+ are elements of 
+\begin_inset Formula $\mathfrak{se}\left(3\right)$
+\end_inset
+
+ whose elements 
+\begin_inset Formula $\tau^{\wedge}$
+\end_inset
+
+ have the form 
+\begin_inset Formula 
+\[
+\tau^{\wedge}=\begin{bmatrix}\left[\omega\right]_{\times} & v\\
+0 & 0
+\end{bmatrix}
+\]
+
+\end_inset
+
+An element in the vector space isomorphic to the Lie algebra is 
+\begin_inset Formula 
+\[
+\tau=\begin{bmatrix}v\\
+\omega
+\end{bmatrix}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The matrix adjoint at 
+\begin_inset Formula $\mathcal{X}$
+\end_inset
+
+ is
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Sola2018"
+
+\end_inset
+
+ 
+\begin_inset Formula 
+\[
+\mathbf{Ad}_{\mathcal{X}}=\begin{bmatrix}R_{b}^{i} & \left[P_{b/i}^{i}\right]_{\times}R_{b}^{i}\\
+0 & R_{b}^{i}
+\end{bmatrix}
+\]
+
+\end_inset
+
+and the matrix coadjoint at 
+\begin_inset Formula $\mathcal{X}$
+\end_inset
+
+ is 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Kim2012"
+
+\end_inset
+
+ 
+\begin_inset Formula 
+\begin{align*}
+\mathbf{Ad}_{\mathcal{X}}^{*} & =\mathbf{Ad}_{\mathcal{X}}^{\top}\\
+ & =\begin{bmatrix}R_{b}^{i^{\top}} & 0\\
+-R_{b}^{i^{\top}}\left[P_{b/i}^{i}\right]_{\times} & R_{b}^{i^{\top}}
+\end{bmatrix}
+\end{align*}
+
+\end_inset
+
+The adjoint of 
+\begin_inset Formula $\mathfrak{se}\left(2\right)$
+\end_inset
+
+ at
+\begin_inset Formula $\tau$
+\end_inset
+
+ is 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Barfoot2019"
+
+\end_inset
+
+ 
+\begin_inset Formula 
+\[
+\mathbf{ad}_{\tau}=\begin{bmatrix}\left[\omega\right]_{\times} & \left[v\right]_{\times}\\
+0 & \left[\omega\right]_{\times}
+\end{bmatrix}
+\]
+
+\end_inset
+
+and the coadjoint at 
+\begin_inset Formula $\tau$
+\end_inset
+
+ is 
+\begin_inset Formula 
+\begin{align*}
+\mathbf{ad}_{\tau}^{*} & =\mathbf{ad}_{\tau}^{\top}\\
+ & =\begin{bmatrix}-\left[\omega\right]_{\times} & 0\\
+-\left[v\right]_{\times} & -\left[\omega\right]_{\times}
+\end{bmatrix}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The generalized force acting on the rigid body is 
+\begin_inset Formula 
+\[
+\mathcal{T}=\begin{bmatrix}F\\
+M
+\end{bmatrix}
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $M\in\mathbb{R}^{3}$
+\end_inset
+
+ and 
+\begin_inset Formula $F\in\mathbb{R}^{3}$
+\end_inset
+
+ represent a moment and force acting on the body.
+ The generalized force is an element of the dual space of 
+\begin_inset Formula $\mathfrak{se}\left(3\right)$
+\end_inset
+
+ and is denoted as 
+\begin_inset Formula $\mathfrak{dse}\left(3\right)$
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Kim2012"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Subsection*
+Generalized Inertia
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Murray2017"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename Figures/GeneralizedInertia.pdf
+	width 95col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Dynamics_genInertia"
+
+\end_inset
+
+A representation of the relation between the origin of the inertial frame
+ 
+\begin_inset Formula $\mathcal{F}^{i}$
+\end_inset
+
+ and the point 
+\begin_inset Formula $r$
+\end_inset
+
+ on a rigid body expressed in 
+\begin_inset Formula $\mathcal{F}^{b}$
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The generalized inertia matrix is derived from the kinetic energy of a rigid
+ body.
+ For its derivation we will reference Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Dynamics_genInertia"
+
+\end_inset
+
+.
+ The figure shows a rigid body attached to 
+\begin_inset Formula $\mathcal{F}^{b}$
+\end_inset
+
+.
+ Points on the rigid body are denoted by 
+\begin_inset Formula $r$
+\end_inset
+
+ which is w.r.t.
+ 
+\begin_inset Formula $F^{b}$
+\end_inset
+
+ expressed in 
+\begin_inset Formula $\mathcal{F}^{b}$
+\end_inset
+
+.
+ The transformation between the origin of 
+\begin_inset Formula $\mathcal{F}^{b}$
+\end_inset
+
+ to the origin of 
+\begin_inset Formula $\mathcal{F}^{i}$
+\end_inset
+
+ is denoted by the rotation matrix 
+\begin_inset Formula $R_{b}^{i}$
+\end_inset
+
+ and the translation 
+\begin_inset Formula $P_{b/i}^{i}$
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $\rho\left(r\right)$
+\end_inset
+
+ denote the mass at point 
+\begin_inset Formula $r$
+\end_inset
+
+.
+ The generalized velocity in 
+\begin_inset Formula $\mathcal{F}^{i}$
+\end_inset
+
+ is 
+\begin_inset Formula $v=\dot{P}_{b/i}^{i}+\dot{R}_{b}^{i}r_{j/b}^{b}$
+\end_inset
+
+, and the kinetic energy of the system is 
+\begin_inset Formula 
+\begin{equation}
+K=\frac{1}{2}\int_{Vol}\rho\left(r\right)\left(\dot{P}+\dot{R}r\right)^{\top}\left(\dot{P}+\dot{R}r\right)dVol
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Expanding the inner product we get 
+\begin_inset Formula 
+\begin{align}
+K & =\frac{1}{2}\int_{Vol}\rho\left(r\right)\left(\dot{P}^{\top}\dot{P}+2\dot{P}^{\top}\dot{R}r+r^{\top}\dot{R}^{\top}\dot{R}r\right)dVol\\
+ & =\frac{1}{2}\int_{Vol}\rho\left(r\right)\left(\dot{P}^{\top}\dot{P}+2\dot{P}^{\top}R\left[\omega\right]_{\times}r+r^{\top}\left[\omega\right]_{\times}^{\top}R^{\top}R\left[\omega\right]_{\times}r\right)dVol\\
+ & =\frac{1}{2}\int_{Vol}\rho\left(r\right)\left(\dot{P}^{\top}\dot{P}-2\dot{P}^{\top}R\left[r\right]_{\times}\omega+\omega^{\top}\left[r\right]_{\times}^{\top}\left[r\right]_{\times}\omega\right)dVol
+\end{align}
+
+\end_inset
+
+where 
+\begin_inset Formula $\omega$
+\end_inset
+
+ is the angular velocity of the body w.r.t.
+ 
+\begin_inset Formula $\mathcal{F}^{i}$
+\end_inset
+
+ expressed in 
+\begin_inset Formula $\mathcal{F}^{b}$
+\end_inset
+
+.
+ The translational velocity can be rotated into 
+\begin_inset Formula $\mathcal{F}^{b}$
+\end_inset
+
+ to express the kinetic energy in the body frame.
+ Let 
+\begin_inset Formula $v=R^{\top}\dot{P}$
+\end_inset
+
+ denote the translational velocity expressed in 
+\begin_inset Formula $\mathcal{F}^{b}$
+\end_inset
+
+, then the kinetic energy becomes 
+\begin_inset Formula 
+\begin{align}
+K & =\frac{1}{2}\int_{Vol}\rho\left(r\right)\left(v^{\top}v-2v^{\top}\left[r\right]_{\times}\omega+\omega^{\top}\left[r\right]_{\times}^{\top}\left[r\right]_{\times}\omega\right)dVol\\
+ & =\frac{1}{2}\tau^{\top}\mathcal{I}\tau
+\end{align}
+
+\end_inset
+
+where the generalized inertia matrix, 
+\begin_inset Formula $\mathcal{I}$
+\end_inset
+
+, has the form 
+\begin_inset Formula 
+\begin{equation}
+\mathcal{I}=\begin{bmatrix}\int_{Vol}\rho\left(r\right)dVol & \int_{Vol}\rho\left(r\right)\left[r\right]_{\times}dVol\\
+\int_{Vol}\rho\left(r\right)\left[r\right]_{\times}^{\top}dVol & \int_{Vol}\rho\left(r\right)\left[r\right]_{\times}^{\top}\left[r\right]_{\times}dVol
+\end{bmatrix}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The term 
+\begin_inset Formula $\int_{Vol}\rho\left(r\right)dVol=mI_{3\times3}$
+\end_inset
+
+ which is the mass of the rigid body, the terms 
+\begin_inset Formula $\int_{Vol}\rho\left(r\right)\left[r\right]_{\times}dVol=0$
+\end_inset
+
+ when the origin of the body frame is at the center of mass, and the term
+ 
+\begin_inset Formula $\int_{Vol}\rho\left(r\right)\left[r\right]_{\times}^{\top}\left[r\right]_{\times}dVol=J$
+\end_inset
+
+ where 
+\begin_inset Formula $J$
+\end_inset
+
+ is the inertial tensor of the system.
+ Assuming that the center of mass of the sUAS is at the origin of the body
+ frame, the generalized inertial matrix simplifies to 
+\begin_inset Formula 
+\begin{equation}
+\mathcal{I}=\begin{bmatrix}mI & 0\\
+0 & J
+\end{bmatrix}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection*
+Time Derivatives of 
+\begin_inset Formula $\mathfrak{se}\left(3\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathfrak{dse}\left(3\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename Figures/DifferentiationOfVector.pdf
+	width 100col%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Dynamics_VectorDiff"
+
+\end_inset
+
+A vector in a rotating reference frame.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In order to model the system properly, we need to take derivatives of vectors
+ in one frame from the point of view of another frame.
+ Using Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Dynamics_VectorDiff"
+
+\end_inset
+
+ let 
+\begin_inset Formula $v$
+\end_inset
+
+ denote a vector moving in frame 
+\begin_inset Formula $\mathcal{F}^{b}$
+\end_inset
+
+.
+ The frame 
+\begin_inset Formula $\mathcal{F}^{b}$
+\end_inset
+
+ does not translate but has the angular velocity 
+\begin_inset Formula $\omega_{b/i}^{b}$
+\end_inset
+
+.
+ We want to calculate the derivative of 
+\begin_inset Formula $v$
+\end_inset
+
+ as seen from 
+\begin_inset Formula $\mathcal{F}^{i}$
+\end_inset
+
+.
+ To do this we express the vector 
+\begin_inset Formula $v$
+\end_inset
+
+ in it's component form
+\begin_inset Formula 
+\begin{equation}
+v=\sum_{i=0}^{3}v_{i}e^{i}
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $e^{i}$
+\end_inset
+
+ form the basis in 
+\begin_inset Formula $\mathcal{F}^{b}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Taking the derivative of 
+\begin_inset Formula $v$
+\end_inset
+
+ w.r.t.
+ the inertial frame yields 
+\begin_inset Formula 
+\begin{equation}
+\frac{d}{dt_{i}}v=\sum_{i=0}^{3}\left(\frac{d}{dt_{b}}v_{i}\right)e^{i}+\sum_{i=0}^{3}v_{i}\left(\frac{d}{dt_{i}}e^{i}\right)
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $\frac{d}{dt_{i}}$
+\end_inset
+
+ denotes the time derivative w.r.t.
+ the inertial frame and 
+\begin_inset Formula $\frac{d}{dt_{b}}$
+\end_inset
+
+ denotes the time derivative w.r.t.
+ the body frame.
+ The first term on the right hand side express the derivative of the vector
+ as viewed from an observer in the rotating body frame and the last term
+ on the right hand side is the derivative of the vector from the rotation
+ of the body 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Beard2008"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+Following the derivation in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Kane1985"
+
+\end_inset
+
+, the derivative of the vector can be simplified to
+\begin_inset Formula 
+\begin{align}
+\frac{d}{dt_{i}}v & =\frac{d}{dt_{b}}v+\omega_{b/i}^{b}\times v\label{eq:Dynamics_VecDeriv}
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+You can derive the derivative of a vector another way which will help us
+ derive the derivative of vectors is 
+\begin_inset Formula $\mathfrak{se}\left(3\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathfrak{dse}\left(3\right)$
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Kim2012"
+
+\end_inset
+
+.
+ The other method takes the derivative of 
+\begin_inset Formula $v$
+\end_inset
+
+ after rotating it into the inertial frame and then rotates it back into
+ the body frame
+\begin_inset Formula 
+\begin{align}
+\frac{d}{dt_{i}}v & =R_{b}^{i^{\top}}\left(\frac{d}{dt_{i}}R_{b}^{i}v\right)\\
+ & =R_{b}^{i^{\top}}\left(R_{b}^{i}\frac{d}{dt_{b}}v\right)+R_{b}^{i^{\top}}\left(\frac{d}{dt_{i}}R_{b}^{i}v\right)\\
+ & =\frac{d}{dt_{b}}v+R_{b}^{i^{\top}}\left(R_{b}^{i}\left[\omega_{b/i}^{b}\right]_{\times}v\right)\\
+ & =\frac{d}{dt_{b}}v+\left[\omega_{b/i}^{b}\right]_{\times}v\\
+ & =\frac{d}{dt_{b}}v+\omega_{b/i}^{b}\times v
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The vectors that we need to differentiate is the generalized velocity vector
+ 
+\begin_inset Formula $\tau_{b/i}^{b}$
+\end_inset
+
+ and it's generalized velocity covector 
+\begin_inset Formula $\mathcal{T}_{b/i}^{b}$
+\end_inset
+
+.
+ This is done by rotating the vectors to be expressed in the inertial frame,
+ taking the derivative and then rotating them back into the body frame.
+ Let 
+\begin_inset Formula $\mathcal{X}$
+\end_inset
+
+ be the transformation between 
+\begin_inset Formula $\mathcal{F}^{b}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathcal{F}^{i}$
+\end_inset
+
+ then 
+\begin_inset Formula 
+\begin{equation}
+\tau_{b/i}^{i}=\mathbf{Ad}_{\mathcal{X}}\tau_{b/i}^{b}
+\end{equation}
+
+\end_inset
+
+taking the derivative w.r.t.
+ the inertial frame and then rotating it back 
+\begin_inset Formula 
+\begin{align}
+\frac{d}{dt_{i}}\tau_{b/i}^{b} & =\mathbf{Ad}_{\mathcal{X}}^{-1}\mathbf{Ad}_{\mathcal{X}}\left(\frac{d}{dt_{b}}\tau_{b/i}^{b}\right)+\mathbf{Ad}_{\mathcal{X}}^{-1}\left(\frac{d}{dt_{i}}\mathbf{Ad}_{\mathcal{X}}\right)\tau_{b/i}^{b}\\
+ & =\frac{d}{dt_{b}}\tau_{b/i}^{b}+\mathbf{Ad}_{\mathcal{X}}^{-1}\left(\frac{d}{dt_{i}}\mathbf{Ad}_{\mathcal{X}}\right)\tau_{b/i}^{b}
+\end{align}
+
+\end_inset
+
+The term 
+\begin_inset Formula $\mathbf{Ad}_{\mathcal{X}}^{-1}\left(\frac{d}{dt_{i}}\mathbf{Ad}_{\mathcal{X}}\right)$
+\end_inset
+
+ can simplified as 
+\begin_inset Formula 
+\begin{gather*}
+\begin{bmatrix}R_{b}^{i^{\top}} & -R_{b}^{i^{\top}}\left[P_{b/i}^{i}\right]_{\times}\\
+0 & R_{b}^{i^{\top}}
+\end{bmatrix}\begin{bmatrix}R_{b}^{i}\left[\omega\right]_{\times} & \left[\dot{P}_{b/i}^{i}\right]_{\times}R_{b}^{i}+\left[P_{b/i}^{i}\right]_{\times}R_{b}^{i}\left[\omega\right]_{\times}\\
+0 & R_{b}^{i}\left[\omega\right]_{\times}
+\end{bmatrix}\\
+\begin{bmatrix}\left[\omega\right]_{\times} & \left[v\right]_{\times}\\
+0 & \left[\omega\right]_{\times}
+\end{bmatrix}
+\end{gather*}
+
+\end_inset
+
+which is the adjoint of 
+\begin_inset Formula $\mathfrak{se}\left(3\right)$
+\end_inset
+
+.
+ Thus 
+\begin_inset Formula 
+\begin{equation}
+\frac{d}{dt_{i}}\tau_{b/i}^{b}=\frac{d}{dt_{b}}\tau_{b/i}^{b}+\mathbf{ad}_{\tau_{b/i}^{b}}\tau_{b/i}^{b}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Accel
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\dot{v}=\frac{1}{m}F-\omega_{b/i}\times v+R_{b}^{i^{\top}}g-I_{2\times3}\frac{\mu}{m}v
+\]
+
+\end_inset
+
+
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+bibfiles "/home/mark/Documents/mendeley/library"
+options "plain"
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

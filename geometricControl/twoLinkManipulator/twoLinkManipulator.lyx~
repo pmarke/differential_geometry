@@ -1,0 +1,867 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass IEEEtran
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_package amsmath 2
+\use_package amssymb 2
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 1in
+\topmargin 1in
+\rightmargin 1in
+\bottommargin 1in
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Two Link Manipulator Example
+\end_layout
+
+\begin_layout Section
+Problem Statement
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename figures/twoLink.jpg
+	width 80col%
+	scaleBeforeRotation
+	rotateAngle 90
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The base point of the far left link is fixed spatially, and the two links
+ are pinned together at their ends.
+ The link whose one end is spatially fixed is referred to as body 1, and
+ the other is referred to as body 2.
+ We choose a spatial/inertial 
+\begin_inset Formula $\left(O_{spatial},\left\{ \mathbf{s}_{1,}\mathbf{s}_{2},\mathbf{s}_{3}\right\} \right)$
+\end_inset
+
+ body frame such that 
+\begin_inset Formula $O_{spatial}$
+\end_inset
+
+ is the point where body 1 is fixed, 
+\begin_inset Formula $\left\{ \mathbf{s}_{1},\mathbf{s}_{2},\mathbf{s}_{3}\right\} $
+\end_inset
+
+ is a basis, and so that 
+\begin_inset Formula $s_{3}$
+\end_inset
+
+ points in the direction orthogonal to the motion allowed by the joint.
+ We choose the body reference frame 
+\begin_inset Formula $\left(O_{body,a},\left\{ \mathbf{b}_{a,1},\mathbf{b}_{a,2},\mathbf{b}_{a,3}\right\} \right),\,a\in\left\{ 1,2\right\} $
+\end_inset
+
+, so that 
+\begin_inset Formula $O_{body,a}$
+\end_inset
+
+ is positioned at the center of mass of body 
+\begin_inset Formula $a$
+\end_inset
+
+, and so that the vectors 
+\begin_inset Formula $\mathbf{b}_{a,3},\,a\in\left\{ 1,2\right\} $
+\end_inset
+
+, are orthogonal to the plane of motion allowed by the joints.
+\end_layout
+
+\begin_layout Section
+The configuration manifold
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $Q_{free}=\left(SO\left(3\right)\times\mathbb{R}^{3}\right)\times\left(SO\left(3\right)\times\mathbb{R}^{3}\right)$
+\end_inset
+
+.
+ For body 1, the matrix 
+\begin_inset Formula $R_{1}$
+\end_inset
+
+ describing the orientation of the body will have the form
+\begin_inset Formula 
+\[
+R_{1}=\begin{bmatrix}\cos\theta_{1} & -\sin\theta_{1} & 0\\
+\sin\theta_{1} & \cos\theta_{1} & 0\\
+0 & 0 & 1
+\end{bmatrix}
+\]
+
+\end_inset
+
+for 
+\begin_inset Formula $\theta_{1}\in\mathbb{R}$
+\end_inset
+
+.
+ Thus 
+\begin_inset Formula $R_{1}$
+\end_inset
+
+ can be thought of as being an element of 
+\begin_inset Formula $SO\left(2\right)$
+\end_inset
+
+.
+ The position vector 
+\begin_inset Formula $\mathbf{r}_{1}=O_{body,1}-O_{spatial}$
+\end_inset
+
+ will be constant length, say 
+\begin_inset Formula $r_{1}$
+\end_inset
+
+, and will have the form 
+\begin_inset Formula 
+\[
+\mathbf{r}_{1}=r_{1}R_{1}\mathbf{s}_{1}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This means that 
+\begin_inset Formula $\mathbf{r}_{1}$
+\end_inset
+
+ is exactly prescribed by 
+\begin_inset Formula $R_{1}$
+\end_inset
+
+, and so the position and orientation of body 1 is determined exactly by
+ 
+\begin_inset Formula $R_{1}$
+\end_inset
+
+.
+ For body 2 we have 
+\begin_inset Formula 
+\[
+R_{2}=\begin{bmatrix}\cos\theta_{2} & -\sin\theta_{2} & 0\\
+\sin\theta_{2} & \cos\theta_{2} & 0\\
+0 & 0 & 1
+\end{bmatrix}
+\]
+
+\end_inset
+
+Thus 
+\begin_inset Formula $R_{2}$
+\end_inset
+
+ can be thought of an element of 
+\begin_inset Formula $SO\left(2\right)$
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $\ell_{1}$
+\end_inset
+
+ denote the distance between the two joints in body 1, and 
+\begin_inset Formula $r_{2}$
+\end_inset
+
+ denote the distance between from the joint to the point 
+\begin_inset Formula $O_{body,2}$
+\end_inset
+
+, in body 2, then it follows that 
+\begin_inset Formula 
+\[
+\mathbf{r}_{2}=\ell_{1}R_{1}\mathbf{s}_{1}+r_{2}R_{2}\mathbf{s}_{1}
+\]
+
+\end_inset
+
+Therefore, the map
+\begin_inset Formula 
+\[
+SO\left(2\right)^{2}\ni\left(\begin{bmatrix}\cos\theta_{1} & -\sin\theta_{1}\\
+\sin\theta_{1} & \cos\theta_{1}
+\end{bmatrix},\begin{bmatrix}\cos\theta_{2} & -\sin\theta_{2}\\
+\sin\theta_{2} & \cos\theta_{2}
+\end{bmatrix}\right)\mapsto\left(\left(R_{1},r_{1}R_{1}\mathbf{s}_{1}\right),\left(R_{2},\ell_{1}R_{1}\mathbf{s}_{1}+r_{2}R_{2}\mathbf{s}_{1}\right)\right)
+\]
+
+\end_inset
+
+is an embedding of 
+\begin_inset Formula $SO\left(2\right)^{2}$
+\end_inset
+
+ into the sub-manifold 
+\begin_inset Formula $Q\subset Q_{free}$
+\end_inset
+
+.
+ Thus we say that 
+\begin_inset Formula $Q=SO\left(2\right)^{2}$
+\end_inset
+
+ is the configuration manifold for the system.
+ Since 
+\begin_inset Formula $SO\left(2\right)^{2}\simeq\mathbb{S}^{1}\times\mathbb{S}^{1}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+Choosing Coordinates
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Choosing-Coordinates"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Since 
+\begin_inset Formula $Q=SO\left(2\right)^{2}\simeq\mathbb{S}^{1}\times\mathbb{S}^{1}$
+\end_inset
+
+.
+ We can choose a coordinate chart
+\begin_inset Formula 
+\begin{multline*}
+\mathcal{U}=\mathbb{S}^{1}\times\mathbb{S}^{1}\backslash\\
+\left(\left\{ \left(\left(x_{1},y_{1}\right),\left(x_{2},y_{2}\right)\right)\in\mathbb{S}^{1}\times\mathbb{S}^{1}|x_{1}=-1\right\} \cup\left\{ \left(\left(x_{1},y_{1}\right),\left(x_{2},y_{2}\right)\right)\in\mathbb{S}^{1}\times\mathbb{S}^{1}|x_{2}=-1\right\} \right),\\
+\phi\left(\left(x_{1},y_{1}\right),\left(x_{2},y_{2}\right)\right)=\left(\arctan\left(x_{1},y_{1}\right),\arctan\left(x_{2},y_{2}\right)\right)\\
+=\left(\theta_{1},\theta_{2}\right)\in\left]-\pi,\pi\right[\times\left]-\pi,\pi\right[\subset\mathbb{R}^{2}
+\end{multline*}
+
+\end_inset
+
+Note that the chart doesn't cover all of 
+\begin_inset Formula $Q$
+\end_inset
+
+, and 
+\begin_inset Formula $\theta_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $\theta_{2}$
+\end_inset
+
+ are the local coordinates.
+ We could construct another chart, but it is generally not needed.
+ 
+\end_layout
+
+\begin_layout Section
+The forward kinematic map
+\end_layout
+
+\begin_layout Standard
+The forward kinematic map maps the configuration manifold for body 
+\begin_inset Formula $a$
+\end_inset
+
+ to the manifold 
+\begin_inset Formula $SO\left(3\right)\times\mathbb{R}^{3}$
+\end_inset
+
+ using local coordinates, and is denoted by 
+\begin_inset Formula $\Pi_{a}:Q\to SO\left(3\right)\times\mathbb{R}^{3}$
+\end_inset
+
+ which represents the orientation, 
+\begin_inset Formula $R_{a}$
+\end_inset
+
+, and position, 
+\begin_inset Formula $\mathbf{r}_{a}$
+\end_inset
+
+.
+ The local coordinated for the configuration manifold is 
+\begin_inset Formula $\theta_{a}$
+\end_inset
+
+.
+ We can represent the position w.r.t.
+ 
+\begin_inset Formula $O_{spatial}$
+\end_inset
+
+ by 
+\begin_inset Formula 
+\begin{align*}
+\mathbf{r}_{1} & =\left(r_{1}\cos\theta_{1},r_{1}\sin\theta,0\right)=r_{1}R_{1}\mathbf{s}_{1}\\
+\mathbf{r}_{2} & =\left(\ell_{1}\cos\theta_{1}+r_{2}\cos\theta_{2},\ell_{1}\sin\theta_{1}+r_{2}\sin\theta_{2}\right)=\ell_{1}R_{1}\mathbf{s}_{1}+r_{2}R_{2}\mathbf{s}_{1}
+\end{align*}
+
+\end_inset
+
+and we can represent the orientation of the links using 
+\begin_inset Formula $\theta_{a}$
+\end_inset
+
+ by 
+\begin_inset Formula 
+\[
+R_{a}=\begin{bmatrix}\cos\theta_{a} & -\sin\theta_{a} & 0\\
+\sin\theta_{a} & \cos\theta_{a} & 0\\
+0 & 0 & 1
+\end{bmatrix}
+\]
+
+\end_inset
+
+Thus the local representative of the forward kinematic maps 
+\begin_inset Formula $\Pi_{a}:Q\to SO\left(3\right)\times\mathbb{R}^{3},\,a\in\left\{ 1,2\right\} $
+\end_inset
+
+ are 
+\begin_inset Formula $\left(\theta_{1},\theta_{2}\right)\mapsto\left(R_{a},r_{a}\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+The tangent bundle of the configuration manifold
+\end_layout
+
+\begin_layout Standard
+We can construct two vector bundle isomorphisms from 
+\begin_inset Formula $TSO\left(3\right)$
+\end_inset
+
+ to the trivial vector bundle 
+\begin_inset Formula $SO\left(3\right)\times\mathbb{R}^{3}$
+\end_inset
+
+.
+ We denote an element of the tangent space at 
+\begin_inset Formula $R$
+\end_inset
+
+ as 
+\begin_inset Formula $\left(R,A_{R}=\dot{R}\right)$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Definition
+Let 
+\begin_inset Formula $R\in SO\left(3\right)$
+\end_inset
+
+ and let 
+\begin_inset Formula $A_{R}\in T_{R}SO\left(3\right)$
+\end_inset
+
+, 
+\begin_inset Formula $A_{R}=\dot{R}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+The 
+\series bold
+body angular velocity 
+\series default
+corresponding to 
+\begin_inset Formula $A_{R}$
+\end_inset
+
+ is 
+\begin_inset Formula $R^{\top}A_{R}=\omega^{\wedge}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+The 
+\series bold
+spatial angular velocity
+\series default
+ corresponding to 
+\begin_inset Formula $A_{R}$
+\end_inset
+
+ is 
+\begin_inset Formula $A_{R}R^{\top}=\Omega^{\wedge}$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+The body and spatial angular velocities are 
+\begin_inset Formula $\mathbb{R}^{3}\times\mathbb{R}^{3}$
+\end_inset
+
+ skew symmetric matrices and are thus isomorphic to 
+\begin_inset Formula $\mathbb{R}^{3}$
+\end_inset
+
+ and are denoted by 
+\begin_inset Formula $\omega$
+\end_inset
+
+ and 
+\begin_inset Formula $\Omega$
+\end_inset
+
+.
+ This allows us to construct two isomorphic manifolds to 
+\begin_inset Formula $TSO$
+\end_inset
+
+
+\begin_inset Formula $\left(3\right)$
+\end_inset
+
+: 
+\begin_inset Formula $\left(R,A_{R}\right)\to\left(R,\left(R^{\top}A_{R}\right)^{\vee}=\omega\right)_{body}$
+\end_inset
+
+or 
+\begin_inset Formula $\left(R,A_{R}\right)\to\left(R,\left(A_{R}R^{\top}\right)^{\vee}\right)_{spatial}$
+\end_inset
+
+.
+ For the two link manipulator
+\begin_inset Formula 
+\begin{align*}
+\Omega_{1}^{\wedge} & =\dot{\theta}_{1}\begin{bmatrix}0 & -1 & 0\\
+1 & 0 & 0\\
+0 & 0 & 0
+\end{bmatrix}\\
+\omega_{1}^{\wedge} & =\dot{\theta}_{1}\begin{bmatrix}0 & -1 & 0\\
+1 & 0 & 0\\
+0 & 0 & 0
+\end{bmatrix}\\
+\Omega_{2}^{\wedge} & =\dot{\theta}_{2}\begin{bmatrix}0 & -1 & 0\\
+1 & 0 & 0\\
+0 & 0 & 0
+\end{bmatrix}\\
+\omega_{2}^{\wedge} & =\dot{\theta}_{2}\begin{bmatrix}0 & -1 & 0\\
+1 & 0 & 0\\
+0 & 0 & 0
+\end{bmatrix}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We can also construct the tangent space of the 
+\begin_inset Formula $a^{th}$
+\end_inset
+
+ body of the forward kinematic map.
+ Let 
+\begin_inset Formula $T\Pi_{a}$
+\end_inset
+
+ denote the map from 
+\begin_inset Formula $SO\left(2\right)\times\mathbb{R}^{2}\to\left(SO\left(3\right)\times\mathbb{R}^{3}\right)\times\left(SO\left(3\right)\times\mathbb{R}^{3}\right)$
+\end_inset
+
+.
+ This is done by taking the derivatives of 
+\begin_inset Formula $\mathbf{r}_{1}$
+\end_inset
+
+, and 
+\begin_inset Formula $\mathbf{r}_{2}$
+\end_inset
+
+.
+ We will only do it for the body angular velocity isomorphism.
+ We already have the tangent space for 
+\begin_inset Formula $R_{a}$
+\end_inset
+
+, however, we need to construct the tangent space for 
+\begin_inset Formula $r_{a}$
+\end_inset
+
+.
+ We recall that the forward kinematic map maps from 
+\begin_inset Formula $SO\left(2\right)^{2}\to\left(SO\left(3\right)\times\mathbb{R}^{3}\right)^{\top}$
+\end_inset
+
+, and we can define a curve on this manifold as 
+\begin_inset Formula $\left(R\left(t\right),r\left(t\right)\right)$
+\end_inset
+
+.
+ 
+\begin_inset Formula 
+\begin{align*}
+\frac{d\mathbf{r}_{1}}{dt} & =\frac{d}{dt}r_{1}R_{1}\mathbf{s}_{1}\\
+ & =r_{1}\dot{R}_{1}\mathbf{s}_{1}\\
+ & =r_{1}R_{1}\omega_{1}^{\wedge}\mathbf{s}_{1}\\
+ & =r_{1}\begin{bmatrix}\cos\theta_{1} & -\sin\theta_{1} & 0\\
+\sin\theta_{1} & \cos\theta_{1} & 0\\
+0 & 0 & 1
+\end{bmatrix}\dot{\theta}_{1}\begin{bmatrix}0 & -1 & 0\\
+1 & 0 & 0\\
+0 & 0 & 0
+\end{bmatrix}\mathbf{s}_{1}\\
+ & =r_{1}\dot{\theta}_{1}\begin{bmatrix}-\sin\theta_{1} & -\cos\theta_{1} & 0\\
+\cos\theta_{1} & -\sin\theta_{1} & 0\\
+0 & 0 & 1
+\end{bmatrix}\mathbf{s}_{1}\\
+ & =\left(-r_{1}\dot{\theta}_{1}\sin\theta_{1},r_{1}\dot{\theta}_{1}\cos\theta_{1},0\right)
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\frac{d\mathbf{r}_{2}}{dt} & =\ell_{1}R_{1}\mathbf{s}_{1}+r_{2}R_{2}\mathbf{s}_{1}\\
+ & =\ell_{1}\dot{R}_{1}\mathbf{s}_{1}+r_{2}\dot{R}_{2}\mathbf{s}_{1}\\
+ & =\ell_{1}R_{1}\omega_{1}^{\wedge}\mathbf{s}_{1}+r_{2}R_{2}\omega_{2}^{\wedge}\mathbf{s}_{1}\\
+ & =\ell_{1}\dot{\theta}_{1}\begin{bmatrix}-\sin\theta_{1} & -\cos\theta_{1} & 0\\
+\cos\theta_{1} & -\sin\theta_{1} & 0\\
+0 & 0 & 1
+\end{bmatrix}\mathbf{s}_{1}+r_{2}\dot{\theta}_{2}\begin{bmatrix}-\sin\theta_{2} & -\cos\theta_{2} & 0\\
+\cos\theta_{2} & -\sin\theta_{2} & 0\\
+0 & 0 & 1
+\end{bmatrix}\mathbf{s}_{1}\\
+ & =\left(-\ell_{1}\dot{\theta}_{1}\sin\theta_{1}-r_{2}\dot{\theta}_{2}\sin\theta_{2},\ell_{1}\dot{\theta}_{1}\cos\theta_{1}+r_{2}\dot{\theta}_{2}\cos\theta,0\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Thus 
+\begin_inset Formula 
+\[
+T\Pi_{1}\left(\left(\theta_{1},\theta_{2}\right),\left(\dot{\theta}_{1},\dot{\theta}_{2}\right)\right)=\left(\left(R_{1},r_{1}\right),\left(\left(-r_{1}\dot{\theta}_{1}\sin\theta_{1},r_{1}\dot{\theta}_{1}\cos\theta_{1},0\right),\omega_{1}^{\wedge}\right)\right)
+\]
+
+\end_inset
+
+and 
+\begin_inset Formula 
+\[
+T\Pi_{2}=\left(\left(\theta_{1},\theta_{2}\right),\left(\dot{\theta}_{1},\dot{\theta}_{2}\right)\right)=\left(\left(R_{2},r_{2}\right),\left(\left(-\ell_{1}\dot{\theta}_{1}\sin\theta_{1}-r_{2}\dot{\theta}_{2}\sin\theta_{2},\ell_{1}\dot{\theta}_{1}\cos\theta_{1}+r_{2}\dot{\theta}_{2}\cos\theta,0\right),\omega_{2}^{\wedge}\right)\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Kinetic energy
+\end_layout
+
+\begin_layout Standard
+The kinetic energy of the two link manipulator is
+\begin_inset Formula 
+\[
+KE_{1}=\frac{1}{8}\left(m_{1}+4m_{2}\right)\ell_{1}^{2}\dot{\theta}_{1}^{2}+\frac{1}{2}J_{1}\dot{\theta}_{1}^{2}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+KE_{2}=\frac{1}{8}m_{2}\ell_{2}^{2}\dot{\theta}_{2}^{2}+\frac{1}{2}m_{2}\ell_{1}\ell_{2}\cos\left(\theta_{1}-\theta_{2}\right)\dot{\theta}_{1}\dot{\theta}_{2}+\frac{1}{2}J_{2}\dot{\theta}_{2}^{2}
+\]
+
+\end_inset
+
+ 
+\begin_inset Formula 
+\begin{multline*}
+KE=\frac{1}{8}\left(m_{1}+4m_{2}\right)\ell_{1}^{2}\dot{\theta}_{1}^{2}+\frac{1}{8}m_{2}\ell_{2}^{2}\dot{\theta}_{2}^{2}+\frac{1}{2}m_{2}\ell_{1}\ell_{2}\cos\left(\theta_{1}-\theta_{2}\right)\dot{\theta}_{1}\dot{\theta}_{2}+\frac{1}{2}J_{1}\dot{\theta}_{1}^{2}+\frac{1}{2}J_{2}\dot{\theta}_{2}^{2}
+\end{multline*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The Riemannian metric generated from the kinetic energy is 
+\begin_inset Formula 
+\[
+\mathbb{G}_{ij}=\sum_{a=1}^{k}\frac{\partial KE_{a}}{\partial\dot{q}_{i}\partial\dot{q}_{j}}
+\]
+
+\end_inset
+
+thus 
+\begin_inset Formula 
+\begin{align*}
+\mathbb{G}_{11} & =\frac{KE_{1}}{\partial\dot{\theta}_{1}\partial\dot{\theta}_{1}}+\frac{KE_{2}}{\partial\dot{\theta}_{1}\partial\dot{\theta}_{1}}=\frac{1}{4}\left(m_{1}+4m_{2}\right)\ell_{1}^{2}+J_{1}\\
+\mathbb{G}_{12}=\mathbb{G}_{21} & =\frac{KE_{1}}{\partial\dot{\theta}_{1}\partial\dot{\theta}_{2}}+\frac{KE_{2}}{\partial\dot{\theta}_{1}\partial\dot{\theta}_{2}}=\frac{1}{2}m_{2}\ell_{1}\ell_{2}\cos\left(\theta_{1}-\theta_{2}\right)\\
+\mathbb{G}_{22} & =\frac{KE_{1}}{\partial\dot{\theta}_{2}\partial\dot{\theta}_{2}}+\frac{KE_{2}}{\partial\dot{\theta}_{2}\partial\dot{\theta}_{2}}=\frac{1}{4}m_{2}\ell_{2}^{2}+J_{2}
+\end{align*}
+
+\end_inset
+
+thus 
+\begin_inset Formula 
+\[
+\mathbb{G}=\begin{bmatrix}J_{1}+\frac{1}{4}\left(m_{1}+4m_{2}\right)\ell_{1}^{2} & \frac{1}{2}m_{2}\ell_{1}\ell_{2}\cos\left(\theta_{1}-\theta_{2}\right)\\
+\frac{1}{2}m_{2}\ell_{1}\ell_{2}\cos\left(\theta_{1}-\theta_{2}\right) & \frac{1}{4}m_{2}\ell_{2}^{2}+J_{2}
+\end{bmatrix}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+The Euler Lagrange Equations
+\end_layout
+
+\begin_layout Standard
+A Lagrangian is a map 
+\begin_inset Formula $L:\mathbb{R}\times TQ\to\mathbb{R}$
+\end_inset
+
+ where 
+\begin_inset Formula $L$
+\end_inset
+
+ is a function of time, position, and velocity.
+ We can define a time-independent Lagrangian as 
+\begin_inset Formula 
+\[
+L_{\mathbb{G}}\left(\dot{q}\right)=\frac{1}{2}\mathbb{G}\left(\dot{q},\dot{q}\right)
+\]
+
+\end_inset
+
+which is the kinetic energy of the system.
+ 
+\end_layout
+
+\begin_layout Standard
+The Euler Lagrange Equation is 
+\begin_inset Formula 
+\[
+\frac{d}{dt}\left(\frac{\partial L}{\partial\dot{q}^{i}}\right)-\frac{\partial L}{\partial q^{i}}=0
+\]
+
+\end_inset
+
+plugging in 
+\begin_inset Formula $L_{\mathbb{G}}$
+\end_inset
+
+ for 
+\begin_inset Formula $L$
+\end_inset
+
+ we get 
+\begin_inset Formula 
+\[
+\frac{d}{dt}\left(\frac{\partial L_{\mathbb{G}}}{\partial\dot{q}^{i}}\right)-\frac{\partial L_{\mathbb{G}}}{\partial q^{i}}=0
+\]
+
+\end_inset
+
+and letting 
+\begin_inset Formula 
+\begin{align*}
+L_{\mathbb{G}} & =\left(\frac{1}{8}\left(m_{1}+4m_{2}\right)\ell_{1}^{2}+\frac{1}{2}J_{1}\right)\dot{\theta}_{1}^{2}+\left(\frac{1}{8}m_{2}\ell_{2}^{2}+\frac{1}{2}J_{2}\right)\dot{\theta}_{2}^{2}+\frac{1}{2}m_{2}\ell_{1}\ell_{2}\cos\left(\theta_{1}-\theta_{2}\right)\dot{\theta}_{1}\dot{\theta}_{2}\\
+ & =\alpha_{1}\dot{\theta}_{1}^{2}+\alpha_{2}\dot{\theta}_{2}^{2}+\alpha_{3}\cos\left(\theta_{1}-\theta_{2}\right)\dot{\theta}_{1}\dot{\theta}_{2}
+\end{align*}
+
+\end_inset
+
+we can easily compute the Euler Lagrange Equations
+\begin_inset Formula 
+\begin{align*}
+\frac{d}{dt}\left(\frac{\partial L_{\mathbb{G}}}{\partial\dot{q}^{1}}\right)-\frac{\partial L_{\mathbb{G}}}{\partial q^{1}} & =\frac{d}{dt}\left(2\alpha_{1}\dot{\theta}_{1}+\alpha_{3}\cos\left(\theta_{1}-\theta_{2}\right)\dot{\theta}_{2}\right)+\alpha_{3}\sin\left(\theta_{1}-\theta_{2}\right)\dot{\theta}_{1}\dot{\theta}_{2}\\
+ & =2\alpha_{1}\ddot{\theta}_{1}-\alpha_{3}\sin\left(\theta_{1}-\theta_{2}\right)\left(\dot{\theta}_{1}-\dot{\theta_{2}}\right)\dot{\theta}_{2}+\alpha_{3}\cos\left(\theta_{1}-\theta_{2}\right)\ddot{\theta}_{2}+\alpha_{3}\sin\left(\theta_{1}-\theta_{2}\right)\dot{\theta}_{1}\dot{\theta}_{2}\\
+ & =2\alpha_{1}\ddot{\theta}_{1}+\alpha_{3}\sin\left(\theta_{1}-\theta_{2}\right)\dot{\theta}_{2}^{2}+\alpha_{3}\cos\left(\theta_{1}-\theta_{2}\right)\ddot{\theta}_{2}
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\frac{d}{dt}\left(\frac{\partial L_{\mathbb{G}}}{\partial\dot{q}^{2}}\right)-\frac{\partial L_{\mathbb{G}}}{\partial q^{2}} & =\frac{d}{dt}\left(2\alpha_{2}\dot{\theta}_{2}+\alpha_{3}\cos\left(\theta_{1}-\theta_{2}\right)\dot{\theta}_{1}\right)-\alpha_{3}\sin\left(\theta_{1}-\theta_{2}\right)\dot{\theta}_{1}\dot{\theta}_{2}\\
+ & =2\alpha_{2}\ddot{\theta}_{2}+\alpha_{3}\cos\left(\theta_{1}-\theta_{2}\right)\ddot{\theta}_{2}-\alpha_{3}\sin\left(\theta_{1}-\theta_{2}\right)\left(\dot{\theta}_{1}-\dot{\theta}_{2}\right)\dot{\theta}_{1}-\alpha_{3}\sin\left(\theta_{1}-\theta_{2}\right)\dot{\theta}_{1}\dot{\theta}_{2}\\
+ & =2\alpha_{2}\ddot{\theta}_{2}-\alpha_{3}\sin\left(\theta_{1}-\theta_{2}\right)\dot{\theta}_{1}^{2}+\alpha_{3}\cos\left(\theta_{1}-\theta_{2}\right)\ddot{\theta}_{1}
+\end{align*}
+
+\end_inset
+
+putting this in matrix form we get 
+\begin_inset Formula 
+\[
+\underbrace{\begin{bmatrix}2\alpha_{1} & \alpha_{3}\cos\left(\theta_{1}-\theta_{2}\right)\\
+\alpha_{3}\cos\left(\theta_{1}-\theta_{2}\right) & 2\alpha_{2}
+\end{bmatrix}}_{A}\begin{bmatrix}\ddot{\theta}_{1}\\
+\ddot{\theta}_{2}
+\end{bmatrix}+\begin{bmatrix}0 & \alpha_{3}\sin\left(\theta_{1}-\theta_{2}\right)\\
+-\alpha_{3}\sin\left(\theta_{1}-\theta_{2}\right) & 0
+\end{bmatrix}\begin{bmatrix}\dot{\theta}_{1}^{2}\\
+\dot{\theta}_{2}^{2}
+\end{bmatrix}=0
+\]
+
+\end_inset
+
+Note that the matrix 
+\begin_inset Formula $A$
+\end_inset
+
+ is the Riemannian metric 
+\begin_inset Formula $\mathbb{G}$
+\end_inset
+
+.
+ Multiplying both sides by 
+\begin_inset Formula $A^{-1}$
+\end_inset
+
+ yields 
+\begin_inset Formula 
+\begin{align*}
+\begin{bmatrix}\ddot{\theta}_{1}\\
+\ddot{\theta}_{2}
+\end{bmatrix}+\frac{1}{\det\mathbb{G}}\begin{bmatrix}2\alpha_{2} & -\alpha_{3}\cos\left(\theta_{1}-\theta_{2}\right)\\
+-\alpha_{3}\cos\left(\theta_{1}-\theta_{2}\right) & 2\alpha_{1}
+\end{bmatrix}\begin{bmatrix}0 & \alpha_{3}\sin\left(\theta_{1}-\theta_{2}\right)\\
+-\alpha_{3}\sin\left(\theta_{1}-\theta_{2}\right) & 0
+\end{bmatrix}\begin{bmatrix}\dot{\theta}_{1}^{2}\\
+\dot{\theta}_{2}^{2}
+\end{bmatrix} & =0\\
+\begin{bmatrix}\ddot{\theta}_{1}\\
+\ddot{\theta}_{2}
+\end{bmatrix}+\frac{1}{\det\mathbb{G}}\begin{bmatrix}\alpha_{3}^{2}\frac{1}{2}\sin\left(2\left(\theta_{1}-\theta_{2}\right)\right) & 2\alpha_{2}\alpha_{3}\sin\left(\theta_{1}-\theta_{2}\right)\\
+-2\alpha_{2}\alpha_{3}\sin\left(\theta_{1}-\theta_{2}\right) & -\alpha_{3}^{2}\frac{1}{2}\sin\left(2\left(\theta_{1}-\theta_{2}\right)\right)
+\end{bmatrix}\begin{bmatrix}\dot{\theta}_{1}^{2}\\
+\dot{\theta}_{2}^{2}
+\end{bmatrix} & =0\\
+\ddot{\theta}_{1}+\frac{m_{2}^{2}\ell_{1}^{2}\ell_{2}^{2}\sin\left(2\left(\theta_{1}-\theta_{2}\right)\right)}{8\det\mathbb{G}}\dot{\theta}_{1}^{2}+\frac{\left(\frac{1}{8}m_{2}\ell_{2}^{2}+\frac{1}{2}J_{2}\right)m_{2}\ell_{1}\ell_{2}\sin\left(\theta_{1}-\theta_{2}\right)}{\det\mathbb{G}}\dot{\theta}_{2}^{2} & =0\\
+\ddot{\theta}_{2}-\frac{\left(\frac{1}{8}m_{2}\ell_{2}^{2}+\frac{1}{2}J_{2}\right)m_{2}\ell_{1}\ell_{2}\sin\left(\theta_{1}-\theta_{2}\right)}{\det\mathbb{G}}\dot{\theta}_{1}^{2}-\frac{m_{2}^{2}\ell_{1}^{2}\ell_{2}^{2}\sin\left(2\left(\theta_{1}-\theta_{2}\right)\right)}{8\det\mathbb{G}}\dot{\theta}_{2}^{2} & =0
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

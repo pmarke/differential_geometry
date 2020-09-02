@@ -1,0 +1,1112 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass IEEEtran
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_package amsmath 2
+\use_package amssymb 2
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 1in
+\topmargin 1in
+\rightmargin 1in
+\bottommargin 1in
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Integration On Manifolds Example
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Standard
+The purpose of this note is to show an example of integration on manifolds.
+ Let 
+\begin_inset Formula $\left(M,\mathcal{A},\left[\omega\right]\right)$
+\end_inset
+
+ be an oriented manifold where 
+\begin_inset Formula $M\coloneqq\left\{ \left(m_{1},m_{2},m_{3}\right)\in\mathbb{R}^{3}\right\} $
+\end_inset
+
+, 
+\begin_inset Formula $\mathcal{A}$
+\end_inset
+
+ is an atlas and 
+\begin_inset Formula $\left[\omega\right]$
+\end_inset
+
+ an equivalence class of volume form with positive orientation.
+ The atlas 
+\begin_inset Formula $\mathcal{A}$
+\end_inset
+
+ contains the charts 
+\begin_inset Formula $\left(U_{s},\phi_{s}\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $\left(U_{c},\phi_{c}\right)$
+\end_inset
+
+ where 
+\begin_inset Formula $U_{s},U_{c}=M$
+\end_inset
+
+, 
+\begin_inset Formula $\phi_{s}:M\to M_{s}$
+\end_inset
+
+ and 
+\begin_inset Formula $\phi_{c}:M\to M_{c}$
+\end_inset
+
+.
+ 
+\begin_inset Formula $M_{s}$
+\end_inset
+
+ denotes 
+\begin_inset Formula $\mathbb{R}^{3}$
+\end_inset
+
+ in spherical coordinates and 
+\begin_inset Formula $M_{c}$
+\end_inset
+
+ denotes 
+\begin_inset Formula $\mathbb{R}^{3}$
+\end_inset
+
+ in Cartesian coordinates.
+ The spaces 
+\begin_inset Formula $TM$
+\end_inset
+
+, 
+\begin_inset Formula $TM_{s}$
+\end_inset
+
+, 
+\begin_inset Formula $TM_{c}$
+\end_inset
+
+ are the associated tangent spaces of 
+\begin_inset Formula $M$
+\end_inset
+
+, 
+\begin_inset Formula $M_{s}$
+\end_inset
+
+, 
+\begin_inset Formula $M_{c}$
+\end_inset
+
+.
+ The maps 
+\begin_inset Formula $T\phi_{s}:TM\to TM_{s}$
+\end_inset
+
+ and 
+\begin_inset Formula $T\phi_{c}:TM\to TM_{c}$
+\end_inset
+
+ are called the tangent of 
+\begin_inset Formula $\phi_{s}$
+\end_inset
+
+ and 
+\begin_inset Formula $\phi_{c}$
+\end_inset
+
+.
+ The vector fields on 
+\begin_inset Formula $M$
+\end_inset
+
+ are denoted by 
+\begin_inset Formula $\mathcal{X}$
+\end_inset
+
+, whose push forward is denoted 
+\begin_inset Formula $\phi_{s*}\mathcal{X}$
+\end_inset
+
+ and 
+\begin_inset Formula $\phi_{c*}\mathcal{X}$
+\end_inset
+
+.
+ Lastly the push forward of the equivalence class of positive volume form
+ 
+\begin_inset Formula $\left[\omega\right]$
+\end_inset
+
+ is denoted 
+\begin_inset Formula $\phi_{s*}\left[\omega\right]$
+\end_inset
+
+ and 
+\begin_inset Formula $\phi_{c*}\left[\omega\right]$
+\end_inset
+
+.
+ This scenario is depicted in fig 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:manifoldDiagram"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/Integration.pdf
+	width 100col%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:manifoldDiagram"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Atlas
+\end_layout
+
+\begin_layout Standard
+In this section we proceed to define the charts 
+\begin_inset Formula $\left(U_{s},\phi_{s}\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $\left(U_{c},\phi_{c}\right)$
+\end_inset
+
+.
+ In order to integrate on manifolds, the charts need to be diffeomorphic
+ so we can construct 
+\begin_inset Formula $T\phi_{s}$
+\end_inset
+
+ and 
+\begin_inset Formula $T\phi_{c}$
+\end_inset
+
+, and the charts need to be positively oriented for integration to be well
+ defined
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Abraham1998"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+Recall that the tangent space of a manifold consists of all of the points
+ on the manifold and all of the vectors tangent at every point.
+ Since 
+\begin_inset Formula $\dim\left(M\right)=3$
+\end_inset
+
+ the tangents space will have dimension 6 such that 
+\begin_inset Formula $TM=\mathbb{R}^{3}\times\mathbb{R}^{3}$
+\end_inset
+
+.
+ Every element in 
+\begin_inset Formula $TM$
+\end_inset
+
+ is a tuple of the form 
+\begin_inset Formula $\left(m,\dot{m}\right)$
+\end_inset
+
+ where 
+\begin_inset Formula $m\in M$
+\end_inset
+
+ and 
+\begin_inset Formula $\dot{m}$
+\end_inset
+
+ is a tangent vector at point 
+\begin_inset Formula $m$
+\end_inset
+
+.
+ The tangent maps 
+\begin_inset Formula $T\phi_{s}$
+\end_inset
+
+ and 
+\begin_inset Formula $T\phi_{c}$
+\end_inset
+
+ are tuples of the form 
+\begin_inset Formula $\left(\phi_{s},\mathbf{d}\phi_{s}\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $\left(\phi_{c},\mathbf{d}\phi_{c}\right)$
+\end_inset
+
+ where the boldface 
+\begin_inset Formula $\mathbf{d}$
+\end_inset
+
+ denotes the differential of the map, and is the part that maps tangent
+ vectors.
+ 
+\end_layout
+
+\begin_layout Subsection
+First Chart
+\end_layout
+
+\begin_layout Standard
+Let the first chart 
+\begin_inset Formula $\left(U_{c},\phi_{c}\right)$
+\end_inset
+
+ have the coordinates 
+\begin_inset Formula $\left(x\left(M\right),y\left(M\right),z\left(M\right)\right)$
+\end_inset
+
+ where 
+\begin_inset Formula 
+\begin{gather*}
+x:M\to\mathbb{R};\,\left(m_{1},m_{2},m_{3}\right)\mapsto m_{1}\\
+y:M\to\mathbb{R};\,\left(m_{1},m_{2},m_{3}\right)\mapsto m_{2}\\
+z:M\to\mathbb{R};\,\left(m_{1},m_{2},m_{3}\right)\mapsto m_{3}
+\end{gather*}
+
+\end_inset
+
+which we will simply denote as 
+\begin_inset Formula $\left(x,y,z\right)$
+\end_inset
+
+ with the mappings implied.
+ The inverse mapping 
+\begin_inset Formula $\phi_{c}^{-1}:M_{c}\to M$
+\end_inset
+
+ is 
+\begin_inset Formula 
+\begin{gather*}
+m_{1}:M_{c}\to\mathbb{R};\,\left(x,y,z\right)\mapsto x\\
+m_{2}:M_{c}\to\mathbb{R};\,\left(x,y,z\right)\mapsto y\\
+m_{3}:M_{c}\to\mathbb{R};\,\left(x,y,z\right)\mapsto z
+\end{gather*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The tangent map 
+\begin_inset Formula $T\phi_{c}:TM\to TM_{c}$
+\end_inset
+
+ is the tuple 
+\begin_inset Formula $\left(\phi_{c},\mathbf{d}\phi_{c}\right)$
+\end_inset
+
+ where 
+\begin_inset Formula $\mathbf{d}\phi_{c}$
+\end_inset
+
+ is the differential of 
+\begin_inset Formula $\phi_{c}$
+\end_inset
+
+ which is calculated by taking the partial derivative of 
+\begin_inset Formula $\phi_{c}$
+\end_inset
+
+ w.r.t.
+ 
+\begin_inset Formula $m_{1},m_{2}$
+\end_inset
+
+, and 
+\begin_inset Formula $m_{3}$
+\end_inset
+
+.
+\begin_inset Formula 
+\begin{align*}
+dx & =\frac{\partial x}{\partial m_{1}}dm_{1}+\frac{\partial x}{\partial m_{2}}dm_{2}+\frac{\partial x}{\partial m_{3}}dm_{3}\\
+ & =dm_{1}\\
+dy & =\frac{\partial y}{\partial m_{1}}dm_{1}+\frac{\partial y}{\partial m_{2}}dm_{2}+\frac{\partial y}{\partial m_{3}}dm_{3}\\
+ & =dm_{2}\\
+dz & =\frac{\partial z}{\partial m_{1}}dm_{1}+\frac{\partial z}{\partial m_{2}}dm_{2}+\frac{\partial z}{\partial m_{3}}dm_{3}\\
+ & =dm_{3}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Second Chart
+\end_layout
+
+\begin_layout Standard
+Let the second chart 
+\begin_inset Formula $\left(U_{s},\phi_{c}\right)$
+\end_inset
+
+ have the coordinates 
+\begin_inset Formula $\left(r\left(M\right),\theta\left(M\right),\phi\left(M\right)\right)$
+\end_inset
+
+ where 
+\begin_inset Formula 
+\begin{gather*}
+r:M\to\mathbb{R};\,\left(m_{1},m_{2},m_{3}\right)\mapsto\sqrt{m_{1}^{2}+m_{2}^{2}+m_{3}^{2}}\\
+\theta:M\to\mathbb{R};\,\left(m_{1},m_{2},m_{3}\right)\mapsto\arccos\left(\frac{m_{3}}{\sqrt{m_{1}^{2}+m_{2}^{2}+m_{3}^{2}}}\right)\\
+\phi:M\to\mathbb{R};\,\left(m_{1},m_{2},m_{3}\right)\mapsto\arctan\left(\frac{m_{2}}{m_{1}}\right)
+\end{gather*}
+
+\end_inset
+
+which we will simply denote as 
+\begin_inset Formula $\left(r,\theta,\phi\right)$
+\end_inset
+
+.
+ The inverse mapping 
+\begin_inset Formula $\phi_{s}^{-1}:M_{s}\to M$
+\end_inset
+
+ is 
+\begin_inset Formula 
+\begin{gather*}
+m_{1}:M_{s}\to\mathbb{R};\,\left(r,\theta,\phi\right)\mapsto r\sin\left(\phi\right)\cos\left(\theta\right)\\
+m_{2}:M_{s}\to\mathbb{R};\,\left(r,\theta,\phi\right)\mapsto r\sin\left(\phi\right)\sin\left(\theta\right)\\
+m_{3}:M_{s}\to\mathbb{R};\,\left(r,\theta,\phi\right)\mapsto r\cos\left(\phi\right)
+\end{gather*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The tangent map 
+\begin_inset Formula $T\phi_{s}:TM\to TM_{c}$
+\end_inset
+
+ is the tuple 
+\begin_inset Formula $\left(\phi_{s},\mathbf{d}\phi_{s}\right)$
+\end_inset
+
+ where 
+\begin_inset Formula $\mathbf{d}\phi_{s}$
+\end_inset
+
+ is the differential of 
+\begin_inset Formula $\phi_{s}$
+\end_inset
+
+ which is calculated by taking the partial derivative of 
+\begin_inset Formula $\phi_{s}$
+\end_inset
+
+ w.r.t.
+ 
+\begin_inset Formula $m_{1},m_{2}$
+\end_inset
+
+, and 
+\begin_inset Formula $m_{3}$
+\end_inset
+
+.
+\begin_inset Formula 
+\begin{align*}
+dr & =\frac{\partial r}{\partial m_{1}}dm_{1}+\frac{\partial r}{\partial m_{2}}dm_{2}+\frac{\partial r}{\partial m_{3}}dm_{3}\\
+ & =\frac{m_{1}}{r}dm_{1}+\frac{m_{2}}{r}dm_{2}+\frac{m_{3}}{r}dm_{3}\\
+d\theta & =\frac{\partial\theta}{\partial m_{1}}dm_{1}+\frac{\partial\theta}{\partial m_{2}}dm_{2}+\frac{\partial\theta}{\partial m_{3}}dm_{3}\\
+ & =\frac{m_{1}m_{3}}{r\sqrt{m_{1}^{2}+m_{2}^{2}}}dm_{1}+\frac{m_{2}m_{3}}{r\sqrt{m_{1}^{2}+m_{2}^{2}}}dm_{2}-\frac{\sqrt{m_{1}^{2}+m_{2}^{2}}}{r^{2}}dm_{3}\\
+d\phi & =\frac{\partial\phi}{\partial m_{1}}dm_{1}+\frac{\partial\phi}{\partial m_{2}}dm_{2}+\frac{\partial\phi}{\partial m_{3}}dm_{3}\\
+ & =\frac{m_{2}}{m_{1}^{2}+m_{2}^{2}}dm_{1}-\frac{m_{1}}{m_{1}^{2}+m_{2}^{2}}dm_{2}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The inverse tangent map 
+\begin_inset Formula $T\phi_{s}^{-1}:TM_{c}\to TM$
+\end_inset
+
+ is the tuple 
+\begin_inset Formula $\left(\phi_{s}^{-1},\mathbf{d}\phi_{s}^{-1}\right)$
+\end_inset
+
+ where 
+\begin_inset Formula $\mathbf{d}\phi_{s}^{-1}$
+\end_inset
+
+ is the differential of 
+\begin_inset Formula $\phi_{s}^{-1}$
+\end_inset
+
+which is calculated by taking the partial derivative of 
+\begin_inset Formula $\phi_{s}^{-1}$
+\end_inset
+
+ w.r.t.
+ 
+\begin_inset Formula $r$
+\end_inset
+
+, 
+\begin_inset Formula $\theta$
+\end_inset
+
+, and 
+\begin_inset Formula $\phi$
+\end_inset
+
+.
+\begin_inset Formula 
+\begin{align*}
+dm_{1} & =\frac{\partial m_{1}}{\partial r}dr+\frac{\partial m_{1}}{\partial\theta}d\theta+\frac{\partial m_{1}}{\partial\phi}d\phi\\
+ & =\cos\theta\sin\phi dr-r\sin\theta\sin\phi d\theta+r\cos\theta\cos\phi d\phi\\
+dm_{2} & =\frac{\partial m_{2}}{\partial r}dr+\frac{\partial m_{2}}{\partial\theta}d\theta+\frac{\partial m_{2}}{\partial\phi}d\phi\\
+ & =\sin\theta\sin\phi dr+r\cos\theta\sin\phi d\theta+r\cos\theta\cos\phi d\phi\\
+dm_{3} & =\frac{\partial m_{3}}{\partial r}dr+\frac{\partial m_{3}}{\partial\theta}d\theta+\frac{\partial m_{3}}{\partial\phi}d\phi\\
+ & =\cos\phi dr-r\sin\phi d\phi
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Representative Chart 
+\end_layout
+
+\begin_layout Standard
+The charts on a manifold by definition must be bijective.
+ This allows us to create maps between 
+\begin_inset Formula $M_{c}$
+\end_inset
+
+ and 
+\begin_inset Formula $M_{s}$
+\end_inset
+
+ over the intersection of 
+\begin_inset Formula $\phi_{c}^{-1}\left(M_{c}\right)\cap\phi_{s}^{-1}\left(M_{s}\right)$
+\end_inset
+
+.
+ In this example that intersection is all of 
+\begin_inset Formula $M$
+\end_inset
+
+, and the two maps are defined as 
+\begin_inset Formula 
+\begin{align*}
+\phi_{s}\circ\phi_{c}^{-1}:M_{c} & \to M_{s}\\
+ & \left(x,y,z\right)\mapsto\left(r,\arccos\left(\frac{z^{2}}{r}\right),\arctan\left(\frac{y}{z}\right)\right)
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $r=\sqrt{x^{2}+y^{2}+z^{2}}$
+\end_inset
+
+, and 
+\begin_inset Formula 
+\begin{align*}
+\phi_{c}\circ\phi_{s}^{-1}:M_{s} & \to M_{c}\\
+ & \left(r,\theta,\phi\right)\mapsto\left(r\sin\left(\phi\right)\cos\left(\theta\right),r\sin\left(\phi\right)\sin\left(\theta\right),r\cos\left(\phi\right)\right).
+\end{align*}
+
+\end_inset
+
+The corresponding tangent maps are defined as 
+\begin_inset Formula 
+\begin{gather*}
+\left(\phi_{s}\circ\phi_{c}^{-1},\mathbf{d}\phi_{s}\circ\,\mathbf{d}\phi_{c}^{-1}\right):TM_{c}\to TM_{s}\\
+\left(\phi_{c}\circ\phi_{s}^{-1},\mathbf{d}\phi_{c}\circ\,\mathbf{d}\phi_{s}^{-1}\right):TM_{s}\to TM_{c}
+\end{gather*}
+
+\end_inset
+
+where 
+\begin_inset Formula $\mathbf{d}\phi_{s}\circ\,\mathbf{d}\phi_{c}^{-1}$
+\end_inset
+
+ in matrix form is 
+\begin_inset Formula 
+\[
+\begin{bmatrix}\frac{x}{r} & \frac{y}{r} & \frac{z}{r}\\
+\frac{xz}{r\sqrt{x^{2}+y^{2}}} & \frac{yz}{r\sqrt{x^{2}+y^{2}}} & -\frac{\sqrt{x^{2}+y^{2}}}{r^{2}}\\
+\frac{x}{x^{2}+y^{2}} & -\frac{x}{x^{2}+y^{2}} & 0
+\end{bmatrix},
+\]
+
+\end_inset
+
+and 
+\begin_inset Formula $\mathbf{d}\phi_{c}\circ\,\mathbf{d}\phi_{s}^{-1}$
+\end_inset
+
+ in matrix form is 
+\begin_inset Formula 
+\[
+\begin{bmatrix}\cos\theta\sin\phi & -r\sin\theta\sin\phi & r\cos\theta\cos\phi\\
+\sin\theta\sin\phi & r\cos\theta\sin\phi & r\cos\theta\cos\phi\\
+\cos\phi &  & -r\sin\phi
+\end{bmatrix}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Remark
+The reason why the charts 
+\begin_inset Formula $\left(U_{s},\phi_{s}\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $\left(U_{c},\phi_{c}\right)$
+\end_inset
+
+ had to be diffeomorphism was to enable us to find the tangent maps.
+\end_layout
+
+\begin_layout --Separator--
+
+\end_layout
+
+\begin_layout Remark
+The differential of a function 
+\begin_inset Formula $\phi$
+\end_inset
+
+ is related to the gradient of the function by 
+\begin_inset Formula $\nabla\phi=\mathbb{G}^{\sharp}\left(\mathbf{d}\phi\right)$
+\end_inset
+
+ where 
+\begin_inset Formula $\mathbb{G}$
+\end_inset
+
+ is the metric tensor.
+ This is an important subtle difference.
+ 
+\end_layout
+
+\begin_layout Section
+Push-forward
+\end_layout
+
+\begin_layout Standard
+Let the volume form 
+\begin_inset Formula $\omega$
+\end_inset
+
+ on 
+\begin_inset Formula $M$
+\end_inset
+
+ be the standard volume form defined as 
+\begin_inset Formula $\omega\coloneqq dm_{1}\wedge dm_{2}\wedge dm_{3}$
+\end_inset
+
+.
+ In order to integrate on 
+\begin_inset Formula $M_{c}$
+\end_inset
+
+ and 
+\begin_inset Formula $M_{s}$
+\end_inset
+
+ we need to push forward the volume form 
+\begin_inset Formula $\omega$
+\end_inset
+
+ from 
+\begin_inset Formula $M$
+\end_inset
+
+ to 
+\begin_inset Formula $M_{c}$
+\end_inset
+
+ and 
+\begin_inset Formula $M_{s}$
+\end_inset
+
+.
+ This is really easy since we have the tangent maps 
+\begin_inset Formula $T\phi_{s}$
+\end_inset
+
+ and 
+\begin_inset Formula $T\phi_{c}$
+\end_inset
+
+.
+\begin_inset Formula 
+\begin{multline*}
+\phi_{s*}\omega\coloneqq\omega\circ T\phi_{s}^{-1}\\
+\phi_{c*}\omega\coloneqq\omega\circ T\phi_{c}^{-1}.
+\end{multline*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+What these maps are showing is that if we have tangent vectors in 
+\begin_inset Formula $TM_{s}$
+\end_inset
+
+ and 
+\begin_inset Formula $TM_{c}$
+\end_inset
+
+ we can map them back to 
+\begin_inset Formula $TM$
+\end_inset
+
+ using the tangent maps and then use the volume form 
+\begin_inset Formula $\omega$
+\end_inset
+
+ that is defined on 
+\begin_inset Formula $M$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+Integration
+\end_layout
+
+\begin_layout Definition
+Let 
+\begin_inset Formula $f\in C^{\infty}\left(M,\mathbb{R}\right)$
+\end_inset
+
+ then we call 
+\begin_inset Formula $\int_{M}f\omega$
+\end_inset
+
+ the 
+\series bold
+integral of 
+\series default
+
+\begin_inset Formula $f$
+\end_inset
+
+ 
+\series bold
+with respect to 
+\begin_inset Formula $\omega$
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Abraham1998"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Theorem
+
+\series bold
+Riesz Representation Theorem
+\series default
+ Let 
+\begin_inset Formula $\left(M,\omega\right)$
+\end_inset
+
+ be a volume manifold.
+ Let 
+\begin_inset Formula $\mathcal{B}$
+\end_inset
+
+ denote the Borel sets of 
+\begin_inset Formula $M$
+\end_inset
+
+, the 
+\begin_inset Formula $\sigma-algebra$
+\end_inset
+
+ generated by the open (or closed, or compact) subsets of 
+\begin_inset Formula $M$
+\end_inset
+
+.
+ Then there is a unique measure 
+\begin_inset Formula $m_{u}$
+\end_inset
+
+ on 
+\begin_inset Formula $\mathcal{B}$
+\end_inset
+
+ such that for every continuous function of compact support
+\begin_inset Formula 
+\[
+\int_{M}fdm_{\omega}=\int_{M}f\omega.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This is saying that a volume form gives rise to a measure w.r.t.
+ which functions can be integrated by the appropriate Legesgue integral.
+ Honestly I don't fully understand this but according to 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Rossmann2002"
+
+\end_inset
+
+ we have (And I copy this right from the book) 
+\begin_inset Formula 
+\[
+\int_{D}f\left(p\right)\nu\left(dp\right)=\int_{Dx}f\left(p\right)\nu\left(\frac{\partial p}{\partial x}\right)dx.
+\]
+
+\end_inset
+
+On the right side 
+\begin_inset Formula $p=p\left(x\right)$
+\end_inset
+
+ is considered a function of 
+\begin_inset Formula $x$
+\end_inset
+
+, 
+\begin_inset Formula $D_{x}$
+\end_inset
+
+ is the point-set in the space of coordinates 
+\begin_inset Formula $x$
+\end_inset
+
+ corresponding to 
+\begin_inset Formula $D\subset M$
+\end_inset
+
+.
+ We have to show that the value of the integral is independent of the coordinate
+ system 
+\begin_inset Formula $x$
+\end_inset
+
+.
+ So suppose 
+\begin_inset Formula $\tilde{x}$
+\end_inset
+
+ is another coordinate system defined on 
+\begin_inset Formula $D$
+\end_inset
+
+.
+ Since in matrix notation 
+\begin_inset Formula $\frac{\partial p}{\partial\tilde{x}}=\frac{\partial x}{\partial\tilde{x}}\frac{\partial p}{\partial x}$
+\end_inset
+
+, one finds 
+\begin_inset Formula 
+\[
+\int_{D\tilde{x}}f\left(p\right)\nu\left(\frac{\partial p}{\partial\tilde{x}}\right)d\tilde{x}=\int_{D\tilde{x}}f\left(p\right)\nu\left(\frac{\partial p}{\partial x}\right)\left|\det\frac{\partial x}{\partial\tilde{x}}\right|d\tilde{x}=\int_{Dx}f\left(p\right)\nu\left(\frac{\partial p}{\partial x}\right)dx.
+\]
+
+\end_inset
+
+(End of copy)
+\end_layout
+
+\begin_layout Remark
+The function 
+\begin_inset Formula $\nu$
+\end_inset
+
+ is the volume form that we have denoted as 
+\begin_inset Formula $\omega$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Application
+\end_layout
+
+\begin_layout Standard
+Let's apply this concept of integration to our problem.
+ Lets start with the integral 
+\begin_inset Formula 
+\[
+\int_{U}f\left(m\right)\omega\left(dm\right)
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $m\in M$
+\end_inset
+
+, 
+\begin_inset Formula $f$
+\end_inset
+
+ is a continuous function on 
+\begin_inset Formula $M$
+\end_inset
+
+, 
+\begin_inset Formula $U$
+\end_inset
+
+ is the region of integration, and 
+\begin_inset Formula $dm$
+\end_inset
+
+ are the unit basis vectors of the tangent space at point 
+\begin_inset Formula $m$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+Let's push the integral onto 
+\begin_inset Formula $M_{c}$
+\end_inset
+
+ using the push forward.
+ This is done by 
+\begin_inset Formula 
+\[
+\int_{\phi_{c}\left(U\right)}f\left(\phi^{-1}\left(p_{c}\right)\right)\omega\left(T\phi_{c}^{-1}dp_{c}\right)dc
+\]
+
+\end_inset
+
+ where 
+\begin_inset Formula $U_{c}=\phi_{c}\left(U\right)$
+\end_inset
+
+ is the image of 
+\begin_inset Formula $U$
+\end_inset
+
+ mapped by 
+\begin_inset Formula $\phi_{c}$
+\end_inset
+
+, 
+\begin_inset Formula $p_{c}\in M_{c}$
+\end_inset
+
+, 
+\begin_inset Formula $dp_{c}$
+\end_inset
+
+ are the unit basis vectors of the tangent space at 
+\begin_inset Formula $p_{c}$
+\end_inset
+
+, and 
+\begin_inset Formula $dc$
+\end_inset
+
+ is just a symbol denoting the small area of integration and should not
+ be confused with the differential.
+ The part that is most interesting to us is 
+\begin_inset Formula 
+\[
+\omega\left(T\phi_{c}^{-1}dp_{c}\right)
+\]
+
+\end_inset
+
+Since 
+\begin_inset Formula $T\phi_{c}^{-1}$
+\end_inset
+
+ is the identity function, 
+\begin_inset Formula $\omega\left(T\phi_{c}^{-1}dp_{c}\right)$
+\end_inset
+
+ evaluates to 
+\begin_inset Formula $1$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Remark
+If 
+\begin_inset Formula $f$
+\end_inset
+
+ and 
+\begin_inset Formula $\omega$
+\end_inset
+
+ have compact support, then 
+\begin_inset Formula $\phi_{s*}f$
+\end_inset
+
+ , 
+\begin_inset Formula $\phi_{s*}\omega$
+\end_inset
+
+, 
+\begin_inset Formula $\phi_{c*}f$
+\end_inset
+
+, and 
+\begin_inset Formula $\phi_{c*}\omega$
+\end_inset
+
+ have compact support.
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+bibfiles "/home/mark/Documents/mendeley/library"
+options "plain"
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

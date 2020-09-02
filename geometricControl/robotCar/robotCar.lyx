@@ -1,0 +1,2513 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass IEEEtran
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_package amsmath 2
+\use_package amssymb 2
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 1in
+\topmargin 1in
+\rightmargin 1in
+\bottommargin 1in
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Geometric Control and Estimation of a Robot Car
+\end_layout
+
+\begin_layout Author
+Mark Petersen
+\end_layout
+
+\begin_layout Section
+Introduction 
+\end_layout
+
+\begin_layout Standard
+The purpose of this document is to verify my understanding of Geometric
+ Control and Estimation for mechanical system by applying the concepts in
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Bullo2005"
+
+\end_inset
+
+, and will follow the exercises found in the aforementioned book: Ex 4.9,4.23,4.35,
+4.41.
+ 
+\end_layout
+
+\begin_layout Subsection
+Problem Description
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename Figures/RobotCar.pdf
+	width 80col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:robot car"
+
+\end_inset
+
+A depiction of the robot car.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+A depiction of the robot car is shown in figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:robot car"
+
+\end_inset
+
+.
+ I have already given it the frames 
+\begin_inset Formula $\mathcal{F}^{i}=\left(O_{i},\left\{ \mathbf{i}_{x},\mathbf{i}_{y},\mathbf{i}_{z}\right\} \right)$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathcal{F}^{b}=\left(O_{b},\left\{ \mathbf{b}_{x},\mathbf{b}_{y},\mathbf{b}_{z}\right\} \right)$
+\end_inset
+
+ where 
+\begin_inset Formula $O_{a},\,a\in\left\{ i,b\right\} $
+\end_inset
+
+ denotes the origin of the inertial and body frame and 
+\begin_inset Formula $\mathbf{a}_{j},\,a\in\left\{ i,b\right\} ,\,j\in\left\{ x,y,z\right\} $
+\end_inset
+
+ denote the 3 dimensional orthogonal basis of frame 
+\begin_inset Formula $a$
+\end_inset
+
+ with the basis 
+\begin_inset Formula $a_{z},\,a\in\left\{ i,b\right\} $
+\end_inset
+
+ pointing out of the page so that each frame is a right handed coordinate
+ frame.
+ We use the coordinates 
+\begin_inset Formula $\left(x,y,\theta,\phi\right)$
+\end_inset
+
+ where 
+\begin_inset Formula $\left(x,y\right)$
+\end_inset
+
+ are the coordinates of the rear axle midpoint, 
+\begin_inset Formula $\theta$
+\end_inset
+
+ is the orientation of the body (measured counterclockwise with respect
+ to (w.r.t.) the inertial basis 
+\begin_inset Formula $i_{x}$
+\end_inset
+
+), and 
+\begin_inset Formula $\phi$
+\end_inset
+
+ is the steering angle (measured counterclockwise w.r.t.
+ the body basis 
+\begin_inset Formula $b_{x}$
+\end_inset
+
+.
+ It is assumed that the center of mass is at the coordinates of the rear
+ axle midpoint.
+\end_layout
+
+\begin_layout Section
+E4.9
+\end_layout
+
+\begin_layout Subsection
+What is the configuration manifold for the system, as a submanifold of 
+\begin_inset Formula $Q_{free}$
+\end_inset
+
+?
+\end_layout
+
+\begin_layout Standard
+Before we can figure out what the configuration manifold is, we need to
+ identify the 
+\series bold
+free mechanical system.
+ 
+\series default
+A free mechanical system is a collection of all particles and rigid bodies,
+ and the possible position and orientation of every particle and rigid body
+ constitute the manifold 
+\begin_inset Formula $Q_{free}$
+\end_inset
+
+.
+ We will model the car as having three rigid bodies: the car frame with
+ the rear wheels denote 
+\begin_inset Formula $b$
+\end_inset
+
+, the front left wheel denoted 
+\begin_inset Formula $l$
+\end_inset
+
+, and the front right wheel denoted 
+\begin_inset Formula $r$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename Figures/RobotCarFrames.pdf
+	width 40col%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:robotCarFrames"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We next associate a frame with every rigid body as shown in figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:robotCarFrames"
+
+\end_inset
+
+.
+ The first frame 
+\begin_inset Formula $\mathcal{F}^{i}=\left(O_{i},\left\{ \mathbf{i}_{x},\mathbf{i}_{y},\mathbf{i}_{z}\right\} \right)$
+\end_inset
+
+ is the fixed inertial frame where 
+\begin_inset Formula $\mathbf{i}_{z}$
+\end_inset
+
+ points out of the page.
+ The second frame is 
+\begin_inset Formula $\mathcal{F}^{b}=\left(O_{b},\left\{ \mathbf{b}_{x},\mathbf{b}_{y},\mathbf{b}_{z}\right\} \right)$
+\end_inset
+
+ is the body frame where 
+\begin_inset Formula $\mathbf{b}_{x}$
+\end_inset
+
+ points along the length of the body 
+\begin_inset Formula $\mathbf{b}_{y}$
+\end_inset
+
+ points towards the left rear wheel, 
+\begin_inset Formula $\mathbf{b}_{z}$
+\end_inset
+
+ points out of the page and 
+\begin_inset Formula $O_{b}$
+\end_inset
+
+ is centered in the middle of the rear axle.
+ The third frame is 
+\begin_inset Formula $\mathcal{F}^{l}=\left(O_{l},\left\{ \mathbf{l}_{x},\mathbf{l}_{y},\mathbf{\mathbf{l}}_{z}\right\} \right)$
+\end_inset
+
+ where 
+\begin_inset Formula $\mathbf{l}_{x}$
+\end_inset
+
+ points along the length of the wheel 
+\begin_inset Formula $\mathbf{l}_{y}$
+\end_inset
+
+ points out towards the left of the wheel, 
+\begin_inset Formula $\mathbf{l}_{z}$
+\end_inset
+
+ points out of the page and 
+\begin_inset Formula $O_{l}$
+\end_inset
+
+ is centered in the middle of the left front wheel.
+ The fourth frame is 
+\begin_inset Formula $\mathcal{F}^{r}=\left(O_{r},\left\{ \mathbf{r}_{x},\mathbf{r}_{y},\mathbf{\mathbf{r}}_{z}\right\} \right)$
+\end_inset
+
+ where 
+\begin_inset Formula $\mathbf{r}_{x}$
+\end_inset
+
+ points along the length of the wheel 
+\begin_inset Formula $\mathbf{r}_{y}$
+\end_inset
+
+ points out towards the left of the wheel, 
+\begin_inset Formula $\mathbf{r}_{z}$
+\end_inset
+
+ points out of the page and 
+\begin_inset Formula $O_{r}$
+\end_inset
+
+ is centered in the middle of the left front wheel.
+ We also note that we are using standard right-handed frames, i.e., each frame
+ has an orthonormal basis where the basis placement follow the right-hand
+ rule.
+\end_layout
+
+\begin_layout Standard
+Every rigid body in a 
+\series bold
+free mechanical system 
+\series default
+can move independently of every other rigid body, thus each rigid body can
+ be described with a rotation matrix from 
+\begin_inset Formula $SO\left(3\right)$
+\end_inset
+
+ and a position vector from 
+\begin_inset Formula $\mathbb{R}^{3}$
+\end_inset
+
+.
+ The rotation matrix will be defined as expressing the basis vectors of
+ 
+\begin_inset Formula $\mathcal{F}^{j},\,j\in\left\{ b,l,r\right\} $
+\end_inset
+
+ in 
+\begin_inset Formula $\mathcal{F}^{i}$
+\end_inset
+
+ denoted as 
+\begin_inset Formula $R_{j}^{i}$
+\end_inset
+
+, and the position vector will be a displacement vector from the origin
+ of 
+\begin_inset Formula $\mathcal{F}^{i}$
+\end_inset
+
+ to the origin of frame 
+\begin_inset Formula $\mathcal{F}^{j},\,j\in\left\{ b,l,r\right\} $
+\end_inset
+
+ denoted as 
+\begin_inset Formula $\mathbf{p}^{j},\,j\in\left\{ b,l,r\right\} $
+\end_inset
+
+.
+ Using this configuration, 
+\begin_inset Formula $Q_{free}=\left(SO\left(3\right)\times\mathbb{R}^{3}\right)^{3}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+As you may have realized, we are not working with a free mechanical system
+ since the origin of 
+\begin_inset Formula $\mathcal{F}^{l}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathcal{F}^{r}$
+\end_inset
+
+ are fixed relative to the origin of 
+\begin_inset Formula $\mathcal{F}^{b}$
+\end_inset
+
+, and the frames 
+\begin_inset Formula $\mathcal{F}^{l}$
+\end_inset
+
+, 
+\begin_inset Formula $\mathcal{F}^{r}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathcal{F}^{b}$
+\end_inset
+
+ are restricted to rotate and move in the plane spanned by the basis vectors
+ 
+\begin_inset Formula $\mathbf{i}_{x}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathbf{i}_{y}$
+\end_inset
+
+.
+ These restrictions with the collection of rigid bodies form an 
+\series bold
+interconnected mechanical system
+\series default
+ that moves in a 
+\begin_inset Formula $c^{\infty}$
+\end_inset
+
+immersed submanifold of 
+\begin_inset Formula $Q_{free}$
+\end_inset
+
+ which we will denote as 
+\begin_inset Formula $Q$
+\end_inset
+
+.
+ The dimensions of 
+\begin_inset Formula $Q$
+\end_inset
+
+ determines the dimension of the interconnected mechanical system.
+ 
+\end_layout
+
+\begin_layout Standard
+There are many different ways that we can define 
+\begin_inset Formula $Q$
+\end_inset
+
+, but we will do it according to the problem description.
+ If we know the position vector 
+\begin_inset Formula $\mathbf{p}^{b}$
+\end_inset
+
+ and the rotation 
+\begin_inset Formula $R_{b}^{i}$
+\end_inset
+
+, then from the constraints, we know the position vectors 
+\begin_inset Formula $\mathbf{p}^{l}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathbf{p}^{r}$
+\end_inset
+
+.
+ We also know that the translational and rotational movement is restricted
+ to the plane spanned by the basis vectors 
+\begin_inset Formula $\mathbf{i}_{x}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathbf{i}_{y}$
+\end_inset
+
+, which means that the vector 
+\begin_inset Formula $\mathbf{p}^{b}$
+\end_inset
+
+ has the form 
+\begin_inset Formula $\left(x,y,0\right)$
+\end_inset
+
+, and 
+\begin_inset Formula $R_{b}^{i}$
+\end_inset
+
+ has the form 
+\begin_inset Formula 
+\[
+R_{b}^{i}=\begin{bmatrix}\cos\left(\theta\right) & -\sin\left(\theta\right) & 0\\
+\sin\left(\theta\right) & \cos\left(\theta\right) & 0\\
+0 & 0 & 1
+\end{bmatrix}.
+\]
+
+\end_inset
+
+From the simplified forms, we see that the position vector 
+\begin_inset Formula $\mathbf{p}^{b}$
+\end_inset
+
+ can be embedded in 
+\begin_inset Formula $\mathbb{R}^{2}$
+\end_inset
+
+ as 
+\begin_inset Formula $\left(x,y\right)$
+\end_inset
+
+, and the rotation matrix 
+\begin_inset Formula $R_{b}^{i}$
+\end_inset
+
+ can be embedded in 
+\begin_inset Formula $SO\left(2\right)$
+\end_inset
+
+ as 
+\begin_inset Formula 
+\[
+\begin{bmatrix}\cos\left(\theta\right) & -\sin\left(\theta\right)\\
+\sin\left(\theta\right) & \cos\left(\theta\right)
+\end{bmatrix}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We also note that 
+\begin_inset Formula $R_{l}^{i}=R_{r}^{i}$
+\end_inset
+
+ and that they have the form 
+\begin_inset Formula 
+\[
+R_{l}^{i}=\begin{bmatrix}\cos\left(\theta+\phi\right) & -\sin\left(\theta+\phi\right) & 0\\
+\sin\left(\theta+\phi\right) & \cos\left(\theta+\phi\right) & 0\\
+0 & 0 & 1
+\end{bmatrix},
+\]
+
+\end_inset
+
+which can be expanded out to be 
+\begin_inset Formula 
+\[
+R_{l}^{i}=\underbrace{\begin{bmatrix}\cos\left(\theta\right) & -\sin\left(\theta\right) & 0\\
+\sin\left(\theta\right) & \cos\left(\theta\right) & 0\\
+0 & 0 & 1
+\end{bmatrix}}_{R_{b}^{i}}\underbrace{\begin{bmatrix}\cos\left(\phi\right) & -\sin\left(\phi\right) & 0\\
+\sin\left(\phi\right) & \cos\left(\phi\right) & 0\\
+0 & 0 & 1
+\end{bmatrix}}_{R_{l}^{b}},
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $R_{l}^{b}=R_{r}^{b}$
+\end_inset
+
+ is the rotation that expresses the basis of 
+\begin_inset Formula $\mathcal{F}^{l\left(r\right)}$
+\end_inset
+
+ in 
+\begin_inset Formula $\mathcal{F}^{b}$
+\end_inset
+
+.
+ Since we already have 
+\begin_inset Formula $R_{b}^{i}$
+\end_inset
+
+, we only need 
+\begin_inset Formula $R_{l}^{b}$
+\end_inset
+
+ to get the original configuration 
+\begin_inset Formula $R_{l}^{i}$
+\end_inset
+
+.
+ The rotation matrix 
+\begin_inset Formula $R_{l}^{b}$
+\end_inset
+
+ can also be embedded in 
+\begin_inset Formula $SO\left(2\right)$
+\end_inset
+
+ as 
+\begin_inset Formula 
+\[
+\begin{bmatrix}\cos\left(\phi\right) & -\sin\left(\phi\right)\\
+\sin\left(\phi\right) & \cos\left(\phi\right)
+\end{bmatrix}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Putting this all together we can form the configuration manifold 
+\begin_inset Formula $Q=SO\left(2\right)\times SO\left(2\right)\times\mathbb{R}^{2}$
+\end_inset
+
+ which is an embedded submanifold of 
+\begin_inset Formula $Q_{free}$
+\end_inset
+
+, and form the homeomorphic map 
+\begin_inset Formula 
+\[
+Q\ni\left(\begin{bmatrix}\cos\left(\theta\right) & -\sin\left(\theta\right)\\
+\sin\left(\theta\right) & \cos\left(\theta\right)
+\end{bmatrix},\begin{bmatrix}\cos\left(\phi\right) & -\sin\left(\phi\right)\\
+\sin\left(\phi\right) & \cos\left(\phi\right)
+\end{bmatrix},\left(x,y\right)\right)\mapsto\left(R_{b}^{i},R_{l}^{i},R_{r}^{i},\mathbf{p}^{b},\mathbf{p}^{l},\mathbf{p}^{r}\right)\in Q_{free}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+A more proper representation is to realize that the rotation and translation
+ of a rigid body restricted to a plane is described using 
+\begin_inset Formula $SE\left(2\right)$
+\end_inset
+
+.
+ 
+\begin_inset Formula $SE\left(2\right)$
+\end_inset
+
+ is the matrix Lie group defined as 
+\begin_inset Formula 
+\[
+SE\left(2\right)\coloneqq\left\{ \begin{bmatrix}R & \mathbf{t}\\
+0_{1\times3} & 1
+\end{bmatrix}|R\in SO\left(3\right),\,\mathbf{t}\in\mathbb{R}^{2}\right\} .
+\]
+
+\end_inset
+
+Using 
+\begin_inset Formula $SE\left(2\right)$
+\end_inset
+
+, the configuration manifold becomes 
+\begin_inset Formula $Q=SE\left(2\right)\times SO\left(2\right)$
+\end_inset
+
+ which is an embedded submanifold of 
+\begin_inset Formula $Q_{free}$
+\end_inset
+
+, and form the homeomorphic map
+\begin_inset Formula 
+\[
+Q\ni\left(\begin{bmatrix}\cos\left(\theta\right) & -\sin\left(\theta\right) & x\\
+\sin\left(\theta\right) & \cos\left(\theta\right) & y\\
+0 & 0 & 1
+\end{bmatrix},\begin{bmatrix}\cos\left(\phi\right) & -\sin\left(\phi\right)\\
+\sin\left(\phi\right) & \cos\left(\phi\right)
+\end{bmatrix}\right)\mapsto\left(\begin{bmatrix}R_{b}^{i} & \mathbf{p}^{b}\\
+0_{1\times3} & 1
+\end{bmatrix},\begin{bmatrix}R_{l}^{i} & \mathbf{p}^{l}\\
+0_{1\times3} & 1
+\end{bmatrix},\begin{bmatrix}R_{r}^{i} & \mathbf{p}^{r}\\
+0_{1\times3} & 1
+\end{bmatrix}\right)\in Q_{free}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+What is a simple abstract model for the configuration manifold?
+\end_layout
+
+\begin_layout Standard
+In order to build the model for the configuration manifold we need to specify
+ some dimensions.
+ To help us with this, we refer to figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:robotCarDimensions"
+
+\end_inset
+
+ where the orange segment, denoted 
+\begin_inset Formula $\ell_{1}$
+\end_inset
+
+, is the length between the centers of the front and rear axle, and the
+ blue segment, denoted 
+\begin_inset Formula $\ell_{2}$
+\end_inset
+
+, is the length between the center of each from wheel to the center of the
+ from axle.
+ We note that the segment 
+\begin_inset Formula $\ell_{2}$
+\end_inset
+
+ aligns with the basis vector 
+\begin_inset Formula $\mathbf{b}_{x}$
+\end_inset
+
+ and the segment 
+\begin_inset Formula $\ell_{2}$
+\end_inset
+
+ aligns with the basis vector 
+\begin_inset Formula $\mathbf{b}_{y}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename Figures/RobotCarDimensions.pdf
+	width 40col%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:robotCarDimensions"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+With 
+\begin_inset Formula $\ell_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $\ell_{2}$
+\end_inset
+
+ defined, we can construct a simple abstract model.
+ From the configuration manifold 
+\begin_inset Formula $Q$
+\end_inset
+
+ we can easily construct 
+\begin_inset Formula $R_{b}^{i}$
+\end_inset
+
+, 
+\begin_inset Formula $R_{r}^{b}$
+\end_inset
+
+, 
+\begin_inset Formula $R_{r}^{b}$
+\end_inset
+
+, and 
+\begin_inset Formula $\mathbf{p}^{b}$
+\end_inset
+
+ using the maps
+\begin_inset Formula 
+\begin{gather*}
+\begin{bmatrix}\cos\left(\theta\right) & -\sin\left(\theta\right)\\
+\sin\left(\theta\right) & \cos\left(\theta\right)
+\end{bmatrix}\mapsto\begin{bmatrix}\cos\left(\theta\right) & -\sin\left(\theta\right) & 0\\
+\sin\left(\theta\right) & \cos\left(\theta\right) & 0\\
+0 & 0 & 1
+\end{bmatrix}=R_{b}^{i}\\
+\begin{bmatrix}\cos\left(\phi\right) & -\sin\left(\phi\right)\\
+\sin\left(\phi\right) & \cos\left(\phi\right)
+\end{bmatrix}\mapsto\begin{bmatrix}\cos\left(\phi\right) & -\sin\left(\phi\right) & 0\\
+\sin\left(\phi\right) & \cos\left(\phi\right) & 0\\
+0 & 0 & 1
+\end{bmatrix}=R_{l\left(r\right)}^{b}\\
+\left(x,y\right)\mapsto\left(x,y,0\right)=\mathbf{p}^{b}
+\end{gather*}
+
+\end_inset
+
+We can then use these to construct 
+\begin_inset Formula $R_{r}^{i}$
+\end_inset
+
+, 
+\begin_inset Formula $R_{l}^{i}$
+\end_inset
+
+, 
+\begin_inset Formula $\mathbf{p}^{r}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathbf{p}^{l}$
+\end_inset
+
+ to be
+\begin_inset Formula 
+\[
+R_{l\left(r\right)}^{i}=R_{b}^{i}R_{l\left(r\right)}^{b},
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\mathbf{p}^{l}=\mathbf{p}^{b}+\ell_{1}R_{b}^{i}\mathbf{i}_{x}+\ell_{2}R_{b}^{i}\mathbf{i}_{y},
+\]
+
+\end_inset
+
+and 
+\begin_inset Formula 
+\[
+\mathbf{p}^{r}=\mathbf{p}^{b}+\ell_{1}R_{b}^{i}\mathbf{i}_{x}-\ell_{2}R_{b}^{i}\mathbf{i}_{y},
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $R_{b}^{i}\mathbf{i}_{x}=\mathbf{b}_{x}$
+\end_inset
+
+ and 
+\begin_inset Formula $R_{b}^{i}\mathbf{i}_{y}=\mathbf{b}_{y}$
+\end_inset
+
+.
+ This relation is easily seen when writing out the rotation matrix 
+\begin_inset Formula $R_{b}^{i}$
+\end_inset
+
+ in terms of standard inner products;
+\begin_inset Formula 
+\[
+R_{b}^{i}=\begin{bmatrix}\left(\mathbf{b}_{x}\cdot\mathbf{i}_{x}\right) & \left(\mathbf{b}_{y}\cdot\mathbf{i}_{x}\right) & \left(\mathbf{b}_{z}\cdot\mathbf{i}_{x}\right)\\
+\left(\mathbf{b}_{x}\cdot\mathbf{i}_{y}\right) & \left(\mathbf{b}_{y}\cdot\mathbf{i}_{y}\right) & \left(\mathbf{b}_{z}\cdot\mathbf{i}_{y}\right)\\
+\left(\mathbf{b}_{x}\cdot\mathbf{i}_{z}\right) & \left(\mathbf{b}_{y}\cdot\mathbf{i}_{z}\right) & \left(\mathbf{b}_{z}\cdot\mathbf{i}_{z}\right)
+\end{bmatrix}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Therefore, the map
+\begin_inset Formula 
+\begin{multline}
+Q\ni\left(\begin{bmatrix}\cos\left(\theta\right) & -\sin\left(\theta\right) & x\\
+\sin\left(\theta\right) & \cos\left(\theta\right) & y\\
+0 & 0 & 1
+\end{bmatrix},\begin{bmatrix}\cos\left(\phi\right) & -\sin\left(\phi\right)\\
+\sin\left(\phi\right) & \cos\left(\phi\right)
+\end{bmatrix}\right)\mapsto\\
+\left(\begin{bmatrix}R_{b}^{i} & \mathbf{p}^{b}\\
+0_{1\times3} & 1
+\end{bmatrix},\begin{bmatrix}R_{l}^{i} & \underbrace{\mathbf{p}^{b}+\ell_{1}R_{b}^{i}\mathbf{i}_{x}+\ell_{2}R_{b}^{i}\mathbf{i}_{y}}_{\mathbf{p}^{l}}\\
+0_{1\times3} & 1
+\end{bmatrix},\begin{bmatrix}R_{r}^{i} & \underbrace{\mathbf{p}^{b}+\ell_{1}R_{b}^{i}\mathbf{i}_{x}-\ell_{2}R_{b}^{i}\mathbf{i}_{y}}_{\mathbf{p}^{r}}\\
+0_{1\times3} & 1
+\end{bmatrix}\right)\in Q_{free}\label{eq:Q_mapsto_Qfree}
+\end{multline}
+
+\end_inset
+
+which is the simple abstract model of the system.
+\end_layout
+
+\begin_layout Subsection
+Find coordinates for the system, and indicate how they are related to the
+ configuration of the system.
+\end_layout
+
+\begin_layout Subsubsection
+SO
+\begin_inset Formula $\left(2\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The real numbers 
+\begin_inset Formula $\mathbb{R}$
+\end_inset
+
+ can be mapped to a matrix of 
+\begin_inset Formula $SO\left(2\right)$
+\end_inset
+
+ simply as 
+\begin_inset Formula 
+\begin{equation}
+\exp\left(\left[\psi\right]_{\times}\right)=\begin{bmatrix}\cos\left(\psi\right) & -\sin\left(\psi\right)\\
+\sin\left(\psi\right) & \cos\left(\psi\right)
+\end{bmatrix},\,\psi\in\mathbb{R},\label{eq:exp_SO2}
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $\left[\psi\right]_{\times}$
+\end_inset
+
+ is a skew symmetric matrix of the form 
+\begin_inset Formula 
+\[
+\left[\psi\right]_{\times}\coloneqq\begin{bmatrix}0 & -\psi\\
+\psi & 0
+\end{bmatrix}.
+\]
+
+\end_inset
+
+This matrix exponential map is surjective.
+ If we restrict the domain such that 
+\begin_inset Formula $\psi\in\left(-\pi,\pi\right)$
+\end_inset
+
+, then the mapping is an injective map.
+ 
+\end_layout
+
+\begin_layout Standard
+The inverse of the matrix exponential is the matrix logarithm 
+\begin_inset Formula $\log:U_{SO\left(2\right)}\subset SO\left(2\right)\to U_{\mathbb{R}}\subset\mathbb{R}$
+\end_inset
+
+, where 
+\begin_inset Formula $U_{SO\left(2\right)}\coloneqq\left\{ R\in SO\left(2\right)|Tr\left(R\right)\neq-2\right\} $
+\end_inset
+
+ and 
+\begin_inset Formula $U_{\mathbb{R}}\coloneqq\left\{ \psi\in\left(-\pi,\pi\right)\right\} $
+\end_inset
+
+.
+ The matrix logarithm is defined as 
+\begin_inset Formula 
+\begin{equation}
+\log\left(R\right)\coloneqq\text{atan2}=\begin{cases}
+2\arccos\left(\frac{R_{21}}{R_{11}+\sqrt{R_{11}^{2}+R_{21}^{2}}}\right) & \text{if }R_{11}>0\text{ or }R_{21}\neq0\\
+\pi & \text{if }R_{11}<0\text{ and }R_{21}=0
+\end{cases}.\label{eq:logSO2}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+SE
+\begin_inset Formula $\left(2\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The space 
+\begin_inset Formula $\mathbb{R}\times\mathbb{R}^{2}$
+\end_inset
+
+ can be mapped to 
+\begin_inset Formula $SE\left(2\right)$
+\end_inset
+
+ using the exponential matrix simply as 
+\begin_inset Formula 
+\begin{equation}
+\exp\left(\begin{bmatrix}\left[\psi\right]_{\times} & \rho\\
+0 & 0
+\end{bmatrix}\right)=\begin{bmatrix}\exp\left(\left[\psi\right]_{\times}\right) & V\left(\psi\right)\rho\\
+0 & 1
+\end{bmatrix}\label{eq:exp_SE2}
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $\left(\psi,\rho\right)\in\mathbb{R}\times\mathbb{R}^{2}$
+\end_inset
+
+, 
+\begin_inset Formula $\exp\left(\left[\psi\right]_{\times}\right)$
+\end_inset
+
+ is defined in 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:exp_SO2"
+
+\end_inset
+
+, and 
+\begin_inset Formula 
+\begin{align*}
+V\left(\psi\right) & \coloneqq\sum_{i=0}^{\infty}\left[\frac{\left[\psi\right]_{\times}^{2i}}{\left(2i+1\right)!}+\frac{\left[\psi\right]_{\times}^{2i+1}}{\left(2i+2\right)!}\right]\\
+ & =\frac{1}{\psi}\begin{bmatrix}\sin\left(\psi\right) & -\left(1-\cos\psi\right)\\
+1-\cos\left(\psi\right) & \sin\left(\psi\right)
+\end{bmatrix}.
+\end{align*}
+
+\end_inset
+
+Once again the matrix exponential is surjective.
+ If we restrict the domain such that 
+\begin_inset Formula $\psi\in\left(-\pi,\pi\right)$
+\end_inset
+
+, then the mapping is an injective map.
+ 
+\end_layout
+
+\begin_layout Standard
+The inverse of the matrix exponential is the matrix logarithm 
+\begin_inset Formula $\log:U_{SE\left(2\right)}\subset SE\left(2\right)\to U_{\mathbb{R}\times\mathbb{R}^{2}}\subset\mathbb{R}\times\mathbb{R}^{2}$
+\end_inset
+
+, where 
+\begin_inset Formula $U_{SE\left(2\right)}\coloneqq\left\{ C=\begin{bmatrix}R & \mathbf{t}\\
+0_{1\times2} & 1
+\end{bmatrix}\in SE\left(2\right)|R\in U_{SO\left(2\right)},\,\mathbf{t}\in\mathbb{R}^{2}\right\} $
+\end_inset
+
+ and 
+\begin_inset Formula $U_{\mathbb{R}\times\mathbb{R}^{2}}\coloneqq\left\{ \left(\psi,\rho\right)\in\mathbb{R}\times\mathbb{R}^{2}|\psi\in\left(-\pi,\pi\right),\,\rho\in\mathbb{R}^{2}\right\} $
+\end_inset
+
+.
+ The matrix logarithm is defined as 
+\begin_inset Formula 
+\begin{equation}
+\log\left(R\right)\coloneqq\left(\log\left(R\right),V^{-1}\left(\log\left(R\right)\right)\mathbf{t}\right),\label{eq:log_SE2}
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $\log\left(R\right)$
+\end_inset
+
+ is defined in 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:logSO2"
+
+\end_inset
+
+, and 
+\begin_inset Formula 
+\[
+V^{-1}\left(\log\left(R\right)\right)\coloneqq\frac{\psi}{2\left(1-\cos\left(\psi\right)\right)}\begin{bmatrix}\sin\left(\psi\right) & \left(1-\cos\psi\right)\\
+-\left(1-\cos\psi\right) & \sin\left(\psi\right)
+\end{bmatrix}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Putting it together
+\end_layout
+
+\begin_layout Standard
+We have presented the mapping between 
+\begin_inset Formula $SO\left(3\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathbb{R}$
+\end_inset
+
+, and the mapping between 
+\begin_inset Formula $SE\left(2\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathbb{R}\times\mathbb{R}^{2}$
+\end_inset
+
+ which comprise of the matrix exponential and matrix logarithm defined in
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:exp_SO2"
+
+\end_inset
+
+, 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:logSO2"
+
+\end_inset
+
+, 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:exp_SE2"
+
+\end_inset
+
+, 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:log_SE2"
+
+\end_inset
+
+.
+ We will not explicitly distinguish between the matrix exponential or the
+ matrix logarithm depending on which group they are operating on.
+ It will simply be inferred.
+ We also note that the mappings provided do not form an atlas on 
+\begin_inset Formula $SO\left(2\right)$
+\end_inset
+
+ or 
+\begin_inset Formula $SE\left(2\right)$
+\end_inset
+
+, but that is fine as long as we work in the subsets where the mappings
+ are defined.
+\end_layout
+
+\begin_layout Subsection
+Write coordinate expressions for the body and spatial translational and
+ rotational velocities, using the notation of Section 4.1.5.
+\end_layout
+
+\begin_layout Subsubsection
+Forward Kinematic Map
+\end_layout
+
+\begin_layout Standard
+The forward kinematic map of an interconnect mechanical system maps each
+ rigid body from the configuration manifold 
+\begin_inset Formula $Q$
+\end_inset
+
+ to 
+\begin_inset Formula $Q_{free}$
+\end_inset
+
+.
+ Since the robot car has three rigid bodies, it will need three forward
+ kinematic maps defined as 
+\begin_inset Formula $\pi_{a}:Q\to\begin{bmatrix}R_{a}^{i} & \mathbf{p}^{a}\\
+0_{1\times3} & 1
+\end{bmatrix}\in SE\left(3\right),\,a\in\left\{ b,l,r\right\} $
+\end_inset
+
+.
+ The first map is
+\begin_inset Formula 
+\[
+\pi_{b}\left(Q\right)=\begin{bmatrix}R_{b}^{i} & \mathbf{p}^{b}\\
+0_{1\times3} & 1
+\end{bmatrix},
+\]
+
+\end_inset
+
+where
+\begin_inset Formula 
+\[
+R_{b}^{i}=\begin{bmatrix}\cos\left(\theta\right) & -\sin\left(\theta\right) & 0\\
+\sin\left(\theta\right) & \cos\left(\theta\right) & 0\\
+0 & 0 & 1
+\end{bmatrix}
+\]
+
+\end_inset
+
+and 
+\begin_inset Formula 
+\[
+\mathbf{p}^{b}=\left(x,y,z\right).
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The second map is 
+\begin_inset Formula 
+\[
+\pi_{l}\left(Q\right)=\begin{bmatrix}R_{l}^{i} & \mathbf{p}^{l}\\
+0_{1\times3} & 1
+\end{bmatrix},
+\]
+
+\end_inset
+
+where
+\begin_inset Formula 
+\[
+R_{l}^{b}=\begin{bmatrix}\cos\left(\phi\right) & -\sin\left(\phi\right) & 0\\
+\sin\left(\phi\right) & \cos\left(\phi\right) & 0\\
+0 & 0 & 1
+\end{bmatrix}
+\]
+
+\end_inset
+
+and 
+\begin_inset Formula 
+\begin{align*}
+\mathbf{p}^{l} & =\mathbf{p}^{b}+\ell_{1}R_{b}^{i}\mathbf{i}_{x}+\ell_{2}R_{b}^{i}\mathbf{i}_{y}\\
+ & =\left(x+\ell_{1}\cos\left(\theta\right)-\ell_{2}\sin\left(\theta\right),y+\ell_{1}\sin\left(\theta\right)+\ell_{2}\cos\left(\theta\right),0\right).
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The third map is 
+\begin_inset Formula 
+\[
+\pi_{r}\left(Q\right)=\begin{bmatrix}R_{r}^{i} & \mathbf{p}^{r}\\
+0_{1\times3} & 1
+\end{bmatrix},
+\]
+
+\end_inset
+
+where
+\begin_inset Formula 
+\[
+R_{r}^{b}=\begin{bmatrix}\cos\left(\phi\right) & -\sin\left(\phi\right) & 0\\
+\sin\left(\phi\right) & \cos\left(\phi\right) & 0\\
+0 & 0 & 1
+\end{bmatrix}
+\]
+
+\end_inset
+
+and 
+\begin_inset Formula 
+\begin{align*}
+\mathbf{p}^{r} & =\mathbf{p}^{b}+\ell_{1}R_{b}^{i}\mathbf{i}_{x}-\ell_{2}R_{b}^{i}\mathbf{i}_{y}\\
+ & =\left(x+\ell_{1}\cos\left(\theta\right)+\ell_{2}\sin\left(\theta\right),y+\ell_{1}\sin\left(\theta\right)-\ell_{2}\cos\left(\theta\right),0\right).
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Tangent Space
+\end_layout
+
+\begin_layout Standard
+Since each forward kinematic map, maps each rigid body to 
+\begin_inset Formula $SE\left(3\right)\coloneqq\left\{ C=\begin{bmatrix}R & \mathbf{t}\\
+0_{1\times3} & 1
+\end{bmatrix}\in SE\left(3\right)|R\in SO\left(3\right),\,\mathbf{t}\in\mathbb{R}^{3}\right\} ,$
+\end_inset
+
+ we need to know the structure of it's tangent space denoted as 
+\begin_inset Formula $TSE\left(3\right)$
+\end_inset
+
+.
+ I won't derive it, but let is suffice to say that 
+\begin_inset Formula 
+\[
+TSE\left(3\right)\coloneqq\left(C,\dot{C}=CX\text{ or }XC\right)
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $X\in\mathfrak{se}\left(3\right)$
+\end_inset
+
+.
+ 
+\begin_inset Formula $\mathfrak{se}\left(3\right)$
+\end_inset
+
+ is the lie algebra of 
+\begin_inset Formula $SE\left(3\right)$
+\end_inset
+
+ defined as 
+\begin_inset Formula $\mathfrak{se}\left(3\right)\coloneqq\left\{ \begin{bmatrix}\omega^{\wedge} & \rho\\
+0_{1\times3} & 0
+\end{bmatrix}\in\mathbb{R}^{3\times3}|\omega,\rho\in\mathbb{R}^{3}\right\} $
+\end_inset
+
+.
+ The wedge operator is the map 
+\begin_inset Formula $\left(\cdot\right)^{\wedge}:\mathbb{R}^{3}\to\mathfrak{so}\left(3\right)$
+\end_inset
+
+, where 
+\begin_inset Formula $\mathfrak{so}\left(3\right)$
+\end_inset
+
+ is a Lie algebra whose set is the 
+\begin_inset Formula $3\times3$
+\end_inset
+
+ skew symmetric matrices.
+ We are only interested in body centric representation so we will define
+ the wedge operator to be 
+\begin_inset Formula 
+\[
+\omega^{\wedge}\coloneqq\begin{bmatrix}0 & -\omega_{z} & \omega_{y}\\
+\omega_{z} & 0 & -\omega_{x}\\
+-\omega_{y} & \omega_{x} & 0
+\end{bmatrix},
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\omega_{a}$
+\end_inset
+
+ is the angular velocity about the 
+\begin_inset Formula $a^{th}$
+\end_inset
+
+ basis vector.
+ 
+\end_layout
+
+\begin_layout Standard
+The inverse of the wedge operator is the vee operator 
+\begin_inset Formula $\left(\cdot\right)^{\vee}\coloneqq\mathfrak{so}\left(3\right)\to\mathbb{R}^{3}$
+\end_inset
+
+.
+ Using the wedge and vee operators, we can define a tangent space that is
+ isomorphic to 
+\begin_inset Formula $TSE\left(3\right)$
+\end_inset
+
+ as 
+\begin_inset Formula 
+\[
+\left(C,\dot{C}=CX\right)\to\left(C,X^{\vee}=\left(C^{-1}\dot{C}\right)^{\vee}\right),
+\]
+
+\end_inset
+
+where the isomorphic space is 
+\begin_inset Formula $T\left(SE\left(3\right)\times\mathbb{R}^{3}\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Lastly we define the last two maps 
+\begin_inset Formula $\rho_{body}:TSE\left(3\right)\to\mathbb{R}^{3}$
+\end_inset
+
+ and 
+\begin_inset Formula $\lambda_{body}:TSE\left(3\right)\to\mathbb{R}^{3}$
+\end_inset
+
+ and define them as 
+\begin_inset Formula 
+\[
+\rho_{body}\left(C,\dot{C}\right)=\omega^{\wedge}
+\]
+
+\end_inset
+
+and 
+\begin_inset Formula 
+\[
+\lambda_{body}\left(C,\dot{C}\right)=\rho.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Write explicit expressions for the maps 
+\begin_inset Formula $\left.l_{body}\right|Q$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+I'm getting bored of this so I will right it quickly.
+ The map 
+\begin_inset Formula $l_{body}:TSE\left(3\right)\to T\left(SE\left(3\right)\times\mathbb{R}^{3}\right)$
+\end_inset
+
+ is defined as 
+\begin_inset Formula 
+\[
+l_{body}\left(C,\dot{C}\right)=\left(C,\left(C^{-1}\dot{C}\right)^{\vee}\right).
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+E4.23
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Kim2012"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Let's do some cleanup! Let 
+\begin_inset Formula $C$
+\end_inset
+
+ denote an arbitrary element of 
+\begin_inset Formula $SE\left(3\right)$
+\end_inset
+
+, 
+\begin_inset Formula $V^{\wedge}$
+\end_inset
+
+ denote an arbitrary element of 
+\begin_inset Formula $\mathfrak{se}\left(3\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $V$
+\end_inset
+
+ denote an arbitrary element of 
+\begin_inset Formula $\mathbb{R}^{6}$
+\end_inset
+
+ which is isomorphic to 
+\begin_inset Formula $\mathfrak{se}\left(3\right)$
+\end_inset
+
+.
+ We use the two mappings 
+\begin_inset Formula $\left(\cdot\right)^{\wedge}:\mathbb{R}^{6}\to\mathfrak{se}\left(3\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $\left(\cdot\right)^{\vee}:\mathfrak{se}\left(3\right)\to\mathbb{R}^{6}$
+\end_inset
+
+ as 
+\begin_inset Formula 
+\[
+V^{\wedge}\coloneqq\begin{bmatrix}\left[\omega\right]_{\times} & \rho\\
+0 & 0
+\end{bmatrix},
+\]
+
+\end_inset
+
+ and 
+\begin_inset Formula 
+\[
+\left(V^{\wedge}\right)^{\vee}\coloneqq\begin{bmatrix}\omega\\
+\rho
+\end{bmatrix}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We refer to 
+\begin_inset Formula $V$
+\end_inset
+
+ as the generalized velocity of the rigid body.
+ The derivative of 
+\begin_inset Formula $C$
+\end_inset
+
+ is 
+\begin_inset Formula $\dot{C}=CV^{\wedge}$
+\end_inset
+
+ which implies that the vector field 
+\begin_inset Formula $V^{\wedge}$
+\end_inset
+
+ is left invariant.
+ The kinetic energy is a left invariant function, which means that 
+\begin_inset Formula $KE\left(CV^{\wedge}\right)=KE\left(V^{\wedge}\right)$
+\end_inset
+
+.
+ Since 
+\begin_inset Formula $\mathfrak{se}\left(3\right)$
+\end_inset
+
+ is isomorphic to 
+\begin_inset Formula $\mathbb{R}^{6}$
+\end_inset
+
+, we can write the kinetic energy as a function of the generalized velocity
+ 
+\begin_inset Formula $V$
+\end_inset
+
+.
+ To do this, we use the generalized inertia tensor 
+\begin_inset Formula 
+\[
+\mathcal{I}=\begin{bmatrix}J & 0\\
+0 & mI_{3\times3}
+\end{bmatrix},
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $J$
+\end_inset
+
+ is the inertia tensor, and 
+\begin_inset Formula $m$
+\end_inset
+
+ is the mass of the system.
+ The generalized inertial tensor is assuming that the frame is placed at
+ the center of mass and that the body is symmetric about each axis of rotation.
+\end_layout
+
+\begin_layout Standard
+Using the generalized inertia tensor and generalized velocity, we can write
+ the kinetic energy as 
+\begin_inset Formula 
+\[
+KE\left(V\right)\coloneqq\frac{1}{2}V^{\top}\mathcal{I}V.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+From the equation for kinetic energy, we can get the metric tensor
+\begin_inset Formula 
+\[
+\mathbb{G}_{ij}=\frac{\partial^{2}KE}{\partial v^{i}\partial v^{j}}.
+\]
+
+\end_inset
+
+ For a single rigid body, the metric tensor is 
+\begin_inset Formula 
+\begin{multline*}
+\mathbb{G}=J_{1}d\epsilon^{1}\otimes d\epsilon^{1}+J_{2}d\epsilon^{2}\otimes d\epsilon^{2}+J_{3}d\epsilon^{3}\otimes d\epsilon^{3}+\\
+m\left(d\epsilon^{4}\otimes d\epsilon^{4}+d\epsilon^{5}\otimes d\epsilon^{5}+d\epsilon^{6}\otimes d\epsilon^{6}\right),
+\end{multline*}
+
+\end_inset
+
+where 
+\begin_inset Formula $\epsilon^{i},\,i\in\left\{ 1,2,3\right\} $
+\end_inset
+
+ is the dual basis vector in the cotangent plane corresponding to angular
+ velocities about the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ basis vector, and 
+\begin_inset Formula $\epsilon^{j},\,j\in\left\{ 4,5,6\right\} $
+\end_inset
+
+ is the dual basis vector in the cotangent plane corresponding to translational
+ velocities along the 
+\begin_inset Formula $j^{th}$
+\end_inset
+
+ basis vector.
+ 
+\end_layout
+
+\begin_layout Standard
+Since the motion of the care is restricted to the plane, the metric tensor
+ can be reduced to 
+\begin_inset Formula 
+\begin{multline*}
+\mathbb{G}=J_{3}d\epsilon^{3}\otimes d\epsilon^{3}+\\
+m\left(d\epsilon^{4}\otimes d\epsilon^{4}+d\epsilon^{5}\otimes d\epsilon^{5}\right).
+\end{multline*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Determine the kinetic energy metric for the system in your set of coordinates.
+\end_layout
+
+\begin_layout Subsubsection
+Kinetic Energy of the Body
+\end_layout
+
+\begin_layout Standard
+The position and orientation of the first rigid body is described by 
+\begin_inset Formula 
+\[
+C_{b}^{i}=\begin{bmatrix}R_{b}^{i} & \mathbf{p}^{b}\\
+0_{1\times3} & 1
+\end{bmatrix}.
+\]
+
+\end_inset
+
+It's derivative is 
+\begin_inset Formula 
+\begin{align*}
+\dot{C}_{b}^{i} & =\underbrace{\begin{bmatrix}R_{b}^{i} & \mathbf{p}^{b}\\
+0_{1\times3} & 1
+\end{bmatrix}}_{C_{b}^{i}}\underbrace{\begin{bmatrix}\left[\omega_{b/i}^{b}\right]_{\times} & \rho_{b/i}^{b}\\
+0 & 0
+\end{bmatrix}}_{V_{b}^{\wedge}}\\
+ & =\begin{bmatrix}R_{b}^{i}\left[\omega_{b/i}^{b}\right]_{\times} & R_{b}^{i}\rho_{b/i}^{b}\\
+0_{1\times3} & 0
+\end{bmatrix}\\
+ & =\begin{bmatrix}\dot{R}_{b}^{i} & \mathbf{\dot{P}}^{b}\\
+0 & 0
+\end{bmatrix}.
+\end{align*}
+
+\end_inset
+
+The identities 
+\begin_inset Formula $\dot{R}_{b}^{i}=R_{b}^{i}\left[\omega_{b/i}^{b}\right]_{\times}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathbf{\dot{P}}^{b}=R_{b}^{i}\rho_{b/i}^{b}$
+\end_inset
+
+ for the front wheels will be useful later on.
+ Recall that the kinetic energy is a left invariant function.
+ This means that 
+\begin_inset Formula $KE\left(\dot{C}\right)=KE\left(V_{b}^{\wedge}\right)$
+\end_inset
+
+.
+ Also recall that the vector space 
+\begin_inset Formula $\mathbb{R}^{6}$
+\end_inset
+
+ is isomorphic to the Lie algebra 
+\begin_inset Formula $\mathfrak{se}\left(3\right)$
+\end_inset
+
+ which means 
+\begin_inset Formula $KE\left(V_{b}^{\wedge}\right)=KE\left(V_{b}\right)$
+\end_inset
+
+, and we only need to work with the generalized velocity vector 
+\begin_inset Formula $V_{b}$
+\end_inset
+
+.
+ The generalized inertial tensor is 
+\begin_inset Formula 
+\[
+\mathcal{I}_{b}=\begin{bmatrix}J_{b} & 0\\
+0 & m_{b}I
+\end{bmatrix},
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $J_{b}$
+\end_inset
+
+ is the inertial tensor for the body, and 
+\begin_inset Formula $m_{b}$
+\end_inset
+
+ is the mass of the body.
+ The kinetic energy of the body is 
+\begin_inset Formula 
+\[
+KE\left(V_{b}\right)\coloneqq\frac{1}{2}V_{b}^{\top}\mathcal{I}_{b}V_{b}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The metric tensor for the first rigid body is calculated from the kinetic
+ energy, and is 
+\begin_inset Formula 
+\begin{equation}
+\mathbb{G}_{b}=J_{b,z}d\mathbf{\theta}\otimes d\theta+m_{b}\left(dx\otimes dx+dy\otimes dy\right).\label{eq:metricTensor_body}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Kinetic Energy of the Left Wheel
+\end_layout
+
+\begin_layout Standard
+The position and orientation of the left wheel is described by 
+\begin_inset Formula 
+\[
+C_{l}^{i}=\begin{bmatrix}R_{l}^{i} & \mathbf{p}^{l}\\
+0_{1\times3} & 0
+\end{bmatrix},
+\]
+
+\end_inset
+
+and it's derivative is 
+\begin_inset Formula 
+\begin{align*}
+\dot{C}_{l}^{i} & =\underbrace{\begin{bmatrix}R_{l}^{i} & \mathbf{p}^{l}\\
+0_{1\times3} & 1
+\end{bmatrix}}_{C_{l}^{i}}\underbrace{\begin{bmatrix}\left[\omega_{l/i}^{l}\right]_{\times} & \rho_{l/i}^{l}\\
+0 & 0
+\end{bmatrix}}_{V_{l}^{\wedge}}\\
+ & =\begin{bmatrix}R_{l}^{i}\left[\omega_{l/i}^{l}\right]_{\times} & R_{l}^{i}\rho_{l/i}^{l}\\
+0_{1\times3} & 0
+\end{bmatrix}\\
+ & =\begin{bmatrix}\dot{R}_{l}^{i} & \mathbf{\dot{P}}^{l}\\
+0 & 0
+\end{bmatrix}.
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The derivative 
+\begin_inset Formula $\dot{\mathbf{p}}^{l}$
+\end_inset
+
+ can be written in terms of 
+\begin_inset Formula $V_{b}$
+\end_inset
+
+ using the identity 
+\begin_inset Formula 
+\[
+\mathbf{p}^{l}=\mathbf{p}^{b}+\ell_{1}R_{b}^{i}\mathbf{i}_{x}+\ell_{2}R_{b}^{i}\mathbf{i}_{y}
+\]
+
+\end_inset
+
+and taking it's derivative
+\begin_inset Formula 
+\begin{align*}
+\dot{\mathbf{p}}^{l} & =\dot{\mathbf{p}}^{b}+\ell_{1}\dot{R}_{b}^{i}\mathbf{i}_{x}+\ell_{2}\dot{R}_{b}^{i}\mathbf{i}_{y}\\
+R_{b}^{i}R_{l}^{b}\rho_{l/i}^{l} & =R_{b}^{i}\rho_{b/i}^{b}+\ell_{1}R_{b}^{i}\left[\omega_{b/i}^{b}\right]_{\times}\mathbf{i}_{x}+\ell_{2}R_{b}^{i}\left[\omega_{b/i}^{b}\right]_{\times}\mathbf{i}_{y}\\
+R_{l}^{b}\rho_{l/i}^{l} & =\rho_{b/i}^{b}+\ell_{1}\left[\omega_{b/i}^{b}\right]_{\times}\mathbf{i}_{x}+\ell_{2}\left[\omega_{b/i}^{b}\right]_{\times}\mathbf{i}_{y}
+\end{align*}
+
+\end_inset
+
+multiplying both sides by 
+\begin_inset Formula $\left(R_{l}^{b}\right)^{\top}$
+\end_inset
+
+ yields
+\begin_inset Formula 
+\[
+\rho_{l/i}^{l}=\left(R_{l}^{b}\right)^{\top}\left(\rho_{b/i}^{b}+\ell_{1}\left[\omega_{b/i}^{b}\right]_{\times}\mathbf{i}_{x}+\ell_{2}\left[\omega_{b/i}^{b}\right]_{\times}\mathbf{i}_{y}\right).
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Since the kinetic energy is a left invariant function, we can drop the term
+ 
+\begin_inset Formula $\left(R_{l}^{b}\right)^{\top}$
+\end_inset
+
+ when calculating the kinetic energy.
+\end_layout
+
+\begin_layout Standard
+The generalized inertial tensor is 
+\begin_inset Formula 
+\[
+\mathcal{I}_{l}=\begin{bmatrix}J_{l} & 0\\
+0 & m_{l}I
+\end{bmatrix},
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $J_{l}$
+\end_inset
+
+ is the inertial tensor for the left wheel, and 
+\begin_inset Formula $m_{l}$
+\end_inset
+
+ is the mass of the left wheel.
+ The kinetic energy of the left wheel is 
+\begin_inset Formula 
+\[
+KE\left(V_{l}\right)\coloneqq\frac{1}{2}V_{l}^{\top}\mathcal{I}_{l}V_{l}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The metric tensor for the left wheel is calculated from the kinetic energy,
+ and is 
+\begin_inset Formula 
+\begin{equation}
+\mathbb{G}_{l}=J_{l,z}d\phi\otimes d\phi+m_{l}\left(dx\otimes dx+dy\otimes dy\right)+m_{l}\left(\ell_{1}^{2}+\ell_{2}^{2}\right)d\mathbf{\theta}\otimes d\theta+m_{l}\ell_{1}\left(d\theta\otimes dy+dy\otimes d\theta\right)-m_{l}\ell_{2}\left(d\theta\otimes dx+dx\otimes d\theta\right).\label{eq:metricTensor_left}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Kinetic Energy of the Right Wheel
+\end_layout
+
+\begin_layout Standard
+The position and orientation of the right wheel is described by 
+\begin_inset Formula 
+\[
+C_{r}^{i}=\begin{bmatrix}R_{r}^{i} & \mathbf{p}^{r}\\
+0_{1\times3} & 0
+\end{bmatrix},
+\]
+
+\end_inset
+
+and it's derivative is 
+\begin_inset Formula 
+\begin{align*}
+\dot{C}_{r}^{i} & =\underbrace{\begin{bmatrix}R_{r}^{i} & \mathbf{p}^{r}\\
+0_{1\times3} & 1
+\end{bmatrix}}_{C_{l}^{i}}\underbrace{\begin{bmatrix}\left[\omega_{r/i}^{r}\right]_{\times} & \rho_{r/i}^{r}\\
+0 & 0
+\end{bmatrix}}_{V_{l}^{\wedge}}\\
+ & =\begin{bmatrix}R_{r}^{i}\left[\omega_{r/i}^{r}\right]_{\times} & R_{r}^{i}\rho_{r/i}^{r}\\
+0_{1\times3} & 0
+\end{bmatrix}\\
+ & =\begin{bmatrix}\dot{R}_{r}^{i} & \mathbf{\dot{P}}^{r}\\
+0 & 0
+\end{bmatrix}.
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The derivative 
+\begin_inset Formula $\dot{\mathbf{p}}^{r}$
+\end_inset
+
+ can be written in terms of 
+\begin_inset Formula $V_{b}$
+\end_inset
+
+ using the identity 
+\begin_inset Formula 
+\[
+\mathbf{p}^{r}=\mathbf{p}^{b}+\ell_{1}R_{b}^{i}\mathbf{i}_{x}-\ell_{2}R_{b}^{i}\mathbf{i}_{y}
+\]
+
+\end_inset
+
+and taking it's derivative
+\begin_inset Formula 
+\begin{align*}
+\dot{\mathbf{p}}^{r} & =\dot{\mathbf{p}}^{b}+\ell_{1}\dot{R}_{b}^{i}\mathbf{i}_{x}-\ell_{2}\dot{R}_{b}^{i}\mathbf{i}_{y}\\
+R_{b}^{i}R_{r}^{b}\rho_{r/i}^{r} & =R_{b}^{i}\rho_{b/i}^{b}+\ell_{1}R_{b}^{i}\left[\omega_{b/i}^{b}\right]_{\times}\mathbf{i}_{x}-\ell_{2}R_{b}^{i}\left[\omega_{b/i}^{b}\right]_{\times}\mathbf{i}_{y}\\
+R_{r}^{b}\rho_{r/i}^{r} & =\rho_{b/i}^{b}+\ell_{1}\left[\omega_{b/i}^{b}\right]_{\times}\mathbf{i}_{x}-\ell_{2}\left[\omega_{b/i}^{b}\right]_{\times}\mathbf{i}_{y}
+\end{align*}
+
+\end_inset
+
+multiplying both sides by 
+\begin_inset Formula $\left(R_{r}^{b}\right)^{\top}$
+\end_inset
+
+ yields
+\begin_inset Formula 
+\[
+\rho_{r/i}^{r}=\left(R_{r}^{b}\right)^{\top}\left(\rho_{b/i}^{b}+\ell_{1}\left[\omega_{b/i}^{b}\right]_{\times}\mathbf{i}_{x}-\ell_{2}\left[\omega_{b/i}^{b}\right]_{\times}\mathbf{i}_{y}\right).
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Since the kinetic energy is a left invariant function, we can drop the term
+ 
+\begin_inset Formula $\left(R_{r}^{b}\right)^{\top}$
+\end_inset
+
+ when calculating the kinetic energy.
+\end_layout
+
+\begin_layout Standard
+The generalized inertial tensor is 
+\begin_inset Formula 
+\[
+\mathcal{I}_{l}=\begin{bmatrix}J_{r} & 0\\
+0 & m_{r}I
+\end{bmatrix},
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $J_{r}$
+\end_inset
+
+ is the inertial tensor for the right wheel, and 
+\begin_inset Formula $m_{r}$
+\end_inset
+
+ is the mass of the right wheel.
+ The kinetic energy of the left wheel is 
+\begin_inset Formula 
+\[
+KE\left(V_{r}\right)\coloneqq\frac{1}{2}V_{r}^{\top}\mathcal{I}_{r}V_{r}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The metric tensor for the left wheel is calculated from the kinetic energy,
+ and is 
+\begin_inset Formula 
+\begin{equation}
+\mathbb{G}_{r}=J_{r,z}d\phi\otimes d\phi+m_{r}\left(dx\otimes dx+dy\otimes dy\right)+m_{r}\left(\ell_{1}^{2}+\ell_{2}^{2}\right)d\mathbf{\theta}\otimes d\theta+m_{r}\ell_{1}\left(d\theta\otimes dy+dy\otimes d\theta\right)+m_{r}\ell_{2}\left(d\theta\otimes dx+dx\otimes d\theta\right).\label{eq:metricTensor_right}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Put it all together now.
+\end_layout
+
+\begin_layout Standard
+The metric tensor 
+\begin_inset Formula $\mathcal{\mathbb{G}}$
+\end_inset
+
+ for the entire care is the sum of the metric tensors for the body and left
+ and right wheel.
+ Summing together 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:metricTensor_body"
+
+\end_inset
+
+, 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:metricTensor_left"
+
+\end_inset
+
+, and 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:metricTensor_right"
+
+\end_inset
+
+ we get the final metric tensor 
+\begin_inset Formula 
+\begin{equation}
+\mathbb{G}=2J_{w,z}d\phi\otimes d\phi+2m_{w}\left(\ell_{1}^{2}+\ell_{2}^{2}+\frac{J_{b,z}}{2m_{w}}\right)d\mathbf{\theta}\otimes d\theta+m_{t}\left(dx\otimes dx+dy\otimes dy\right)+2m_{w}\ell_{1}\left(d\theta\otimes dy+dy\otimes d\theta\right),\label{eq:metricTensor_total}
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $J_{r,z}=J_{l,z}=J_{w,z}$
+\end_inset
+
+, 
+\begin_inset Formula $m_{r}=m_{l}=m_{w}$
+\end_inset
+
+, and 
+\begin_inset Formula $m_{t}=m_{b}+m_{l}+m_{r}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Determine the Christoffel symbols for the Levi-Civita affine connection.
+ 
+\end_layout
+
+\begin_layout Standard
+Since the components of the metric tenor in 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:metricTensor_total"
+
+\end_inset
+
+ are constant, the Christoffel symbols are all zero.
+\end_layout
+
+\begin_layout Subsection
+Determine the potential function.
+\end_layout
+
+\begin_layout Standard
+The system doesn't have any potential energy, so it is zero.
+\end_layout
+
+\begin_layout Section
+Force and Torque
+\end_layout
+
+\begin_layout Standard
+Consider the two forces on the robot consisting of a force from the drive
+ wheels and a torque that rotates the steering wheels as depicted in Fig
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:robot car"
+
+\end_inset
+
+.
+ Determine the covector fields.
+\end_layout
+
+\begin_layout Standard
+We will denote the force from the drive wheels as 
+\begin_inset Formula $F$
+\end_inset
+
+ and the torque as 
+\begin_inset Formula $T$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The covector field of 
+\begin_inset Formula $F$
+\end_inset
+
+ is 
+\begin_inset Formula 
+\[
+F=\cos\left(\theta\right)dx+\sin\left(\theta\right)dy,
+\]
+
+\end_inset
+
+and the covector field of 
+\begin_inset Formula $T$
+\end_inset
+
+ is 
+\begin_inset Formula 
+\[
+T=d\phi.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Equations of Motion
+\end_layout
+
+\begin_layout Subsection
+a
+\end_layout
+
+\begin_layout Standard
+The rear wheels can only move along 
+\begin_inset Formula $\frac{\partial}{\partial x}$
+\end_inset
+
+ which means velocity of the rear wheels has the constraint 
+\begin_inset Formula 
+\[
+=0,
+\]
+
+\end_inset
+
+which can be written as 
+\begin_inset Formula 
+\[
+\dot{y}=0
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The velocity of the front left wheel is 
+\begin_inset Formula 
+\[
+\rho_{l/i}=\left(R_{l}^{b}\right)^{\top}\left(\rho_{b/i}+\ell_{1}\left[\omega_{b/i}\right]_{\times}\mathbf{i}_{x}+\ell_{2}\left[\omega_{b/i}\right]_{\times}\mathbf{i}_{y}\right),
+\]
+
+\end_inset
+
+which can be expressed in coordinates
+\begin_inset Formula 
+\begin{align*}
+\rho_{l/i} & =\begin{bmatrix}\cos\left(\phi\right) & \sin\left(\phi\right) & 0\\
+-\sin\left(\phi\right) & \cos\left(\phi\right) & 0\\
+0 & 0 & 1
+\end{bmatrix}\begin{bmatrix}\dot{x}-\ell_{2}\omega_{z}\\
+\dot{y}+\ell_{1}\omega_{z}\\
+0
+\end{bmatrix}\\
+ & =\begin{bmatrix}\cos\left(\phi\right)\left(\dot{x}-\ell_{2}\omega_{z}\right)+\sin\left(\phi\right)\left(\dot{y}+\ell_{1}\omega_{z}\right)\\
+-\sin\left(\phi\right)\left(\dot{x}-\ell_{2}\omega_{z}\right)+\cos\left(\phi\right)\left(\dot{y}+\ell_{1}\omega_{z}\right)\\
+0
+\end{bmatrix}.
+\end{align*}
+
+\end_inset
+
+Since the wheel can only move along 
+\begin_inset Formula $\mathbf{l}_{x}$
+\end_inset
+
+ we have the constraint
+\begin_inset Formula 
+\[
+-\sin\left(\phi\right)\left(\dot{x}-\ell_{2}\omega_{z}\right)+\cos\left(\phi\right)\left(\dot{y}+\ell_{1}\omega_{z}\right)=0,
+\]
+
+\end_inset
+
+which can be simplified using the above constraint
+\begin_inset Formula 
+\[
+-\sin\left(\phi\right)\dot{x}+\left(\cos\left(\phi\right)\ell_{1}+\sin\left(\phi\right)\ell_{2}\right)\omega_{z}=0.
+\]
+
+\end_inset
+
+From this constraint we can construct out vector fields
+\begin_inset Formula 
+\begin{gather}
+\left(\cos\left(\phi\right)\ell_{1}+\sin\left(\phi\right)\ell_{2}\right)\frac{\partial}{\partial x}+\sin\left(\phi\right)\frac{\partial}{\partial\theta}\\
+\frac{\partial}{\partial\phi}
+\end{gather}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In the local frame, the vector fields are 
+\begin_inset Formula 
+\begin{align}
+X_{1} & =\frac{\partial}{\partial\phi}\\
+X_{2} & =\cos\left(\theta\right)\left(\cos\left(\phi\right)\ell_{1}+\ell_{2}\sin\left(\phi\right)\right)\frac{\partial}{\partial x}+\sin\left(\theta\right)\left(\cos\left(\phi\right)\ell_{1}+\ell_{2}\sin\left(\phi\right)\right)\frac{\partial}{\partial y}+\sin\left(\phi\right)\frac{\partial}{\partial\theta}
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note that the vector fields for a 
+\begin_inset Formula $G$
+\end_inset
+
+-orthogonal basis for 
+\begin_inset Formula $D$
+\end_inset
+
+ on 
+\begin_inset Formula $Q_{D}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Generalized Ghristoffel Symbols
+\end_layout
+
+\begin_layout Standard
+The formula to compute the Generalized Christoffel Symbols are
+\begin_inset Formula 
+\[
+\Gamma_{\alpha\beta}^{\delta}\left(q\right)=\frac{1}{\left\Vert X_{\delta}\left(q\right)\right\Vert _{\mathbb{G}}^{2}}\mathbb{G}\left(\overset{\mathcal{\mathbb{G}}}{\nabla}_{X_{\alpha}}X_{\beta}\left(q\right)\right)
+\]
+
+\end_inset
+
+we use the following variable to simplify the expression
+\begin_inset Formula 
+\begin{align*}
+c_{1} & =2m_{w}\left(\ell_{1}^{2}+\ell_{2}^{2}\right)+J_{b}\\
+c_{2} & =\cos\left(\phi\right)\ell_{1}+\ell_{2}\sin\left(\phi\right)\\
+c_{3} & =c_{1}\sin\left(\phi\right)^{2}+c_{2}^{2}m_{t}+4c_{2}\ell_{1}m_{w}\sin\left(\phi\right)\sin\left(\theta\right)
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\Gamma_{12}^{2} & =\frac{\cos\left(\phi\right)\left(c_{1}\sin\left(\phi\right)+2c_{2}\ell_{1}m_{w}\sin\left(\theta\right)\right)}{c_{3}}\\
+\Gamma_{22}^{2} & =\frac{2c_{2}\ell_{1}m_{w}\cos\left(\theta\right)\sin^{2}\left(\phi\right)}{c_{3}}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Control Forces and Dissipative forces
+\end_layout
+
+\begin_layout Standard
+We first need to convert the force and torque to covector fields and then
+ project them onto the distribution 
+\begin_inset Formula 
+\begin{align*}
+YF & =PD\left(\mathbb{G}^{\#}\left(F\right)\right)\\
+ & =\frac{c_{2}^{2}\cos\left(\theta\right)}{c_{3}}\frac{\partial}{\partial x}+\frac{c_{2}^{2}\sin\left(\theta\right)}{c_{3}}\frac{\partial}{\partial y}+\frac{c_{2}^{2}\sin\left(\phi\right)}{c_{3}}\frac{\partial}{\partial\theta}
+\end{align*}
+
+\end_inset
+
+and
+\begin_inset Formula 
+\begin{align*}
+YT & =PD\left(\mathbb{G}^{\#}\left(T\right)\right)\\
+ & =\frac{1}{2J_{w}}\frac{\partial}{\partial\phi}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We also have the dissipative forces
+\begin_inset Formula 
+\[
+F_{d}=-b_{t}\cos\left(\theta\right)\dot{v}dx-b_{t}\sin\left(\theta\right)\dot{v}dy-b_{r}\dot{\phi}d\phi,
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $b_{t}$
+\end_inset
+
+ and 
+\begin_inset Formula $b_{r}$
+\end_inset
+
+ are translational and rotational friction coefficients, and 
+\begin_inset Formula $\dot{v}=\sqrt{\dot{x}^{2}+\dot{y}^{2}}$
+\end_inset
+
+.
+ 
+\begin_inset Formula 
+\[
+YF_{d}=\frac{-b_{t}\dot{v}c_{2}^{2}\cos\left(\theta\right)}{c_{3}}\frac{\partial}{\partial x}+\frac{-b_{t}\dot{v}c_{2}^{2}\sin\left(\theta\right)}{c_{3}}\frac{\partial}{\partial y}+\frac{-b_{t}\dot{v}c_{2}^{2}\sin\left(\phi\right)}{c_{3}}\frac{\partial}{\partial\theta}+\frac{-b_{r}\dot{\phi}}{2J_{w}}\frac{\partial}{\partial\phi}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+The pseudo velocities
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\dot{q}^{i}\left(t\right)\frac{\partial}{\partial q^{i}}=v^{\alpha}\left(t\right)X_{\alpha}\left(\gamma\left(t\right)\right)
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\begin{bmatrix}\dot{x}\\
+\dot{y}\\
+\dot{\theta}\\
+\dot{\phi}
+\end{bmatrix}=v^{2}\begin{bmatrix}\cos\left(\theta\right)c_{2}\\
+\sin\left(\theta\right)c_{2}\\
+\sin\left(\phi\right)\\
+0
+\end{bmatrix}+v^{1}\begin{bmatrix}0\\
+0\\
+0\\
+1
+\end{bmatrix}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Finally we have
+\begin_inset Formula 
+\begin{align*}
+\dot{x} & =\cos\left(\theta\right)c_{2}v^{2}\\
+\dot{y} & =\sin\left(\theta\right)c_{2}v^{2}\\
+\dot{\theta} & =\sin\left(\phi\right)v^{2}\\
+\ddot{\phi} & =\frac{1}{2J_{w}}u_{\phi}-\frac{b_{r}}{2J_{w}}\dot{\phi}\\
+\dot{v}^{1} & =-\Gamma_{12}^{2}v^{2}\dot{\phi}-\Gamma_{22}^{2}\left(v^{2}\right)^{2}-\frac{b_{t}c_{2}}{c_{3}}v+\frac{c_{2}}{c_{3}}u_{v^{1}}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+bibfiles "/home/mark/Documents/mendeley/library"
+options "plain"
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

@@ -1,0 +1,1540 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass IEEEtran
+\options onecolumn
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_package amsmath 2
+\use_package amssymb 2
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 1in
+\topmargin 1in
+\rightmargin 1in
+\bottommargin 1in
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Exponential and Log Maps of Matrix Lie Groups
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Standard
+In this document we will quickly explore groups, manifolds, the exponential
+ maps, and logarithmic maps in order to see how they all fit together.
+ We will begin with a broad view of each concept, but then focus our attention
+ on the special orthogonal groups and the special Euclidean groups of 2,3-dimens
+ions and the exponential and log maps for each group.
+ This is not intended to be extensive or thorough by any means.
+ For more information on any of the topics, I refer you to 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Abraham1998,Bullo2005,Stillwell2008"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Matrix Lie Groups
+\end_layout
+
+\begin_layout Standard
+To understand what a matrix Lie group is, we need a basic understanding
+ of groups and manifolds.
+ 
+\end_layout
+
+\begin_layout Subsection
+Group
+\end_layout
+
+\begin_layout Definition
+A 
+\series bold
+group 
+\series default
+
+\begin_inset Formula $G$
+\end_inset
+
+ is a set of elements combined with an operation 
+\begin_inset Formula $\bullet$
+\end_inset
+
+ with the following properties
+\end_layout
+
+\begin_layout Enumerate
+Closure
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+For all 
+\begin_inset Formula $g_{1},g_{2}\in G$
+\end_inset
+
+, the result of the operation 
+\begin_inset Formula $g_{1}\bullet g_{2}\in G$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Associativity
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+For all 
+\begin_inset Formula $g_{1},\,g_{2}$
+\end_inset
+
+ and 
+\begin_inset Formula $g_{3}$
+\end_inset
+
+ in G, 
+\begin_inset Formula $\left(g_{1}\bullet g_{2}\right)\bullet g_{3}=g_{1}\bullet\left(g_{2}\bullet g_{3}\right)$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Identity Element
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+There exists an element 
+\begin_inset Formula $\mathbf{1}\in G$
+\end_inset
+
+ that for all 
+\begin_inset Formula $g\in G$
+\end_inset
+
+, the equation 
+\begin_inset Formula $\mathbf{1}\bullet g=g\bullet\mathbf{1}=g$
+\end_inset
+
+ holds.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Inverse Element
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+For each 
+\begin_inset Formula $g_{1}\in G$
+\end_inset
+
+ there exists an element 
+\begin_inset Formula $g_{2}\in G$
+\end_inset
+
+, such that 
+\begin_inset Formula $g_{1}\bullet g_{2}=g_{2}\bullet g_{1}=\mathbf{1}$
+\end_inset
+
+, where 
+\begin_inset Formula $\mathbf{1}$
+\end_inset
+
+ is the identity element.
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+The overarching matrix group is the 
+\series bold
+general linear group
+\series default
+.
+ It is the set of all 
+\begin_inset Formula $n\times n$
+\end_inset
+
+ invertible matrices together with the group operation of matrix multiplication
+ and is denoted as 
+\begin_inset Formula $GL\left(n\right)$
+\end_inset
+
+.
+ All other matrix groups is a subgroup of a general linear group.
+ There are four groups of interest that we will consider in this document:
+\end_layout
+
+\begin_layout Enumerate
+Special orthogonal group of 2-dimensions 
+\begin_inset Formula $SO\left(2\right)\coloneqq\left\{ R\in\mathbb{R}^{2\times2}|R^{\top}R=\mathbf{1}=I,\,\text{det}\left(R\right)=1\right\} $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Special orthogonal group of 3-dimensions 
+\begin_inset Formula $SO\left(3\right)\coloneqq\left\{ R\in\mathbb{R}^{3\times3}|R^{\top}R=\mathbf{1}=I,\,\text{det}\left(R\right)=1\right\} $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Special Euclidean group of 2/3-dimesnions is the group of (Euclidean) isometries
+ of an Euclidean space 
+\begin_inset Formula $\mathbb{E}^{n}$
+\end_inset
+
+ comprised of all translations and rotations.
+ It is isomorphic to the space 
+\begin_inset Formula $SO\left(n\right)\times\mathbb{R}^{n}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Manifold
+\end_layout
+
+\begin_layout Standard
+A manifold 
+\begin_inset Formula $M$
+\end_inset
+
+ is a topological space 
+\begin_inset Formula $S$
+\end_inset
+
+ together with an atlas 
+\begin_inset Formula $\mathcal{A}$
+\end_inset
+
+ whose charts 
+\begin_inset Formula $\left(\mathcal{U}_{i},\phi_{i}\right),i\in\mathbb{R}^{+}$
+\end_inset
+
+ are compatible and provide a bijective map 
+\begin_inset Formula $\phi_{i}:\mathcal{U}_{i}\in S\to\mathbb{E}^{n}$
+\end_inset
+
+.
+ Forgive me for the imprecise definition I'm about to give.
+ If every map 
+\begin_inset Formula $\phi_{i}$
+\end_inset
+
+ is a 
+\begin_inset Formula $C^{r}$
+\end_inset
+
+- diffeomorphism where 
+\begin_inset Formula $r\in\left\{ \mathbb{R}^{+},\infty,\omega\right\} $
+\end_inset
+
+, then 
+\begin_inset Formula $M$
+\end_inset
+
+ is a 
+\begin_inset Formula $C^{r}$
+\end_inset
+
+differentiable manifold.
+ In very simple terms, a manifold is a space that locally resembles Euclidean
+ space.
+ Because of this, the subsets 
+\begin_inset Formula $\mathcal{U}_{i}\in S$
+\end_inset
+
+ can be mapped to Euclidean space.
+ And if 
+\begin_inset Formula $M$
+\end_inset
+
+ is a differentiable manifold, then I can perform calculus in Euclidean
+ space and map them to the tangent bundle of the manifold.
+ 
+\end_layout
+
+\begin_layout Standard
+For a precise definition of a manifold, see 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Abraham1998"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Matrix Lie Group
+\end_layout
+
+\begin_layout Standard
+A 
+\series bold
+matrix Lie group
+\series default
+ is a matrix group that has the additional structure of a smooth manifold,
+ i.e., there are smooth diffeomorphic maps from the matrix Lie group to Euclidean
+ space.
+\end_layout
+
+\begin_layout Section
+Exponential and Log Maps
+\end_layout
+
+\begin_layout Standard
+The matrix exponential is a surjective map whose inverse is the matrix logarithm
+ic map.
+ By restricting the domain of the matrix exponential to a subset, the mapping
+ becomes locally diffeomorphic, and we can use it for our purposes.
+ The log map is used to map elements of a matrix Lie group to Euclidean
+ space, and the exponential map performs the inverse.
+ 
+\end_layout
+
+\begin_layout Subsection
+General Matrix Exponential
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:General-Matrix-Exponential"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $A\in\mathbb{R}^{n\times n}$
+\end_inset
+
+ be an 
+\begin_inset Formula $n\times n$
+\end_inset
+
+ matrix with real components, then the matrix exponential is the map 
+\begin_inset Formula $\exp:\mathbb{R}^{n\times n}\to\mathbb{R}^{n\times n}$
+\end_inset
+
+ defined using the Taylor series as 
+\begin_inset Formula 
+\begin{equation}
+\exp\left(A\right)\coloneqq\sum_{k=0}^{\infty}\frac{A^{k}}{k!}.\label{eq:matrixExponential}
+\end{equation}
+
+\end_inset
+
+which is guaranteed to converge for all real, square matrices 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Stillwell2008"
+
+\end_inset
+
+.
+ This means that the definition of the matrix exponential in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:matrixExponential"
+
+\end_inset
+
+works on the entire domain of real 
+\begin_inset Formula $n\times n$
+\end_inset
+
+ matrices.
+ There are subspaces of 
+\begin_inset Formula $\mathbb{R}^{n\times n}$
+\end_inset
+
+ whose matrix exponential can have a simplified expression that's derived
+ from the original definition.
+ We will discuss these later on.
+\end_layout
+
+\begin_layout Subsection
+General Logarithmic Map
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:General-Logarithmic-Map"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+A matrix 
+\begin_inset Formula $X\in\mathbb{C}^{n\times n}$
+\end_inset
+
+ is a logarithm of 
+\begin_inset Formula $A\in\mathbb{C}^{n\times n}$
+\end_inset
+
+ if 
+\begin_inset Formula $\exp\left(X\right)=A$
+\end_inset
+
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Al-Mohy2012"
+
+\end_inset
+
+, and the logarithmic map is the map 
+\begin_inset Formula $\log:\mathbb{C}^{n\times n}\to\left\{ X\in\mathbb{C}^{n\times n}|\mathbb{C}^{n\times n}\ni A=\exp\left(X\right)\right\} $
+\end_inset
+
+.
+ There are many definitions of this map, but we will only discuss two of
+ them in this subsection.
+ The first one is the map defined by the classical infinite series or power
+ series and is defined as
+\begin_inset Formula 
+\begin{equation}
+\log\left(A\right)\coloneqq\sum_{k=1}^{\infty}\left(-1\right)^{k+1}\frac{\left(A-I\right)^{k}}{k}\label{eq:logPowerSeries}
+\end{equation}
+
+\end_inset
+
+which is only guaranteed to converges if 
+\begin_inset Formula $\left\Vert A-I\right\Vert <1$
+\end_inset
+
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Stillwell2008"
+
+\end_inset
+
+.
+ This specific definition of the matrix log has a very restrictive convergence
+ criteria that greatly reduces the domain.
+\end_layout
+
+\begin_layout Standard
+The next definition of the logarithmic map is known as the principle matrix
+ logarithm and is well discussed in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Al-Mohy2012"
+
+\end_inset
+
+.
+ We will briefly present the algorithm here.
+ 
+\begin_inset Quotes eld
+\end_inset
+
+For 
+\begin_inset Formula $A\in\mathbb{C}^{n\times n}$
+\end_inset
+
+ with no eigenvalues on 
+\begin_inset Formula $\mathbb{R}^{-}$
+\end_inset
+
+, the principal logarithm is the unique logarithm whose eigenvalues have
+ imaginary parts lying in the interval 
+\begin_inset Formula $\left(-\pi,\pi\right)$
+\end_inset
+
+
+\begin_inset Quotes erd
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Al-Mohy2012"
+
+\end_inset
+
+.
+ The principle algorithm is found by first computing 
+\begin_inset Formula $A^{\frac{1}{2^{s}}}$
+\end_inset
+
+, for an integer 
+\begin_inset Formula $s$
+\end_inset
+
+ large enough so that 
+\begin_inset Formula $A^{\frac{1}{2^{s}}}$
+\end_inset
+
+ is close to the identity.
+ Then 
+\begin_inset Formula $\log\left(A^{\frac{1}{2^{s}}}\right)$
+\end_inset
+
+ is approximated by 
+\begin_inset Formula $r_{m}\left(A^{\frac{1}{2^{s}}}-I\right)$
+\end_inset
+
+, where 
+\begin_inset Formula $r_{m}$
+\end_inset
+
+ is an 
+\begin_inset Formula $m/m$
+\end_inset
+
+ Pad
+\begin_inset IPA
+
+\begin_layout Standard
+é
+\end_layout
+
+\end_inset
+
+ approximate to the function 
+\begin_inset Formula $\log\left(1+x\right)$
+\end_inset
+
+, and finally we can form the approximation 
+\begin_inset Formula 
+\begin{equation}
+\log\left(A\right)\approx2^{s}r_{m}\left(A^{\frac{1}{2^{s}}}-I\right)\label{eq:principleLogarithm}
+\end{equation}
+
+\end_inset
+
+.
+ This approximation exploits the identity 
+\begin_inset Formula 
+\[
+\log\left(A\right)=2^{s}\log\left(A^{\frac{1}{2^{s}}}\right).
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The principle matrix logarithm (PML) is a great improvement to the power
+ series logarithm since it is a locally diffeomorphic map whose domain is
+ 
+\begin_inset Formula $\left\{ A\in\mathbb{C}^{n\times n}|-1\notin\left\{ \text{eig}\left(A\right)\right\} \right\} $
+\end_inset
+
+ and co-domain is 
+\begin_inset Formula $\left\{ X\in\mathbb{C}^{n\times n}|\text{eig}\left(X\right)\in\left(-\pi i,\pi i\right)\right\} $
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+Just like with the matrix exponential, there are subspaces of 
+\begin_inset Formula $\mathbb{C}^{n\times n}$
+\end_inset
+
+ whose matrix logarithm can have a simplified expression that's derived
+ from the definition of a the matrix exponential.
+ We will discuss these later.
+\end_layout
+
+\begin_layout Section
+SO
+\begin_inset Formula $\left(3\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $SO\left(3\right)$
+\end_inset
+
+ is a matrix Lie group which isn't also a Euclidean space.
+ Therefore it lacks the structure necessary to do calculus, i.e., take derivatives
+ and perform integrations.
+ However, since it is a manifold, we can construct charts 
+\begin_inset Formula $(\mathcal{U}_{i},\phi_{i})$
+\end_inset
+
+ that maps subsets 
+\begin_inset Formula $\mathcal{U}_{i}\in SO\left(3\right)$
+\end_inset
+
+ to 
+\begin_inset Formula $\mathbb{E}^{3}$
+\end_inset
+
+ using diffeomorphic maps.
+ Once in Euclidean space, we can take derivatives and map these derivatives
+ to the tangent space of 
+\begin_inset Formula $SO\left(3\right)$
+\end_inset
+
+ using the pull back function.
+ 
+\end_layout
+
+\begin_layout Standard
+We will only construct one chart that covers most of 
+\begin_inset Formula $SO\left(3\right)$
+\end_inset
+
+ because it is the only one ever used in literature.
+ To construct the chart, we will first look at the inverse map 
+\begin_inset Formula $\phi^{-1}$
+\end_inset
+
+, the matrix exponential, since the map 
+\begin_inset Formula $\phi$
+\end_inset
+
+ is easily derived from 
+\begin_inset Formula $\phi^{-1}$
+\end_inset
+
+.
+ Next, we will derive 
+\begin_inset Formula $\phi$
+\end_inset
+
+ from 
+\begin_inset Formula $\phi^{-1}$
+\end_inset
+
+ and define the subsets of 
+\begin_inset Formula $SO\left(3\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathbb{E}^{3}$
+\end_inset
+
+ for which the map is diffeomorphic.
+ Lastly, we will define the pull back function.
+\end_layout
+
+\begin_layout Subsection
+Matrix Exponential
+\end_layout
+
+\begin_layout Standard
+The matrix exponential is the map 
+\begin_inset Formula $\phi^{-1}$
+\end_inset
+
+ defined in subsection 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:General-Matrix-Exponential"
+
+\end_inset
+
+ for arbitrary square, complex matrices.
+ However, the elements of 
+\begin_inset Formula $SO\left(3\right)$
+\end_inset
+
+ have a unique structure that allows us to simplify the matrix exponential.
+ We will not derive the simplified matrix exponential, but only present
+ it.
+ 
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $U_{\mathfrak{so}\left(3\right)}\coloneqq\left\{ X\in\mathbb{R}^{3\times3}|X^{\top}+X=0,\,\left\Vert X\right\Vert <\pi\right\} $
+\end_inset
+
+ be a subset of the skew symmetric matrices 
+\begin_inset Formula $\mathfrak{so}\left(3\right)\coloneqq\left\{ X\in\mathbb{R}^{3\times3}|X^{\top}+X=0\right\} $
+\end_inset
+
+.
+ The condition 
+\begin_inset Formula $\left\Vert X\right\Vert <\pi$
+\end_inset
+
+ is equivalent to the condition 
+\begin_inset Formula $\text{eig}\left(X\right)\in\left(-\pi i,\pi i\right)$
+\end_inset
+
+ for skew symmetric matrices since the eigenvalues of a 3-dimensional skew
+ symmetric matrix are 
+\begin_inset Formula $0,\pm\left\Vert X\right\Vert i$
+\end_inset
+
+.
+ Using the subset 
+\begin_inset Formula $U_{\mathfrak{so}\left(3\right)}$
+\end_inset
+
+ we restrict the domain and co-domain of the matrix exponential so that
+ the map 
+\begin_inset Formula $\exp:U_{\mathfrak{so}\left(3\right)}\subset\mathfrak{so}\left(3\right)\to U_{so\left(3\right)}\subset SO\left(3\right)$
+\end_inset
+
+ is locally diffeomorphic.
+ Of course to show that the map is a local diffeomorphism, we need to show
+ that the inverse of the matrix exponential exists and is differentiable
+ in 
+\begin_inset Formula $U_{so\left(3\right)}$
+\end_inset
+
+.
+ The subset 
+\begin_inset Formula $U_{so\left(3\right)}$
+\end_inset
+
+ will be defined in the next subsection.
+\end_layout
+
+\begin_layout Standard
+Since the matrix exponential defined in 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:matrixExponential"
+
+\end_inset
+
+ is well defined for all 
+\begin_inset Formula $A\in\mathbb{C}^{n\times n}$
+\end_inset
+
+, it is well defined for 
+\begin_inset Formula $U_{\mathfrak{so}\left(3\right)}$
+\end_inset
+
+; however, the unique properties of 
+\begin_inset Formula $\mathfrak{so}\left(3\right)$
+\end_inset
+
+ allows us to use a simplified matrix exponential known as the Rodrigues
+ Formula which we now present.
+ Any given 
+\begin_inset Formula $X\in U_{\mathfrak{so}\left(3\right)}$
+\end_inset
+
+ can be written as 
+\begin_inset Formula $X=\theta\omega$
+\end_inset
+
+ where 
+\begin_inset Formula $\theta=\left\Vert X\right\Vert $
+\end_inset
+
+ and 
+\begin_inset Formula $\omega=\frac{X}{\left\Vert X\right\Vert }$
+\end_inset
+
+, and the Rodrigues Formula is 
+\begin_inset Formula 
+\begin{equation}
+\exp\coloneqq I+\sin\left(\theta\right)\omega+\left(1-\cos\left(\theta\right)\right)\omega^{2}.\label{eq:RodriguesFormula}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The Rodrigues Formula offers us several benefits.
+ The first is that it is faster than computing an infinite series, and is
+ still a smooth map.
+ The other benefit is that it will help us derive an inverse map that is
+ a simplified version of the matrix logarithm presented in subsection 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:General-Logarithmic-Map"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Matrix Logarithm
+\end_layout
+
+\begin_layout Standard
+The simplified matrix logarithm for 
+\begin_inset Formula $U_{so\left(3\right)}\subset SO\left(3\right)$
+\end_inset
+
+ is derived using the Rodrigues formula.
+ This derivation will help us define 
+\begin_inset Formula $U_{so\left(3\right)}$
+\end_inset
+
+ for reasons you will see.
+\end_layout
+
+\begin_layout Standard
+We will follow 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Gallier2003"
+
+\end_inset
+
+ in this derivation and fill in some of the steps that the author omitted.
+ This derivation is done in several steps.
+ The first step is to define a function 
+\begin_inset Formula $f_{1}:U_{so\left(3\right)}\to\left[0,\pi\right)$
+\end_inset
+
+ which will give us the angle 
+\begin_inset Formula $\theta$
+\end_inset
+
+ in 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:RodriguesFormula"
+
+\end_inset
+
+.
+ The second step is to define a function 
+\begin_inset Formula $f_{2}:U_{so\left(3\right)}\to\left\{ X\in\mathbb{R}^{3\times3}|X^{\top}+X=0,\,\left\Vert X\right\Vert =1\right\} $
+\end_inset
+
+ which will give us 
+\begin_inset Formula $\omega$
+\end_inset
+
+ in 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:RodriguesFormula"
+
+\end_inset
+
+.
+ Once we have 
+\begin_inset Formula $\theta$
+\end_inset
+
+ and 
+\begin_inset Formula $\omega$
+\end_inset
+
+, we can reconstruct the skew symmetric matrix 
+\begin_inset Formula $X$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+To derive 
+\begin_inset Formula $f_{1}$
+\end_inset
+
+ we start with the Rodrigues formula 
+\begin_inset Formula 
+\[
+R=I+\sin\left(\theta\right)\omega+\left(1-\cos\left(\theta\right)\right)\omega^{2}.
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $R\in SO\left(3\right)$
+\end_inset
+
+, and take the trace, 
+\begin_inset Formula $Tr\left(\cdot\right)$
+\end_inset
+
+, of 
+\begin_inset Formula $R$
+\end_inset
+
+ 
+\begin_inset Formula 
+\[
+Tr\left(R\right)=Tr\left(I+\sin\left(\theta\right)\omega+\left(1-\cos\left(\theta\right)\right)\omega^{2}\right).
+\]
+
+\end_inset
+
+Using the linearity property of the trace we get
+\begin_inset Formula 
+\begin{align*}
+Tr\left(R\right) & =Tr\left(I\right)+Tr\left(\sin\left(\theta\right)\omega\right)+Tr\left(\left(1-\cos\left(\theta\right)\right)\omega^{2}\right).
+\end{align*}
+
+\end_inset
+
+Since 
+\begin_inset Formula $\omega$
+\end_inset
+
+ is a skew symmetric matrix, 
+\begin_inset Formula $Tr\left(\sin\left(\theta\right)\omega\right)=0$
+\end_inset
+
+.
+ Using this property we can reduce the equation to 
+\begin_inset Formula 
+\[
+Tr\left(R\right)=3+Tr\left(\left(1-\cos\left(\theta\right)\right)\omega^{2}\right).
+\]
+
+\end_inset
+
+Since 
+\begin_inset Formula $\omega$
+\end_inset
+
+ is a skew symmetric matrix with unit norm, 
+\begin_inset Formula $Tr\left(\omega\right)=-2$
+\end_inset
+
+.
+ Using this property, we can reduce the equation to 
+\begin_inset Formula 
+\[
+Tr\left(R\right)=1+2\cos\left(\theta\right).
+\]
+
+\end_inset
+
+We can then solve for 
+\begin_inset Formula $\theta$
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\theta=\arccos\left(\frac{Tr\left(R\right)-1}{2}\right),
+\]
+
+\end_inset
+
+which gives us the map 
+\begin_inset Formula 
+\begin{equation}
+f_{1}\left(R\right)\coloneqq\arccos\left(\frac{Tr\left(R\right)-1}{2}\right).\label{eq:SO3_R_TH}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+To derive 
+\begin_inset Formula $f_{2}$
+\end_inset
+
+ we start with the Rodrigues formula 
+\begin_inset Formula 
+\[
+R=I+\sin\left(\theta\right)\omega+\left(1-\cos\left(\theta\right)\right)\omega^{2},
+\]
+
+\end_inset
+
+ and add the negative of it's transpose to each side to give us 
+\begin_inset Formula 
+\begin{align*}
+\left(R-R^{\top}\right) & =\left(I+\sin\left(\theta\right)\omega+\left(1-\cos\left(\theta\right)\right)\omega^{2}\right)-\left(I+\sin\left(\theta\right)\omega+\left(1-\cos\left(\theta\right)\right)\omega^{2}\right)^{\top}.
+\end{align*}
+
+\end_inset
+
+Since 
+\begin_inset Formula $\omega$
+\end_inset
+
+ is a skew symmetric matrix, 
+\begin_inset Formula $\omega-\omega^{\top}=2\omega$
+\end_inset
+
+, and since 
+\begin_inset Formula $\omega^{2}$
+\end_inset
+
+ is a symmetric matrix, 
+\begin_inset Formula $\omega^{2}-\left(\omega^{2}\right)^{\top}=0$
+\end_inset
+
+.
+ Using these properties we get 
+\begin_inset Formula 
+\begin{equation}
+\left(R-R^{\top}\right)=2\sin\left(\theta\right)\omega.
+\end{equation}
+
+\end_inset
+
+which gives us the first part of the second map 
+\begin_inset Formula 
+\begin{equation}
+f_{2,1}\left(R,f_{1}\left(R\right)\right)\coloneqq\frac{\left(R-R^{\top}\right)}{2\sin\left(f_{1}\left(R\right)\right)}.\label{eq:SO3_R_OMEGA}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The map 
+\begin_inset Formula $f_{2,1}$
+\end_inset
+
+ is not valid when 
+\begin_inset Formula $\theta=k\pi,\,k\in\mathbb{Z}$
+\end_inset
+
+.
+ Fortunately there exists a map for when 
+\begin_inset Formula $\theta=0$
+\end_inset
+
+.
+ This map is found by substituting 
+\begin_inset Formula $\theta=0$
+\end_inset
+
+ into 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:RodriguesFormula"
+
+\end_inset
+
+ to get 
+\begin_inset Formula 
+\begin{align*}
+R & =I+\sin\left(0\right)\omega+\left(1-\cos\left(0\right)\right)\omega^{2}\\
+ & =I.
+\end{align*}
+
+\end_inset
+
+which gives us the second part of the map 
+\begin_inset Formula $f_{2}$
+\end_inset
+
+
+\begin_inset Formula 
+\[
+f_{2,1}\left(R\right)\coloneqq I.
+\]
+
+\end_inset
+
+Note that if 
+\begin_inset Formula $\theta=0$
+\end_inset
+
+, then 
+\begin_inset Formula $\omega$
+\end_inset
+
+ must be the zero matrix.
+ 
+\end_layout
+
+\begin_layout Standard
+Unfortunately, there is not bijective map for when 
+\begin_inset Formula $\theta=\pm\pi$
+\end_inset
+
+, only a multivalued map.
+ This should make sense since 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\exp\left(\theta\omega\right)=\exp\left(\left(-\theta\right)\omega\right)=\exp\left(\theta\left(-\omega\right)\right)=\exp\left(\left(-\theta\right)\left(-\omega\right)\right)
+\]
+
+\end_inset
+
+which means that the Rodrigues Formula is surjective when 
+\begin_inset Formula $\theta=\pm\pi$
+\end_inset
+
+, and it's inverse must be multivalued.
+ Therefore, we need to identify the subset of 
+\begin_inset Formula $SO\left(3\right)$
+\end_inset
+
+ such that 
+\begin_inset Formula $f_{1}\left(R\right)=\pi$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+This subset is easy to identify using the exponential property that the
+ eigenvalues of a matrix 
+\begin_inset Formula $A$
+\end_inset
+
+ are the exponential of the eigenvalues of it's logarithm 
+\begin_inset Formula $X$
+\end_inset
+
+ where 
+\begin_inset Formula $A=\exp\left(X\right)$
+\end_inset
+
+.
+ We recall that 
+\begin_inset Formula $X=\theta\omega$
+\end_inset
+
+ where has eigenvalues 
+\begin_inset Formula $0,\pm i$
+\end_inset
+
+; therefore, 
+\begin_inset Formula $X$
+\end_inset
+
+ has eigenvalues 
+\begin_inset Formula $0,\pm\pi i$
+\end_inset
+
+, and 
+\begin_inset Formula $A$
+\end_inset
+
+ must have eigenvalues 
+\begin_inset Formula $1,-1$
+\end_inset
+
+ and 
+\begin_inset Formula $-1$
+\end_inset
+
+.
+ This means that the matrix logarithm we are deriving in this subsection
+ is valid for 
+\begin_inset Formula $U_{so\left(3\right)}\coloneqq\left\{ R\in SO\left(3\right)|Tr\left(R\right)\neq-1\right\} $
+\end_inset
+
+, which is the same valid domain for the matrix logarithm defined in subsection
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:General-Logarithmic-Map"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+Now that we have all of the pieces, we can put them together.
+ The matrix logarithm derived from the Rodrigues formula is the map 
+\begin_inset Formula $\log:U_{so\left(3\right)}\to U_{\mathfrak{so}\left(3\right)}$
+\end_inset
+
+ defined as 
+\begin_inset Formula 
+\begin{equation}
+\log\left(R\right)\coloneqq\begin{cases}
+I & R=I\\
+f_{1}\left(R\right)f_{2,1}\left(R,f_{1}\left(R\right)\right) & R\neq I
+\end{cases},\label{eq:rodriguezLog}
+\end{equation}
+
+\end_inset
+
+or more plainly written
+\begin_inset Formula 
+\[
+\log\left(R\right)\coloneqq\begin{cases}
+I & R=I\\
+f_{1}\left(R\right)\frac{\left(R-R^{\top}\right)}{2\sin\left(f_{1}\left(R\right)\right)} & R\neq I
+\end{cases}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Chart
+\end_layout
+
+\begin_layout Standard
+We finally have the everything we need to construct the chart 
+\begin_inset Formula $\left(U,\phi\right)$
+\end_inset
+
+ where the subset 
+\begin_inset Formula $U=U_{so\left(3\right)}$
+\end_inset
+
+, 
+\begin_inset Formula $\phi$
+\end_inset
+
+ is the matrix logarithm defined either by 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "sub:General-Logarithmic-Map"
+
+\end_inset
+
+ or 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:rodriguezLog"
+
+\end_inset
+
+, and 
+\begin_inset Formula $\phi^{-1}$
+\end_inset
+
+ is the matrix exponential defined either by 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "sub:General-Matrix-Exponential"
+
+\end_inset
+
+ or 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:RodriguesFormula"
+
+\end_inset
+
+.
+ Since the chart doesn't cover all of 
+\begin_inset Formula $SO\left(3\right)$
+\end_inset
+
+, we do not have an atlas.
+ We could construct other charts, but they are typically not needed.
+\end_layout
+
+\begin_layout Section
+SE
+\begin_inset Formula $\left(3\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+I will not go into a lot of detail with 
+\begin_inset Formula $SE\left(3\right)$
+\end_inset
+
+, but rather only present the matrix exponential and matrix logarithm.
+ For the interested reader, I refer you to 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Eade2013"
+
+\end_inset
+
+ for the derivation of each map.
+\end_layout
+
+\begin_layout Standard
+For 
+\begin_inset Formula $R\in SO\left(3\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $t\in\mathbb{R}^{3}$
+\end_inset
+
+, and element of 
+\begin_inset Formula $C\in SE\left(3\right)$
+\end_inset
+
+ is the homogenous matrix 
+\begin_inset Formula 
+\[
+C=\begin{bmatrix}R & t\\
+0_{1\times3} & 1
+\end{bmatrix},
+\]
+
+\end_inset
+
+whose inverse is 
+\begin_inset Formula 
+\[
+C^{-1}=\begin{bmatrix}R^{\top} & -R^{\top}t\\
+0_{1\times3} & 1
+\end{bmatrix}.
+\]
+
+\end_inset
+
+The set 
+\begin_inset Formula $SE\left(3\right)$
+\end_inset
+
+ forms a matrix Lie group with the operator being defined as matrix multiplicati
+on.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $SE\left(3\right)$
+\end_inset
+
+ has a corresponding Lie algebra 
+\begin_inset Formula $\mathfrak{se}\left(3\right)\coloneqq\left\{ \begin{bmatrix}X & \rho\\
+0 & 0
+\end{bmatrix}\in\mathbb{R}^{n\times n}|X^{\top}+X=0,\,\rho\in\mathbb{R}\right\} $
+\end_inset
+
+.
+ There is a chart 
+\begin_inset Formula $\left(U_{SE\left(3\right)},\phi\right)$
+\end_inset
+
+ with a diffeomorphic map 
+\begin_inset Formula $\phi:U_{SE\left(3\right)}\to U_{\mathfrak{se}\left(3\right)}$
+\end_inset
+
+ which we will discuss in this section.
+\end_layout
+
+\begin_layout Subsection
+Matrix Exponential
+\end_layout
+
+\begin_layout Standard
+The matrix exponential is the map 
+\begin_inset Formula $\exp:\mathfrak{se}\left(3\right)\to SE\left(3\right)$
+\end_inset
+
+ and is defined in 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "sub:General-Matrix-Exponential"
+
+\end_inset
+
+.
+ It has a simplified form that is similar to the Rodriguez formula and is
+ defined for 
+\begin_inset Formula $c=\begin{bmatrix}X & \rho\\
+0 & 0
+\end{bmatrix}\in\mathfrak{se}\left(3\right)$
+\end_inset
+
+ as 
+\begin_inset Formula 
+\[
+\exp\left(c\right)\coloneqq\begin{bmatrix}\exp\left(X\right) & B\left(X\right)\rho\\
+0 & 1
+\end{bmatrix},
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula 
+\[
+B\left(X\right)\coloneqq\begin{cases}
+I & X=0\\
+I+\left(\frac{1-\cos\left(\left\Vert X\right\Vert \right)}{\left\Vert X\right\Vert }\right)\frac{X}{\left\Vert X\right\Vert }+\left(1-\frac{\sin\left(\left\Vert X\right\Vert \right)}{\left\Vert X\right\Vert }\right)\frac{X^{2}}{\left\Vert X\right\Vert ^{2}} & X\neq0
+\end{cases},
+\]
+
+\end_inset
+
+and 
+\begin_inset Formula $\exp\left(X\right)$
+\end_inset
+
+ is already defined by 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:RodriguesFormula"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Matrix Logarithm
+\end_layout
+
+\begin_layout Standard
+The matrix logarithm is the map 
+\begin_inset Formula $\log:U_{SE\left(3\right)}\to U_{\mathfrak{se}\left(3\right)}$
+\end_inset
+
+ where 
+\begin_inset Formula $U_{SE\left(3\right)}\coloneqq\left\{ \begin{bmatrix}R & t\\
+0 & 1
+\end{bmatrix}\in SE\left(3\right)|R\in U_{SO\left(3\right)},\,t\in\mathbb{R}^{3}\right\} $
+\end_inset
+
+ and 
+\begin_inset Formula $U_{\mathfrak{se}\left(3\right)}\coloneqq\left\{ \begin{bmatrix}X & \rho\\
+0 & 0
+\end{bmatrix}\in\mathfrak{se}\left(3\right)|X\in U_{\mathfrak{so}\left(3\right)},\,\rho\in\mathbb{R}^{3}\right\} $
+\end_inset
+
+ and is defined in 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:principleLogarithm"
+
+\end_inset
+
+.
+ It has a simplified form defined for 
+\begin_inset Formula $C=\begin{bmatrix}R & t\\
+0 & 1
+\end{bmatrix}\in U_{SE\left(3\right)}$
+\end_inset
+
+ as 
+\begin_inset Formula 
+\[
+\log\left(C\right)\coloneqq\begin{bmatrix}\log\left(R\right) & B^{-1}\left(\log\left(R\right)\right)t\\
+0 & 0
+\end{bmatrix},
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula 
+\[
+B^{-1}\left(X\right)\coloneqq\begin{cases}
+I & X=0\\
+I-\frac{1}{2}X+\left(1-\frac{\left\Vert X\right\Vert }{2}\cot\left(\frac{\left\Vert X\right\Vert }{2}\right)\right)\frac{X^{2}}{\left\Vert X\right\Vert ^{2}} & X\neq0
+\end{cases},
+\]
+
+\end_inset
+
+and 
+\begin_inset Formula $\log\left(R\right)$
+\end_inset
+
+ is already defined by 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:rodriguezLog"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+bibfiles "/home/mark/Documents/mendeley/library"
+options "plain"
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

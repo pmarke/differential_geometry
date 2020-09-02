@@ -1,0 +1,207 @@
+classdef se3_dse3 < handle
+    properties
+        v;        % This is log(SE(3))
+        u;        % This is the tangent space of dse3
+    end
+    
+    methods
+        function obj = se3_dse3(v,u)
+            obj.v=v;
+            obj.u=u;
+        end
+        
+        function X = exp(obj)
+            
+            g = expm(obj.v);
+            w = se3_dse3.se3_dexp(obj.v,obj.u);
+            X = SE3_dse3(g,w);
+            
+        end
+        
+        % Performs scalar multiplication
+        function obj_new = times(obj,scalar)
+            
+            vn = obj.v*scalar;
+            un = obj.u*scalar;
+            obj_new = se3_dse3(vn,un);
+        end
+        
+         % Performs scalar right division
+        function obj_new = rdivide(obj,scalar)
+            
+            vn = obj.v/scalar;
+            un = obj.u/scalar;
+            obj_new = se3_dse3(vn,un);
+        end
+        
+                % Performs scalar left division
+        function obj_new = ldivide(obj,scalar)
+            
+            vn = obj.v/scalar;
+            un = obj.u/scalar;
+            obj_new = se3_dse3(vn,un);
+        end
+        
+        function obj_new = plus(obj1,obj2)
+            
+           vn = obj1.v+obj2.v;
+           un = obj1.u+obj2.u;
+           obj_new = se3_dse3(vn,un);
+        end
+        
+    end
+    
+    
+    
+    methods(Static)
+        
+        
+        
+%          % Calculates dexp_inv between two elements of se3_se3      
+%         function obj_new = dexp_inv(w1,w2)
+%             
+%             B = [1, -0.5, 1/6, 0, -1/30, 0, 1/42, 0, -1/30, 0, 5/66, 0, -691/2730,0,7/6,0,-3617/510]; % Bernouli numbers
+%             sa = 0;
+%             sb = 0;
+%             k = length(B);
+%             
+%             u = w1.v;
+%             delta = w1.u;
+%             v = w2.v;
+%             gamma = w2.u;
+%             
+%             a = 0;
+%             b = 0;
+% 
+%             for ii = 0:k-1
+%               
+%                 a = v;
+%                 b = delta - gamma;
+%                 for jj = 1:ii
+%                    a = u*a-a*u;
+%                    b = a'*delta-delta*a'-u'*b+b*u';
+%                 end
+%               
+%               sa = sa + B(ii+1)/factorial(ii)*a;  
+%               sb = sb + B(ii+1)/factorial(ii)*b*0;
+% 
+%             end
+%             
+% %             [v,u] = se3_dse3.se3_se3_wedge(s*w2_vee);
+%             obj_new = se3_dse3(sa,sb);
+%             
+%         end 
+        
+         % Calculates dexp_inv between two elements of se3_se3      
+        function obj_new = dexp_inv(w1,w2)
+            
+            B = [1, -0.5, 1/6, 0, -1/30, 0, 1/42, 0, -1/30, 0, 5/66, 0, -691/2730,0,7/6,0,-3617/510]; % Bernouli numbers
+            s = 0;
+            k = length(B);
+            ad = se3_dse3.se3_se3_m_ad(w1);
+            w2_vee = se3_dse3.se3_se3_vee(w2);
+
+            for ii = 0:k-1
+              s = s + B(ii+1)/factorial(ii)*ad^ii;  
+
+            end
+            
+            [v,u] = se3_dse3.se3_se3_wedge(s*w2_vee);
+            obj_new = se3_dse3(v,u);
+            
+        end 
+        
+        % Construct the matrix adjoint of se3_se3
+        % ad_vu is a 12x12 matrix
+        function ad_vu = se3_se3_m_ad(w)
+            
+            ad_v = SE3_dse3.se3_m_ad(w.v);
+            ad_u = SE3_dse3.se3_m_ad(w.u);
+            a = w.u(1:3,4);
+            bx = w.u(1:3,1:3);
+            ax = SE3_dse3.SO3_wedge(a);
+            ad_u = [zeros(3,3) ax; ax bx];
+            
+            ad_vu = [ad_v, zeros(6,6);ad_u -ad_v'];
+%             ad_vu = [ad_v, ad_u;zeros(6,6) ad_v];
+%             ad_vu = ad_vu';
+            
+        end
+        
+        % Construct the vee form of the lie algebra
+        % returns a 12x1 matrix
+        function vu_vee=se3_se3_vee(w)
+            v_vee = SE3_dse3.SE3_vee(w.v);
+            u_vee = SE3_dse3.SE3_vee(w.u);
+            vu_vee = [v_vee;u_vee];
+        end
+        
+        % Construc the wedge form of the lie algebra
+        % returns two 4x4 matrices
+        function [v,u] = se3_se3_wedge(vu_vee)
+            
+            v = SE3_dse3.SE3_wedge(vu_vee(1:6));
+            u = SE3_dse3.SE3_wedge(vu_vee(7:12));
+            
+        end
+        
+%         % Computes the lie bracket between two elements
+%         function obj_new = lie_bracket(w1,w2)
+%             
+%             v3 = w1.v*w2.v-w2.v*w1.v;
+%             u3 = -(w2.v*w1.u-w1.u*w2.v) + w1.v*w2.u-w2.u*w1.v;
+%             obj_new = se3_dse3(v3,u3);
+%            
+%             
+%             
+%         end
+        
+        % Computes dexp between two elements of se3
+        function u2 = se3_dexp(v,u)
+            
+            w = -v(1:3,1:3);
+            th = norm(w);
+            dexp_w = eye(3)-(cos(th)-1)/th^2*w+(th-sin(th))/th^3*w^2;
+            
+            p = -v(1:3,4);
+            px = SE3_dse3.SO3_wedge(p);
+            a_th = (cos(th)-1)/th^2;
+            b_th=(th-sin(th))/th^3;
+            c_th = -sin(th)/th^3+2*((1-cos(th))/th^4);
+            d_th = -2/th^4+3/th^5*sin(th)-1/th^4*cos(th);
+            q = (SE3_dse3.SO3_vee(w)'*p)*(-c_th*w+d_th*w^2);
+            B = (-a_th*px+b_th*(w*px+px*w)+q);
+            
+            dexp = [dexp_w zeros(3,3);...
+                        B, dexp_w];
+            u2 = SE3_dse3.SE3_wedge(dexp*SE3_dse3.SE3_vee(u));
+            
+            B = [1, -0.5, 1/6, 0, -1/30, 0, 1/42, 0, -1/30, 0, 5/66, 0, -691/2730,0,7/6]; % Bernouli numbers
+            s = 0;
+            k = 25;
+            
+            ad_v = SE3_dse3.se3_m_co_ad(v);
+            u_vee = SE3_dse3.SE3_vee(u);
+
+            for ii = 0:k-1
+% 
+%               ad = u;
+%               for jj=1:ii
+%                   ad = v*ad-ad*v;
+%               end
+% 
+%               s = s + (-1)^ii*ad/factorial(ii+1);  
+                s = s + ad_v^ii/factorial(ii+1);
+
+            end
+            
+            s = SE3_dse3.SE3_wedge(s*u_vee);
+%             norm(s-u2)
+            u2 = s;
+% %             
+        end
+
+        
+    end
+end
+
