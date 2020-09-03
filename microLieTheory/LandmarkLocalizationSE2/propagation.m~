@@ -1,7 +1,0 @@
-x_t = [1; 2; 0.1];
-xh_t = [0; 0; 0];
-
-x = Exp(x_t);
-xh = Exp(xh_t);
-
-Lgo(inv(xh)*x)
