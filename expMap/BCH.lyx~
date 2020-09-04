@@ -1275,7 +1275,7 @@ J_{l}\left(u\right)=\begin{bmatrix}W_{l}\left(\theta\right) & D_{l}\left(\theta\
 where 
 \begin_inset Formula 
 \[
-W_{l}\left(\theta\right)=\frac{\cos\left(\theta\right)-1}{\theta}\left[1\right]_{\times}+\frac{\sin\left(\theta\right)}{\theta}I
+W_{l}\left(\theta\right)=\frac{1-\cos\left(\theta\right)}{\theta}\left[1\right]_{\times}+\frac{\sin\left(\theta\right)}{\theta}I
 \]
 
 \end_inset
@@ -1362,11 +1362,25 @@ where
 
 .
  Let 
+\begin_inset Formula $u^{\vee}\in\mathbb{R}^{3}$
+\end_inset
+
+ where 
+\begin_inset Formula 
+\[
+u^{\vee}\begin{bmatrix}\rho\\
+\theta
+\end{bmatrix}.
+\]
+
+\end_inset
+
+Let 
 \begin_inset Formula 
 \begin{align*}
 W_{r}\left(\theta\right) & =\frac{\cos\left(\theta\right)-1}{\theta}\left[1\right]_{\times}+\frac{\sin\left(\theta\right)}{\theta}I\\
 D_{r}\left(\theta\right) & =\frac{1-\cos\left(\theta\right)}{\theta^{2}}\left[1\right]_{\times}+\frac{\theta-\sin\left(\theta\right)}{\theta^{2}}I\\
-W_{l}\left(\theta\right) & =\frac{\cos\left(\theta\right)-1}{\theta}\left[1\right]_{\times}+\frac{\sin\left(\theta\right)}{\theta}I\\
+W_{l}\left(\theta\right) & =\frac{1-\cos\left(\theta\right)}{\theta}\left[1\right]_{\times}+\frac{\sin\left(\theta\right)}{\theta}I\\
 D_{l}\left(\theta\right) & =\frac{\cos\left(\theta\right)-1}{\theta^{2}}\left[1\right]_{\times}+\frac{\theta-\sin\left(\theta\right)}{\theta^{2}}I,
 \end{align*}
 

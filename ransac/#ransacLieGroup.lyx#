@@ -3183,10 +3183,6 @@ Let
 \begin_inset Formula $\bar{p}\left(x_{m}\right)$
 \end_inset
 
- denote the probability of 
-\begin_inset Formula $x_{m}$
-\end_inset
-
  after state propagation.
  It is calculated as 
 \begin_inset Formula 

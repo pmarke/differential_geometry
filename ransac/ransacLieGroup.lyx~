@@ -2863,12 +2863,45 @@ key "Hall2003"
 
 \begin_layout Standard
 As previously stated, we will present our research using a discrete, linear,
- time-invariant, constant velocity model of the form
+ time-invariant, constant velocity model of the form 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{subequations}
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "eq:system_model"
+
+\end_inset
+
+
 \begin_inset Formula 
-\begin{align*}
+\begin{align}
 g_{k} & =g_{k^{-}}\oplus\left(\delta_{k}u+\delta_{k}w_{k}\right)\\
 y_{k} & =h\left(x_{k},v_{k}\right)
-\end{align*}
+\end{align}
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{subequations}
+\end_layout
 
 \end_inset
 
@@ -2893,11 +2926,15 @@ where
 \end_inset
 
  is the constant velocity of the system, 
-\begin_inset Formula $y_{k}$
+\begin_inset Formula $y_{k}\in N$
 \end_inset
 
- is the output, 
-\begin_inset Formula $h$
+ is the output and 
+\begin_inset Formula $N$
+\end_inset
+
+ is a Lie group, 
+\begin_inset Formula $h:G\to M$
 \end_inset
 
  is the observation model, 
@@ -2918,6 +2955,227 @@ on with covariance
 \end_inset
 
 ).
+ Note that the measurement 
+\begin_inset Formula $y_{k}$
+\end_inset
+
+ resides in a measurement space which is not necessarily the Lie group nor
+ the Lie algebra.
+ 
+\end_layout
+
+\begin_layout Standard
+The state 
+\begin_inset Formula $x=\left(g,u\right)$
+\end_inset
+
+ is a new Lie group generated from the Cartesian product such that 
+\begin_inset Formula $x\in G\times\mathfrak{g}$
+\end_inset
+
+ and the group operation is inherited.
+ The Lie algebra of 
+\begin_inset Formula $G\times\mathfrak{g}$
+\end_inset
+
+ is simply 
+\begin_inset Formula $\mathfrak{g}\times\mathfrak{g}$
+\end_inset
+
+ which is isomorphic to 
+\begin_inset Formula $\mathbb{R}^{m}$
+\end_inset
+
+ for some 
+\begin_inset Formula $m$
+\end_inset
+
+ which we will denote as 
+\begin_inset Formula $\bar{V}$
+\end_inset
+
+.
+ All of the operations previously defined are simply inherited.
+ For example, let 
+\begin_inset Formula $x\in G\times\mathfrak{g}$
+\end_inset
+
+ and 
+\begin_inset Formula $v\in\bar{V}$
+\end_inset
+
+, then 
+\begin_inset Formula 
+\begin{align*}
+x\oplus v & =\left(g,u\right)\oplus\left(a,b\right)\\
+ & =\left(g\text{Exp}\left(a\right),u+b\right),
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $g\in G$
+\end_inset
+
+, and 
+\begin_inset Formula $u,a,b\in V$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Probability
+\end_layout
+
+\begin_layout Standard
+Given our model defined in 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:system_model"
+
+\end_inset
+
+ we need to know how to calculate certain probabilities that will be useful
+ when propagating the system forward in time and updating the state estimate
+ when more measurements are given.
+ We follow the convention, notation and terminology from 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Reid2001,Reid2001a,Thrun2006"
+
+\end_inset
+
+ adapted for the Lie group setting.
+\end_layout
+
+\begin_layout Standard
+We denote the state estimate at time 
+\begin_inset Formula $m$
+\end_inset
+
+ as 
+\begin_inset Formula $\hat{x}_{m}\in G\times\mathfrak{g}$
+\end_inset
+
+ and the actual state at time 
+\begin_inset Formula $m$
+\end_inset
+
+ as 
+\begin_inset Formula $x_{m}\in G\times\mathfrak{g}$
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $\delta x_{m}\in V\times V$
+\end_inset
+
+ denote a local perturbation around 
+\begin_inset Formula $\hat{x}_{m}$
+\end_inset
+
+ that is a zero-mean, Gaussian, random variable with error covariance 
+\begin_inset Formula $P_{m}$
+\end_inset
+
+ such that 
+\begin_inset Formula 
+\[
+x_{m}=\hat{x}_{m}\oplus\delta x_{m}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We denote the prior distribution, or the belief distribution as 
+\begin_inset Formula $p\left(x_{m}\right)$
+\end_inset
+
+ and define it as 
+\begin_inset Formula 
+\begin{align*}
+p\left(x_{m}\right) & =\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus\hat{x}_{m}\right)^{\top}P_{m}^{-1}\left(x_{m}\ominus\hat{x}_{m}\right)\right)\\
+ & =\eta\exp\left(-\frac{1}{2}\delta x_{m}^{\top}P_{m}^{-1}\delta x\right),
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $\eta$
+\end_inset
+
+ is a normalizing coefficient corresponding to the Gaussian distribution.
+ We will overload 
+\begin_inset Formula $\eta$
+\end_inset
+
+ to define any normalizing coefficient.
+ We denote the state transition probability as 
+\begin_inset Formula $p\left(x_{m}\mid x_{m^{-}}\right)$
+\end_inset
+
+ and define it as 
+\begin_inset Formula 
+\[
+p\left(x_{m}\mid x_{m^{-}}\right)=\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus f\left(x_{m^{-}},w_{k}\right)\right)^{\top}Q^{-1}\left(x_{m}\ominus f\left(x_{m^{-}},w_{k}\right)\right)\right),
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $Q^{-1}$
+\end_inset
+
+ is positive semi-definite.
+ It is often useful to approximate the probability by using the Taylor series
+ expansion of 
+\begin_inset Formula $x_{m}\ominus f\left(x_{m^{-}}\right)$
+\end_inset
+
+ treating 
+\begin_inset Formula $\delta k_{m^{-}}$
+\end_inset
+
+ and 
+\begin_inset Formula $w_{k}$
+\end_inset
+
+ as perturbations.
+ Doing so, yields
+\begin_inset Formula 
+\[
+p\left(x_{m}\mid x_{m^{-}}\right)\approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus f\left(\hat{x}_{m^{-}}\right)+F\left(x_{m^{-}}\right)\delta x_{m^{-}}+G\left(\hat{x}_{m^{-}}\right)\delta_{m}w_{m}\right)^{\top}Q^{-1}\left(x_{m}\ominus f\left(\hat{x}_{m^{-}}\right)+F\left(x_{m^{-}}\right)\delta x_{m^{-}}+G\left(\hat{x}_{m^{-}}\right)\delta_{m}w_{m}\right)\right),
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula 
+\begin{align*}
+F\left(\hat{x}_{m^{-}}\right) & =\left.\frac{\partial x_{m}\ominus f\left(x_{m^{-}}\right)}{\partial x_{m^{-}}}\right|_{\hat{x}_{m^{-}}}\\
+ & =\begin{bmatrix}\mathbf{Ad}_{\text{Exp}\left(\delta_{m}\hat{u}_{m^{-}}\right)^{-1}}\\
+J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)
+\end{bmatrix},
+\end{align*}
+
+\end_inset
+
+and
+\begin_inset Formula 
+\begin{align*}
+G\left(\hat{x}_{m^{-}}\right) & =\left.\frac{\partial x_{m}\ominus f\left(x_{m^{-}}\right)}{\partial x_{m^{-}}}\right|_{\hat{x}_{m}^{-}}\\
+ & =\begin{bmatrix}J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)\\
+0
+\end{bmatrix}.
+\end{align*}
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -2938,6 +3196,179 @@ Special Orthogonal Group
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+Suppose that we can measure the pose of the system.
+ That is 
+\begin_inset Formula 
+\[
+y_{k}=x_{k}\oplus v_{k}.
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $y_{k}$
+\end_inset
+
+ is the output, 
+\begin_inset Formula $x_{k}$
+\end_inset
+
+ is the state and 
+\begin_inset Formula $v_{k}$
+\end_inset
+
+ is measurement noise.
+ The probability of the output condition on the state is denoted 
+\begin_inset Formula $p\left(y\mid x\right)$
+\end_inset
+
+ and is defined as 
+\begin_inset Formula 
+\[
+p\left(y\mid x\right)=\eta\exp\left(-\frac{1}{2}\left(y\ominus x\right)^{\top}R^{-1}\left(y\ominus x\right)\right).
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Recall that 
+\begin_inset Formula $x=\hat{x}\exp\left(\delta x\right)$
+\end_inset
+
+.
+ We do not know 
+\begin_inset Formula $x$
+\end_inset
+
+ exactly but we have our estimate 
+\begin_inset Formula $\hat{x}$
+\end_inset
+
+.
+ Thus we want to estimate 
+\begin_inset Formula $\left(y\ominus x\right)$
+\end_inset
+
+ using the Taylor series expansion around 
+\begin_inset Formula $\hat{x}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+We can approximate the probability by computing the Taylor series of 
+\begin_inset Formula $\left(y\ominus x\right)$
+\end_inset
+
+.
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial y\ominus x}{\partial x} & =\frac{\partial\log\left(x^{-1}y\right)}{\partial x}\\
+ & =J_{r}^{-1}\left(\log\left(x^{-1}y\right)\right)\left(\mathbf{Ad}_{y}^{-1}\right)\left(-\mathbf{Ad}_{x}\right)\\
+ & =-J_{r}^{-1}\left(\log\left(x^{-1}y\right)\right)\mathbf{Ad}y^{-1}x\\
+ & =-J_{r}^{-1}\left(\log\left(x^{-1}y\right)\mathbf{Ad}_{\left(xy\right)^{-1}}\right)\\
+ & =-J_{l}^{-1}\left(\log\left(x^{-1}y\right)\right).
+\end{align*}
+
+\end_inset
+
+Using a first order Taylor series expansion, we can approximate 
+\begin_inset Formula $p\left(y\mid x\right)$
+\end_inset
+
+ as 
+\begin_inset Formula 
+\[
+p\left(y\mid x\right)\approx\eta\exp\left(-\frac{1}{2}\left(y\ominus x-J_{l}^{-1}\left(y\ominus x\right)\delta x\right)^{\top}R^{-1}\left(y\ominus x-J_{l}^{-1}\left(y\ominus x\right)\delta x\right)\right).
+\]
+
+\end_inset
+
+Our objective is to calculate the posterior 
+\begin_inset Formula $p\left(x\mid y\right)$
+\end_inset
+
+.
+ Using Bayes rule we get 
+\begin_inset Formula 
+\[
+p\left(x\mid y\right)=\frac{p\left(y\mid x\right)p\left(x\right)}{p\left(y\right)}.
+\]
+
+\end_inset
+
+Since we are trying to maximize the posterior probability we can write 
+\begin_inset Formula $p\left(x\mid y\right)$
+\end_inset
+
+ as 
+\begin_inset Formula 
+\[
+p\left(x\mid y\right)=\eta p\left(y\mid x\right)p\left(x\right).
+\]
+
+\end_inset
+
+Note that 
+\begin_inset Formula 
+\begin{align*}
+p\left(y\mid x\right)p\left(x\right) & \approx\eta\exp\left(-\frac{1}{2}\left(y\ominus x-J_{l}^{-1}\left(y\ominus x\right)\delta x\right)^{\top}R^{-1}\left(y\ominus x-J_{l}^{-1}\left(y\ominus x\right)\delta x\right)\right)\exp\left(-\frac{1}{2}\delta x^{\top}P^{-1}\delta x\right)\\
+ & =\eta\exp\left(-\frac{1}{2}\left(y\ominus x-J_{l}^{-1}\left(y\ominus x\right)\delta x\right)^{\top}R^{-1}\left(y\ominus x-J_{l}^{-1}\left(y\ominus x\right)\delta x\right)-\frac{1}{2}\delta x^{\top}P^{-1}\delta x\right).
+\end{align*}
+
+\end_inset
+
+We are interested in maximizing the posterior distribution.
+ To do this we 
+\begin_inset Formula 
+\[
+\frac{\partial L}{\partial\delta x}=e^{\top}R^{-1}J_{l}^{-1}\left(e\right)+\delta x^{\top}\left(J_{l}^{-1}\left(e\right)\right)^{\top}R^{-1}J_{l}^{-1}\left(e\right)+\delta x^{\top}P^{-1}.
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $e=y\ominus x$
+\end_inset
+
+.
+ Setting it to zero and solving for 
+\begin_inset Formula $\delta x$
+\end_inset
+
+ we get 
+\begin_inset Formula 
+\[
+\delta x=\left(\left(J_{l}^{-1}\left(e\right)\right)^{\top}R^{-1}J_{l}^{-1}\left(e\right)+P^{-1}\right)\left(J_{l}^{-1}\left(e\right)\right)^{\top}R^{-1}e.
+\]
+
+\end_inset
+
+Which can be written as 
+\begin_inset Formula 
+\[
+\delta x=Ke
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula 
+\begin{align*}
+S & =\left(J_{l}^{-1}\left(e\right)\right)P\left(J_{l}^{-1}\left(e\right)\right)^{\top}+R\\
+K & =P\left(J_{l}^{-1}\left(e\right)\right)^{\top}S^{-1}.
+\end{align*}
+
+\end_inset
+
+ 
 \end_layout
 
 \begin_layout --Separator--

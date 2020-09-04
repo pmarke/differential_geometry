@@ -1275,7 +1275,7 @@ J_{l}\left(u\right)=\begin{bmatrix}W_{l}\left(\theta\right) & D_{l}\left(\theta\
 where 
 \begin_inset Formula 
 \[
-W_{l}\left(\theta\right)=\frac{\cos\left(\theta\right)-1}{\theta}\left[1\right]_{\times}+\frac{\sin\left(\theta\right)}{\theta}I
+W_{l}\left(\theta\right)=\frac{1-\cos\left(\theta\right)}{\theta}\left[1\right]_{\times}+\frac{\sin\left(\theta\right)}{\theta}I
 \]
 
 \end_inset
@@ -1362,11 +1362,15 @@ where
 
 .
  Let 
+\begin_inset Formula $u^{\vee}\in\mathff$
+\end_inset
+
+Let 
 \begin_inset Formula 
 \begin{align*}
 W_{r}\left(\theta\right) & =\frac{\cos\left(\theta\right)-1}{\theta}\left[1\right]_{\times}+\frac{\sin\left(\theta\right)}{\theta}I\\
 D_{r}\left(\theta\right) & =\frac{1-\cos\left(\theta\right)}{\theta^{2}}\left[1\right]_{\times}+\frac{\theta-\sin\left(\theta\right)}{\theta^{2}}I\\
-W_{l}\left(\theta\right) & =\frac{\cos\left(\theta\right)-1}{\theta}\left[1\right]_{\times}+\frac{\sin\left(\theta\right)}{\theta}I\\
+W_{l}\left(\theta\right) & =\frac{1-\cos\left(\theta\right)}{\theta}\left[1\right]_{\times}+\frac{\sin\left(\theta\right)}{\theta}I\\
 D_{l}\left(\theta\right) & =\frac{\cos\left(\theta\right)-1}{\theta^{2}}\left[1\right]_{\times}+\frac{\theta-\sin\left(\theta\right)}{\theta^{2}}I,
 \end{align*}
 
@@ -1381,12 +1385,47 @@ J_{r}\left(u\right) & =\begin{bmatrix}W\left(\theta\right) & D\left(\theta\right
 J_{l}\left(u\right) & =\begin{bmatrix}W_{l}\left(\theta\right) & D_{l}\left(\theta\right)\rho\\
 0 & 1
 \end{bmatrix}\\
-J_{r}^{-1}\left(u\right)
+J_{r}^{-1}\left(u\right) & =\begin{bmatrix}W_{r}^{-1}\left(\theta\right) & -W_{r}^{-1}\left(\theta\right)D_{r}\left(\theta\right)\rho\\
+0 & 1
+\end{bmatrix}\\
+J_{l}^{-1}\left(u\right) & =\begin{bmatrix}W_{l}^{-1}\left(\theta\right) & -W_{l}^{-1}\left(\theta\right)D_{l}\left(\theta\right)\rho\\
+0 & 1
+\end{bmatrix}.
 \end{align*}
 
 \end_inset
 
- 
+If 
+\begin_inset Formula $\theta\approx0$
+\end_inset
+
+, then the Jacobians and their inverses can be simplified to 
+\begin_inset Formula 
+\[
+J_{r}\left(u\right)=J_{l}\left(u\right)=J_{r}^{-1}\left(u\right)=J_{l}^{-1}\left(u\right)=0.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+To use this form of the Jacobian, remember to apply the wedge and vee operator
+ appropriately.
+ Given 
+\begin_inset Formula $u,v\in\mathfrak{se}\left(2\right)$
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\left(J_{r}\left(u\right)v^{\vee}\right)^{\wedge}\in\mathfrak{se}\left(2\right).
+\]
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section

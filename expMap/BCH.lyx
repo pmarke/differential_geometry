@@ -1362,6 +1362,20 @@ where
 
 .
  Let 
+\begin_inset Formula $u^{\vee}\in\mathbb{R}^{3}$
+\end_inset
+
+ where 
+\begin_inset Formula 
+\[
+u^{\vee}\begin{bmatrix}\rho\\
+\theta
+\end{bmatrix}.
+\]
+
+\end_inset
+
+Lastly let 
 \begin_inset Formula 
 \begin{align*}
 W_{r}\left(\theta\right) & =\frac{\cos\left(\theta\right)-1}{\theta}\left[1\right]_{\times}+\frac{\sin\left(\theta\right)}{\theta}I\\

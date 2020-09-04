@@ -14,7 +14,7 @@ h = expm(wedge(rand(3,1)));
 
 
 
-for ii = 1:90
+for ii = 1:150
    
     
     [P,g,u] = propagate(P,g,u,Q,dt);
@@ -28,7 +28,30 @@ end
 
 
 
+%% derivative test
 
+
+% dt = 0.1;
+% delta = [dt;0;0];
+% gh = g*expm(wedge(delta))
+% 
+% (vee(logm(inv(gh)*h)) - vee(logm(inv(g)*h)) )/dt
+% 
+% 
+% delta = [0;dt;0];
+% gh = g*expm(wedge(delta))
+% 
+% (vee(logm(inv(gh)*h)) - vee(logm(inv(g)*h)) )/dt
+
+% dt = 0.01;
+% delta = [dt;-dt;2*dt];
+% 
+% gh = g*expm(wedge(delta));
+% vee(logm(inv(gh)*h))
+% 
+% vee(logm(inv(g)*h)) -Jl_inv(vee(logm(inv(g)*h)))*delta
+
+% -Jl_inv(vee(logm(inv(g)*h)))
 
 
 function [P,g,u] = propagate(P,g,u,Q,dt)
@@ -51,7 +74,7 @@ function [P,g,u] = update(P,g,u,z,R)
 
 e = vee(logm(inv(g)*z));
 
-H = [-Jl_inv(vee(logm(g))), zeros(3,3)];
+H = [Jl_inv(vee(logm(inv(g)*z))), zeros(3,3)];
 
 Z = H*P*H' + R;
 K = P*H'*inv(Z);
@@ -59,9 +82,10 @@ K = P*H'*inv(Z);
 delta = K*e
 
 g = g*expm(wedge(delta(1:3)));
-u = u + delta(4:6);
+u = u + 10*delta(4:6);
 P;
 P = P-K*Z*K';
+% P = (eye(6)-K*H)*P;
 
 end
 
