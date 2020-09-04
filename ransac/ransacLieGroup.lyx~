@@ -2863,7 +2863,52 @@ key "Hall2003"
 
 \begin_layout Standard
 As previously stated, we will present our research using a discrete, linear,
- time-invariant, constant velocity model of the form 
+ time-invariant, constant velocity model.
+ The state of the system at time 
+\begin_inset Formula $k$
+\end_inset
+
+ will be denoted as 
+\begin_inset Formula $x_{k}=\left(g_{k},u\right)\in G\times V$
+\end_inset
+
+ where 
+\begin_inset Formula $g_{k}$
+\end_inset
+
+ is the pose and 
+\begin_inset Formula $u$
+\end_inset
+
+ is the velocity.
+ The Cartesian product 
+\begin_inset Formula $G\times V$
+\end_inset
+
+ forms a Lie group with a corresponding Lie algebra 
+\begin_inset Formula $\mathfrak{g}\times V$
+\end_inset
+
+.
+ Note that 
+\begin_inset Formula $\mathfrak{g}\times V\cong V\times V\cong\mathbb{R}^{2n}$
+\end_inset
+
+.
+ To avoid confusion, let 
+\begin_inset Formula $G\times V\triangleq\bar{G}$
+\end_inset
+
+, 
+\begin_inset Formula $\mathfrak{g}\times V\triangleq\bar{\mathfrak{g}}$
+\end_inset
+
+, and 
+\begin_inset Formula $\mathbb{R}^{2n}\triangleq\bar{V}$
+\end_inset
+
+.
+ The system model is defined as 
 \begin_inset ERT
 status open
 
@@ -2886,7 +2931,7 @@ name "eq:system_model"
 
 \begin_inset Formula 
 \begin{align}
-g_{k} & =g_{k^{-}}\oplus\left(\delta_{k}u+\delta_{k}w_{k}\right)\\
+x_{k} & =f\left(x_{k^{-}},w_{k}\right)\\
 y_{k} & =h\left(x_{k},v_{k}\right)
 \end{align}
 
@@ -2906,7 +2951,7 @@ end{subequations}
 \end_inset
 
 where 
-\begin_inset Formula $x_{k}=\left(g_{k},u\right)$
+\begin_inset Formula $x_{k}$
 \end_inset
 
  is the state of the system at time 
@@ -2914,26 +2959,26 @@ where
 \end_inset
 
 , 
-\begin_inset Formula $g_{k}\in G$
+\begin_inset Formula $f$
 \end_inset
 
- is the pose of the system at time 
-\begin_inset Formula $k$
+ is the state transition model defined as
+\begin_inset Formula 
+\[
+f\left(x_{k^{-}},w_{k}\right)=\left(x_{k^{-}}\oplus\left(\delta_{k}u+\delta_{k}w_{k}\right),u\right),
+\]
+
 \end_inset
 
-, 
-\begin_inset Formula $u^{\wedge}\in\mathfrak{g}$
-\end_inset
-
- is the constant velocity of the system, 
+ 
 \begin_inset Formula $y_{k}\in N$
 \end_inset
 
- is the output and 
+ is the output with 
 \begin_inset Formula $N$
 \end_inset
 
- is a Lie group, 
+ being a Lie group, 
 \begin_inset Formula $h:G\to M$
 \end_inset
 
@@ -2959,69 +3004,7 @@ on with covariance
 \begin_inset Formula $y_{k}$
 \end_inset
 
- resides in a measurement space which is not necessarily the Lie group nor
- the Lie algebra.
- 
-\end_layout
-
-\begin_layout Standard
-The state 
-\begin_inset Formula $x=\left(g,u\right)$
-\end_inset
-
- is a new Lie group generated from the Cartesian product such that 
-\begin_inset Formula $x\in G\times\mathfrak{g}$
-\end_inset
-
- and the group operation is inherited.
- The Lie algebra of 
-\begin_inset Formula $G\times\mathfrak{g}$
-\end_inset
-
- is simply 
-\begin_inset Formula $\mathfrak{g}\times\mathfrak{g}$
-\end_inset
-
- which is isomorphic to 
-\begin_inset Formula $\mathbb{R}^{m}$
-\end_inset
-
- for some 
-\begin_inset Formula $m$
-\end_inset
-
- which we will denote as 
-\begin_inset Formula $\bar{V}$
-\end_inset
-
-.
- All of the operations previously defined are simply inherited.
- For example, let 
-\begin_inset Formula $x\in G\times\mathfrak{g}$
-\end_inset
-
- and 
-\begin_inset Formula $v\in\bar{V}$
-\end_inset
-
-, then 
-\begin_inset Formula 
-\begin{align*}
-x\oplus v & =\left(g,u\right)\oplus\left(a,b\right)\\
- & =\left(g\text{Exp}\left(a\right),u+b\right),
-\end{align*}
-
-\end_inset
-
-where 
-\begin_inset Formula $g\in G$
-\end_inset
-
-, and 
-\begin_inset Formula $u,a,b\in V$
-\end_inset
-
-.
+ resides in a measurement space which is not necessarily the same Lie group.
 \end_layout
 
 \begin_layout Subsection
@@ -3047,6 +3030,11 @@ key "Reid2001,Reid2001a,Thrun2006"
 \end_inset
 
  adapted for the Lie group setting.
+ We refer to the propagation step or the prediction step as the step in
+ which the state is propagated in time, and we refer to the update step
+ as the step in which measurements are incorporated into the state estimate
+ in order to enhance the state estimate.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -3055,7 +3043,7 @@ We denote the state estimate at time
 \end_inset
 
  as 
-\begin_inset Formula $\hat{x}_{m}\in G\times\mathfrak{g}$
+\begin_inset Formula $\hat{x}_{m}=\left(\hat{g}_{m},\hat{u}_{m}\right)\in G\times V$
 \end_inset
 
  and the actual state at time 
@@ -3063,16 +3051,16 @@ We denote the state estimate at time
 \end_inset
 
  as 
-\begin_inset Formula $x_{m}\in G\times\mathfrak{g}$
+\begin_inset Formula $x_{m}\in G\times V$
 \end_inset
 
 .
  Let 
-\begin_inset Formula $\delta x_{m}\in V\times V$
+\begin_inset Formula $\delta x_{m}\in\bar{V}$
 \end_inset
 
  denote a local perturbation around 
-\begin_inset Formula $\hat{x}_{m}$
+\begin_inset Formula $\mu_{m}$
 \end_inset
 
  that is a zero-mean, Gaussian, random variable with error covariance 
@@ -3130,14 +3118,14 @@ where
 \begin_inset Formula $Q^{-1}$
 \end_inset
 
- is positive semi-definite.
+ is positive, semi-definite.
  It is often useful to approximate the probability by using the Taylor series
  expansion of 
 \begin_inset Formula $x_{m}\ominus f\left(x_{m^{-}}\right)$
 \end_inset
 
  treating 
-\begin_inset Formula $\delta k_{m^{-}}$
+\begin_inset Formula $\delta x_{m^{-}}$
 \end_inset
 
  and 
@@ -3148,7 +3136,7 @@ where
  Doing so, yields
 \begin_inset Formula 
 \[
-p\left(x_{m}\mid x_{m^{-}}\right)\approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus f\left(\hat{x}_{m^{-}}\right)+F\left(x_{m^{-}}\right)\delta x_{m^{-}}+G\left(\hat{x}_{m^{-}}\right)\delta_{m}w_{m}\right)^{\top}Q^{-1}\left(x_{m}\ominus f\left(\hat{x}_{m^{-}}\right)+F\left(x_{m^{-}}\right)\delta x_{m^{-}}+G\left(\hat{x}_{m^{-}}\right)\delta_{m}w_{m}\right)\right),
+p\left(x_{m}\mid x_{m^{-}}\right)\approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus f\left(\hat{x}_{m^{-}}\right)+F\left(\hat{x}_{m^{-}}\right)\delta x_{m^{-}}+G\left(\hat{x}_{m^{-}}\right)\delta_{m}w_{m}\right)^{\top}Q^{-1}\left(x_{m}\ominus f\left(\hat{x}_{m^{-}}\right)+F\left(\hat{x}_{m^{-}}\right)\delta x_{m^{-}}+G\left(\hat{x}_{m^{-}}\right)\delta_{m}w_{m}\right)\right),
 \]
 
 \end_inset
@@ -3156,7 +3144,7 @@ p\left(x_{m}\mid x_{m^{-}}\right)\approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\om
 where 
 \begin_inset Formula 
 \begin{align*}
-F\left(\hat{x}_{m^{-}}\right) & =\left.\frac{\partial x_{m}\ominus f\left(x_{m^{-}}\right)}{\partial x_{m^{-}}}\right|_{\hat{x}_{m^{-}}}\\
+F\left(\mu_{m^{-}}\right) & =\left.\frac{\partial x_{m}\ominus f\left(x_{m^{-}}\right)}{\partial x_{m^{-}}}\right|_{\hat{x}_{m^{-}}}\\
  & =\begin{bmatrix}\mathbf{Ad}_{\text{Exp}\left(\delta_{m}\hat{u}_{m^{-}}\right)^{-1}}\\
 J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)
 \end{bmatrix},
@@ -3173,6 +3161,40 @@ G\left(\hat{x}_{m^{-}}\right) & =\left.\frac{\partial x_{m}\ominus f\left(x_{m^{
 \end{bmatrix}.
 \end{align*}
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $\bar{p}\left(x_{m}\right)$
+\end_inset
+
+ denote the probability of 
+\begin_inset Formula $x_{m}$
+\end_inset
+
+ after state propagation.
+ It is calculated as 
+\begin_inset Formula 
+\[
+\bar{p}\left(x_{m}\right)=\int p\left(x_{m}\mid x_{m^{-}}\right)p\left(x_{m^{-}}\right)dx_{m^{-}}.
+\]
+
+\end_inset
+
+By using the Taylor series expansion to estimate 
+\begin_inset Formula $p\left(x_{m}\mid x_{m^{-}}\right)$
+\end_inset
+
+, we can approximate 
+\begin_inset Formula $\bar{p}\left(x_{m}\right)$
+\end_inset
+
+ using a Gaussian distribution which is parametrized by the new state estimate
+ 
+\begin_inset Formula $\hat{\bar{x}}_{m}$
 \end_inset
 
 
