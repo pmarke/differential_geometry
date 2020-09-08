@@ -788,6 +788,483 @@ Let
 \end_layout
 
 \begin_layout Section
+Lie Theory Review
+\end_layout
+
+\begin_layout Standard
+The objective of this section is to provide a review of the important concepts
+ of Lie theory that we will use along with the notation.
+ We assume that the reader is familiar with Lie group and Lie algebra theory.
+ For those unfamiliar with this material, we refer the interested reader
+ primarily to 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Sola2018"
+
+\end_inset
+
+.
+ Solá offers a very gentle introduction to Lie theory that covers the majority
+ of information needed to understand this paper.
+ We also follow much of the notation prescribed by Solá and Hertzberg who
+ proposed the box plus and minus notation in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Hertzberg2013"
+
+\end_inset
+
+.
+ For those who are interested in a more rigorous treatment of Lie theory,
+ we refer the reader to 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Barfoot2019,Stillwell2008,Hall2003,Bullo2005a,Lee2013,Abraham1998"
+
+\end_inset
+
+.
+ In this document we will focus on targets with a discrete system model
+ and constant velocity, this is merely to simplify the presentation of the
+ material.
+ With no loss in generality, everything we present can be extended to targets
+ with a continuous system model and constant acceleration by using a semidirect
+ product group formed from a Lie group and its Lie algebra to form a new
+ Lie group and numerical integration on the manifold.
+ Engo in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Engo2003"
+
+\end_inset
+
+ provides a good overview of the semidirect product group formed from a
+ Lie group and its Lie algebra in addition to numerical integration on the
+ manifold using the Runge-Kutta-Munthe-Kaas method originally developed
+ in the series of papers 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Munthe-Kaas1995,Munthe-Kaas1998,Munthe-Kaas1999"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $G$
+\end_inset
+
+ denote a Lie group and 
+\begin_inset Formula $\mathfrak{g}$
+\end_inset
+
+ denote it's corresponding Lie algebra.
+ The exponential map maps elements of the Lie algebra to an element of the
+ Lie group, and the logarithmic map is the inverse of the exponential map
+ and are defined as
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{subequations}
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Formula 
+\begin{align*}
+\exp:\mathfrak{g} & \to G\\
+\log:G & \to\mathfrak{g}.
+\end{align*}
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{subequations}
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+Depending on the Lie group, these functions may only be defined locally
+ around the identity.
+ 
+\end_layout
+
+\begin_layout Standard
+The Lie algebra is isomorphic to the Euclidean space 
+\begin_inset Formula $\mathbb{R}^{n}$
+\end_inset
+
+ where 
+\begin_inset Formula $n$
+\end_inset
+
+ is the dimension of the Lie algebra.
+ We will denote this Euclidean space as 
+\begin_inset Formula $E$
+\end_inset
+
+.
+ The Wedge function maps an element from the Euclidean space to the Lie
+ algebra, and the Vee function is the inverse function which are defined
+ as
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{subequations}
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Formula 
+\begin{align*}
+\cdot^{\wedge}:E\to\mathfrak{g} & \quad\left(v\right)\mapsto v^{\wedge}\\
+\cdot^{\vee}:\mathfrak{g}\to V & \quad\left(v^{\wedge}\right)^{\vee}\mapsto v.
+\end{align*}
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{subequations}
+\end_layout
+
+\end_inset
+
+.
+ To distinguish between an element of a Lie algebra and an element of the
+ corresponding Euclidean space, the element of the Lie group will always
+ be accompanied by the Vee.
+ For example, let 
+\begin_inset Formula $v\in E$
+\end_inset
+
+ then we denote the corresponding element in the Lie algebra as 
+\begin_inset Formula $v^{\wedge}\in\mathfrak{g}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+When working with the Euclidean space, we define additional the exponential
+ and logarithmic maps as 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{subequations}
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Formula 
+\begin{align*}
+\text{Exp}:E\to G & \quad\left(v\right)\mapsto\exp\left(v^{\wedge}\right)\\
+\text{Log}:G\to V & \quad\left(g\right)\mapsto\log\left(g\right)^{\vee}.
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{subequations}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Other functions of importance are the box-plus/minus and the o-plus/minus
+ defined as 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{subequations}
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Formula 
+\begin{align*}
+\boxplus:G\times\mathfrak{g}\to G & \quad\left(g,v^{\wedge}\right)\mapsto g\bullet\exp\left(v^{\wedge}\right)\\
+\boxminus:G\times G\to\mathfrak{g} & \quad\left(g,h\right)\mapsto\log\left(h^{-1}\bullet g\right)\\
+\oplus:G\times E\to G & \quad\left(g,v\right)\mapsto g\bullet\text{Exp}\left(v\right)\\
+\ominus:G\times G\to E & \quad\left(g,h\right)\mapsto\text{Log}\left(h^{-1}\bullet g\right).
+\end{align*}
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{subequations}
+\end_layout
+
+\end_inset
+
+ where 
+\begin_inset Formula $\bullet$
+\end_inset
+
+ represents the group operator which we will omit in the future, and 
+\begin_inset Formula $h^{-1}$
+\end_inset
+
+ is the inverse element of 
+\begin_inset Formula $h$
+\end_inset
+
+.
+ We have based the definition of these function on left trivializations
+ (using vector fields that are left invariant).
+ They could also be defined on right trivializations (using vector fields
+ that are right invariant).
+ 
+\end_layout
+
+\begin_layout Standard
+The big adjoint is a representation of 
+\begin_inset Formula $G$
+\end_inset
+
+ that acts on the Lie algebra defined as 
+\begin_inset Formula 
+\begin{align*}
+Ad_{g}:\mathfrak{g} & \to\mathfrak{g}\quad\left(v^{\wedge}\right)\mapsto gv^{\wedge}g^{-1}
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $g\in G$
+\end_inset
+
+.
+ Since the big adjoint is a linear function, we can find a matrix version
+ that operates on the associated Euclidean space defined as 
+\begin_inset Formula 
+\[
+\mathbf{Ad}_{g}:E\to E\quad\left(v\right)\mapsto\mathbf{Ad}_{g}v
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\mathbf{Ad}_{g}$
+\end_inset
+
+ is the matrix adjoint representation of 
+\begin_inset Formula $G$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+The little adjoint is a representation of 
+\begin_inset Formula $\mathfrak{g}$
+\end_inset
+
+ that acts on itself.
+ It is also the Lie bracket 
+\begin_inset Formula $\left[\cdot,\cdot\right]$
+\end_inset
+
+ which we will also denote as 
+\begin_inset Formula 
+\[
+ad_{v^{\wedge}}:\mathfrak{g}\to\mathfrak{g}\quad\left(u^{\wedge}\right)\mapsto\left[u^{\wedge},v^{\wedge}\right]
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $v^{\wedge}\in\mathfrak{g}$
+\end_inset
+
+.
+ Since the little adjoint is a linear function, we can find a matrix version
+ that operates on the space 
+\begin_inset Formula $V$
+\end_inset
+
+ defined as 
+\begin_inset Formula 
+\[
+\mathbf{ad}_{v^{\wedge}}:V\to V\quad\left(u\right)\mapsto\mathbf{ad}_{v^{\wedge}}u
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where 
+\begin_inset Formula $\mathbf{ad}_{v^{\wedge}}$
+\end_inset
+
+ is the matrix adjoint representation of 
+\begin_inset Formula $\mathfrak{g}$
+\end_inset
+
+.
+ We understand that we have abused notation, but we believe that our meaning
+ is clear.
+\end_layout
+
+\begin_layout Standard
+As stated in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Iserles2000a"
+
+\end_inset
+
+, we can defined the differential of the exponential mapping as the 'left
+ trivialized' tangent of the exponential map or as the right trivialized'
+ tangent of the exponential map.
+ These differentials are also commonly called the right and left Jacobians.
+ Since we are defining everything using the left trivialization, we will
+ define only the right Jacobian, 
+\begin_inset Formula $J_{r}:V\to GL\left(V\right)$
+\end_inset
+
+, using a similar definition in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Sola2018"
+
+\end_inset
+
+.
+\begin_inset Formula 
+\[
+J_{r}\left(v\right)=\frac{^{r}\partial\text{Exp}\left(v\right)}{\partial\tau}.
+\]
+
+\end_inset
+
+Since the space 
+\begin_inset Formula $V$
+\end_inset
+
+ is isomorphic to the Lie algebra, we can easily define a right Jacobian
+ 
+\begin_inset Formula $J_{r}\left(v^{\wedge}\right):\mathfrak{g}\to GL\left(\mathfrak{g}\right)$
+\end_inset
+
+, where we overloaded the notation 
+\begin_inset Formula $J_{r}$
+\end_inset
+
+, to be 
+\begin_inset Formula 
+\[
+J_{r}\left(v^{\wedge}\right)=J_{r}\left(\left(v^{\wedge}\right)^{\vee}\right)^{\wedge}.
+\]
+
+\end_inset
+
+ The right Jacobian has the property that for small 
+\begin_inset Formula $u\in V$
+\end_inset
+
+ given 
+\begin_inset Formula $v\in V$
+\end_inset
+
+ we get that 
+\begin_inset Formula 
+\begin{align*}
+\text{Exp}\left(v+u\right) & \approx\text{Exp}\left(v\right)\text{Exp}\left(J_{r}\left(v\right)u\right)\\
+\text{Exp}\left(v\right)\text{Exp}\left(u\right) & \approx\text{Exp}\left(v+J_{r}^{-1}\left(v\right)u\right)\\
+\text{Log}\left(\text{Exp}\left(v\right)\text{Exp}\left(u\right)\right) & \approx v+J_{r}^{-1}\left(v\right)u,
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $J_{r}^{-1}$
+\end_inset
+
+ is the inverse Jacobian.
+ The derivation of the left and right Jacobians stems from the Baker-Campbell-Ha
+usdorff formula and can be studied in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Barfoot2019"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Hall2003"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Section
 Problem Description
 \end_layout
 
@@ -815,8 +1292,8 @@ name "eq:system"
  
 \begin_inset Formula 
 \begin{align}
-x_{k} & =f\left(x_{k^{-}},u,w_{k},\delta_{k}\right)\\
-y_{k} & =h\left(x_{k}\right)+v_{k}
+x_{k} & =f\left(x_{k^{-}},w_{k},\delta_{k}\right)\\
+y_{k} & =h\left(x_{k},v_{k}\right)+v_{k}
 \end{align}
 
 \end_inset
@@ -834,8 +1311,8 @@ end{subequations}
 
 \end_inset
 
-where 
-\begin_inset Formula $x_{k}$
+
+\begin_inset Formula $x_{k}=\left(g_{k},u\right)$
 \end_inset
 
  is the state of the system at time 
@@ -843,45 +1320,484 @@ where
 \end_inset
 
 , 
-\begin_inset Formula $u$
+\begin_inset Formula $g_{k}\in G$
 \end_inset
 
- are unknown parameters, 
-\begin_inset Formula $y_{k}$
-\end_inset
-
- is the measured output 
+ is the pose of the system at time 
 \begin_inset Formula $k$
 \end_inset
 
 , 
+\begin_inset Formula $u^{\wedge}\in\mathfrak{g}$
+\end_inset
+
+ is the constant velocity of the system, 
 \begin_inset Formula $f$
 \end_inset
 
- is the system model, 
-\begin_inset Formula $h$
+ the system model defined as 
+\begin_inset Formula 
+\begin{equation}
+f\left(x_{k^{-}},w_{k},\delta_{k}\right)=\left(g_{k^{-}}\oplus\left(\delta_{k}u+\delta_{k}w_{k}\right),u\right)\label{eq:system_model}
+\end{equation}
+
+\end_inset
+
+
+\begin_inset Formula $y_{k}\in N$
+\end_inset
+
+ is the output and 
+\begin_inset Formula $N$
+\end_inset
+
+ is a Lie group, 
+\begin_inset Formula $h:G\to M$
 \end_inset
 
  is the observation model, 
 \begin_inset Formula $w_{k}$
 \end_inset
 
- is process noise sampled from a zero-mean, white-noise, Gaussian distribution
- with covariance 
-\begin_inset Formula $Q$
-\end_inset
-
-, and 
+ is process noise and 
 \begin_inset Formula $v_{k}$
 \end_inset
 
- is measurement noise sampled from zero-mean, white-noise, Gaussian distribution
- with covariance 
+ is measurement noise sampled from a zero-mean, white-noise, Gaussian distributi
+on with covariance 
+\begin_inset Formula $Q$
+\end_inset
+
+ (respectively 
 \begin_inset Formula $R$
 \end_inset
 
+).
+\end_layout
+
+\begin_layout Standard
+The state 
+\begin_inset Formula $x=\left(g,u\right)$
+\end_inset
+
+ is a new Lie group generated from the Cartesian product of 
+\begin_inset Formula $G$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathfrak{g}$
+\end_inset
+
 .
+ The Lie algebra of 
+\begin_inset Formula $G\times\mathfrak{g}$
+\end_inset
+
+ is simply 
+\begin_inset Formula $\mathfrak{g}\times\mathfrak{g}$
+\end_inset
+
+ which is isomorphic to 
+\begin_inset Formula $\mathbb{R}^{m}$
+\end_inset
+
+ for some 
+\begin_inset Formula $m$
+\end_inset
+
+ which we will denote as 
+\begin_inset Formula $\bar{E}$
+\end_inset
+
+.
+ All of the operations previously defined are simply inherited.
+ For example, let 
+\begin_inset Formula $x\in G\times\mathfrak{g}$
+\end_inset
+
+ and 
+\begin_inset Formula $v\in\bar{E}$
+\end_inset
+
+, then 
+\begin_inset Formula 
+\begin{align*}
+x\oplus v & =\left(g,u\right)\oplus\left(a,b\right)\\
+ & =\left(g\text{Exp}\left(a\right),u+b\right),
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $g\in G$
+\end_inset
+
+, and 
+\begin_inset Formula $u,a,b\in E$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Given a set of measurements 
+\begin_inset Formula $\Psi_{T_{W}}$
+\end_inset
+
+ which contains true and false measurements, we want to estimate the current
+ state of the system.
+\end_layout
+
+\begin_layout Section
+Lie Group Probability
+\end_layout
+
+\begin_layout Standard
+Given our model defined in 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:system"
+
+\end_inset
+
+ we need to know how to calculate certain probabilities that will be useful
+ when propagating the system forward in time and updating the state estimate
+ when more measurements are received.
+ We follow the convention, notation and terminology from 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Reid2001,Reid2001a,Thrun2006"
+
+\end_inset
+
+ adapted for the Lie group setting.
+\end_layout
+
+\begin_layout Standard
+We denote the state estimate at time 
+\begin_inset Formula $m$
+\end_inset
+
+ as 
+\begin_inset Formula $\hat{x}_{m}\in G\times\mathfrak{g}$
+\end_inset
+
+ and the actual state at time 
+\begin_inset Formula $m$
+\end_inset
+
+ as 
+\begin_inset Formula $x_{m}\in G\times\mathfrak{g}$
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $\delta x_{m}\in\bar{V}$
+\end_inset
+
+ denote a local perturbation around 
+\begin_inset Formula $\hat{x}_{m}$
+\end_inset
+
+ that is a zero-mean, Gaussian, random variable with error covariance 
+\begin_inset Formula $P_{m}$
+\end_inset
+
+ such that 
+\begin_inset Formula 
+\[
+x_{m}=\hat{x}_{m}\oplus\delta x_{m}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We denote the prior distribution, or the belief distribution as 
+\begin_inset Formula $p\left(x_{m}\right)$
+\end_inset
+
+ and define it as 
+\begin_inset Formula 
+\begin{align*}
+p\left(x_{m}\right) & =\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus\hat{x}_{m}\right)^{\top}P_{m}^{-1}\left(x_{m}\ominus\hat{x}_{m}\right)\right)\\
+ & =\eta\exp\left(-\frac{1}{2}\delta x_{m}^{\top}P_{m}^{-1}\delta x\right),
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $\eta$
+\end_inset
+
+ is a normalizing coefficient corresponding to the Gaussian distribution.
+ We will overload 
+\begin_inset Formula $\eta$
+\end_inset
+
+ to define any normalizing coefficient.
+ We denote the state transition probability as 
+\begin_inset Formula $p\left(x_{m}\mid x_{m^{-}}\right)$
+\end_inset
+
+ and define it as 
+\begin_inset Formula 
+\[
+p\left(x_{m}\mid x_{m^{-}}\right)=\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus f\left(x_{m^{-}},w_{k},\delta_{m}\right)\right)^{\top}\bar{Q}^{-1}\left(x_{m}\ominus f\left(x_{m^{-}},w_{k},\delta_{m}\right)\right)\right),
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\bar{Q}^{-1}$
+\end_inset
+
+ is positive semi-definite defined as 
+\begin_inset Formula 
+\[
+\bar{Q}^{-1}=\begin{bmatrix}Q^{-1} & 0\\
+0 & 0
+\end{bmatrix}.
+\]
+
+\end_inset
+
+It is often useful to approximate the probability by using the Taylor series
+ expansion of 
+\begin_inset Formula $x_{m}\ominus f\left(x_{m^{-}}\right)$
+\end_inset
+
+ treating 
+\begin_inset Formula $\delta k_{m^{-}}$
+\end_inset
+
+ and 
+\begin_inset Formula $w_{k}$
+\end_inset
+
+ as perturbations.
+ Doing so, yields
+\begin_inset Formula 
+\[
+p\left(x_{m}\mid x_{m^{-}}\right)\approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus f\left(\hat{x}_{m^{-}},\hat{w}_{m},\delta_{m}\right)+F_{m}\delta x_{m^{-}}+G_{m}\delta_{m}w_{m}\right)^{\top}\bar{Q}^{-1}\left(x_{m}\ominus f\left(\hat{x}_{m^{-}},\hat{w}_{m},\delta_{m}\right)+F_{m}\delta x_{m^{-}}+G_{m}\delta_{m}w_{m}\right)\right),
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula 
+\begin{align*}
+F_{m} & =\left.\frac{\partial x_{m}\ominus f\left(x_{m^{-}},w_{k},\delta_{m}\right)}{\partial x_{m^{-}}}\right|_{\hat{x}_{m^{-}},\hat{w}_{m},\delta_{m}}\\
+ & =\begin{bmatrix}\mathbf{Ad}_{\text{Exp}\left(\delta_{m}\hat{u}_{m^{-}}\right)^{-1}}\\
+J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)
+\end{bmatrix},
+\end{align*}
+
+\end_inset
+
+and
+\begin_inset Formula 
+\begin{align*}
+G_{m} & =\left.\frac{\partial x_{m}\ominus f\left(x_{m^{-}},w_{k},\delta_{m}\right)}{\partial w_{m}}\right|_{\hat{x}_{m^{-}},\hat{w}_{m},\delta_{m}}\\
+ & =\begin{bmatrix}J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)\\
+0
+\end{bmatrix},
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $\hat{w}$
+\end_inset
+
+ is the expected value of the process noise which is zero.
  
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $\bar{p}\left(x_{m}\right)$
+\end_inset
+
+ denote the probability of 
+\begin_inset Formula $x_{m}$
+\end_inset
+
+ after state propagation.
+ It is calculated as 
+\begin_inset Formula 
+\[
+\bar{p}\left(x_{m}\right)=\int p\left(x_{m}\mid x_{m^{-}}\right)p\left(x_{m^{-}}\right)dx_{m^{-}}.
+\]
+
+\end_inset
+
+By using the Taylor series expansion to estimate 
+\begin_inset Formula $p\left(x_{m}\mid x_{m^{-}}\right)$
+\end_inset
+
+, we can approximate 
+\begin_inset Formula $\bar{p}\left(x_{m}\right)$
+\end_inset
+
+ using a Gaussian distribution which is parametrized by the new state estimate
+ 
+\begin_inset Formula $\hat{\bar{x}}_{m}$
+\end_inset
+
+ and error covariance 
+\begin_inset Formula $\bar{P}_{m}$
+\end_inset
+
+.
+ We will not include the tedious derivation, but refer the reader to 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Thrun2006"
+
+\end_inset
+
+.
+ The new state estimate and error covariance is calculated as 
+\begin_inset Formula 
+\begin{align*}
+\hat{\bar{x}}_{m} & =f\left(\hat{x}_{m^{-}},\hat{w}_{m},\delta_{m}\right)\\
+\bar{P}_{m} & =F_{m}P_{m^{-}}F_{m}^{\top}+G_{m}QG_{m}^{\top},
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $Q$
+\end_inset
+
+ is we will refer to this as the propagation or the prediction step.
+\end_layout
+
+\begin_layout Standard
+The probability of a measurement conditioned on the state is called the
+ measurement probability or likelihood and is denoted as 
+\begin_inset Formula $p\left(y_{m}\mid x_{m}\right)$
+\end_inset
+
+.
+ We stated earlier that for our system, the output 
+\begin_inset Formula $y_{m}$
+\end_inset
+
+ is an element of a Lie group, but not necessarily the same Lie group as
+ 
+\begin_inset Formula $x_{m}$
+\end_inset
+
+.
+ The measurement probability is defined as 
+\begin_inset Formula 
+\[
+p\left(y_{m}\mid x_{m}\right)=\eta\exp\left(-\frac{1}{2}\left(y_{m}\ominus h\left(x_{m},v_{m}\right)\right)^{\top}R^{-1}\left(y_{m}\ominus h\left(x_{m},y_{m}\right)\right)\right).
+\]
+
+\end_inset
+
+We can linearize the measurement probability to get 
+\begin_inset Formula 
+\[
+p\left(y_{m}\mid x_{m}\right)\approx\eta\exp\left(-\frac{1}{2}\left(e+H_{m}\delta x_{m}+V_{m}v_{m}\right)^{\top}R^{-1}\left(e+H_{m}\delta x_{m}+V_{m}v_{m}\right)\right)
+\]
+
+\end_inset
+
+where
+\begin_inset Formula 
+\[
+e=y_{m}\ominus h\left(\hat{x}_{m},\hat{v}_{m}\right),
+\]
+
+\end_inset
+
+ 
+\begin_inset Formula 
+\[
+H_{m}=\left.\frac{\partial y_{m}\ominus h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{\hat{x}_{m},\hat{v}_{m}},
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+V_{m}=\left.\frac{\partial y_{m}\ominus h\left(x_{m},v_{m}\right)}{\partial v_{m}}\right|_{\hat{x}_{m},\hat{v}_{m}},
+\]
+
+\end_inset
+
+and 
+\begin_inset Formula $\hat{v}_{m}$
+\end_inset
+
+ is the expected value of the measurement noise which is zero.
+\end_layout
+
+\begin_layout Standard
+The probability of the state given a measurement is called the posterior
+ and is denoted 
+\begin_inset Formula $p\left(x\mid y\right)$
+\end_inset
+
+ and is defined as 
+\begin_inset Formula 
+\[
+p\left(x\mid y\right)=\frac{p\left(y\mid x\right)\bar{p}\left(x\right)}{p\left(y\right)}.
+\]
+
+\end_inset
+
+We improve the state estimate 
+\begin_inset Formula $\hat{x}_{m}$
+\end_inset
+
+ by maximizing the posterior distribution.
+ This process is outlined in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Thrun2006"
+
+\end_inset
+
+ which gives us the standard Kalman filter update step:
+\begin_inset Formula 
+\begin{align*}
+e & =y_{m}\ominus h\left(x_{m},v_{m}\right)\\
+Z & =H_{m}\bar{P}_{m}H_{m}^{\top}+V_{m}RV_{m}^{\top}\\
+K & =\bar{P}_{m}H_{m}^{\top}Z^{-1}\\
+\delta x_{m} & =Ke\\
+\hat{x}_{m} & =\hat{\bar{x}}_{m}\oplus\delta x_{m}\\
+P_{m} & =P_{m}-KZK^{\top}.
+\end{align*}
+
+\end_inset
+
+Depending on the data associating filter used, the update step will be different
+; however, the underlying basic idea is the same which will require computing
+ the Jacobians 
+\begin_inset Formula $F_{m}$
+\end_inset
+
+, 
+\begin_inset Formula $G_{m}$
+\end_inset
+
+, 
+\begin_inset Formula $H_{m}$
+\end_inset
+
+ and 
+\begin_inset Formula $V_{m}$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Section
@@ -925,10 +1841,6 @@ LMLE estimates the joint probability of all the states in the time window,
 \begin_inset Formula $x_{0:k}$
 \end_inset
 
-, and the unknown parameter 
-\begin_inset Formula $u$
-\end_inset
-
  conditioned on the measurements 
 \begin_inset Formula $y_{0:k}$
 \end_inset
@@ -937,7 +1849,7 @@ LMLE estimates the joint probability of all the states in the time window,
  The posterior probability is 
 \begin_inset Formula 
 \[
-p\left(x_{0:k},u\mid y_{0:k}\right).
+p\left(x_{0:k}\mid y_{0:k}\right).
 \]
 
 \end_inset
@@ -945,7 +1857,7 @@ p\left(x_{0:k},u\mid y_{0:k}\right).
 Using Bayes rule we get
 \begin_inset Formula 
 \begin{align*}
-p\left(x_{0:k},u\mid y_{0:k}\right) & =\frac{p\left(y_{k}\mid x_{0:k},u,y_{0:k^{-}}\right)p\left(x_{0:k},u\mid y_{0:k^{-}}\right)}{p\left(y_{k}\mid y_{0:k^{-}}\right)}.
+p\left(x_{0:k}\mid y_{0:k}\right) & =\frac{p\left(y_{k}\mid x_{0:k},y_{0:k^{-}}\right)p\left(x_{0:k}\mid y_{0:k^{-}}\right)}{p\left(y_{k}\mid y_{0:k^{-}}\right)}.
 \end{align*}
 
 \end_inset
@@ -962,7 +1874,7 @@ Since
  so that the posterior becomes
 \begin_inset Formula 
 \[
-p\left(x_{0:k},u\mid y_{0:k}\right)=\eta p\left(y_{k}\mid x_{0:k},u,y_{0:k^{-}}\right)p\left(x_{0:k},u\mid y_{0:k^{-}}\right).
+p\left(x_{0:k}\mid y_{0:k}\right)=\eta p\left(y_{k}\mid x_{0:k},y_{0:k^{-}}\right)p\left(x_{0:k}\mid y_{0:k^{-}}\right).
 \]
 
 \end_inset
@@ -971,7 +1883,7 @@ Under the assumption that the system is a first order Markov process, we
  can simplify the posterior to
 \begin_inset Formula 
 \[
-\eta p\left(y_{k}\mid x_{k}\right)p\left(x_{0:k},u\mid y_{0:k^{-}}\right)=\eta p\left(y_{k}\mid x_{k}\right)p\left(x_{k}\mid x_{k^{-}},u\right)p\left(x_{0:k^{-}},u\mid y_{0:k^{-}}\right).
+\eta p\left(y_{k}\mid x_{k}\right)p\left(x_{0:k}\mid y_{0:k^{-}}\right)=\eta p\left(y_{k}\mid x_{k}\right)p\left(x_{k}\mid x_{k^{-}}\right)p\left(x_{0:k^{-}}\mid y_{0:k^{-}}\right).
 \]
 
 \end_inset
@@ -979,7 +1891,7 @@ Under the assumption that the system is a first order Markov process, we
 Repeating the process recursively, we get 
 \begin_inset Formula 
 \[
-p\left(x_{0:k},u\mid y_{0:k}\right)=\eta p\left(x_{0}\right)p\left(u\right)\prod_{j=1}^{k}\left[p\left(x_{j}\mid x_{j^{-}},u\right)\right]\prod_{j=0}^{k}\prod_{m=1}^{\ell\left(j\right)}\left[p\left(y_{j}^{m}\mid x_{j}\right)\right],
+p\left(x_{0:k}\mid y_{0:k}\right)=\eta p\left(x_{0}\right)\prod_{j=1}^{k}\left[p\left(x_{j}\mid x_{j^{-}}\right)\right]\prod_{j=0}^{k}\prod_{m=1}^{\ell\left(j\right)}\left[p\left(y_{j}^{m}\mid x_{j}\right)\right],
 \]
 
 \end_inset
@@ -1004,7 +1916,7 @@ Maximizing the posterior is equivalent to minimizing the negative log posterior.
  The negative log posterior is 
 \begin_inset Formula 
 \[
-\log\left(-p\left(x_{0:k},u\mid y_{1:k}\right)\right)=\log\left(-\eta\right)+\log\left(-p\left(x_{0}\right)\right)+\log\left(-p\left(u\right)\right)+\sum_{j=1}^{k}\log\left(-p\left(x_{j}\mid x_{j-1},u\right)\right)+\sum_{j=0}^{k}\sum_{m=1}^{\ell\left(j\right)}\log\left(-p\left(y_{j}^{m}\mid x_{j}\right)\right).
+\log\left(-p\left(x_{0:k}\mid y_{1:k}\right)\right)=\log\left(-\eta\right)+\log\left(-p\left(x_{0}\right)\right)+\sum_{j=1}^{k}\log\left(-p\left(x_{j}\mid x_{j-1}\right)\right)+\sum_{j=0}^{k}\sum_{m=1}^{\ell\left(j\right)}\log\left(-p\left(y_{j}^{m}\mid x_{j}\right)\right).
 \]
 
 \end_inset
@@ -1014,20 +1926,21 @@ We can drop the term
 \end_inset
 
  since it will have no impact on the optimization problem.
- The terms 
+ The term 
 \begin_inset Formula $\log\left(-p\left(x_{0}\right)\right)$
 \end_inset
 
- and 
-\begin_inset Formula $\log\left(-p\left(u\right)\right)$
+ is negligible compared to the rest of the optimization problem since its
+ probability is relatively small since the initial error covariance is big
+ indicating we do not know the initial state 
+\begin_inset Formula $x_{0}$
 \end_inset
 
- are negligible compared to the rest of the optimization problem since their
- probabilities are so small.
+.
  We thus simplify the negative log posterior to 
 \begin_inset Formula 
 \[
-\log\left(-p\left(x_{0:k},u\mid y_{1:k}\right)\right)\approx\sum_{j=1}^{k}\log\left(-p\left(x_{j}\mid x_{j-1},u\right)\right)+\sum_{j=0}^{k}\sum_{m=1}^{\ell\left(j\right)}\log\left(-p\left(y_{j}^{m}\mid x_{j}\right)\right),
+\log\left(-p\left(x_{0:k},u\mid y_{1:k}\right)\right)\approx\sum_{j=1}^{k}\log\left(-p\left(x_{j}\mid x_{j-1}\right)\right)+\sum_{j=0}^{k}\sum_{m=1}^{\ell\left(j\right)}\log\left(-p\left(y_{j}^{m}\mid x_{j}\right)\right),
 \]
 
 \end_inset
@@ -1035,7 +1948,7 @@ We can drop the term
 which is the minimization problem described as 
 \begin_inset Formula 
 \[
-\arg\min_{x_{0:k},u}\left(\sum_{j=1}^{k}\log\left(-p\left(x_{j}\mid x_{j-1},u\right)\right)+\sum_{j=0}^{k}\sum_{m=1}^{\ell\left(j\right)}\log\left(-p\left(y_{j}^{m}\mid x_{j}\right)\right)\right).
+\arg\min_{x_{0:k}}\left(\sum_{j=1}^{k}\log\left(-p\left(x_{j}\mid x_{j-1},u\right)\right)+\sum_{j=0}^{k}\sum_{m=1}^{\ell\left(j\right)}\log\left(-p\left(y_{j}^{m}\mid x_{j}\right)\right)\right).
 \]
 
 \end_inset
@@ -1048,7 +1961,7 @@ Since we are only interested in estimating the current state
  
 \begin_inset Formula 
 \[
-\arg\min_{x_{k},u}\left(\sum_{j=0}^{k}\sum_{m=1}^{\ell\left(j\right)}\log\left(-p\left(y_{j}^{m}\mid x_{k},u\right)\right)\right).
+\arg\min_{x_{k},u}\left(\sum_{j=0}^{k}\sum_{m=1}^{\ell\left(j\right)}\log\left(-p\left(y_{j}^{m}\mid x_{k}\right)\right)\right).
 \]
 
 \end_inset
@@ -1057,7 +1970,7 @@ This requires constructing a map from the current state
 \begin_inset Formula $x_{k}$
 \end_inset
 
- to the previous state 
+ to a previous state 
 \begin_inset Formula $x_{j}$
 \end_inset
 
@@ -1070,94 +1983,94 @@ Model Inversion
 \end_layout
 
 \begin_layout Standard
-We assume a discrete, constant velocity, time invariant system of the form
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{subequations}
-\end_layout
-
+Given the current state 
+\begin_inset Formula $x_{k}$
 \end_inset
 
-
-\begin_inset CommandInset label
-LatexCommand label
-name "eq:system-1"
-
-\end_inset
-
- 
-\begin_inset Formula 
-\begin{align}
-x_{k} & =x_{k^{-}}\boxplus\left(\delta_{k}u+\delta_{k}w_{k}\right)\\
-y_{k} & =h\left(x_{k}\boxplus v_{k}\right)
-\end{align}
-
-\end_inset
-
-
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{subequations}
-\end_layout
-
-\end_inset
-
-where 
-\begin_inset Formula $x_{k}\in G$
-\end_inset
-
- is the state of the system at time 
-\begin_inset Formula $k$
-\end_inset
-
-, 
-\begin_inset Formula $u\in\mathfrak{g}$
-\end_inset
-
- is the constant velocity, 
-\begin_inset Formula $y_{k}\in G$
-\end_inset
-
- is the observed state at time 
-\begin_inset Formula $k$
-\end_inset
-
-, 
-\begin_inset Formula $h$
-\end_inset
-
- is the observation model, 
-\begin_inset Formula $w_{k}\in\mathfrak{g}$
-\end_inset
-
- is process noise sampled from a zero-mean, white noise, Gaussian distribution
- with covariance 
-\begin_inset Formula $Q$
-\end_inset
-
-, and 
-\begin_inset Formula $v_{k}\in\mathfrak{g}$
-\end_inset
-
- is measurement noise sampled from zero-mean, white-noise, Gaussian distribution
- with covariance 
-\begin_inset Formula $R$
+ we are interested in calculating the state and output at time 
+\begin_inset Formula $m<n$
 \end_inset
 
 .
-\end_layout
+ We can easily invert the system model defined in 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:system_model"
 
-\begin_layout --Separator--
+\end_inset
+
+.
+ Ignoring the noise term, we can make the system model more generic to propagate
+ the state at time 
+\begin_inset Formula $m$
+\end_inset
+
+ to time 
+\begin_inset Formula $k$
+\end_inset
+
+ as 
+\begin_inset Formula 
+\[
+g_{k}=g_{m}\exp\left(\delta_{m:k}u\right).
+\]
+
+\end_inset
+
+Solving for 
+\begin_inset Formula $g_{m}$
+\end_inset
+
+ yields 
+\begin_inset Formula 
+\begin{align*}
+g_{m} & =\exp^{-1}\left(\delta_{m:k}u\right)g_{k}\\
+ & =\exp\left(-\delta_{m:k}u\right)g_{k}\\
+ & =\exp\left(\delta_{k:m}u\right)g_{k}.
+\end{align*}
+
+\end_inset
+
+Thus, the inverse of the system model is 
+\begin_inset Formula 
+\begin{equation}
+f^{-1}\left(x_{k},\delta_{k:m}\right)=\left(\exp\left(\delta_{k:m}u+\delta_{k:m}w_{k}\right)g_{k},u\right),\label{eq:system_model_inverse}
+\end{equation}
+
+\end_inset
+
+and the output at time 
+\begin_inset Formula $m$
+\end_inset
+
+ is 
+\begin_inset Formula 
+\[
+y_{m}=h\left(f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),v_{m}\right).
+\]
+
+\end_inset
+
+The likelihood 
+\begin_inset Formula $p\left(y_{m}\mid x_{k}\right)$
+\end_inset
+
+ is defined as 
+\begin_inset Formula 
+\[
+p\left(y_{m}\mid x_{k}\right)=\eta\exp\left(-\frac{1}{2}\left(y_{m}\ominus h\left(f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),v_{m}\right)\right)^{\top}R^{-1}\left(y_{m}\ominus h\left(f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),v_{m}\right)\right)\right),
+\]
+
+\end_inset
+
+and can be linearized as 
+\begin_inset Formula 
+\[
+p\left(y_{m}\mid x_{k}\right)\approx\eta\exp\left(-\frac{1}{2}\left(y_{m}\ominus h\left(f^{-1}\left(\hat{x}_{k},\hat{w}_{k},\delta_{k:m}\right),\hat{v}_{m}\right)+H_{k:m}\delta x_{k}+V_{m}v_{m}\right)^{\top}R^{-1}\left(y_{m}\ominus h\left(f^{-1}\left(x_{k},\hat{w}_{k},\delta_{k:m}\right),\hat{v}_{m}\right)+H_{k:m}\delta x_{k}+V_{m}v_{m}\right)\right)
+\]
+
+\end_inset
+
 
 \end_layout
 
@@ -2376,828 +3289,8 @@ y_{k+1} & =h\left(x_{k+1}\right)+v_{k}
 Quick Review of Lie Group and Lie Algebra
 \end_layout
 
-\begin_layout Standard
-The objective of this section is to provide a review of the important concepts
- of Lie theory that we will use along with the notation.
- We assume that the reader is familiar with Lie group and Lie algebra theory.
- For those unfamiliar with this material, we refer the interested reader
- primarily to 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Sola2018"
-
-\end_inset
-
-.
- Solá offers a very gentle introduction to Lie theory that covers the majority
- of information needed to understand this paper.
- We also follow much of the notation prescribed by Solá and Hertzberg who
- proposed the box plus and minus notation in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Hertzberg2013"
-
-\end_inset
-
-.
- For those who are interested in a more rigorous treatment of Lie theory,
- we refer the reader to 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Barfoot2019,Stillwell2008,Hall2003,Bullo2005a,Lee2013,Abraham1998"
-
-\end_inset
-
-.
- In this document we will focus on targets with a discrete system model
- and constant velocity, this is merely to simplify the presentation of the
- material.
- With no loss in generality, everything we present can be extended to targets
- with a continuous system model and constant acceleration by using a semidirect
- product group formed from a Lie group and its Lie algebra to form a new
- Lie group and numerical integration on the manifold.
- Engo in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Engo2003"
-
-\end_inset
-
- provides a good overview of the semidirect product group formed from a
- Lie group and its Lie algebra in addition to numerical integration on the
- manifold using the Runge-Kutta-Munthe-Kaas method originally developed
- in the series of papers 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Munthe-Kaas1995,Munthe-Kaas1998,Munthe-Kaas1999"
-
-\end_inset
-
-.
- 
-\end_layout
-
-\begin_layout Standard
-Let 
-\begin_inset Formula $G$
-\end_inset
-
- denote a Lie group and 
-\begin_inset Formula $\mathfrak{g}$
-\end_inset
-
- denote it's corresponding Lie algebra.
- The exponential map maps elements of the Lie algebra to an element of the
- Lie group, and the logarithmic map is the inverse of the exponential map
- and are defined as
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{subequations}
-\end_layout
-
-\end_inset
-
- 
-\begin_inset Formula 
-\begin{align*}
-\exp:\mathfrak{g} & \to G\\
-\log:G & \to\mathfrak{g}.
-\end{align*}
-
-\end_inset
-
-
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{subequations}
-\end_layout
-
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-Depending on the Lie group, these functions may only be defined locally
- around the identity.
- 
-\end_layout
-
-\begin_layout Standard
-The Lie algebra is isomorphic to the Euclidean space 
-\begin_inset Formula $\mathbb{R}^{n}$
-\end_inset
-
- where 
-\begin_inset Formula $n$
-\end_inset
-
- is the dimension of the Lie algebra.
- We will denote this Euclidean space as 
-\begin_inset Formula $V$
-\end_inset
-
-.
- The Wedge function maps an element from the Euclidean space to the Lie
- algebra, and the Vee function is the inverse function which are defined
- as
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{subequations}
-\end_layout
-
-\end_inset
-
- 
-\begin_inset Formula 
-\begin{align*}
-\cdot^{\wedge}:V\to\mathfrak{g} & \quad\left(v\right)\mapsto v^{\wedge}\\
-\cdot^{\vee}:\mathfrak{g}\to V & \quad\left(v^{\wedge}\right)^{\vee}\mapsto v.
-\end{align*}
-
-\end_inset
-
-
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{subequations}
-\end_layout
-
-\end_inset
-
-.
- To distinguish between an element of a Lie algebra and an element of the
- corresponding Euclidean space, the element of the Lie group will always
- be accompanied by the Vee.
- For example, let 
-\begin_inset Formula $v\in V$
-\end_inset
-
- then we denote the corresponding element in the Lie algebra as 
-\begin_inset Formula $v^{\wedge}\in\mathfrak{g}$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-When working with the Euclidean space, we define additional the exponential
- and logarithmic maps as 
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{subequations}
-\end_layout
-
-\end_inset
-
- 
-\begin_inset Formula 
-\begin{align*}
-\text{Exp}:V\to G & \quad\left(v\right)\mapsto\exp\left(v^{\wedge}\right)\\
-\text{Log}:G\to V & \quad\left(g\right)\mapsto\log\left(g\right)^{\vee}.
-\end{align*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{subequations}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Other functions of importance are the box-plus/minus and the o-plus/minus
- defined as 
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{subequations}
-\end_layout
-
-\end_inset
-
- 
-\begin_inset Formula 
-\begin{align*}
-\boxplus:G\times\mathfrak{g}\to G & \quad\left(g,v^{\wedge}\right)\mapsto g\bullet\exp\left(v^{\wedge}\right)\\
-\boxminus:G\times G\to\mathfrak{g} & \quad\left(g,h\right)\mapsto\log\left(h^{-1}\bullet g\right)\\
-\oplus:G\times V\to G & \quad\left(g,v\right)\mapsto g\bullet\text{Exp}\left(v\right)\\
-\ominus:G\times G\to V & \quad\left(g,h\right)\mapsto\text{Log}\left(h^{-1}\bullet g\right).
-\end{align*}
-
-\end_inset
-
-
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{subequations}
-\end_layout
-
-\end_inset
-
- where 
-\begin_inset Formula $\bullet$
-\end_inset
-
- represents the group operator which we will omit in the future, and 
-\begin_inset Formula $h^{-1}$
-\end_inset
-
- is the inverse element of 
-\begin_inset Formula $h$
-\end_inset
-
-.
- We have based the definition of these function on left trivializations
- (using vector fields that are left invariant).
- They could also be defined on right trivializations (using vector fields
- that are right invariant).
- 
-\end_layout
-
-\begin_layout Standard
-The big adjoint is a representation of 
-\begin_inset Formula $G$
-\end_inset
-
- that acts on the Lie algebra defined as 
-\begin_inset Formula 
-\begin{align*}
-Ad_{g}:\mathfrak{g} & \to\mathfrak{g}\quad\left(v^{\wedge}\right)\mapsto gv^{\wedge}g^{-1}
-\end{align*}
-
-\end_inset
-
-where 
-\begin_inset Formula $g\in G$
-\end_inset
-
-.
- Since the big adjoint is a linear function, we can find a matrix version
- that operates on the associated Euclidean space defined as 
-\begin_inset Formula 
-\[
-\mathbf{Ad}_{g}:V\to V\quad\left(v\right)\mapsto\pi\left(g\right)v
-\]
-
-\end_inset
-
-where 
-\begin_inset Formula $\pi\left(g\right)$
-\end_inset
-
- is the matrix.
-\end_layout
-
-\begin_layout Standard
-The little adjoint is a representation of 
-\begin_inset Formula $\mathfrak{g}$
-\end_inset
-
- that acts on itself.
- It is also the Lie bracket 
-\begin_inset Formula $\left[\cdot,\cdot\right]$
-\end_inset
-
- which we will also denote as 
-\begin_inset Formula 
-\[
-ad_{v^{\wedge}}:\mathfrak{g}\to\mathfrak{g}\quad\left(u^{\wedge}\right)\mapsto\left[u^{\wedge},v^{\wedge}\right]
-\]
-
-\end_inset
-
-where 
-\begin_inset Formula $v^{\wedge}\in\mathfrak{g}$
-\end_inset
-
-.
- Since the little adjoint is a linear function, we can find a matrix version
- that operates on the space 
-\begin_inset Formula $V$
-\end_inset
-
- defined as 
-\begin_inset Formula 
-\[
-\mathbf{ad}_{v^{\wedge}}:V\to V\quad\left(u\right)\mapsto\pi\left(v^{\wedge}\right)u
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-where 
-\begin_inset Formula $\pi\left(v^{\wedge}\right)$
-\end_inset
-
- is the matrix.
- We understand that we overuse the function 
-\begin_inset Formula $\pi$
-\end_inset
-
- but we hope that our intent is clear from the context.
- We quickly note that 
-\begin_inset Formula $\pi\left(\mathfrak{g}\right)$
-\end_inset
-
- is a Lie algebra, 
-\begin_inset Formula $\pi\left(G\right)$
-\end_inset
-
- is a Lie group, and that 
-\begin_inset Formula $\pi\left(\mathfrak{g}\right)$
-\end_inset
-
- is the Lie algebra of the Lie group 
-\begin_inset Formula $\pi\left(G\right)$
-\end_inset
-
-.
- 
-\end_layout
-
-\begin_layout Standard
-As stated in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Iserles2000a"
-
-\end_inset
-
-, we can defined the differential of the exponential mapping as the 'left
- trivialized' tangent of the exponential map or as the right trivialized'
- tangent of the exponential map.
- These differentials are also commonly called the right and left Jacobians.
- Since we are defining everything using the left trivialization, we will
- define only the right Jacobian, 
-\begin_inset Formula $J_{r}:V\to GL\left(V\right)$
-\end_inset
-
-, using a similar definition in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Sola2018"
-
-\end_inset
-
-.
-\begin_inset Formula 
-\[
-J_{r}\left(v\right)=\frac{^{r}\partial\text{Exp}\left(v\right)}{\partial\tau}.
-\]
-
-\end_inset
-
-Since the space 
-\begin_inset Formula $V$
-\end_inset
-
- is isomorphic to the Lie algebra, we can easily define a right Jacobian
- 
-\begin_inset Formula $J_{r}\left(v^{\wedge}\right):\mathfrak{g}\to GL\left(\mathfrak{g}\right)$
-\end_inset
-
-, where we overloaded the notation 
-\begin_inset Formula $J_{r}$
-\end_inset
-
-, to be 
-\begin_inset Formula 
-\[
-J_{r}\left(v^{\wedge}\right)=J_{r}\left(\left(v^{\wedge}\right)^{\vee}\right)^{\wedge}.
-\]
-
-\end_inset
-
- The right Jacobian has the property that for small 
-\begin_inset Formula $u\in V$
-\end_inset
-
- given 
-\begin_inset Formula $v\in V$
-\end_inset
-
- we get that 
-\begin_inset Formula 
-\begin{align*}
-\text{Exp}\left(v+u\right) & \approx\text{Exp}\left(v\right)\text{Exp}\left(J_{r}\left(v\right)u\right)\\
-\text{Exp}\left(v\right)\text{Exp}\left(u\right) & \approx\text{Exp}\left(v+J_{r}^{-1}\left(v\right)u\right)\\
-\text{Log}\left(\text{Exp}\left(v\right)\text{Exp}\left(u\right)\right) & \approx v+J_{r}^{-1}\left(v\right)u,
-\end{align*}
-
-\end_inset
-
-where 
-\begin_inset Formula $J_{r}^{-1}$
-\end_inset
-
- is the inverse Jacobian.
- The derivation of the left and right Jacobians stems from the Baker-Campbell-Ha
-usdorff formula and can be studied in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Barfoot2019"
-
-\end_inset
-
- and 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Hall2003"
-
-\end_inset
-
-.
- 
-\end_layout
-
-\begin_layout Standard
-As previously stated, we will present our research using a discrete, linear,
- time-invariant, constant velocity model.
- The state of the system at time 
-\begin_inset Formula $k$
-\end_inset
-
- will be denoted as 
-\begin_inset Formula $x_{k}=\left(g_{k},u\right)\in G\times V$
-\end_inset
-
- where 
-\begin_inset Formula $g_{k}$
-\end_inset
-
- is the pose and 
-\begin_inset Formula $u$
-\end_inset
-
- is the velocity.
- The Cartesian product 
-\begin_inset Formula $G\times V$
-\end_inset
-
- forms a Lie group with a corresponding Lie algebra 
-\begin_inset Formula $\mathfrak{g}\times V$
-\end_inset
-
-.
- Note that 
-\begin_inset Formula $\mathfrak{g}\times V\cong V\times V\cong\mathbb{R}^{2n}$
-\end_inset
-
-.
- To avoid confusion, let 
-\begin_inset Formula $G\times V\triangleq\bar{G}$
-\end_inset
-
-, 
-\begin_inset Formula $\mathfrak{g}\times V\triangleq\bar{\mathfrak{g}}$
-\end_inset
-
-, and 
-\begin_inset Formula $\mathbb{R}^{2n}\triangleq\bar{V}$
-\end_inset
-
-.
- The system model is defined as 
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{subequations}
-\end_layout
-
-\end_inset
-
-
-\begin_inset CommandInset label
-LatexCommand label
-name "eq:system_model"
-
-\end_inset
-
-
-\begin_inset Formula 
-\begin{align}
-x_{k} & =f\left(x_{k^{-}},w_{k}\right)\\
-y_{k} & =h\left(x_{k},v_{k}\right)
-\end{align}
-
-\end_inset
-
-
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{subequations}
-\end_layout
-
-\end_inset
-
-where 
-\begin_inset Formula $x_{k}$
-\end_inset
-
- is the state of the system at time 
-\begin_inset Formula $k$
-\end_inset
-
-, 
-\begin_inset Formula $f$
-\end_inset
-
- is the state transition model defined as
-\begin_inset Formula 
-\[
-f\left(x_{k^{-}},w_{k}\right)=\left(x_{k^{-}}\oplus\left(\delta_{k}u+\delta_{k}w_{k}\right),u\right),
-\]
-
-\end_inset
-
- 
-\begin_inset Formula $y_{k}\in N$
-\end_inset
-
- is the output with 
-\begin_inset Formula $N$
-\end_inset
-
- being a Lie group, 
-\begin_inset Formula $h:G\to M$
-\end_inset
-
- is the observation model, 
-\begin_inset Formula $w_{k}$
-\end_inset
-
- is process noise and 
-\begin_inset Formula $v_{k}$
-\end_inset
-
- is measurement noise sampled from a zero-mean, white-noise, Gaussian distributi
-on with covariance 
-\begin_inset Formula $Q$
-\end_inset
-
- (respectively 
-\begin_inset Formula $R$
-\end_inset
-
-).
- Note that the measurement 
-\begin_inset Formula $y_{k}$
-\end_inset
-
- resides in a measurement space which is not necessarily the same Lie group.
-\end_layout
-
 \begin_layout Subsection
 Probability
-\end_layout
-
-\begin_layout Standard
-Given our model defined in 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:system_model"
-
-\end_inset
-
- we need to know how to calculate certain probabilities that will be useful
- when propagating the system forward in time and updating the state estimate
- when more measurements are given.
- We follow the convention, notation and terminology from 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Reid2001,Reid2001a,Thrun2006"
-
-\end_inset
-
- adapted for the Lie group setting.
- We refer to the propagation step or the prediction step as the step in
- which the state is propagated in time, and we refer to the update step
- as the step in which measurements are incorporated into the state estimate
- in order to enhance the state estimate.
- 
-\end_layout
-
-\begin_layout Standard
-We denote the state estimate at time 
-\begin_inset Formula $m$
-\end_inset
-
- as 
-\begin_inset Formula $\hat{x}_{m}=\left(\hat{g}_{m},\hat{u}_{m}\right)\in G\times V$
-\end_inset
-
- and the actual state at time 
-\begin_inset Formula $m$
-\end_inset
-
- as 
-\begin_inset Formula $x_{m}\in G\times V$
-\end_inset
-
-.
- Let 
-\begin_inset Formula $\delta x_{m}\in\bar{V}$
-\end_inset
-
- denote a local perturbation around 
-\begin_inset Formula $\mu_{m}$
-\end_inset
-
- that is a zero-mean, Gaussian, random variable with error covariance 
-\begin_inset Formula $P_{m}$
-\end_inset
-
- such that 
-\begin_inset Formula 
-\[
-x_{m}=\hat{x}_{m}\oplus\delta x_{m}.
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-We denote the prior distribution, or the belief distribution as 
-\begin_inset Formula $p\left(x_{m}\right)$
-\end_inset
-
- and define it as 
-\begin_inset Formula 
-\begin{align*}
-p\left(x_{m}\right) & =\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus\hat{x}_{m}\right)^{\top}P_{m}^{-1}\left(x_{m}\ominus\hat{x}_{m}\right)\right)\\
- & =\eta\exp\left(-\frac{1}{2}\delta x_{m}^{\top}P_{m}^{-1}\delta x\right),
-\end{align*}
-
-\end_inset
-
-where 
-\begin_inset Formula $\eta$
-\end_inset
-
- is a normalizing coefficient corresponding to the Gaussian distribution.
- We will overload 
-\begin_inset Formula $\eta$
-\end_inset
-
- to define any normalizing coefficient.
- We denote the state transition probability as 
-\begin_inset Formula $p\left(x_{m}\mid x_{m^{-}}\right)$
-\end_inset
-
- and define it as 
-\begin_inset Formula 
-\[
-p\left(x_{m}\mid x_{m^{-}}\right)=\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus f\left(x_{m^{-}},w_{k}\right)\right)^{\top}Q^{-1}\left(x_{m}\ominus f\left(x_{m^{-}},w_{k}\right)\right)\right),
-\]
-
-\end_inset
-
-where 
-\begin_inset Formula $Q^{-1}$
-\end_inset
-
- is positive, semi-definite.
- It is often useful to approximate the probability by using the Taylor series
- expansion of 
-\begin_inset Formula $x_{m}\ominus f\left(x_{m^{-}}\right)$
-\end_inset
-
- treating 
-\begin_inset Formula $\delta x_{m^{-}}$
-\end_inset
-
- and 
-\begin_inset Formula $w_{k}$
-\end_inset
-
- as perturbations.
- Doing so, yields
-\begin_inset Formula 
-\[
-p\left(x_{m}\mid x_{m^{-}}\right)\approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus f\left(\hat{x}_{m^{-}}\right)+F\left(\hat{x}_{m^{-}}\right)\delta x_{m^{-}}+G\left(\hat{x}_{m^{-}}\right)\delta_{m}w_{m}\right)^{\top}Q^{-1}\left(x_{m}\ominus f\left(\hat{x}_{m^{-}}\right)+F\left(\hat{x}_{m^{-}}\right)\delta x_{m^{-}}+G\left(\hat{x}_{m^{-}}\right)\delta_{m}w_{m}\right)\right),
-\]
-
-\end_inset
-
-where 
-\begin_inset Formula 
-\begin{align*}
-F\left(\mu_{m^{-}}\right) & =\left.\frac{\partial x_{m}\ominus f\left(x_{m^{-}}\right)}{\partial x_{m^{-}}}\right|_{\hat{x}_{m^{-}}}\\
- & =\begin{bmatrix}\mathbf{Ad}_{\text{Exp}\left(\delta_{m}\hat{u}_{m^{-}}\right)^{-1}}\\
-J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)
-\end{bmatrix},
-\end{align*}
-
-\end_inset
-
-and
-\begin_inset Formula 
-\begin{align*}
-G\left(\hat{x}_{m^{-}}\right) & =\left.\frac{\partial x_{m}\ominus f\left(x_{m^{-}}\right)}{\partial x_{m^{-}}}\right|_{\hat{x}_{m}^{-}}\\
- & =\begin{bmatrix}J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)\\
-0
-\end{bmatrix}.
-\end{align*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Let 
-\begin_inset Formula $\bar{p}\left(x_{m}\right)$
-\end_inset
-
- denote the probability of 
-\begin_inset Formula $x_{m}$
-\end_inset
-
- after state propagation.
- It is calculated as 
-\begin_inset Formula 
-\[
-\bar{p}\left(x_{m}\right)=\int p\left(x_{m}\mid x_{m^{-}}\right)p\left(x_{m^{-}}\right)dx_{m^{-}}.
-\]
-
-\end_inset
-
-By using the Taylor series expansion to estimate 
-\begin_inset Formula $p\left(x_{m}\mid x_{m^{-}}\right)$
-\end_inset
-
-, we can approximate 
-\begin_inset Formula $\bar{p}\left(x_{m}\right)$
-\end_inset
-
- using a Gaussian distribution which is parametrized by the new state estimate
- 
-\begin_inset Formula $\hat{\bar{x}}_{m}$
-\end_inset
-
-
 \end_layout
 
 \begin_layout Subsection

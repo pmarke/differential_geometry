@@ -186,7 +186,7 @@ where
 
 \begin_layout Standard
 Suppose we are interested in calculating the derivative of the integral
- curves with respect to parameter 
+ curves with respect to the parameter 
 \begin_inset Formula $t$
 \end_inset
 
@@ -205,49 +205,96 @@ Suppose we are interested in calculating the derivative of the integral
 \end_layout
 
 \begin_layout Standard
+Baker-Campbel-Hausdorff (BCH) formula allows us to express 
+\begin_inset Formula $\log\left(\exp\left(a\right)\exp\left(b\right)\right)$
+\end_inset
 
-\series bold
-move this stuff to later.
+ as a geometric series using Lie brackets.
+ This form is used to calculate the derivative.
+ Much of the material presented is taken from 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Barfoot2019,Hall2003,Sola2018"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Before proceeding to calculating the derivative, we will quickly review
+ some notation and terminology.
  
-\series default
-If the Lie group is commutative, then we can use the exponential property
- that 
-\begin_inset Formula 
-\[
-\exp\left(a\right)\exp\left(b\right)=\exp\left(a+b\right).
-\]
+\end_layout
 
+\begin_layout Subsection
+Notation and Terminology
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $u\in\mathfrak{g}$
 \end_inset
 
-Using this property, we can simplify the derivative to 
-\begin_inset Formula 
-\begin{align*}
-\frac{\partial\log\left(\exp\left(a\right)\exp\left(b\right)\right)}{\partial t} & =\frac{\partial\log\left(\exp\left(a+b\right)\right)}{\partial t}\\
- & =\frac{\partial\left(a+b\right)}{\partial t}\\
- & =\frac{^{l}\partial v\left(t\right)}{t}\quad\text{or}\quad\frac{^{r}\partial v\left(t\right)}{t},
-\end{align*}
-
+.
+ We use the vee function to map an element in the Lie algebra to the Euclidean
+ space of dimension 
+\begin_inset Formula $n$
 \end_inset
 
-where the superscript to the left of the derivative symbol indicates the
- left or right trivialization.
- We also substituted 
-\begin_inset Formula $v\left(t\right)$
+ that it is isomorphic to.
+ We denote this map as
+\begin_inset Formula $\cdot^{\vee}:\mathfrak{g}\to\mathbb{R}^{n}$
 \end_inset
 
- in for 
-\begin_inset Formula $a$
+ and define it as 
+\begin_inset Formula $\left(u\right)\mapsto u^{\vee}$
 \end_inset
 
- or 
-\begin_inset Formula $b$
+.
+ The inverse of the vee function is the wedge function 
+\begin_inset Formula $\cdot^{\wedge}:\mathbb{R}^{n}\to\mathfrak{g}$
 \end_inset
 
- depending on the case.
- Note that if the Lie group is abelian, left and right trivialization is
- equivalent and thus so are their derivatives.
- If the Lie group is not abelian, we calculate the derivative using the
- Baker-Campbel-Hausdorff (BCH) formula.
+.
+ We use the curly-wedge symbol to denote the function that maps an element
+ of 
+\begin_inset Formula $\mathbb{R}^{n}$
+\end_inset
+
+ to the matrix adjoint representation of the Lie algebra, 
+\begin_inset Formula $\cdot^{\curlywedge}:\mathfrak{\mathbb{R}^{n}}\to\mathbf{ad}\left(\mathfrak{g}\right)$
+\end_inset
+
+ defined as 
+\begin_inset Formula $\left(v\right)\mapsto v^{\curlywedge}$
+\end_inset
+
+.
+ The inverse operation is the curly-vee function, 
+\begin_inset Formula $\cdot^{\curlyvee}:\mathbf{ad}\left(\mathfrak{g}\right)\to\mathbb{R}^{n}$
+\end_inset
+
+.
+ We will often denote the element 
+\begin_inset Formula $v^{\curlywedge}\in\mathbf{ad}\left(\mathfrak{g}\right)$
+\end_inset
+
+ as 
+\begin_inset Formula $\mathbf{ad}_{v}$
+\end_inset
+
+.
+ We will overload the curly-wedge and curly-vee functions to also be 
+\begin_inset Formula $\cdot^{\curlywedge}:\mathfrak{g}\to\mathbf{ad}\left(\mathfrak{g}\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $\cdot^{\curlyvee}:\mathbf{ad}\left(\mathfrak{g}\right)\to\mathfrak{g}$
+\end_inset
+
+.
+ We will use the context to distinguish between the two definitions.
  
 \end_layout
 
@@ -256,7 +303,7 @@ General BCH Formula
 \end_layout
 
 \begin_layout Standard
-We now suppose that given 
+Let
 \begin_inset Formula $a,b\in\mathfrak{g}$
 \end_inset
 
@@ -268,39 +315,12 @@ We now suppose that given
 \begin_inset Formula $b=v\left(t\right)$
 \end_inset
 
- depending on the trivialization, that 
-\begin_inset Formula 
-\[
-\exp\left(a\right)\exp\left(b\right)\neq\exp\left(b\right)\exp\left(a\right),
-\]
-
-\end_inset
-
-which is equivalent to 
-\begin_inset Formula 
-\[
-ab\neq ba;
-\]
-
-\end_inset
-
-therefore
-\begin_inset Formula 
-\[
-\exp\left(a\right)\exp\left(b\right)\neq\exp\left(a+b\right).
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-We thus desire a 
+ depending on the trivialization.
+ Also, let 
 \begin_inset Formula $z\left(t\right)$
 \end_inset
 
- such that 
+ be defined as 
 \begin_inset Formula 
 \[
 \exp\left(z\left(t\right)\right)=\exp\left(a\right)\exp\left(b\right),
@@ -320,15 +340,22 @@ z\left(t\right)=\log\left(\exp\left(a\right)\exp\left(b\right)\right).
 \end_layout
 
 \begin_layout Standard
-We can approximate 
-\begin_inset Formula $z$
+We can define 
+\begin_inset Formula $z\left(t\right)$
 \end_inset
 
- using a first order approximation.
- This requires computing the first derivative 
+ using the Taylor series of 
+\begin_inset Formula $\log\left(\exp\left(a\right)\exp\left(b\right)\right)$
+\end_inset
+
+ centered at 
+\begin_inset Formula $t=0$
+\end_inset
+
+ and then easily calculate the first derivative by 
 \begin_inset Formula 
 \[
-\frac{\partial z\left(t\right)}{\partial t}.
+\left.\frac{\partial z\left(t\right)}{\partial t}\right|_{t=0}.
 \]
 
 \end_inset
@@ -337,11 +364,28 @@ We can approximate
 \end_layout
 
 \begin_layout Standard
-Recall that the geometric series representation for the matrix logarithm
- and matrix exponential are
+Typically the Taylor series is constructed by taking derivatives, but since
+ we already know the Taylor series for 
+\begin_inset Formula $\log$
+\end_inset
+
+ and 
+\begin_inset Formula $\exp$
+\end_inset
+
+, we can use their Taylor series to construct the Taylor series of 
+\begin_inset Formula $\log\left(\exp\left(a\right)\exp\left(b\right)\right)$
+\end_inset
+
+, and then use the Taylor series to find the first derivative.
+\end_layout
+
+\begin_layout Standard
+Recall that the Taylor series for the matrix logarithm and matrix exponential
+ are
 \begin_inset Formula 
 \[
-\log\left(g\right)=-\sum_{n=1}^{\infty}\frac{\left(I-g\right)}{n!}^{n}
+\log\left(g\right)=-\sum_{k=1}^{\infty}\frac{\left(I-g\right)}{k!}^{k}
 \]
 
 \end_inset
@@ -349,7 +393,7 @@ Recall that the geometric series representation for the matrix logarithm
 and
 \begin_inset Formula 
 \[
-\exp\left(w\right)=\sum_{r=0}^{\infty}\frac{w^{r}}{r!},
+\exp\left(u\right)=\sum_{r=0}^{\infty}\frac{u^{r}}{r!},
 \]
 
 \end_inset
@@ -359,22 +403,22 @@ where
 \end_inset
 
  and 
-\begin_inset Formula $w\in\mathfrak{g}$
+\begin_inset Formula $u\in\mathfrak{g}$
 \end_inset
 
 .
- Using the geometric series representation, we can write 
+ Using the Taylor series, we can write 
 \begin_inset Formula 
-\begin{align}
+\begin{align*}
 \exp\left(a\right)\exp\left(b\right) & =\sum_{r=0}^{\infty}\frac{a^{r}}{r!}\sum_{s=0}^{\infty}\frac{b^{s}}{s!}\\
  & =\sum_{r=0}^{\infty}\sum_{s=0}^{\infty}\frac{a^{r}}{r!}\frac{b^{s}}{s!}\\
  & =\sum_{r,s=0}^{\infty}\frac{a^{r}}{r!}\frac{b^{s}}{s!}.
-\end{align}
+\end{align*}
 
 \end_inset
 
-Combining this with the geometric series representation for the matrix logarithm
- we get 
+Combining this with the Taylor series for the logarithm function we get
+ 
 \begin_inset Formula 
 \begin{align}
 \log\left(\exp\left(a\right)\exp\left(b\right)\right) & =\sum_{k=1}^{\infty}\frac{\left(-1\right)^{k-1}}{k}\left(\sum_{r,s=0}^{\infty}\frac{a^{r}}{r!}\frac{b^{s}}{s!}-1\right)^{k}\label{eq:BCH_ln_exp}\\
@@ -387,7 +431,7 @@ Combining this with the geometric series representation for the matrix logarithm
 \end_layout
 
 \begin_layout Standard
-Using this expression we can calculate the first two terms.
+Using this expression we can calculate the first few terms.
 \begin_inset Formula 
 \begin{gather*}
 \underbrace{\left(a+b+ab+\cdots\right)}_{k=1}-\underbrace{\frac{1}{2}\left(a^{2}+b^{2}+ab+ba+\cdots\right)}_{k=2}\\
@@ -397,7 +441,7 @@ Using this expression we can calculate the first two terms.
 \end_inset
 
 where 
-\begin_inset Formula $\left[A,B\right]=AB-BA$
+\begin_inset Formula $\left[a,b\right]$
 \end_inset
 
  is the lie bracket.
@@ -413,7 +457,7 @@ reference "eq:BCH_ln_exp"
  This new form is known as the BCH formula
 \begin_inset Formula 
 \begin{equation}
-\ln\left(\exp\left(a\right)\exp\left(b\right)\right)=\sum_{k=1}^{\infty}\frac{\left(-1\right)^{k-1}}{k}\sum_{r_{1}+s_{1}>0}\cdots\sum_{r_{k}+s_{k}>0}\frac{\left[a^{r_{1}}b^{s_{1}}a^{r_{2}}b^{s_{2}}\cdots a^{r_{n}}b^{s_{n}}\right]}{\left(\sum_{j=1}^{k}\left(r_{j}+s_{j}\right)\right)\prod_{i=1}^{k}r_{i}!s_{i}!}\label{eq:BCH_dynkins}
+\log\left(\exp\left(a\right)\exp\left(b\right)\right)=\sum_{k=1}^{\infty}\frac{\left(-1\right)^{k-1}}{k}\sum_{r_{1}+s_{1}>0}\cdots\sum_{r_{k}+s_{k}>0}\frac{\left[a^{r_{1}}b^{s_{1}}a^{r_{2}}b^{s_{2}}\cdots a^{r_{n}}b^{s_{n}}\right]}{\left(\sum_{j=1}^{k}\left(r_{j}+s_{j}\right)\right)\prod_{i=1}^{k}r_{i}!s_{i}!}\label{eq:BCH_dynkins}
 \end{equation}
 
 \end_inset
@@ -429,17 +473,17 @@ where the super scripts
  indicate the order of the lie bracket
 \begin_inset Formula 
 \[
-\left[a^{r_{1}}b^{s_{1}}a^{r_{2}}b^{s_{2}}\cdots a^{r_{n}}b^{s_{n}}\right]=\underbrace{[a,[\cdots a,}_{r_{1}}\underbrace{[b,[\cdots,[b}_{s_{1}},[\cdots,\underbrace{[a,[\cdots a,}_{r_{k}}\underbrace{[b,[\cdots,[b]}_{s_{k}}\cdots]
+\left[a^{r_{1}}b^{s_{1}}a^{r_{2}}b^{s_{2}}\cdots a^{r_{n}}b^{s_{n}}\right]=\underbrace{[a,[\cdots a,}_{r_{1}}\underbrace{[b,[\cdots,[b}_{s_{1}},[\cdots,\underbrace{[a,[\cdots a,}_{r_{k}}\underbrace{[b,[\cdots,[b]}_{s_{k}}\cdots].
 \]
 
 \end_inset
 
- and note that 
+ Note that 
 \begin_inset Formula $r_{i}+s_{i}>0$
 \end_inset
 
 .
- Also if the lie bracket only has one term then,
+ If the lie bracket has only one term then,
 \begin_inset Formula $\left[a\right]=a$
 \end_inset
 
@@ -631,23 +675,24 @@ f_{2}\left(0,2,1,0\right) & =-\frac{1}{2}\frac{\left[b,\left[b,a\right]\right]}{
 
 \end_inset
 
-If we add the first few terms that we calculated, we would get 
+Using the first few terms we calculated, we get 
 \begin_inset Formula 
-\begin{multline}
-a+b+\frac{1}{2}\left[a,b\right]+\frac{1}{6}\left[a,\left[a,b\right]\right]-\frac{1}{3}\left[a,b\right]-\frac{1}{3}\left[b,a\right]\\
--\frac{1}{6}\left[a,\left[a,b\right]\right]-\frac{1}{6}\left[b,\left[a,b\right]\right]-\frac{1}{12}\left[a,\left[a,b\right]\right]-\frac{1}{12}\left[b,\left[b,a\right]\right]
-\end{multline}
+\begin{align*}
+z\left(t\right) & =a+b+\frac{1}{2}\left[a,b\right]+\frac{1}{6}\left[a,\left[a,b\right]\right]-\frac{1}{3}\left[a,b\right]-\frac{1}{3}\left[b,a\right]\\
+ & -\frac{1}{6}\left[a,\left[a,b\right]\right]-\frac{1}{6}\left[b,\left[a,b\right]\right]-\frac{1}{12}\left[a,\left[a,b\right]\right]-\frac{1}{12}\left[b,\left[b,a\right]\right]\cdots
+\end{align*}
 
 \end_inset
 
-noting that 
+Using the antisymmetric property of the Lie bracket, i.e.
+ 
 \begin_inset Formula $\left[a,b\right]=-\left[b,a\right]$
 \end_inset
 
- we can simplify the above sum to 
+, we can simplify the above sum to 
 \begin_inset Formula 
 \begin{equation}
-a+b+\frac{1}{2}\left[a,b\right]+\frac{1}{12}\left(\left[a,\left[a,b\right]\right]+\left[b,\left[b,a\right]\right]\right)
+z\left(t\right)=a+b+\frac{1}{2}\left[a,b\right]+\frac{1}{12}\left(\left[a,\left[a,b\right]\right]+\left[b,\left[b,a\right]\right]\right)+\cdots
 \end{equation}
 
 \end_inset
@@ -666,7 +711,7 @@ reference "eq:BCH_dynkins"
  since they are well known 
 \begin_inset Formula 
 \begin{align*}
-z & =\log\left(\exp\left(a\right)\exp\left(b\right)\right)\\
+z\left(t\right) & =\log\left(\exp\left(a\right)\exp\left(b\right)\right)\\
  & =a+b+\frac{1}{2}\left[a,b\right]+\frac{1}{12}\left(\left[a,\left[a,b\right]\right]+\left[b,\left[b,a\right]\right]\right)-\frac{1}{24}\left[b,\left[a,\left[a,b\right]\right]\right]\\
  & -\frac{1}{720}\left(\left[\left[\left[\left[a,b\right],b\right],b\right],b\right]+\left[\left[\left[\left[b,a\right],a\right],a\right],a\right]\right)\\
  & +\frac{1}{360}\left(\left[\left[\left[\left[a,b\right],b\right],b\right],a\right]+\left[\left[\left[\left[b,a\right],a\right],a\right],b\right]\right)\\
@@ -675,23 +720,18 @@ z & =\log\left(\exp\left(a\right)\exp\left(b\right)\right)\\
 
 \end_inset
 
-Let 
-\begin_inset Formula $\cdot^{\curlywedge}:\mathfrak{g}\to\mathbf{ad}\left(\mathfrak{g}\right)$
+Using the adjoint representation, we can write 
+\begin_inset Formula $z\left(t\right)$
 \end_inset
 
- denote the map from the Lie algebra to the adjoint representation.
- Using the adjoint representation, we can write 
-\begin_inset Formula $Z$
-\end_inset
-
- as z
+ as 
 \begin_inset Formula 
 \begin{align*}
-z & =\log\left(\exp\left(a\right)\exp\left(b\right)\right)\\
+z\left(t\right) & =\log\left(\exp\left(a\right)\exp\left(b\right)\right)\\
  & =a+b+\frac{1}{2}\left(a^{\curlywedge}b^{\vee}\right)^{\wedge}+\frac{1}{12}\left(\left(\left(a^{\curlywedge}\right)^{2}b^{\vee}\right)^{\wedge}+\left(\left(b^{\curlywedge}\right)^{2}a^{\vee}\right)^{\wedge}\right)-\frac{1}{24}\left[b,\left[a,\left[a,b\right]\right]\right]\\
  & -\frac{1}{720}\left(\left(\left(a^{\curlywedge}\right)^{4}b^{\vee}\right)^{\wedge}+\left(\left(b^{\curlywedge}\right)^{4}a^{\vee}\right)^{\wedge}\right)\\
  & +\frac{1}{360}\left(\left[\left[\left[\left[a,b\right],b\right],b\right],a\right]+\left[\left[\left[\left[b,a\right],a\right],a\right],b\right]\right)\\
- & +\frac{1}{120}\left(\left[\left[\left[\left[a,b\right],a\right],b\right],a\right]+\left[\left[\left[\left[b,a\right],b\right],a\right],b\right]\right)+\cdots+
+ & +\frac{1}{120}\left(\left[\left[\left[\left[a,b\right],a\right],b\right],a\right]+\left[\left[\left[\left[b,a\right],b\right],a\right],b\right]\right)+\cdots
 \end{align*}
 
 \end_inset
@@ -705,6 +745,34 @@ which shows that there are terms linear in
 \end_inset
 
 .
+ These are the terms that correspond to the first order derivative and the
+ ones we are interested in.
+ If 
+\begin_inset Formula $a$
+\end_inset
+
+ is a function of 
+\begin_inset Formula $t$
+\end_inset
+
+, then we only need to keep the terms that have at most one 
+\begin_inset Formula $a$
+\end_inset
+
+ in them since all others will not correspond to the first order derivative.
+ Likewise, if 
+\begin_inset Formula $b$
+\end_inset
+
+ is a function of 
+\begin_inset Formula $t$
+\end_inset
+
+, then we only need to keep the terms that have at most one 
+\begin_inset Formula $b$
+\end_inset
+
+ in them.
 \end_layout
 
 \begin_layout Standard
@@ -712,28 +780,20 @@ If we keep terms that have at most one
 \begin_inset Formula $a$
 \end_inset
 
- in them, under the assumption that 
-\begin_inset Formula $a$
-\end_inset
-
- is small, the general BCH formula becomes 
+ in them, the general BCH formula becomes 
 \begin_inset Formula 
 \begin{align}
 \log\left(\exp\left(a\right)\exp\left(b\right)\right) & \approx b+\sum_{k=0}^{\infty}\frac{\mathcal{B}_{k}}{k!}\underbrace{[b,[b,\ldots,[b}_{k},a]]]\label{eq:BCH_approx_A}\\
- & =b+\sum_{k=0}^{\infty}\frac{\mathcal{B}_{k}}{k!}\left(\left(b^{\curlywedge}\right)^{k}a^{\vee}\right)^{\wedge}
+ & =b+\sum_{k=0}^{\infty}\frac{\mathcal{B}_{k}}{k!}\left(\left(b^{\curlywedge}\right)^{k}a^{\vee}\right)^{\wedge}.
 \end{align}
 
 \end_inset
 
-and if we keep only the terms that have at most one 
+If we keep only the terms that have at most one 
 \begin_inset Formula $b$
 \end_inset
 
- in them, under the assumption that 
-\begin_inset Formula $b$
-\end_inset
-
- is small, the general BCH formula becomes 
+ in them, the general BCH formula becomes 
 \begin_inset Formula 
 \begin{align}
 \log\left(\exp\left(a\right)\exp\left(b\right)\right) & \approx a+\sum_{k=0}^{\infty}\left(-1\right)^{k}\frac{\mathcal{B}_{k}}{k!}\underbrace{[a,[a,\ldots,[a}_{k},b]]]\label{eq:BCH_approx_B}\\
@@ -749,12 +809,18 @@ where
  are the Bernoulli numbers
 \begin_inset Formula 
 \begin{equation}
-\mathcal{B}_{0}=1,\,\mathcal{B}_{1}=-\frac{1}{2},\,\mathcal{B}_{2}=\frac{1}{6},\,\mathcal{B}_{3}=0,\,\mathcal{B}_{4}=-\frac{1}{30},\ldots,
+\mathcal{B}_{0}=1,\,\mathcal{B}_{1}=-\frac{1}{2},\,\mathcal{B}_{2}=\frac{1}{6},\,\mathcal{B}_{3}=0,\,\mathcal{B}_{4}=-\frac{1}{30},\ldots
 \end{equation}
 
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+We are now ready to compute the derivatives, which we call the left and
+ right Jacobians (or inverse Jacobians) depending on the trivialization.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -794,7 +860,7 @@ J_{r}^{-1}\left(a\right) & =\frac{\partial\ln\left(\exp\left(a\right)\exp\left(b
 One can compute the inverse Jacobians to get 
 \begin_inset Formula 
 \begin{align*}
-J_{l}\left(b\right) & =\frac{^{r}\partial\exp\left(b\right)}{\partial b}\\
+J_{l}\left(b\right) & =\frac{\partial\exp\left(b\right)}{\partial b}\\
  & =\sum_{n=0}^{\infty}\frac{1}{\left(n+1\right)!}\left(b^{\curlywedge}\right)^{k}
 \end{align*}
 
@@ -803,15 +869,14 @@ J_{l}\left(b\right) & =\frac{^{r}\partial\exp\left(b\right)}{\partial b}\\
 and 
 \begin_inset Formula 
 \begin{align*}
-J_{r}\left(a\right) & =\frac{^{l}\partial\exp\left(a\right)}{\partial a}\\
+J_{r}\left(a\right) & =\frac{\partial\exp\left(a\right)}{\partial a}\\
  & =\sum_{n=0}^{\infty}\frac{1}{\left(n+1\right)!}\left(-a^{\curlywedge}\right)^{k}.
 \end{align*}
 
 \end_inset
 
 A quick aside.
- The left and right Jacobians are also called the derivatives of the matrix
- exponential and you might see notation such as 
+ The left and right Jacobians and their inverses are also denoted as 
 \begin_inset Formula $\text{dexp}\left(a\right)$
 \end_inset
 
@@ -822,6 +887,8 @@ A quick aside.
  to indicated either the left or right Jacobian.
  This notation requires that the context is sufficient to know which Jacobian
  to use.
+ Lastly note that the left Jacobian corresponds to the right-trivialization
+ and the right Jacobian corresponds to the left-trivialization.
  
 \end_layout
 
@@ -889,6 +956,49 @@ Since
 
 \end_layout
 
+\begin_layout Subsection
+Abelian Lie Groups
+\end_layout
+
+\begin_layout --Separator--
+
+\end_layout
+
+\begin_layout Standard
+If the Lie group is an Abelian group, then 
+\begin_inset Formula $\left[a,b\right]=0$
+\end_inset
+
+ for any 
+\begin_inset Formula $a,b\in\mathfrak{g}$
+\end_inset
+
+.
+ This property allows us to greatly simplify the BCH formula.
+ Recall that 
+\begin_inset Formula 
+\[
+\log\left(\exp\left(a\right)\exp\left(b\right)\right)=\sum_{k=1}^{\infty}\frac{\left(-1\right)^{k-1}}{k}\sum_{r_{1}+s_{1}>0}\cdots\sum_{r_{k}+s_{k}>0}\frac{\left[a^{r_{1}}b^{s_{1}}a^{r_{2}}b^{s_{2}}\cdots a^{r_{n}}b^{s_{n}}\right]}{\left(\sum_{j=1}^{k}\left(r_{j}+s_{j}\right)\right)\prod_{i=1}^{k}r_{i}!s_{i}!}.
+\]
+
+\end_inset
+
+If the Lie group is Abelian, the BCH formula simplifies to 
+\begin_inset Formula 
+\[
+\log\left(\exp\left(a\right)\exp\left(b\right)\right)=a+b.
+\]
+
+\end_inset
+
+Thus the left and right Jacobians are merely the identity map.
+ 
+\end_layout
+
+\begin_layout Subsection
+Summary
+\end_layout
+
 \begin_layout Standard
 In summary of this section, we present some useful properties.
  Let 
@@ -924,7 +1034,8 @@ and
 \end_layout
 
 \begin_layout Standard
-Lastly we have the properties
+The left and right Jacobians are related by the matrix adjoint representation
+ of the Lie group.
 \begin_inset Formula 
 \[
 \exp\left(u\right)^{\curlywedge}=J_{l}\left(u\right)J_{r}^{-1}\left(u\right).
@@ -936,11 +1047,37 @@ Lastly we have the properties
 \end_layout
 
 \begin_layout Standard
-As we have defined the left and right Jacobians of the matrix exponential,
- they are geometric series.
- Fortunately, some of the more common matrix Lie groups have closed form
- expressions.
+Lastly, if 
+\begin_inset Formula $\left\Vert u\right\Vert \approx0$
+\end_inset
+
+, then the left and right Jacobians can be approximated as the identity
+ map.
  
+\end_layout
+
+\begin_layout Standard
+We have defined the left and right Jacobians using power series for non-abelian
+ Lie groups.
+ Fortunately, some of Lie groups have closed form expressions.
+ In the remaining sections, we will derive the closed form expression of
+ the left and right Jacobians for 
+\begin_inset Formula $SO\left(2\right)$
+\end_inset
+
+, 
+\begin_inset Formula $SE\left(2\right)$
+\end_inset
+
+, 
+\begin_inset Formula $SO\left(3\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $SE\left(3\right)$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Section
@@ -1070,7 +1207,7 @@ An element of the Lie algebra can be written as
 \end_inset
 
 .
- Also, we quickly not that 
+ Also, we quickly note that 
 \begin_inset Formula 
 \begin{align*}
 \left[1\right]_{\times}^{2} & =-I\\
@@ -1082,13 +1219,13 @@ An element of the Lie algebra can be written as
 
 \end_inset
 
-and the patter repeats.
+where the pattern repeats.
  
 \end_layout
 
 \begin_layout Standard
 To help us calculate the Jacobians, lets notice a pattern regarding the
- adjoint representation and it's powers.
+ adjoint representation and its powers.
  
 \begin_inset Formula 
 \begin{align*}
@@ -1164,7 +1301,7 @@ J_{r}\left(u\right) & =\sum_{n=0}^{\infty}\frac{1}{\left(n+1\right)!}\left(-\mat
 We can brake up Jacobian to facilitate the process as 
 \begin_inset Formula 
 \[
-J_{r}\left(u\right)=\begin{bmatrix}W\left(\theta\right) & D\left(\theta\right)\rho\\
+J_{r}\left(u\right)=\begin{bmatrix}W_{r}\left(\theta\right) & D_{r}\left(\theta\right)\rho\\
 0 & 1
 \end{bmatrix}
 \]
@@ -1191,7 +1328,7 @@ Looking closely at the first few terms of
 \begin_inset Formula $W_{r}\left(\theta\right)$
 \end_inset
 
-, we begin to notice a pattern in the geometric series 
+, we begin to notice a pattern in the power series 
 \begin_inset Formula 
 \begin{align*}
 W_{r}\left(\theta\right) & =I-\frac{1}{2!}\theta\left[1\right]_{\times}-\frac{1}{3!}\theta^{2}I+\frac{1}{4!}\theta^{3}\left[1\right]_{\times}+\frac{1}{5!}\theta^{4}I-\frac{1}{6!}\theta^{5}\left[1\right]_{\times}-\frac{1}{7!}\theta^{6}I+\cdots.\\
@@ -1202,8 +1339,8 @@ W_{r}\left(\theta\right) & =I-\frac{1}{2!}\theta\left[1\right]_{\times}-\frac{1}
 
 \end_inset
 
-We notice that there is a cosine and a sine geometric series which allows
- us to write 
+We notice that there is a cosine and a sine power series which allows us
+ to write 
 \begin_inset Formula 
 \[
 W_{r}\left(\theta\right)=\frac{1}{\theta}\left[1\right]_{\times}\sum_{n=0}^{\infty}\left(-1\right)^{n}\frac{\theta^{2n}}{\left(2n\right)!}-\frac{1}{\theta}\left[1\right]_{\times}+\frac{1}{\theta}I\sum_{n=0}^{\infty}\left(-1\right)^{n}\frac{\theta^{2n+1}}{\left(2n+1\right)!}.
@@ -1230,13 +1367,13 @@ Looking closely at the first few terms of
 , we begin to notice another pattern 
 \begin_inset Formula 
 \[
-D_{r}\left(\theta\right)=\frac{1}{2!}\left[1\right]_{\times}+\frac{1}{3!}\theta I-\frac{1}{4!}\theta^{2}\left[1\right]_{\times}-\frac{1}{5!}\theta^{3}I+\frac{1}{6!}\theta^{4}\left[1\right]_{\times}+\frac{1}{7!}\theta^{5}I+\cdots.
+D_{r}\left(\theta\right)=\frac{1}{2!}\left[1\right]_{\times}-\frac{1}{3!}\theta I-\frac{1}{4!}\theta^{2}\left[1\right]_{\times}+\frac{1}{5!}\theta^{3}I+\frac{1}{6!}\theta^{4}\left[1\right]_{\times}-\frac{1}{7!}\theta^{5}I+\cdots.
 \]
 
 \end_inset
 
-Once again we notice that there is a cosine and a sine geometric series
- which allows us to write
+Once again we notice that there is a cosine and a sine power series which
+ allows us to write
 \begin_inset Formula 
 \[
 D_{r}\left(\theta\right)=\frac{1-\cos\left(\theta\right)}{\theta^{2}}\left[1\right]_{\times}+\frac{\theta-\sin\left(\theta\right)}{\theta^{2}}I.
@@ -1248,12 +1385,25 @@ D_{r}\left(\theta\right)=\frac{1-\cos\left(\theta\right)}{\theta^{2}}\left[1\rig
 \end_layout
 
 \begin_layout Standard
-The left Jacobian can derived in a similar manner and is 
+The left Jacobian can derived in a similar manner.
+ Recall that the left Jacobian is defined as 
+\begin_inset Formula 
+\[
+J_{l}\left(u\right)=\sum_{n=0}^{\infty}\frac{1}{\left(n+1\right)!}\left(\mathbf{ad}_{u}\right)^{k}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We can brake up Jacobian to facilitate the process as 
 \begin_inset Formula 
 \[
 J_{l}\left(u\right)=\begin{bmatrix}W_{l}\left(\theta\right) & D_{l}\left(\theta\right)\rho\\
 0 & 1
-\end{bmatrix},
+\end{bmatrix}
 \]
 
 \end_inset
@@ -1261,12 +1411,69 @@ J_{l}\left(u\right)=\begin{bmatrix}W_{l}\left(\theta\right) & D_{l}\left(\theta\
 where 
 \begin_inset Formula 
 \[
-W_{l}\left(\theta\right)=\frac{1-\cos\left(\theta\right)}{\theta}\left[1\right]_{\times}+\frac{\sin\left(\theta\right)}{\theta}I
+W_{l}\left(\theta\right)=\sum_{n=0}^{\infty}\frac{1}{\left(n+1\right)!}\theta^{k}\left(\left[1\right]_{\times}\right)^{k},
 \]
 
 \end_inset
 
 and 
+\begin_inset Formula 
+\[
+D_{l}\left(\theta\right)=-\frac{1}{2!}\left[1\right]_{\times}+\sum_{n=2}^{\infty}\frac{\theta^{n-1}}{\left(n+1\right)!}\left(\left[1\right]_{\times}\right)^{n}.
+\]
+
+\end_inset
+
+Looking closely at the first few terms of 
+\begin_inset Formula $W_{l}\left(\theta\right)$
+\end_inset
+
+, we begin to notice a pattern in the power series 
+\begin_inset Formula 
+\begin{align*}
+W_{l}\left(\theta\right) & =I+\frac{1}{2!}\theta\left[1\right]_{\times}-\frac{1}{3!}\theta^{2}I-\frac{1}{4!}\theta^{3}\left[1\right]_{\times}+\frac{1}{5!}\theta^{4}I+\frac{1}{6!}\theta^{5}\left[1\right]_{\times}-\frac{1}{7!}\theta^{6}I+\cdots.\\
+ & =I+\left(+\frac{1}{2!}\theta-\frac{1}{4!}\theta^{3}+\frac{1}{6!}\theta^{5}+\cdots\right)\left[1\right]_{\times}+\left(-\frac{1}{3!}\theta^{2}+\frac{1}{5!}\theta^{4}-\frac{1}{7!}\theta^{6}+\cdots\right)I\\
+ & =I+\frac{1}{\theta}\left(1-1+\frac{1}{2!}\theta^{2}-\frac{1}{4!}\theta^{4}+\frac{1}{6!}\theta^{6}+\cdots\right)\left[1\right]_{\times}+\frac{1}{\theta}\left(\theta-\theta-\frac{1}{3!}\theta^{3}+\frac{1}{5!}\theta^{5}-\frac{1}{7!}\theta^{7}+\cdots\right)I\\
+ & =\frac{1}{\theta}\left(-1+\frac{1}{2!}\theta^{2}-\frac{1}{4!}\theta^{4}+\frac{1}{6!}\theta^{6}+\cdots\right)\left[1\right]_{\times}+\frac{1}{\theta}\left[1\right]_{\times}+\frac{1}{\theta}\left(\theta-\frac{1}{3!}\theta^{3}+\frac{1}{5!}\theta^{5}-\frac{1}{7!}\theta^{7}+\cdots\right)I.
+\end{align*}
+
+\end_inset
+
+We notice that there is a cosine and a sine power series which allows us
+ to write 
+\begin_inset Formula 
+\[
+W_{l}\left(\theta\right)=\frac{1}{\theta}\left[1\right]_{\times}\sum_{n=0}^{\infty}\left(-1\right)^{n+1}\frac{\theta^{2n}}{\left(2n\right)!}+\frac{1}{\theta}\left[1\right]_{\times}+\frac{1}{\theta}I\sum_{n=0}^{\infty}\left(-1\right)^{n}\frac{\theta^{2n+1}}{\left(2n+1\right)!}.
+\]
+
+\end_inset
+
+Which can be simplified to 
+\begin_inset Formula 
+\[
+W_{l}\left(\theta\right)=\frac{1-\cos\left(\theta\right)}{\theta}\left[1\right]_{\times}+\frac{\sin\left(\theta\right)}{\theta}I.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Looking closely at the first few terms of 
+\begin_inset Formula $D_{l}\left(\theta\right)$
+\end_inset
+
+, we begin to notice another pattern 
+\begin_inset Formula 
+\[
+D_{l}\left(\theta\right)=-\frac{1}{2!}\left[1\right]_{\times}-\frac{1}{3!}\theta I+\frac{1}{4!}\theta^{2}\left[1\right]_{\times}+\frac{1}{5!}\theta^{3}I-\frac{1}{6!}\theta^{4}\left[1\right]_{\times}-\frac{1}{7!}\theta^{5}I+\cdots.
+\]
+
+\end_inset
+
+Once again we notice that there is a cosine and a sine power series which
+ allows us to write
 \begin_inset Formula 
 \[
 D_{l}\left(\theta\right)=\frac{\cos\left(\theta\right)-1}{\theta^{2}}\left[1\right]_{\times}+\frac{\theta-\sin\left(\theta\right)}{\theta^{2}}I.
@@ -1488,7 +1695,7 @@ In order to calculate the closed form of the power series, we will used
 \begin_inset Formula 
 \begin{align*}
 \mathbf{ad}_{u} & =u\\
-\mathbf{ad}_{u} & =u^{2}\\
+\mathbf{ad}_{u}^{2} & =u^{2}\\
 \mathbf{ad}{}_{u}^{2n+1} & =\left(-1\right)^{n}\theta^{2n}u\\
 \mathbf{ad}_{u}^{2n+2} & =\left(-1\right)^{n}\theta^{2n}u^{2},
 \end{align*}
@@ -1706,9 +1913,6 @@ J_{r}\left(u\right) & =\sum_{n=0}^{\infty}\left(-1\right)^{n}\frac{\mathbf{ad}{}
 \end{bmatrix}\right)+\sum_{n=0}^{\infty}\frac{\left(-1\right)^{2n+2}}{\left(2n+3\right)!}\left(-1\right)^{n}\left(\theta^{2n}\mathbf{ad}{}_{u}^{2}+\begin{bmatrix}0 & \alpha\left(n\right)\omega^{2}\\
 0 & 0
 \end{bmatrix}\right)\\
- & =1+\sum_{n=0}^{\infty}\frac{\left(-1\right)^{2n+1}}{\left(2n+2\right)!}\left(-1\right)^{n}\left(\theta^{2n}\mathbf{ad}_{u}+\begin{bmatrix}0 & \alpha\left(n\right)w\\
-0 & 0
-\end{bmatrix}\right)+\sum_{n=0}^{\infty}\frac{\left(-1\right)^{2n+2}}{\left(2n+3\right)!}\left(-1\right)^{n}\left(\theta^{2n}\mathbf{ad}{}_{u}^{2}+\right)\\
  & =1+\sum_{n=0}^{\infty}\frac{\left(-1\right)^{n+1}}{\left(2n+2\right)!}\theta^{2n}\mathbf{ad}_{u}+\sum_{n=0}^{\infty}\frac{\left(-1\right)^{n+2}}{\left(2n+3\right)!}\theta^{2n}\mathbf{ad}_{u}^{2}+\sum_{n=0}^{\infty}\frac{\left(-1\right)^{n+1}}{\left(2n+2\right)!}\begin{bmatrix}0 & \alpha\left(n\right)\omega\\
 0 & 0
 \end{bmatrix}+\sum_{n=0}^{\infty}\frac{\left(-1\right)^{n+2}}{\left(2n+3\right)!}\begin{bmatrix}0 & \alpha\left(n\right)\omega^{2}\\
@@ -1999,6 +2203,17 @@ J_{l}^{-1}\left(u\right) & =\begin{bmatrix}J_{l}^{-1}\left(\omega\right) & J_{l}
 0 & J_{l}^{-1}\left(\omega\right)
 \end{bmatrix}.
 \end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+bibfiles "/home/mark/Documents/mendeley/library"
+options "plain"
 
 \end_inset
 

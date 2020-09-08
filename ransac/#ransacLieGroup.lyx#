@@ -2097,10 +2097,10 @@ HG_{k:m} & =\left.\frac{\partial y_{m}\ominus h\left(f^{-1}\left(x_{k},w_{k},\de
 \end_inset
 
 where 
-\begin_inset Formula $z=y_{m}\ominus h\left(f^{-1}\left(\hat{x}_{k},\hat{w}_{k},\delta_{k:m}\right),\hat{v}_{m}\right)$
+\begin_inset Formula $z=$
 \end_inset
 
-.
+
 \end_layout
 
 \begin_layout Subsection

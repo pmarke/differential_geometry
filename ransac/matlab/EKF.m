@@ -30,28 +30,68 @@ end
 
 %% derivative test
 
+rng('default')
 
-% dt = 0.1;
-% delta = [dt;0;0];
-% gh = g*expm(wedge(delta))
-% 
-% (vee(logm(inv(gh)*h)) - vee(logm(inv(g)*h)) )/dt
-% 
-% 
-% delta = [0;dt;0];
-% gh = g*expm(wedge(delta))
-% 
-% (vee(logm(inv(gh)*h)) - vee(logm(inv(g)*h)) )/dt
+v = rand(3,1);
+u = rand(3,1);
 
-% dt = 0.01;
-% delta = [dt;-dt;2*dt];
-% 
-% gh = g*expm(wedge(delta));
-% vee(logm(inv(gh)*h))
-% 
-% vee(logm(inv(g)*h)) -Jl_inv(vee(logm(inv(g)*h)))*delta
+dd = -0.2;
+dt = 0.0001;
+dg = [dt;0;0];
+du = [0;0;0];
+gk = expm(wedge(rand(3,1)));
 
-% -Jl_inv(vee(logm(inv(g)*h)))
+ym = expm(wedge(v));
+gm = expm(wedge(dd*u))*gk;
+gd = expm(wedge(dd*u+du))*gk*expm(wedge(dg));
+
+x = (vee(logm(inv(gd)*ym))- vee(logm(inv(gm)*ym)))/dt;
+
+dg = [0;dt;0];
+du = [0;0;0];
+gm = expm(wedge(dd*u))*gk;
+gd = expm(wedge(dd*u+du))*gk*expm(wedge(dg));
+y = (vee(logm(inv(gd)*ym))- vee(logm(inv(gm)*ym)))/dt;
+
+
+dg = [0;0;dt];
+du = [0;0;0];
+gm = expm(wedge(dd*u))*gk;
+gd = expm(wedge(dd*u+du))*gk*expm(wedge(dg));
+z = (vee(logm(inv(gd)*ym))- vee(logm(inv(gm)*ym)))/dt;
+
+[x,y,z];
+
+-Jl_inv(vee(logm(inv(gm)*ym)));
+
+
+dg = [0;0;0];
+du = [dt;0;0];
+gm = expm(wedge(dd*u))*gk;
+gd = expm(wedge(dd*u+du))*gk*expm(wedge(dg));
+
+xx = (vee(logm(inv(gd)*ym))- vee(logm(inv(gm)*ym)))/dt;
+
+
+dg = [0;0;0];
+du = [0;dt;0];
+gm = expm(wedge(dd*u))*gk;
+gd = expm(wedge(dd*u+du))*gk*expm(wedge(dg));
+
+yy = (vee(logm(inv(gd)*ym))- vee(logm(inv(gm)*ym)))/dt;
+
+dg = [0;0;0];
+du = [0;0;dt];
+gm = expm(wedge(dd*u))*gk;
+gd = expm(wedge(dd*u+du))*gk*expm(wedge(dg));
+
+zz = (vee(logm(inv(gd)*ym))- vee(logm(inv(gm)*ym)))/dt;
+
+[xx,yy,zz]
+
+-Jr_inv(vee(logm(inv(gm)*ym)))*Ad(inv(ym))*Jr(-dd*u)
+
+
 
 
 function [P,g,u] = propagate(P,g,u,Q,dt)
@@ -154,6 +194,25 @@ else
 end
 
 end
+
+
+function J = Jr_inv(v)
+
+p = v(1:2);
+th = v(3);
+
+s = [0 -1; 1 0];
+
+if abs(th) < 0.001
+   J = eye(3); 
+else
+    
+    J = inv(Jr(v));
+    
+end
+
+end
+
 
 function J = Jr(v)
 
