@@ -3,6 +3,7 @@
 \begin_document
 \begin_header
 \textclass IEEEtran
+\options onecolumn
 \use_default_options true
 \maintain_unincluded_children false
 \language english
@@ -75,27 +76,6 @@
 
 \begin_layout Section
 Baker-Campbell-Hausdorff
-\begin_inset CommandInset label
-LatexCommand label
-name "sec:Baker-Campbell-Hausdorff"
-
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Barfoot2019"
-
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Michael2019"
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
@@ -206,13 +186,13 @@ where
 
 \begin_layout Standard
 Suppose we are interested in calculating the derivative of the integral
- curves with respect to 
+ curves with respect to parameter 
 \begin_inset Formula $t$
 \end_inset
 
 .
- Since the matrix Lie groups don't support addition, we map the integral
- curves to the Lie algebra and calculate the derivative in the Lie algebra.
+ In order to calculate the derivative, we map the integral curves to the
+ Lie algebra and calculate the derivative in the Lie algebra.
  In other words, we are interested in finding
 \begin_inset Formula 
 \[
@@ -225,6 +205,11 @@ Suppose we are interested in calculating the derivative of the integral
 \end_layout
 
 \begin_layout Standard
+
+\series bold
+move this stuff to later.
+ 
+\series default
 If the Lie group is commutative, then we can use the exponential property
  that 
 \begin_inset Formula 
@@ -239,7 +224,7 @@ Using this property, we can simplify the derivative to
 \begin{align*}
 \frac{\partial\log\left(\exp\left(a\right)\exp\left(b\right)\right)}{\partial t} & =\frac{\partial\log\left(\exp\left(a+b\right)\right)}{\partial t}\\
  & =\frac{\partial\left(a+b\right)}{\partial t}\\
- & =\frac{^{l}\partial v\left(t\right)}{t}=\frac{^{r}\partial v\left(t\right)}{t},
+ & =\frac{^{l}\partial v\left(t\right)}{t}\quad\text{or}\quad\frac{^{r}\partial v\left(t\right)}{t},
 \end{align*}
 
 \end_inset
@@ -261,12 +246,13 @@ where the superscript to the left of the derivative symbol indicates the
  depending on the case.
  Note that if the Lie group is abelian, left and right trivialization is
  equivalent and thus so are their derivatives.
- In the case where the Lie group is not abelian, we utilize the BCH formula.
+ If the Lie group is not abelian, we calculate the derivative using the
+ Baker-Campbel-Hausdorff (BCH) formula.
  
 \end_layout
 
 \begin_layout Subsection
-Non-Abelian 
+General BCH Formula
 \end_layout
 
 \begin_layout Standard
@@ -1368,7 +1354,7 @@ where
  where 
 \begin_inset Formula 
 \[
-u^{\vee}\begin{bmatrix}\rho\\
+u^{\vee}=\begin{bmatrix}\rho\\
 \theta
 \end{bmatrix}.
 \]
@@ -1412,7 +1398,7 @@ If
 , then the Jacobians and their inverses can be simplified to 
 \begin_inset Formula 
 \[
-J_{r}\left(u\right)=J_{l}\left(u\right)=J_{r}^{-1}\left(u\right)=J_{l}^{-1}\left(u\right)=0.
+J_{r}\left(u\right)=J_{l}\left(u\right)=J_{r}^{-1}\left(u\right)=J_{l}^{-1}\left(u\right)=I.
 \]
 
 \end_inset
@@ -1447,197 +1433,122 @@ Left and Right Jacobians of
 \end_layout
 
 \begin_layout Standard
-The BCH approximations 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:BCH_approx_A"
-
+Let 
+\begin_inset Formula $u\in\mathfrak{so}\left(3\right)$
 \end_inset
 
-
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:BCH_approx_B"
-
-\end_inset
-
- can be easily simplified using the identity 
+ have the form 
 \begin_inset Formula 
-\begin{equation}
-\left[A,B\right]=\left[Ab\right]_{\times}
-\end{equation}
+\[
+u=\begin{bmatrix}0 & -z & y\\
+z & 0 & -x\\
+-y & x & 0
+\end{bmatrix},
+\]
+
+\end_inset
+
+the vee 
+\begin_inset Formula $\cdot^{\vee}:\mathfrak{so}\left(3\right)\to\mathbb{R}^{3}$
+\end_inset
+
+ map be defined as
+\begin_inset Formula 
+\[
+u^{\vee}=\begin{bmatrix}x\\
+y\\
+z
+\end{bmatrix},
+\]
+
+\end_inset
+
+and the curly-wedge map 
+\begin_inset Formula $\cdot^{\curlywedge}:\mathfrak{so}\left(3\right)\to\mathbf{ad}\left(\mathfrak{so}\left(3\right)\right)$
+\end_inset
+
+ be defined as 
+\begin_inset Formula 
+\[
+u^{\curlywedge}=u.
+\]
+
+\end_inset
+
+The right Jacobian is defined as 
+\begin_inset Formula 
+\[
+J_{r}\left(u\right)=\sum_{n=0}^{\infty}\frac{1}{\left(n+1\right)!}\left(-\mathbf{ad}_{u}\right)^{k}.
+\]
+
+\end_inset
+
+In order to calculate the closed form of the power series, we will used
+ some properties of the skew symmetric matrix
+\begin_inset Formula 
+\begin{align*}
+\mathbf{ad}_{u} & =u\\
+\mathbf{ad}_{u} & =u^{2}\\
+\mathbf{ad}{}_{u}^{2n+1} & =\left(-1\right)^{n}\theta^{2n}u\\
+\mathbf{ad}_{u}^{2n+2} & =\left(-1\right)^{n}\theta^{2n}u^{2},
+\end{align*}
 
 \end_inset
 
 where 
-\begin_inset Formula $b\in\mathbb{R}^{3}$
-\end_inset
-
- is the isomorphism of the skew symmetric matrix 
-\begin_inset Formula $B$
+\begin_inset Formula $\theta=\left\Vert u\right\Vert $
 \end_inset
 
  and 
-\begin_inset Formula $\left[\cdot\right]_{\times}$
+\begin_inset Formula $n\in\mathbb{R}\geq0$
 \end_inset
 
- takes a vector in 
-\begin_inset Formula $\mathbb{R}^{3}$
-\end_inset
+.
+ The derivation proceeds as follows
+\end_layout
 
- and maps it to a skew symmetric matrix.
- Expanding the first few terms of 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:BCH_approx_A"
-
-\end_inset
-
- yields
-\begin_inset Formula 
-\begin{align}
-\ln\left(\exp\left(A\right)\exp\left(B\right)\right) & \approx B+A-\frac{1}{2}\left(BA-AB\right)+\frac{1}{12}\left(B\left(BA-AB\right)-\left(BA-AB\right)B\right)+\cdots\\
-Z & \approx B+A-\frac{1}{2}\left[Ba\right]_{\times}+\frac{1}{12}\left[BBa\right]_{\times}+\cdots
-\end{align}
-
-\end_inset
-
-The vector isomorphism of 
-\begin_inset Formula $Z$
-\end_inset
-
- is simply 
+\begin_layout Standard
 \begin_inset Formula 
 \begin{align*}
-z & \approx b+a-\frac{1}{2}Ba+\frac{1}{12}B^{2}a+\cdots\\
- & \approx b+\sum_{k=0}^{\infty}\frac{\mathcal{B}_{k}}{\left(k\right)!}\left(B\right)^{k}a\\
- & \approx b+J_{\ell}\left(B\right)^{-1}a
+J_{r}\left(u\right) & =\sum_{n=0}^{\infty}\left(-1\right)^{n}\frac{\mathbf{ad}{}_{u}^{n}}{\left(n+1\right)!}\\
+ & =\sum_{n=0}^{\infty}\left(-1\right)^{n}\frac{u^{n}}{\left(n+1\right)!}\\
+ & =I-\frac{1}{2!}u+\frac{1}{3!}u^{2}+\frac{\left\Vert u\right\Vert ^{2}}{4!}u-\frac{\left\Vert u\right\Vert ^{2}}{5!}u^{2}\cdots\\
+ & =I+\left[\left(1-\frac{\theta^{2}}{2!}+\frac{\theta^{4}}{4!}\cdots\right)-1\right]\frac{u}{\left\Vert \theta\right\Vert ^{2}}+\left[1-\left(\left\Vert \theta\right\Vert -\frac{\left\Vert \theta\right\Vert ^{3}}{3!}+\frac{\left\Vert \theta\right\Vert ^{5}}{5!}\cdots\right)/\left\Vert \theta\right\Vert \right]\frac{u^{2}}{\left\Vert \theta\right\Vert ^{2}}\\
+ & =I+\frac{\cos\left(\theta\right)-1}{\theta^{2}}u+\frac{\theta-\sin\left(\theta\right)}{\theta^{3}}u^{2}.
 \end{align*}
 
 \end_inset
 
-where 
-\begin_inset Formula $J_{\ell}\left(B\right)^{-1}$
-\end_inset
-
- is the inverse left hand Jacobian defined as 
+The left Jacobian is defined as 
 \begin_inset Formula 
-\begin{equation}
-J_{\ell}\left(B\right)^{-1}\triangleq\sum_{k=0}^{\infty}\frac{\mathcal{B}_{k}}{\left(k\right)!}\left(B\right)^{k}
-\end{equation}
+\[
+J_{l}\left(u\right)=\sum_{n=0}^{\infty}\frac{1}{\left(n+1\right)!}\left(\mathbf{ad}_{u}\right)^{n},
+\]
 
 \end_inset
 
-
-\end_layout
-
-\begin_layout Standard
-A similar process can be done by expanding the first few terms of 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:BCH_approx_B"
-
-\end_inset
-
- to get
-\begin_inset Formula 
-\begin{align}
-\ln\left(\exp\left(A\right)\exp\left(B\right)\right) & \approx A+B+\frac{1}{2}\left(AB-BA\right)+\frac{1}{12}\left(A\left(AB-BA\right)-\left(AB-BA\right)A\right)+\cdots\\
-Z & \approx A+B+\frac{1}{2}\left[Ab\right]_{\times}+\frac{1}{12}\left[AAb\right]_{\times}+\cdots
-\end{align}
-
-\end_inset
-
-The vector isomorphism of 
-\begin_inset Formula $Z$
-\end_inset
-
- is simply 
-\begin_inset Formula 
-\begin{align}
-z & \approx b+a+\frac{1}{2}Ab+\frac{1}{12}A^{2}b+\cdots\\
- & \approx b+\sum_{k=0}^{\infty}\frac{\mathcal{B}_{k}}{\left(k\right)!}\left(-A\right)^{k}b\\
- & \approx b+J_{r}\left(A\right)^{-1}b
-\end{align}
-
-\end_inset
-
- where 
-\begin_inset Formula $J_{r}\left(A\right)^{-1}$
-\end_inset
-
- is the inverse right hand Jacobian defined as 
-\begin_inset Formula 
-\begin{equation}
-J_{r}\left(A\right)^{-1}=\sum_{k=0}^{\infty}\frac{\mathcal{B}_{k}}{\left(k\right)!}\left(-A\right)^{k}
-\end{equation}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-This approximation for 
-\begin_inset Formula $z$
-\end_inset
-
- holds on the conditions
+and its derivation proceeds as follows
 \begin_inset Formula 
 \begin{align*}
-z & =\ln\left(\exp\left(A\right)\exp\left(B\right)\right)\\
- & \approx\begin{cases}
-J_{\ell}\left(B\right)^{-1}A+B & \text{if }A\:\text{is small}\\
-A+J_{r}\left(A\right)^{-1}B & \text{if }B\:\text{is small}
-\end{cases}
+J_{l}\left(u\right) & =\sum_{n=0}^{\infty}\frac{1}{\left(n+1\right)!}\left(\mathbf{ad}_{u}\right)^{n}\\
+ & =\sum_{n=0}^{\infty}\frac{u^{n}}{\left(n+1\right)!}\\
+ & =I+\frac{1}{2!}u+\frac{1}{3!}u^{2}-\frac{\left\Vert \theta\right\Vert ^{2}}{4!}u-\frac{\left\Vert u\right\Vert ^{2}}{5!}u^{2}\cdots\\
+ & =I-\left[\left(1-\frac{\theta^{2}}{2!}+\frac{\theta^{4}}{4!}\cdots\right)-1\right]\frac{u}{\left\Vert \theta\right\Vert ^{2}}+\left[1-\left(\left\Vert \theta\right\Vert -\frac{\left\Vert \theta\right\Vert ^{3}}{3!}+\frac{\left\Vert \theta\right\Vert ^{5}}{5!}\cdots\right)/\left\Vert \theta\right\Vert \right]\frac{u^{2}}{\left\Vert \theta\right\Vert ^{2}}\\
+ & =I+\frac{1-\cos\left(\theta\right)}{\theta^{2}}u+\frac{\theta-\sin\left(\theta\right)}{\theta^{3}}u^{2}.
 \end{align*}
 
 \end_inset
 
-which holds since if 
-\begin_inset Formula $A$
-\end_inset
 
- is small then 
-\begin_inset Formula 
-\[
-\sum_{k=0}^{\infty}\frac{\mathcal{B}_{k}}{k!}\underbrace{[A,[A,\ldots,[A}_{k},B]]]
-\]
-
-\end_inset
-
-should be negligible and if 
-\begin_inset Formula $B$
-\end_inset
-
- is small then 
-\begin_inset Formula 
-\[
-\sum_{k=0}^{\infty}\frac{\mathcal{B}_{k}}{k!}\underbrace{[B,[B,\ldots,[B}_{k},A]]]
-\]
-
-\end_inset
-
-should be negligible.
- 
 \end_layout
 
 \begin_layout Standard
-For completeness we also present the left and right Jacobians
+Their corresponding inverses are 
 \begin_inset Formula 
-\begin{align}
-J_{r}\left(\phi\right) & =\sum_{k=0}^{\infty}\frac{1}{\left(k+1\right)!}\left(-\phi\right)^{k}\\
-J_{\ell}\left(\phi\right) & =\sum_{k=0}^{\infty}\frac{1}{\left(k+1\right)!}\left(\phi\right)^{k}
-\end{align}
-
-\end_inset
-
-which are related by 
-\begin_inset Formula 
-\begin{align}
-J_{\ell}\left(\phi\right) & =\exp\left(\phi\right)J_{r}\left(\phi\right)\\
-J_{\ell}\left(-\phi\right) & =J_{r}\left(\phi\right)
-\end{align}
+\begin{align*}
+J_{r}^{-1}\left(u\right) & =I+\frac{1}{2}u-\frac{\left\Vert \theta\right\Vert \cot\left(\frac{\left\Vert \theta\right\Vert }{2}\right)-2}{2\left\Vert \theta\right\Vert ^{2}}u^{2}\\
+J_{l}^{-1}\left(u\right) & =I-\frac{1}{2}u-\frac{\left\Vert \theta\right\Vert \cot\left(\frac{\left\Vert \theta\right\Vert }{2}\right)-2}{2\left\Vert \theta\right\Vert ^{2}}u^{2}.
+\end{align*}
 
 \end_inset
 
@@ -1645,6 +1556,36 @@ J_{\ell}\left(-\phi\right) & =J_{r}\left(\phi\right)
 \end_layout
 
 \begin_layout Subsection
+Summary
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $u\in\mathfrak{so}\left(3\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $\theta=\left\Vert u\right\Vert $
+\end_inset
+
+, then 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+J_{r}\left(u\right) & =I+\frac{\cos\left(\theta\right)-1}{\theta^{2}}u+\frac{\theta-\sin\left(\theta\right)}{\theta^{3}}u^{2}\\
+J_{l}\left(u\right) & =I+\frac{1-\cos\left(\theta\right)}{\theta^{2}}u+\frac{\theta-\sin\left(\theta\right)}{\theta^{3}}u^{2}\\
+J_{r}^{-1}\left(u\right) & =I+\frac{1}{2}u-\frac{\left\Vert \theta\right\Vert \cot\left(\frac{\left\Vert \theta\right\Vert }{2}\right)-2}{2\left\Vert \theta\right\Vert ^{2}}u^{2}\\
+J_{l}^{-1}\left(u\right) & =I-\frac{1}{2}u-\frac{\left\Vert \theta\right\Vert \cot\left(\frac{\left\Vert \theta\right\Vert }{2}\right)-2}{2\left\Vert \theta\right\Vert ^{2}}u^{2}.
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
 The Left and Right Jacobians of 
 \begin_inset Formula $SE\left(3\right)$
 \end_inset
@@ -1653,31 +1594,53 @@ The Left and Right Jacobians of
 \end_layout
 
 \begin_layout Standard
-Before calculating the left and right Jacobians of 
-\begin_inset Formula $SE\left(3\right)$
+Let 
+\begin_inset Formula $u\in\mathfrak{se}\left(3\right)$
 \end_inset
 
- we need to talk about the adjoint of 
-\begin_inset Formula $SE\left(3\right)$
+ have the form 
+\begin_inset Formula 
+\[
+u=\begin{bmatrix}\omega & \rho\\
+0 & 0
+\end{bmatrix},
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\omega\in\mathfrak{so}\left(3\right)$
 \end_inset
 
  and 
-\begin_inset Formula $\mathfrak{se}\left(3\right)$
+\begin_inset Formula $\rho\in\mathbb{R}^{3}$
 \end_inset
 
 .
- Consider two elements 
-\begin_inset Formula $\tau_{1},\tau_{2}\in\mathbb{R}^{6}$
+ The vee map 
+\begin_inset Formula $\cdot^{\vee}:\mathfrak{se}\left(3\right)\to\mathbb{R}^{3}$
 \end_inset
 
- and the element 
-\begin_inset Formula $\chi\in SE\left(3\right)$
-\end_inset
-
- that follow the equality
+ is defined as 
 \begin_inset Formula 
 \[
-\tau_{1}\boxplus\chi=\chi\boxplus\tau_{2}
+u^{\vee}=\begin{bmatrix}\rho\\
+\omega^{\vee}
+\end{bmatrix},
+\]
+
+\end_inset
+
+and the curly-wedge map 
+\begin_inset Formula $\cdot^{\curlywedge}:\mathfrak{se}\left(3\right)\to\mathbf{ad}\left(\mathfrak{se}\left(3\right)\right)$
+\end_inset
+
+ be defined as
+\begin_inset Formula 
+\[
+u^{\curlywedge}=\begin{bmatrix}\omega & \left[\rho\right]_{\times}\\
+0 & \omega
+\end{bmatrix}.
 \]
 
 \end_inset
@@ -1686,339 +1649,355 @@ Before calculating the left and right Jacobians of
 \end_layout
 
 \begin_layout Standard
-The adjoint at 
-\begin_inset Formula $\chi$
+The adjoint of 
+\begin_inset Formula $u$
 \end_inset
 
-, 
-\begin_inset Formula $Ad_{\chi}$
-\end_inset
-
-, maps 
-\begin_inset Formula $\tau_{2}^{\wedge}$
-\end_inset
-
- to 
-\begin_inset Formula $\tau_{1}^{\wedge}$
-\end_inset
-
-, 
-\begin_inset Formula $Ad_{\chi}:\tau_{2}^{\wedge}\to\tau_{1}^{\wedge}$
-\end_inset
-
- as is found as such,
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Sola2018"
-
-\end_inset
-
-,
-\begin_inset Formula 
-\begin{align}
-\tau_{1}\boxplus\chi & =\chi\boxplus\tau_{2}\\
-\exp\left(\tau_{1}^{\wedge}\right)\chi & =\chi\exp\left(\tau_{2}^{\wedge}\right)\\
-\exp\left(\tau_{1}^{\wedge}\right) & =\chi\exp\left(\tau_{2}^{\wedge}\right)\chi^{-1}\\
-\exp\left(\tau_{1}^{\wedge}\right) & =\exp\left(\chi\tau_{2}^{\land}\chi^{-1}\right)\\
-\tau_{1}^{\wedge} & =\chi\tau_{2}^{\vee}\chi^{-1}\label{eq:BCH_SE3_Ad}
-\end{align}
-
-\end_inset
-
-The adjoint 
-\begin_inset Formula $Ad_{\chi}$
-\end_inset
-
- also has a matrix representation that maps 
-\begin_inset Formula $\tau_{2}$
-\end_inset
-
- to 
-\begin_inset Formula $\tau_{1}$
-\end_inset
-
-, 
-\begin_inset Formula $\mathbf{Ad}_{\chi}:\tau_{2}\to\tau_{1}$
-\end_inset
-
- and is found using 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:BCH_SE3_Ad"
-
-\end_inset
-
-,
-\begin_inset Formula 
-\begin{align}
-\tau_{1}^{\wedge} & =\chi\tau_{2}^{\vee}\chi^{-1}\\
-\tau_{1} & =\left(\chi\tau_{2}^{\wedge}\chi^{-1}\right)^{\vee}\\
- & =\begin{bmatrix}R & \left[t\right]_{\times}R\\
-0 & R
-\end{bmatrix}\tau_{2}
-\end{align}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-The matrix adjoint is a lie group 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Barfoot2019"
-
-\end_inset
-
- with a corresponding lie algebra
+ and its powers are 
 \begin_inset Formula 
 \begin{align*}
-\ln\left(\mathbf{Ad}_{\chi}\right) & =\begin{bmatrix}\left[\theta\right]_{\times} & \left[\rho\right]_{\times}\\
-0 & \left[\theta\right]_{\times}
-\end{bmatrix}\\
- & =\tau_{1}^{\curlywedge}
+\mathbf{ad}_{u} & =\begin{bmatrix}\omega & \left[\rho\right]_{\times}\\
+0 & \omega
+\end{bmatrix},\\
+\mathbf{ad}_{u}^{2} & =\begin{bmatrix}\omega^{2} & \left(\omega\left[\rho\right]_{x}+\left[\rho\right]_{x}\omega\right)\\
+0 & \omega^{2}
+\end{bmatrix},\\
+\mathbf{ad}_{u}^{3} & =-\theta^{2}\mathbf{ad}_{u}-2\left(\left(\omega^{\vee}\right)^{\top}\rho\right)\begin{bmatrix}0 & \omega\\
+0 & 0
+\end{bmatrix},\\
+\mathbf{ad}_{u}^{2n+1} & =\left(-1\right)^{n}\left(\theta^{2n}\mathbf{ad}_{u}+\begin{bmatrix}0 & \alpha\left(n\right)\omega\\
+0 & 0
+\end{bmatrix}\right),\\
+\mathbf{ad}_{u}^{2n+2} & =\left(-1\right)^{n}\left(\theta^{2n}\mathbf{ad}_{u}+\begin{bmatrix}0 & \alpha\left(n\right)\omega\\
+0 & 0
+\end{bmatrix}\right),
 \end{align*}
 
 \end_inset
 
-with the relation
-\begin_inset Formula 
-\begin{align*}
-\tau^{\wedge}\in\mathfrak{se}\left(3\right) & \quad\underset{\to}{\exp}\quad\chi\in SE\left(3\right)\\
-\downarrow ad & \quad\quad\quad\quad\downarrow Ad\\
-\tau^{\curlywedge}\in ad\left(\mathfrak{se}\left(3\right)\right) & \quad\underset{\to}{\exp}\quad\mathrm{\chi}^{\curlywedge}\in Ad\left(SE\left(3\right)\right)
-\end{align*}
-
+for 
+\begin_inset Formula $n\in\mathbb{R}\geq0$
 \end_inset
 
-this relation implies that 
-\begin_inset Formula $\mathfrak{se}\left(3\right)$
-\end_inset
-
- is a homomorphism to 
-\begin_inset Formula $ad\left(\mathfrak{se}\left(3\right)\right)$
-\end_inset
-
- and that 
-\begin_inset Formula $SE\left(3\right)$
-\end_inset
-
- is a homomorphism to 
-\begin_inset Formula $Ad\left(SE\left(3\right)\right)$
-\end_inset
-
-.
- We lastly note the property 
-\begin_inset Formula 
-\begin{equation}
-\left[\tau_{1}^{\curlywedge},\tau_{2}^{\curlywedge}\right]=\tau_{1}^{\curlywedge}\tau_{2}^{\curlywedge}-\tau_{2}^{\curlywedge}\tau_{1}^{\curlywedge}=\left(\tau_{1}^{\curlywedge}\tau_{2}\right)^{\curlywedge}\in ad\left(\mathfrak{se}\left(3\right)\right)\label{eq:BCH_SE3_adjoint_property}
-\end{equation}
-
-\end_inset
-
-This property will help us in computing the Jacobians of 
-\begin_inset Formula $SE\left(3\right)$
-\end_inset
-
-.
- 
-\end_layout
-
-\begin_layout Standard
-The BCH approximations 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:BCH_approx_A"
-
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:BCH_approx_B"
-
-\end_inset
-
- can be easily simplified for 
-\begin_inset Formula $SE\left(3\right)$
-\end_inset
-
- using 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:BCH_SE3_adjoint_property"
-
-\end_inset
-
-.
- To show this we begin by expanding 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:BCH_approx_A"
-
-\end_inset
-
-
-\begin_inset Formula 
-\begin{align}
-\ln\left(\exp\left(\tau_{1}\right)\exp\left(\tau_{2}\right)\right)^{\vee} & =\ln\left(\exp\left(\tau_{1}^{\curlywedge}\right)\exp\left(\tau_{2}^{\curlywedge}\right)\right)^{\curlyvee}\\
-\ln\left(\exp\left(\tau_{1}^{\curlywedge}\right)\exp\left(\tau_{2}^{\curlywedge}\right)\right)^{\curlyvee} & \approx\left(\tau_{2}^{\curlywedge}+\sum_{k=0}^{\infty}\frac{\mathcal{B}_{k}}{k!}\underbrace{[\tau_{2}^{\curlywedge},[\tau_{2}^{\curlywedge},\ldots,[\tau_{2}^{\curlywedge}}_{k},\tau_{1}^{\curlywedge}]]]\right)^{\curlyvee}\\
- & \approx\tau_{2}+\left(\tau_{1}^{\curlywedge}-\frac{1}{2}\left[\tau_{2}^{\curlywedge},\tau_{1}^{\curlywedge}\right]+\frac{1}{12}\left[\tau_{2}^{\curlywedge},\left[\tau_{2}^{\curlywedge},\tau_{1}^{\curlywedge}\right]\right]+\cdots\right)^{\curlyvee}\\
- & \approx\tau_{2}+\tau_{1}-\frac{1}{2}\tau_{2}^{\curlywedge}\tau_{1}+\frac{1}{12}\left(\tau_{2}^{\curlywedge}\right)^{2}\tau_{1}+\cdots\\
- & \approx\tau_{2}+\sum_{k=0}^{\infty}\frac{\mathcal{B}_{k}}{\left(k\right)!}\left(\tau_{2}^{\curlywedge}\right)^{k}\tau_{1}\\
- & \approx\tau_{2}+J_{\ell}\left(\tau_{2}^{\curlywedge}\right)^{-1}\tau_{1}
-\end{align}
-
-\end_inset
-
-where 
-\begin_inset Formula $J_{\ell}\left(\tau^{\curlywedge}\right)^{-1}$
-\end_inset
-
- is the inverse left Jacobian defined as 
-\begin_inset Formula 
-\begin{equation}
-J_{\ell}\left(\tau^{\curlywedge}\right)^{-1}=\sum_{k=0}^{\infty}\frac{\mathcal{B}_{k}}{\left(k\right)!}\left(\tau^{\curlywedge}\right)^{k}
-\end{equation}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-We can find the right Jacobian by expanding 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:BCH_approx_B"
-
-\end_inset
-
-
-\begin_inset Formula 
-\begin{align}
-\ln\left(\exp\left(\tau_{1}\right)\exp\left(\tau_{2}\right)\right)^{\vee} & =\ln\left(\exp\left(\tau_{1}^{\curlywedge}\right)\exp\left(\tau_{2}^{\curlywedge}\right)\right)^{\curlyvee}\\
-\ln\left(\exp\left(\tau_{1}^{\curlywedge}\right)\exp\left(\tau_{2}^{\curlywedge}\right)\right)^{\curlyvee} & \approx\left(\tau_{1}^{\curlywedge}+\sum_{k=0}^{\infty}\left(-1\right)^{k}\frac{\mathcal{B}_{k}}{k!}\underbrace{[\tau_{1}^{\curlywedge},[\tau_{1}^{\curlywedge},\ldots,[\tau_{1}^{\curlywedge}}_{k},\tau_{2}^{\curlywedge}]]]\right)^{\curlyvee}\\
- & \approx\tau_{1}+\left(\tau_{2}^{\curlywedge}+\frac{1}{2}\left[\tau_{1}^{\curlywedge},\tau_{2}^{\curlywedge}\right]+\frac{1}{12}\left[\tau_{1}^{\curlywedge},\left[\tau_{1}^{\curlywedge},\tau_{2}^{\curlywedge}\right]\right]+\cdots\right)^{\curlyvee}\\
- & \approx\tau_{1}+\tau_{2}+\frac{1}{2}\tau_{1}^{\curlywedge}\tau_{2}+\frac{1}{12}\left(\tau_{1}^{\curlywedge}\right)^{2}\tau_{2}\\
- & \approx\tau_{1}+\sum_{k=0}^{\infty}\frac{\mathcal{B}_{k}}{\left(k\right)!}\left(-\tau_{1}^{\curlywedge}\right)^{k}\tau_{2}\\
- & \approx\tau_{1}+J_{r}\left(\tau_{1}^{\curlywedge}\right)^{-1}\tau_{2}
-\end{align}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-where 
-\begin_inset Formula $J_{r}\left(\tau^{\curlywedge}\right)^{-1}$
-\end_inset
-
- is the inverse right Jacobian defined as 
-\begin_inset Formula 
-\begin{equation}
-J_{r}\left(\tau^{\curlywedge}\right)^{-1}=\sum_{k=0}^{\infty}\frac{\mathcal{B}_{k}}{\left(k\right)!}\left(-\tau^{\curlywedge}\right)^{k}
-\end{equation}
-
-\end_inset
-
-These approximations hold under certain conditions
-\begin_inset Formula 
-\begin{align*}
-\tau_{3} & =\ln\left(\exp\left(\tau_{1}\right)\exp\left(\tau_{2}\right)\right)^{\vee}\\
- & \approx\begin{cases}
-J_{\ell}\left(\tau_{2}^{\curlywedge}\right)^{-1}\tau_{1}^{\curlywedge}+\tau_{2}^{\curlywedge} & \text{if }\tau_{1}^{\curlywedge}\:\text{is small}\\
-\tau_{1}^{\curlywedge}+J_{r}\left(\tau_{1}^{\curlywedge}\right)^{-1}\tau_{2}^{\curlywedge} & \text{if }\tau_{2}^{\curlywedge}\:\text{is small}
-\end{cases}
-\end{align*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-We can inverse the inverted Jacobians to get the right and left Jacobians.
- These values are
-\begin_inset Formula 
-\begin{align*}
-J_{r}\left(\tau\right) & =\sum_{k=0}^{\infty}\frac{1}{\left(k+1\right)!}\left(-\tau^{\curlywedge}\right)^{k}=\begin{bmatrix}J_{r}\left(\theta\right) & Q_{r}\\
-0 & J_{r}\left(\theta\right)
-\end{bmatrix}\\
-J_{\ell}\left(\tau\right) & =\sum_{k=0}^{\infty}\frac{1}{\left(k+1\right)!}\left(\tau^{\curlywedge}\right)^{k}=\begin{bmatrix}J_{\ell}\left(\theta\right) & Q_{\ell}\\
-0 & J_{\ell}\left(\theta\right)
-\end{bmatrix}
-\end{align*}
-
-\end_inset
-
-where 
-\begin_inset Formula $J_{r}\left(\theta\right)$
-\end_inset
-
- and 
-\begin_inset Formula $J_{\ell}\left(\theta\right)$
-\end_inset
-
- are the left and right Jacobians of 
-\begin_inset Formula $\theta$
-\end_inset
-
- where 
-\begin_inset Formula $\theta$
-\end_inset
-
- is the corresponding rotational component of 
-\begin_inset Formula $\tau=\left[\rho,\theta\right]^{\top}$
-\end_inset
-
-, 
+ and where 
 \begin_inset Formula 
 \[
-Q_{\ell}\left(\tau\right)=\sum_{n=0}^{\infty}\sum_{m=0}^{\infty}\frac{1}{\left(n+m+2\right)!}\left(\left[\theta\right]_{\times}\right)^{n}\left[\rho\right]_{\times}\left[\theta\right]_{\times}^{m}
+\alpha\left(n\right)=\left(2n\right)\left(\left(\omega^{\vee}\right)^{\top}\rho\right)\theta^{2\left(n-1\right)}
 \]
-
-\end_inset
-
-which can be simplified to 
-\begin_inset Formula 
-\begin{multline*}
-Q_{\ell}\left(\tau\right)=\frac{1}{2}\left[\rho\right]_{\times}+\left(\frac{\theta-\sin\theta}{\theta^{3}}\right)\left(\left[\theta\right]_{\times}\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\left[\theta\right]_{\times}+\left[\theta\right]_{\times}\left[\rho\right]_{\times}\left[\theta\right]_{\times}\right)\\
-+\left(\frac{\theta^{2}+2\cos\theta-2}{2\theta^{4}}\right)\left(\left[\theta\right]_{\times}\left[\theta\right]_{\times}\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\left[\theta\right]_{\times}\left[\theta\right]_{\times}-3\left[\theta\right]_{\times}\left[\rho\right]_{\times}\left[\theta\right]_{\times}\right)\\
-+\left(\frac{2\theta-3\sin\theta+\theta\cos\theta}{2\theta^{5}}\right)\left(\left[\theta\right]_{\times}\left[\rho\right]_{\times}\left[\theta\right]_{\times}\left[\theta\right]_{\times}+\left[\theta\right]_{\times}\left[\theta\right]_{\times}\left[\rho\right]_{\times}\left[\theta\right]_{\times}\right)
-\end{multline*}
 
 \end_inset
 
 and 
+\begin_inset Formula $\theta=\left\Vert \mathbf{ad}_{u}\right\Vert $
+\end_inset
+
+.
+ The geometric series of 
+\begin_inset Formula $J_{r}\left(u\right)$
+\end_inset
+
+ is 
 \begin_inset Formula 
 \begin{align*}
-Q_{\ell}\left(-\tau\right) & =Q_{r}\left(\tau\right),\quad\text{or}\\
-\exp\left(\theta\right)Q_{\ell}\left(\tau\right)+\left(J_{\ell}\left(\theta\right)\rho\right)^{\wedge}\exp\left(\theta\right)J_{\ell}\left(\theta\right) & =Q_{r}\left(\tau\right)
+J_{r}\left(u\right) & =\sum_{n=0}^{\infty}\left(-1\right)^{n}\frac{\mathbf{ad}{}_{u}^{n}}{\left(n+1\right)!}\\
+ & =1+\sum_{n=0}^{\infty}\frac{\left(-1\right)^{2n+1}}{\left(2n+2\right)!}\mathbf{ad}{}_{u}^{2n+1}+\sum_{n=0}^{\infty}\frac{\left(-1\right)^{2n+2}}{\left(2n+3\right)!}\mathbf{ad}{}_{u}^{2n+2}\\
+ & =1+\sum_{n=0}^{\infty}\frac{\left(-1\right)^{2n+1}}{\left(2n+2\right)!}\left(-1\right)^{n}\left(\theta^{2n}\mathbf{ad}_{u}+\begin{bmatrix}0 & \alpha\left(n\right)\omega\\
+0 & 0
+\end{bmatrix}\right)+\sum_{n=0}^{\infty}\frac{\left(-1\right)^{2n+2}}{\left(2n+3\right)!}\left(-1\right)^{n}\left(\theta^{2n}\mathbf{ad}{}_{u}^{2}+\begin{bmatrix}0 & \alpha\left(n\right)\omega^{2}\\
+0 & 0
+\end{bmatrix}\right)\\
+ & =1+\sum_{n=0}^{\infty}\frac{\left(-1\right)^{2n+1}}{\left(2n+2\right)!}\left(-1\right)^{n}\left(\theta^{2n}\mathbf{ad}_{u}+\begin{bmatrix}0 & \alpha\left(n\right)w\\
+0 & 0
+\end{bmatrix}\right)+\sum_{n=0}^{\infty}\frac{\left(-1\right)^{2n+2}}{\left(2n+3\right)!}\left(-1\right)^{n}\left(\theta^{2n}\mathbf{ad}{}_{u}^{2}+\right)\\
+ & =1+\sum_{n=0}^{\infty}\frac{\left(-1\right)^{n+1}}{\left(2n+2\right)!}\theta^{2n}\mathbf{ad}_{u}+\sum_{n=0}^{\infty}\frac{\left(-1\right)^{n+2}}{\left(2n+3\right)!}\theta^{2n}\mathbf{ad}_{u}^{2}+\sum_{n=0}^{\infty}\frac{\left(-1\right)^{n+1}}{\left(2n+2\right)!}\begin{bmatrix}0 & \alpha\left(n\right)\omega\\
+0 & 0
+\end{bmatrix}+\sum_{n=0}^{\infty}\frac{\left(-1\right)^{n+2}}{\left(2n+3\right)!}\begin{bmatrix}0 & \alpha\left(n\right)\omega^{2}\\
+0 & 0
+\end{bmatrix}.
 \end{align*}
 
 \end_inset
 
-It is also worth noting
+We can solve for the closed form solution of this geometric series by solving
+ for the closed form solution of the sub geometric series.
+ We already know 
 \begin_inset Formula 
 \begin{align*}
-J_{\ell}\left(\tau\right) & =\exp\left(\tau^{\wedge}\right)J_{r}\left(\tau\right),\quad\text{or}\\
-J_{\ell}\left(-\tau\right) & =J_{r}\left(\tau\right)
+\sum_{n=0}^{\infty}\frac{\left(-1\right)^{n+1}}{\left(2n+2\right)!}\theta^{2n}\mathbf{ad}_{x} & =\frac{\cos\left(\theta\right)-1}{\theta^{2}}\mathbf{ad}_{x}\\
+\sum_{n=0}^{\infty}\frac{\left(-1\right)^{n+2}}{\left(2n+3\right)!}\theta^{2n}\mathbf{ad}_{x}^{2} & =\frac{\theta-\sin\left(\theta\right)}{\theta^{3}}\mathbf{ad}_{x}^{2}
 \end{align*}
 
 \end_inset
 
-and
+since they were solved in the previous subsection.
+ This leaves us to solve the other two series.
+ We being with finding the closed form expression to 
 \begin_inset Formula 
-\begin{align*}
-J_{r}\left(\tau\right)^{-1} & =\begin{bmatrix}J_{r}\left(\theta\right)^{-1} & -J_{r}\left(\theta\right)^{-1}Q_{r}J_{r}\left(\theta\right)^{-1}\\
-0 & J_{r}\left(\theta\right)^{-1}
-\end{bmatrix}\\
-J_{\ell}\left(\tau\right)^{-1} & =\begin{bmatrix}J_{\ell}\left(\theta\right)^{-1} & -J_{\ell}\left(\theta\right)^{-1}Q_{\ell}J_{\ell}\left(\theta\right)^{-1}\\
-0 & J_{\ell}\left(\theta\right)^{-1}
+\[
+\sum_{n=0}^{\infty}\frac{\left(-1\right)^{n+1}}{\left(2n+2\right)!}\begin{bmatrix}0 & \alpha\left(n\right)\omega\\
+0 & 0
+\end{bmatrix}.
+\]
+
+\end_inset
+
+Since the term 
+\begin_inset Formula 
+\[
+\begin{bmatrix}0 & \alpha\left(n\right)\omega\\
+0 & 0
 \end{bmatrix}
+\]
+
+\end_inset
+
+is constant, it can be pulled outside of the sum which yields 
+\begin_inset Formula 
+\[
+\left(\omega^{\vee}\right)^{\top}\rho\left(\sum_{n=0}^{\infty}\frac{\left(-1\right)^{n+1}\left(2n\right)}{\left(2n+2\right)!}\theta^{2\left(n-1\right)}\right)\begin{bmatrix}0 & \omega\\
+0 & 0
+\end{bmatrix}.
+\]
+
+\end_inset
+
+Thus we are left with finding the closed form expression to 
+\begin_inset Formula 
+\[
+\sum_{n=0}^{\infty}\frac{\left(-1\right)^{n+1}\left(2n\right)}{\left(2n+2\right)!}\theta^{2\left(n-1\right)}.
+\]
+
+\end_inset
+
+We do this in a similar manner as done with the other power series.
+\begin_inset Formula 
+\begin{align*}
+\sum_{n=0}^{\infty}\frac{\left(-1\right)^{n+1}\left(2n\right)}{\left(2n+2\right)!}\theta^{2\left(n-1\right)} & =0+\frac{2}{4!}-\frac{4}{6!}\theta^{2}+\frac{6}{8!}\theta^{4}-\frac{8}{10!}\theta^{6}+\frac{10}{12!}\theta^{8}\cdots\\
+ & =\left(\frac{1}{3!}-\frac{1}{5!}\theta^{2}+\frac{1}{7!}\theta^{4}-\frac{1}{9!}\theta^{6}\cdots\right)+\left(\frac{-2}{4!}+\frac{2}{6!}\theta^{2}-\frac{2}{8!}\theta^{4}+\frac{2}{10!}\theta^{6}\cdots\right)\\
+ & =\frac{1}{\theta^{2}}-\frac{1}{\theta^{3}}\left(\theta-\frac{1}{3!}\theta^{3}+\frac{1}{5!}\theta^{5}+\cdots\right)+-\frac{1}{\theta^{2}}+\frac{2}{\theta^{4}}-\frac{2}{\theta^{4}}\left(1-\frac{1}{2}\theta^{2}+\frac{1}{4!}\theta^{4}+\cdots\right)\\
+ & =-\frac{1}{\theta^{3}}\sin\left(\theta\right)+2\left(\frac{1-\cos\left(\theta\right)}{\theta^{4}}\right),
+\end{align*}
+
+\end_inset
+
+where we used the identity 
+\begin_inset Formula 
+\[
+\frac{n-2}{n!}=\frac{1}{\left(n-1\right)!}-\frac{2}{n!}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We find the closed form solution for the other series in a similar manner.
+ The series 
+\begin_inset Formula 
+\[
+\sum_{n=0}^{\infty}\frac{\left(-1\right)^{n+2}}{\left(2n+3\right)!}\begin{bmatrix}0 & \alpha\left(n\right)\omega^{2}\\
+0 & 0
+\end{bmatrix}
+\]
+
+\end_inset
+
+can be written as 
+\begin_inset Formula 
+\[
+\left(\omega^{\vee}\right)^{\top}\rho\left(\sum_{n=0}^{\infty}\frac{\left(-1\right)^{n+2}\left(2n\right)}{\left(2n+3\right)!}\theta^{2\left(n-1\right)}\right)\begin{bmatrix}0 & \omega^{2}\\
+0 & 0
+\end{bmatrix}.
+\]
+
+\end_inset
+
+Thus we are left with finding the closed form solution to 
+\begin_inset Formula 
+\begin{align*}
+\sum_{n=0}^{\infty}\frac{\left(-1\right)^{n+2}\left(2n\right)}{\left(2n+3\right)!}\theta^{2\left(n-1\right)} & =0-\frac{2}{5!}+\frac{4}{7!}\theta^{2}-\frac{6}{9!}\theta^{4}+\frac{8}{11!}\theta^{6}\cdots\\
+ & =\left(\frac{3}{5!}-\frac{3}{7!}\theta^{2}+\frac{3}{9!}\theta^{4}-\frac{3}{11!}\theta^{6}\cdots\right)+\left(-\frac{1}{4!}+\frac{1}{6!}\theta^{2}-\frac{1}{8!}\theta^{4}+\frac{1}{10!}\theta^{6}\cdots\right)\\
+ & =-\frac{3}{\theta^{4}}+\frac{3}{3!\theta^{2}}+\frac{3}{\theta^{5}}\left(\theta-\frac{1}{3!}\theta^{3}+\frac{1}{5!}\theta^{5}+\cdots\right)+\frac{1}{\theta^{4}}-\frac{1}{2!\theta^{2}}-\frac{1}{\theta^{4}}\left(1-\frac{1}{2!}\theta^{2}+\frac{1}{4!}\theta^{4}+\cdots\right)\\
+ & =-\frac{2}{\theta^{4}}+\frac{3}{\theta^{5}}\sin\left(\theta\right)-\frac{1}{\theta^{4}}\cos\left(\theta\right),
+\end{align*}
+
+\end_inset
+
+where we used the identity 
+\begin_inset Formula 
+\[
+\frac{n-3}{n!}=\frac{1}{\left(n-1\right)!}-\frac{3}{n!}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For clarity, let 
+\begin_inset Formula 
+\begin{align*}
+a_{\theta} & =\frac{\cos\left(\theta\right)-1}{\theta^{2}}\\
+b_{\theta} & =\frac{\theta-\sin\left(\theta\right)}{\theta^{3}}\\
+c_{\theta} & =-\frac{1}{\theta^{3}}\sin\left(\theta\right)+2\left(\frac{1-\cos\left(\theta\right)}{\theta^{4}}\right)\\
+d_{\theta} & =-\frac{2}{\theta^{4}}+\frac{3}{\theta^{5}}\sin\left(\theta\right)-\frac{1}{\theta^{4}}\cos\left(\theta\right)\\
+q_{r}\left(\omega\right) & =\left(\left(\omega^{\vee}\right)^{\top}\rho\right)\left(c_{\theta}\omega+d_{\theta}\omega^{2}\right).
+\end{align*}
+
+\end_inset
+
+Putting all of the pieces together we get 
+\begin_inset Formula 
+\[
+J_{r}\left(u\right)=\begin{bmatrix}J_{r}\left(\omega\right) & \left(a_{\theta}\left[\rho\right]_{\times}+b_{\theta}\left(\omega\rho_{\times}+\left[\rho\right]_{\times}\omega\right)+q_{r}\left(\omega\right)\right)\\
+0 & J_{r}\left(\omega\right)
+\end{bmatrix}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The closed form solution for 
+\begin_inset Formula $J_{l}\left(u\right)$
+\end_inset
+
+ is derived in a similar manner, which we will not do here; however, its
+ closed form is 
+\begin_inset Formula 
+\[
+J_{l}\left(u\right)=\begin{bmatrix}J_{l}\left(\omega\right) & \left(-a_{\theta}\left[\rho\right]_{\times}+b_{\theta}\left(\omega\rho_{\times}+\left[\rho\right]_{\times}\omega\right)+q_{l}\left(\omega\right)\right)\\
+0 & J_{l}\left(\omega\right)
+\end{bmatrix}
+\]
+
+\end_inset
+
+where
+\begin_inset Formula 
+\[
+q_{l}\left(\omega\right)=\left(\left(\omega^{\vee}\right)^{\top}\rho\right)\left(-c_{\theta}\omega+d_{\theta}\omega^{2}\right).
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The inverses of Jacobians are easily computed since a square block matrix
+ 
+\begin_inset Formula $M$
+\end_inset
+
+ with the from 
+\begin_inset Formula 
+\[
+M=\begin{bmatrix}A & B\\
+0 & A
+\end{bmatrix}
+\]
+
+\end_inset
+
+has an inverse
+\begin_inset Formula 
+\[
+M^{-1}=\begin{bmatrix}A^{-1} & -A^{-1}BA^{-1}\\
+0 & A^{-1}
+\end{bmatrix}.
+\]
+
+\end_inset
+
+Using this identity we compute 
+\begin_inset Formula 
+\begin{align*}
+J_{r}^{-1}\left(u\right) & =\begin{bmatrix}J_{r}^{-1}\left(\omega\right) & J_{r}^{-1}\left(\omega\right)B_{r}\left(u\right)J_{r}^{-1}\left(\omega\right)\\
+0 & J_{r}^{-1}\left(\omega\right)
+\end{bmatrix}\\
+J_{l}^{-1}\left(u\right) & =\begin{bmatrix}J_{l}^{-1}\left(\omega\right) & J_{l}^{-1}\left(\omega\right)B_{l}\left(u\right)J_{l}^{-1}\left(\omega\right)\\
+0 & J_{l}^{-1}\left(\omega\right)
+\end{bmatrix}
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula 
+\begin{align*}
+B_{r}\left(u\right) & =\left(a_{\theta}\left[\rho\right]_{\times}+b_{\theta}\left(\omega\rho_{\times}+\left[\rho\right]_{\times}\omega\right)+q_{r}\left(\omega\right)\right)\\
+B_{l}\left(u\right) & =\left(-a_{\theta}\left[\rho\right]_{\times}+b_{\theta}\left(\omega\rho_{\times}+\left[\rho\right]_{\times}\omega\right)+q_{l}\left(\omega\right)\right).
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Summary
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $u\in\mathfrak{se}\left(3\right)$
+\end_inset
+
+ have the form 
+\begin_inset Formula 
+\[
+u=\begin{bmatrix}\omega & \rho\\
+0 & 0
+\end{bmatrix},
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\omega\in\mathfrak{so}\left(3\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $\rho\in\mathbb{R}^{3}$
+\end_inset
+
+.
+ 
+\begin_inset Formula 
+\begin{align*}
+\theta & =\left\Vert \mathbf{ad}_{u}\right\Vert \\
+a_{\theta} & =\frac{\cos\left(\theta\right)-1}{\theta^{2}}\\
+b_{\theta} & =\frac{\theta-\sin\left(\theta\right)}{\theta^{3}}\\
+c_{\theta} & =-\frac{1}{\theta^{3}}\sin\left(\theta\right)+2\left(\frac{1-\cos\left(\theta\right)}{\theta^{4}}\right)\\
+d_{\theta} & =-\frac{2}{\theta^{4}}+\frac{3}{\theta^{5}}\sin\left(\theta\right)-\frac{1}{\theta^{4}}\cos\left(\theta\right)\\
+q_{r}\left(\omega\right) & =\left(\left(\omega^{\vee}\right)^{\top}\rho\right)\left(c_{\theta}\omega+d_{\theta}\omega^{2}\right)\\
+q_{l}\left(\omega\right) & =\left(\left(\omega^{\vee}\right)^{\top}\rho\right)\left(-c_{\theta}\omega+d_{\theta}\omega^{2}\right)\\
+B_{r}\left(u\right) & =\left(a_{\theta}\left[\rho\right]_{\times}+b_{\theta}\left(\omega\rho_{\times}+\left[\rho\right]_{\times}\omega\right)+q_{r}\left(\omega\right)\right)\\
+B_{l}\left(u\right) & =\left(-a_{\theta}\left[\rho\right]_{\times}+b_{\theta}\left(\omega\rho_{\times}+\left[\rho\right]_{\times}\omega\right)+q_{l}\left(\omega\right)\right)
+\end{align*}
+
+\end_inset
+
+then 
+\begin_inset Formula 
+\begin{align*}
+J_{r}\left(u\right) & =\begin{bmatrix}J_{r}\left(\omega\right) & \left(a_{\theta}\left[\rho\right]_{\times}+b_{\theta}\left(\omega\rho_{\times}+\left[\rho\right]_{\times}\omega\right)+q_{r}\left(\omega\right)\right)\\
+0 & J_{r}\left(\omega\right)
+\end{bmatrix}\\
+J_{l}\left(u\right) & =\begin{bmatrix}J_{l}\left(\omega\right) & \left(-a_{\theta}\left[\rho\right]_{\times}+b_{\theta}\left(\omega\rho_{\times}+\left[\rho\right]_{\times}\omega\right)+q_{l}\left(\omega\right)\right)\\
+0 & J_{l}\left(\omega\right)
+\end{bmatrix}\\
+J_{r}^{-1}\left(u\right) & =\begin{bmatrix}J_{r}^{-1}\left(\omega\right) & J_{r}^{-1}\left(\omega\right)B_{r}\left(u\right)J_{r}^{-1}\left(\omega\right)\\
+0 & J_{r}^{-1}\left(\omega\right)
+\end{bmatrix}\\
+J_{l}^{-1}\left(u\right) & =\begin{bmatrix}J_{l}^{-1}\left(\omega\right) & J_{l}^{-1}\left(\omega\right)B_{l}\left(u\right)J_{l}^{-1}\left(\omega\right)\\
+0 & J_{l}^{-1}\left(\omega\right)
+\end{bmatrix}.
 \end{align*}
 
 \end_inset
