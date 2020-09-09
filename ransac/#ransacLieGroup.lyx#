@@ -1898,13 +1898,13 @@ Under the assumption that the system is a first order Markov process, we
 Repeating the process recursively, we get 
 \begin_inset Formula 
 \[
-p\left(x_{0:k}\mid y_{0:k}\right)=\eta p\left(x_{0}\right)\prod_{j=1}^{k}\left[p\left(x_{j}\mid x_{j^{-}}\right)\right]\prod_{j=0}^{k}\prod_{m=1}^{\ell\left(j\right)}\left[p\left(y_{j}^{m}\mid x_{j}\right)\right],
+p\left(x_{0:k}\mid y_{0:k}\right)=\eta p\left(x_{0}\right)\prod_{m=1}^{k}\left[p\left(x_{m}\mid x_{m^{-}}\right)\right]\prod_{m=0}^{k}\prod_{j=1}^{\ell\left(m\right)}\left[p\left(y_{m}^{j}\mid x_{m}\right)\right],
 \]
 
 \end_inset
 
 where 
-\begin_inset Formula $\ell\left(j\right)$
+\begin_inset Formula $\ell\left(m\right)$
 \end_inset
 
  is the number of measurements in 
@@ -1912,7 +1912,7 @@ where
 \end_inset
 
  that were received at time 
-\begin_inset Formula $j$
+\begin_inset Formula $m$
 \end_inset
 
 .
@@ -1923,7 +1923,7 @@ Maximizing the posterior is equivalent to minimizing the negative log posterior.
  The negative log posterior is 
 \begin_inset Formula 
 \[
-\log\left(-p\left(x_{0:k}\mid y_{1:k}\right)\right)=\log\left(-\eta\right)+\log\left(-p\left(x_{0}\right)\right)+\sum_{j=1}^{k}\log\left(-p\left(x_{j}\mid x_{j-1}\right)\right)+\sum_{j=0}^{k}\sum_{m=1}^{\ell\left(j\right)}\log\left(-p\left(y_{j}^{m}\mid x_{j}\right)\right).
+\log\left(-p\left(x_{0:k}\mid y_{1:k}\right)\right)=\log\left(-\eta\right)+\log\left(-p\left(x_{0}\right)\right)+\sum_{m=1}^{k}\log\left(-p\left(x_{m}\mid x_{m^{-}}\right)\right)+\sum_{m=0}^{k}\sum_{j=1}^{\ell\left(m\right)}\log\left(-p\left(y_{m}^{j}\mid x_{m}\right)\right).
 \]
 
 \end_inset
@@ -1947,7 +1947,7 @@ We can drop the term
  We thus simplify the negative log posterior to 
 \begin_inset Formula 
 \[
-\log\left(-p\left(x_{0:k},u\mid y_{1:k}\right)\right)\approx\sum_{j=1}^{k}\log\left(-p\left(x_{j}\mid x_{j-1}\right)\right)+\sum_{j=0}^{k}\sum_{m=1}^{\ell\left(j\right)}\log\left(-p\left(y_{j}^{m}\mid x_{j}\right)\right),
+\log\left(-p\left(x_{0:k}\mid y_{1:k}\right)\right)\approx\sum_{m=1}^{k}\log\left(-p\left(x_{m}\mid x_{m^{-}}\right)\right)+\sum_{m=0}^{k}\sum_{j=1}^{\ell\left(m\right)}\log\left(-p\left(y_{m}^{j}\mid x_{m}\right)\right),
 \]
 
 \end_inset
@@ -1955,7 +1955,7 @@ We can drop the term
 which is the minimization problem described as 
 \begin_inset Formula 
 \[
-\arg\min_{x_{0:k}}\left(\sum_{j=1}^{k}\log\left(-p\left(x_{j}\mid x_{j-1},u\right)\right)+\sum_{j=0}^{k}\sum_{m=1}^{\ell\left(j\right)}\log\left(-p\left(y_{j}^{m}\mid x_{j}\right)\right)\right).
+\arg\min_{x_{0:k}}\left(\sum_{m=1}^{k}\log\left(-p\left(x_{m}\mid x_{m^{-}}\right)\right)+\sum_{m=0}^{k}\sum_{j=1}^{\ell\left(m\right)}\log\left(-p\left(y_{m}^{j}\mid x_{m}\right)\right)\right).
 \]
 
 \end_inset
@@ -1968,7 +1968,7 @@ Since we are only interested in estimating the current state
  
 \begin_inset Formula 
 \[
-\arg\min_{x_{k},u}\left(\sum_{j=0}^{k}\sum_{m=1}^{\ell\left(j\right)}\log\left(-p\left(y_{j}^{m}\mid x_{k}\right)\right)\right).
+\arg\min_{x_{k}}\left(\sum_{m=0}^{k}\sum_{j=1}^{\ell\left(m\right)}\log\left(-p\left(y_{m}^{j}\mid x_{k}\right)\right)\right).
 \]
 
 \end_inset
@@ -1978,7 +1978,7 @@ This requires constructing a map from the current state
 \end_inset
 
  to a previous state 
-\begin_inset Formula $x_{j}$
+\begin_inset Formula $x_{m}$
 \end_inset
 
 .
@@ -2058,22 +2058,29 @@ y_{m}=h\left(f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),v_{m}\right).
 
 \end_inset
 
-The likelihood 
+
+\end_layout
+
+\begin_layout Standard
+We are interested in the linearized likelihood of 
 \begin_inset Formula $p\left(y_{m}\mid x_{k}\right)$
 \end_inset
 
- is defined as 
+.
+ Since the likelihood is conditioned on the state, the state is not a random
+ variable.
+ This simplifies the Taylor series of 
 \begin_inset Formula 
 \[
-p\left(y_{m}\mid x_{k}\right)=\eta\exp\left(-\frac{1}{2}\left(y_{m}\ominus h\left(f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),v_{m}\right)\right)^{\top}R^{-1}\left(y_{m}\ominus h\left(f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),v_{m}\right)\right)\right),
+y_{m}\ominus h\left(f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),v_{m}\right),
 \]
 
 \end_inset
 
-and can be linearized as 
+which is 
 \begin_inset Formula 
 \[
-p\left(y_{m}\mid x_{k}\right)\approx\eta\exp\left(-\frac{1}{2}\left(y_{m}\ominus h\left(f^{-1}\left(\hat{x}_{k},\hat{w}_{k},\delta_{k:m}\right),\hat{v}_{m}\right)+HF_{k:m}\delta x_{k}+HG_{k:m}w_{k}+V_{m}v_{m}\right)^{\top}R^{-1}\left(y_{m}\ominus h\left(f^{-1}\left(x_{k},\hat{w}_{k},\delta_{k:m}\right),\hat{v}_{m}\right)+H_{k:m}\delta x_{k}+HG_{k:m}w_{k}+V_{m}v_{m}\right)\right),
+y_{m}\ominus h\left(f^{-1}\left(x_{k},\hat{w}_{k},\delta_{k:m}\right),\hat{v}_{m}\right)+G_{k:m}w_{k}+Vv_{m},
 \]
 
 \end_inset
@@ -2081,328 +2088,41 @@ p\left(y_{m}\mid x_{k}\right)\approx\eta\exp\left(-\frac{1}{2}\left(y_{m}\ominus
 where 
 \begin_inset Formula 
 \begin{align*}
-HF_{k:m} & =\left.\frac{\partial y_{m}\ominus h\left(f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),v_{m}\right)}{\partial x_{k}}\right|_{\hat{x}_{k},\hat{w}_{k},\hat{v}_{m}}\\
- & =\left.J_{r}^{-1}\left(z\right)\mathbf{Ad}_{y_{m}^{-1}}\frac{\partial h\left(f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),v_{m}\right)}{\partial x_{k}}\right|_{\hat{x}_{k},\hat{w}_{k},\hat{v}_{m}},
+G_{k:m} & =\left.\frac{\partial y_{m}\ominus h\left(f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),v_{m}\right)}{\partial w_{k}}\right|_{x_{k},\hat{w}_{k},\hat{v}_{m}}=\\
+ & =\left.J_{r}^{-1}\left(z\right)\mathbf{Ad}_{y_{m}^{-1}}\frac{\partial h\left(f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),v_{m}\right)}{\partial w_{k}}\right|_{x_{k},\hat{w}_{k},\hat{v}_{m}}.
 \end{align*}
 
 \end_inset
 
-
-\begin_inset Formula 
-\begin{align*}
-HG_{k:m} & =\left.\frac{\partial y_{m}\ominus h\left(f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),v_{m}\right)}{\partial w_{k}}\right|_{\hat{x}_{k},\hat{w}_{k},\hat{v}_{m}}\\
- & =\left.J_{r}^{-1}\left(z\right)\mathbf{Ad}_{y_{m}^{-1}}\frac{\partial h\left(f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),v_{m}\right)}{\partial w_{k}}\right|_{\hat{x}_{k},\hat{w}_{k},\hat{v}_{m}},
-\end{align*}
-
-\end_inset
-
-where 
-\begin_inset Formula $z=$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Model Inversion
-\end_layout
-
-\begin_layout Standard
-The system model described in 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:system"
-
-\end_inset
-
- propagates the system forward in time.
- We could easily invert the model to propagate the system backwards in time
- to get the system 
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{subequations}
-\end_layout
-
-\end_inset
-
-
-\begin_inset CommandInset label
-LatexCommand label
-name "eq:inverse_model"
-
-\end_inset
-
- 
-\begin_inset Formula 
-\begin{align}
-x_{k-1} & =x_{k}\boxplus\left(-\delta_{k}u-\delta_{k}w_{k}\right)\\
-y_{k-1} & =x_{k-1}\boxplus v_{k}.
-\end{align}
-
-\end_inset
-
-
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{subequations}
-\end_layout
-
-\end_inset
-
-Since we are assuming that the velocity is constant, we can write the output
- as 
+The expected value is 
 \begin_inset Formula 
 \[
-y_{k-1}=x_{k}\boxplus\left(-\delta_{k}u-\delta_{k}w_{k}\right)\boxplus v_{k}.
+y_{m}\ominus h\left(f^{-1}\left(x_{k},\hat{w}_{k},\delta_{k:m}\right),\hat{v}_{m}\right),
 \]
 
 \end_inset
 
-In fact, we can write the output at any time as a function of the current
- state
+and the covariance is 
 \begin_inset Formula 
 \[
-y_{k-n}=x_{k}\boxplus\left(-\left(t_{k}-t_{k-n}\right)\left(u-w_{k}\right)\right)\boxplus v_{k},
+G_{k:m}QG_{k:m}^{\top}+V_{m}RV_{m}^{\top}
 \]
 
 \end_inset
 
-with 
-\begin_inset Formula $n$
-\end_inset
-
- being an integer from the interval 
-\begin_inset Formula $0\leq n\leq k$
+which we will denote as 
+\begin_inset Formula $R_{k:m}$
 \end_inset
 
 .
- 
-\end_layout
-
-\begin_layout Standard
-Using this model, the negative log posterior simplifies to 
-\begin_inset Formula 
-\[
-\log\left(-p\left(x_{k},u\right)\right)=\sum_{j=1}^{k}\log\left(-p\left(y_{j}\mid x_{k},u\right)\right),
-\]
-
+ Therefore, the linearized probability of 
+\begin_inset Formula $p\left(y_{m}\mid x_{k}\right)$
 \end_inset
 
-thus we want to solve the LMLE problem 
-\begin_inset Formula 
-\[
-\arg\min_{x_{k},u}\left(\sum_{j=1}^{k}\log\left(-p\left(y_{j}\mid x_{k},u\right)\right)\right).
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-This requires knowing the likelihood 
-\begin_inset Formula $p\left(y_{j}\mid x_{k},u\right)$
-\end_inset
-
- for all 
-\begin_inset Formula $j\in\left\{ 1,2,\ldots,k\right\} $
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Subsection
-Likelihood
-\end_layout
-
-\begin_layout Standard
-Let 
-\begin_inset Formula $y_{k}$
-\end_inset
-
- denote the true observation, 
-\begin_inset Formula $\hat{y}_{k}$
-\end_inset
-
- denote the estimated observation, and 
-\begin_inset Formula $\Delta_{k-n}=t_{k-n}-t_{k}$
-\end_inset
-
-, then 
-\begin_inset Formula 
-\[
-y_{k-n}=x_{k}\boxplus\left(\Delta_{k-n}\left(u-w_{k}\right)\right)\boxplus v_{k},
-\]
-
-\end_inset
-
-and 
-\begin_inset Formula 
-\[
-\hat{y}_{k-n}=x_{k}\boxplus\left(\Delta_{k-n}u\right).
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Under the assumption that the observation noise is small, we can approximate
- the the observation
-\begin_inset Formula 
-\[
-y_{k-n}\approx x_{k}\boxplus\left(\Delta_{k-n}\left(u-w_{k}\right)+J_{r}^{-1}\left(\Delta_{k-n}\left(u-w_{k}\right)\right)v_{k}\right),
-\]
-
-\end_inset
-
-with 
-\begin_inset Formula $J_{r}^{-1}$
-\end_inset
-
- being the inverse of the right Jacobian.
- 
-\end_layout
-
-\begin_layout Standard
-We define the error to be 
-\begin_inset Formula 
-\[
-z_{k-n}=y_{k-n}\boxminus\hat{y}_{k-n}.
-\]
-
-\end_inset
-
-Expanding it out gives us 
-\begin_inset Formula 
-\begin{align*}
-z_{k-n} & =\log\left(\exp\left(-\Delta_{k-n}u\right)x_{k}^{-1}x_{k}\exp\left(\Delta_{k-n}\left(u-w_{k}\right)+J_{r}^{-1}\left(\Delta_{k-n}\left(u-w_{k}\right)\right)v_{k}\right)\right)\\
- & =\log\left(\exp\left(-\Delta_{k-n}u\right)\exp\left(\Delta_{k-n}\left(u-w_{k}\right)+J_{r}^{-1}\left(\Delta_{k-n}\left(u-w_{k}\right)\right)v_{k}\right)\right).
-\end{align*}
-
-\end_inset
-
-Under the assumption that 
-\begin_inset Formula $-\Delta_{k-n}w_{k}+J_{r}^{-1}\left(\Delta_{k-n}\left(u-w_{k}\right)\right)v_{k}$
-\end_inset
-
- is small, we can approximate the error to be 
-\begin_inset Formula 
-\begin{align*}
-z_{k-n} & \approx\log\left(\exp\left(-\Delta_{k-n}u\right)\exp\left(\Delta_{k-n}u\right)\exp\left(J_{r}\left(\Delta_{k-n}u\right)\left(-\Delta_{k-n}w_{k}+J_{r}^{-`}\left(\Delta_{k-n}\left(u-w_{k}\right)\right)v_{k}\right)\right)\right)\\
- & =J_{r}\left(\Delta_{k-n}u\right)\left(-\Delta_{k-n}w_{k}+J_{r}^{-1}\left(\Delta_{k-n}\left(u-w_{k}\right)\right)v_{k}\right).
-\end{align*}
-
-\end_inset
-
-Since 
-\begin_inset Formula $w_{k}$
-\end_inset
-
- can be thought of as a small deviation from 
-\begin_inset Formula $u$
-\end_inset
-
-, we can use the Taylor series expansion up to the first order on the term
- 
-\begin_inset Formula $J_{r}\left(\Delta_{k-n}\left(u-w_{k}\right)\right)^{-1}$
-\end_inset
-
- to get 
-\begin_inset Formula 
-\[
-J_{r}\left(\Delta_{k-n}\left(u-w_{k}\right)\right)^{-1}\approx J_{r}^{-1}\left(\Delta_{k-n}u\right)-\left.\frac{\partial J_{r}^{-1}}{\partial u}\right|\Delta_{k-n}w_{k},
-\]
-
-\end_inset
-
-thus the error is approximated as 
-\begin_inset Formula 
-\begin{align*}
-z_{k-n} & \approx J_{r}\left(\Delta_{k-n}u\right)\left(-\Delta_{k-n}w_{k}+\left(J_{r}^{-1}\left(\Delta_{k-n}u\right)-\left.\frac{\partial J_{r}^{-1}}{\partial u}\right|\Delta_{k-n}w_{k}\right)v_{k}\right)\\
- & =-\Delta_{k-n}J_{r}\left(\Delta_{k-n}u\right)w_{k}-J_{r}\left(\Delta_{k-n}u\right)\left(\left.\frac{\partial J_{r}^{-1}}{\partial u}\right|\Delta_{k-n}w_{k}\right)v_{k}+v_{k}
-\end{align*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Since 
-\begin_inset Formula $z_{k-n}$
-\end_inset
-
- is a random variable, we need to calculate the mean and covariance in order
- to form the distribution.
- Under the assumption that 
-\begin_inset Formula $E\left[w_{k}v_{k}\right]=0$
-\end_inset
-
- we get 
-\begin_inset Formula 
-\begin{align*}
-E\left[z_{k-n}\right] & =E\left[\Delta_{k-n}J_{r}\left(\Delta_{k-n}u\right)w_{k}-J_{r}\left(\Delta_{k-n}u\right)\left(\left.\frac{\partial J_{r}^{-1}}{\partial u}\right|\Delta_{k-n}w_{k}\right)v_{k}+v_{k}\right]\\
- & =E\left[v_{k}\right]-\Delta_{k-n}J_{r}\left(\Delta_{k-n}u\right)E\left[w_{k}\right]\\
- & =0.
-\end{align*}
-
-\end_inset
-
-The covariance of the error is 
-\begin_inset Formula 
-\begin{align*}
-E\left[z_{k-n}z_{k-n}^{\top}\right] & =R+\Delta_{k-n}^{2}J_{r}\left(\Delta_{k-n}u\right)QJ_{r}\left(\Delta_{k-n}u\right)\\
- & =R+\bar{Q}\left(u\right).
-\end{align*}
-
-\end_inset
-
-Thus 
-\begin_inset Formula 
-\[
-p\left(z_{k-n}\mid x_{k},u\right)=\mathcal{N}\left(0,R+\bar{Q}\right).
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\[
-\arg\min_{x_{k},u}\sum_{n=1}^{k}z_{k-n}^{\top}\left(R+\bar{Q}\left(u\right)\right)^{-1}z_{k-n}.
-\]
-
-\end_inset
-
-Since 
-\begin_inset Formula $x_{k}$
-\end_inset
-
- is an element of the matrix Lie group, it does really support operations
- such as addition and scalar multiplications.
- To work around this, we optimize over an element in the Lie algebra 
-\begin_inset Formula $\tau_{k}=\log\left(x_{k}\right)$
-\end_inset
-
-.
- Finally, the final form of the optimization is 
+ is 
 \begin_inset Formula 
 \begin{equation}
-\arg\min_{\tau_{k},u}\sum_{n=1}^{k}z_{k-n}^{\top}\left(R+\bar{Q}\right)^{-1}z_{k-n}.\label{eq:Error_LMLE}
+p\left(y_{m}\mid x_{k}\right)=\eta\exp\left(-\frac{1}{2}\left(y_{m}\ominus h\left(f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),v_{m}\right)\right)^{\top}R_{k:m}^{-1}\left(y_{m}\ominus h\left(f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),v_{m}\right)\right)\right).\label{eq:likelihood_inverse}
 \end{equation}
 
 \end_inset
@@ -2410,65 +2130,416 @@ Since
 
 \end_layout
 
-\begin_layout Subsection
-Seeding
+\begin_layout Standard
+Using the linearized probability, we can write the minimization problem
+ as 
+\begin_inset Formula 
+\begin{equation}
+\arg\min_{x_{k}}\left(\sum_{m=0}^{k}\sum_{j=1}^{\ell\left(m\right)}\left(y_{m}^{j}\ominus h\left(f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),v_{m}\right)\right)^{\top}R_{k:m}^{-1}\left(y_{m}^{j}\ominus h\left(f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),v_{m}\right)\right)\right).\label{eq:MLE_inverse}
+\end{equation}
+
+\end_inset
+
+There are many methods that can be used to solve the optimization problem.
+ If the system is linear, the optimization problem reduces to the one described
+ in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Niedfeldt2014a"
+
+\end_inset
+
+.
+ If the system is non-linear, the optimization problem can be solved using
+ the Gauss-newton method or some other optimization method.
+ Depending on the method used, you may need compute the derivative of 
+\begin_inset Formula $y_{m}^{j}\ominus h\left(f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),v_{m}\right)$
+\end_inset
+
+ with respect to the state.
+ We denote this derivative as 
+\begin_inset Formula $F_{k:m}$
+\end_inset
+
+ which is defined as 
+\begin_inset Formula 
+\begin{align*}
+F_{k:m} & =\left.\frac{\partial y_{m}\ominus h\left(f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),v_{m}\right)}{\partial x_{k}}\right|_{\hat{x}_{k},\hat{w}_{k},\hat{v}_{m}}\\
+ & =\left.J_{r}^{-1}\left(z\right)\mathbf{Ad}_{y_{m}^{-1}}\frac{\partial h\left(f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),v_{m}\right)}{\partial x_{k}}\right|_{\hat{x}_{k},\hat{w}_{k},\hat{v}_{m}}.
+\end{align*}
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
-Note that the optimization problem 
+If the optimization is non-linear, a scheme to seed the optimization will
+ drastically help.
+ In the examples that we will present later, we will show same possible
+ seeding methods.
+ 
+\end_layout
+
+\begin_layout Standard
+Some of these calculations can be very costly.
+ Can we make them cheaper or just simplify the problem by setting 
+\begin_inset Formula $R_{k:m}=R$
+\end_inset
+
+ ?
+\end_layout
+
+\begin_layout Section
+RANSAC
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $Y^{i}$
+\end_inset
+
+ denote the set of measurements pertaining to the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ cluster during the time window, and let 
+\begin_inset Formula $y_{0:k}^{i}$
+\end_inset
+
+ be a minimum subset of 
+\begin_inset Formula $Y^{i}$
+\end_inset
+
+ that contains a measurement from the current time 
+\begin_inset Formula $k$
+\end_inset
+
+ and other measurements randomly sampled such that the system can be observed
+ by the measurements in 
+\begin_inset Formula $y_{0:k}^{i}$
+\end_inset
+
+.
+ A model hypotheses is generated using the minimum subset of measurements
+ with the MLE algorithm stated in 
 \begin_inset CommandInset ref
 LatexCommand eqref
-reference "eq:Error_LMLE"
+reference "eq:MLE_inverse"
 
 \end_inset
 
- is non-linear.
- Nonlinear optimization problems are slow relative to linear optimizations
- problems.
- Nonlinear optimization problems can converge faster if they are seeded
- smartly.
- In this subsection we present one possible scheme of seeding.
- We assume that we get two measurements at two distinct time steps 
-\begin_inset Formula $y_{k}$
+.
+ We will denote the state estimate of the 
+\begin_inset Formula $i^{th}$
 \end_inset
 
- and 
-\begin_inset Formula $y_{k-n}$
+ model hypothesis at time 
+\begin_inset Formula $k$
 \end_inset
 
- according to the model described in 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:inverse_model"
+ by 
+\begin_inset Formula $\mu_{k}^{i}$
+\end_inset
+
+.
+ Using 
+\begin_inset Formula $\mu_{k}^{i}$
+\end_inset
+
+, we search 
+\begin_inset Formula $Y^{i}$
+\end_inset
+
+ for inliers.
+ An inlier, is a measurement within some distance of the estimated measurement
+ obtained from 
+\begin_inset Formula $\mu_{k}^{i}$
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $d:N\times N\to\mathbb{R}$
+\end_inset
+
+ be a metric on the measurement space 
+\begin_inset Formula $N$
+\end_inset
+
+, as described in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Moon2000"
 
 \end_inset
 
-, then we can approximate 
-\begin_inset Formula $x_{k}$
+, and let 
+\begin_inset Formula $\tau_{I}\in\mathbb{R}$
 \end_inset
 
- by setting it equal to 
-\begin_inset Formula $y_{k}$
-\end_inset
-
-, and then we can approximate 
-\begin_inset Formula $u$
-\end_inset
-
- using the equation
+ be a threshold, then if 
 \begin_inset Formula 
 \[
-u\approx\frac{1}{\Delta_{k-n}}y_{k}\boxminus y_{k-n}.
+d\left(y_{m},\hat{y}_{m}\right)<\tau_{I},
 \]
 
 \end_inset
 
-If we wanted to use multiple measurement to estimate 
-\begin_inset Formula $u$
+where 
+\begin_inset Formula $\hat{y}_{m}$
 \end_inset
 
-, it would become a simple linear least squares method.
+ is the estimated measurement at time 
+\begin_inset Formula $m$
+\end_inset
+
+ defined as 
+\begin_inset Formula 
+\[
+h\left(f^{-1}\left(\mu_{k}^{i},0,\delta_{k:m}\right),0\right),
+\]
+
+\end_inset
+
+then the measurement 
+\begin_inset Formula $y_{m}$
+\end_inset
+
+ is considered an inlier to the model hypothesis.
+ The past versions of R-RANSAC defined the distance metric differently.
+ One possible metric is the likelihood function defined in 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:likelihood_inverse"
+
+\end_inset
+
+ and selecting 
+\begin_inset Formula $\tau_{I}$
+\end_inset
+
+ to be a measure of standard deviations.
+ All the measurements that are inliers to the model hypothesis, are added
+ to the hypothesis's consensus set.
+ We define the size, not cardinality, of the consensus set as the number
+ of measurements from different sources at each time step.
+ For example, if a source provided ten measurements at time 
+\begin_inset Formula $k$
+\end_inset
+
+ and four of them were added to the consensus set, all four of them would
+ count as one.
+ The purpose of this definition is to ensure that one source is not weighted
+ more heavily than another.
+ The model hypothesis with the largest size, provided that the size is greater
+ than the threshold 
+\begin_inset Formula $\tau_{T}$
+\end_inset
+
+, is kept and turned into a model via a smoothing algorithm.
+\end_layout
+
+\begin_layout --Separator--
+
+\end_layout
+
+\begin_layout Section
+Centralized Measurement Fusion
+\end_layout
+
+\begin_layout Standard
+R-RANSAC is a centralized tracking system that receives measurements asynchronou
+sly from various measurement sources.
+ Thus we rely on the centralized measurement fusion method, as discussed
+ in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Bar-Shalom1988"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Millard2017"
+
+\end_inset
+
+, to update the state estimate when measurements are associated with the
+ model.
+ This method assumes that measurements are statistically independent.
+ We briefly review this method here.
+ Let 
+\begin_inset Formula $N_{s}$
+\end_inset
+
+ denote the number of measurement sources, 
+\begin_inset Formula $\theta_{m}^{i}=\left\{ y^{1},y^{2},\cdots,y^{n}\right\} $
+\end_inset
+
+ denote the set of measurements associated with the model that were received
+ at time 
+\begin_inset Formula $k$
+\end_inset
+
+ from the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ measurement source, 
+\begin_inset Formula $\beta^{j}$
+\end_inset
+
+ be the weight associated with measurement 
+\begin_inset Formula $y^{j}\in\theta_{m}^{i}$
+\end_inset
+
+, 
+\begin_inset Formula $Z^{i}$
+\end_inset
+
+ be defined as 
+\begin_inset Formula 
+\[
+Z^{i}=\begin{cases}
+\sum_{y\in\theta_{m}^{i}}\beta^{j}H_{m}^{\top}R^{-1}y^{j}\ominus h\left(x_{m}\right) & \text{if }\left|\theta_{m}^{i}\right|>0\\
+0 & \text{else}
+\end{cases},
+\]
+
+\end_inset
+
+and 
+\begin_inset Formula $P_{m}^{i}$
+\end_inset
+
+ be the updated measurement covariance after incorporating only the measurements
+ from the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ source, then the covariance update is 
+\begin_inset Formula 
+\[
+P_{m}^{-1}=\bar{P}_{m}^{-1}+\sum_{i=1}^{N_{s}}\left(\left(P_{m}^{i}\right)^{-1}-\bar{P}_{m}^{-1}\right),
+\]
+
+\end_inset
+
+and the state update is 
+\begin_inset Formula 
+\[
+\hat{x}_{m}=\hat{\bar{x}}_{m}+P_{m}\sum_{i=1}^{N_{s}}Z^{i}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For example, if we are using a PDAF to associate measurements and update
+ the state estimate, then the weights 
+\begin_inset Formula $\beta^{j}$
+\end_inset
+
+ would be the weights calculated from the PDAF and 
+\begin_inset Formula 
+\[
+P_{m}^{i}=\sum_{j=1}^{\left|\theta_{m}^{i}\right|}\beta^{j}\left(\bar{P}_{m}-KSK^{\top}\right)+\tilde{P}_{m}^{i},
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $K$
+\end_inset
+
+ is the Kalman gain, 
+\begin_inset Formula $S$
+\end_inset
+
+ the innovation covariance, and 
+\begin_inset Formula 
+\[
+\tilde{P}_{m}^{i}=K\left(\sum_{j=1}^{\left|\theta_{m}^{i}\right|}\beta^{j}\nu^{j}\left(\nu^{j}\right)^{\top}-\nu\nu^{\top}\right)K^{\top},
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\nu^{j}=y^{j}\ominus h\left(x_{m}\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $\nu=\sum_{j=1}^{\left|\theta_{m}^{i}\right|}\nu^{j}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+Track to Track Fusion
+\end_layout
+
+\begin_layout Standard
+In the case where R-RANSAC initializes two different tracks and later decides
+ that the two tracks represent the same target, the tracks need to be fused
+ (merged) together.
+ Calculating the cross covariance needed to optimally fuse the two tracks
+ can be computationally complex and time expensive, or in our case unknown.
+ Fortunately, the covariance intersection (CI) method can be used to fuse
+ two tracks together without calculating the cross covariance.
+ A good introduction to the CI method is presented in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Deng2012"
+
+\end_inset
+
+.
+ Bar-Shalom, in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Bar-Shalom2011"
+
+\end_inset
+
+, pointed out that the CI method is so conservative in its estimation that
+ it can indicate degradation of the state estimate due to fusion, i.e.
+ the fused error covariance is larger than the original.
  
+\end_layout
+
+\begin_layout Section
+Filtering
+\end_layout
+
+\begin_layout Standard
+Just start at 
+\begin_inset Formula $x_{0}$
+\end_inset
+
+ with 
+\begin_inset Formula $P_{0}$
+\end_inset
+
+ and apply the Kalman prediction and update until you have incorporated
+ all the measurements and the state is now 
+\begin_inset Formula $x_{k}$
+\end_inset
+
+.
+ You could apply a smoothing technique, but that could be costly.
+ 
+\end_layout
+
+\begin_layout Section
+Example 
+\begin_inset Formula $\mathbb{R}^{2}$
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
