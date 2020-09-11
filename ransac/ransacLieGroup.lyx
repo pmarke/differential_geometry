@@ -2515,11 +2515,201 @@ key "Tian2010"
 
 \end_inset
 
- called the no-loss covariance intersection (NLCI) method.
- This is the method we will use to fuse tracks together.
- In this section we will briefly present the algorithm in a way suited for
- our use.
+ called the sampled covariance intersection (SCI) method.
+ We will test for track association using a method prescribed in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Bar-Shalom2011"
+
+\end_inset
+
+, and fuse associated tracks together using the SCI method.
+ In this section we will briefly present these algorithm in a way suited
+ for our use.
  
+\end_layout
+
+\begin_layout Subsection
+Track Association
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $\hat{x}^{i}$
+\end_inset
+
+ denote the state estimate of the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ track and 
+\begin_inset Formula $P^{i}$
+\end_inset
+
+ be the corresponding error covariance.
+ The estimation error between two tracks is denoted 
+\begin_inset Formula $\Delta^{ij}$
+\end_inset
+
+ and defined as 
+\begin_inset Formula 
+\[
+\Delta^{ij}=\hat{x}^{i}\ominus\hat{x}^{j}.
+\]
+
+\end_inset
+
+Assuming that the two tracks are independent, the covariance of the estimation
+ error is 
+\begin_inset Formula 
+\[
+T^{ij}=P^{i}+P^{j}.
+\]
+
+\end_inset
+
+We next define a metric 
+\begin_inset Formula $D:\left(G\times\mathfrak{g}\right)\times\left(G\times\mathfrak{g}\right)\to\mathbb{R}$
+\end_inset
+
+ to be
+\begin_inset Formula 
+\[
+D\left(\hat{x}^{i},\hat{x}^{j}\right)=\left(\Delta^{ij}\right)^{\top}\left(T^{ij}\right)^{-1}\Delta^{ij}.
+\]
+
+\end_inset
+
+If 
+\begin_inset Formula $D\left(\cdot,\cdot\right)<\tau_{S}$
+\end_inset
+
+ where 
+\begin_inset Formula $\tau_{S}\in\mathbb{R}$
+\end_inset
+
+, then the two tracks are deemed to be the same and should be merged.
+\end_layout
+
+\begin_layout Subsection
+Track Fusion
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $\hat{x}^{1},\hat{x}^{2},\cdots,\hat{x}^{n}$
+\end_inset
+
+ denote the state estimates of the tracks that need to be fused together
+ and 
+\begin_inset Formula $P^{i}$
+\end_inset
+
+ be their corresponding error covariance.
+ The fused estimate in SCI is calculated as if the tracks to be fused are
+ independent; therefore,
+\begin_inset Formula 
+\begin{align*}
+P^{-1} & =\sum_{i=1}^{n}\left(P^{i}\right)^{-1}\\
+\hat{x}_{SCI} & =P\left(\sum_{i=1}^{n}\left(P^{i}\right)^{-1}\hat{x}^{i}\right).
+\end{align*}
+
+\end_inset
+
+The error covariance 
+\begin_inset Formula $P^{-1}$
+\end_inset
+
+ is overly optimistic, so we must adjust the size as follows:
+\end_layout
+
+\begin_layout Itemize
+Generate 
+\begin_inset Formula $N$
+\end_inset
+
+ (about 100 for a good distribution) random samples 
+\begin_inset Formula $x^{j}$
+\end_inset
+
+, 
+\begin_inset Formula $j=1,2,\ldots,N$
+\end_inset
+
+ from 
+\begin_inset Formula $x\sim\mathcal{N}\left(0,P\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Find
+\begin_inset Formula 
+\[
+r_{\text{max}}=\max_{j=1,\ldots,N}\frac{\left(x^{j}\right)^{\top}P^{-1}x^{j}}{\underset{j=1,\ldots,N}{\max}\left\{ \left(x^{j}\right)^{\top}P^{-1}x^{j}\right\} }
+\]
+
+\end_inset
+
+and
+\begin_inset Formula 
+\[
+r_{\text{min}}=\min_{j=1,\ldots,N}\frac{\left(x^{j}\right)^{\top}P^{-1}x^{j}}{\underset{j=1,\ldots,N}{\max}\left\{ \left(x^{j}\right)^{\top}P^{-1}x^{j}\right\} }
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Then set
+\begin_inset Formula 
+\[
+P_{SCI}=\frac{P}{ur_{\text{min}}+\left(1-u\right)r_{\text{max}}}
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $u\in\left[0,1\right]$
+\end_inset
+
+ is used to adjust the performance of the SCI algorithm.
+ When 
+\begin_inset Formula $u=1$
+\end_inset
+
+, the fused covariance is conservative and when 
+\begin_inset Formula $u=0$
+\end_inset
+
+, the fused covariance is optimistic.
+ The authors of 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Tian2010"
+
+\end_inset
+
+ received good results by setting 
+\begin_inset Formula $u=0.5$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The fused track will have the state estimate 
+\begin_inset Formula $\hat{x}_{SCI}$
+\end_inset
+
+ with error covariance 
+\begin_inset Formula $P_{SCI}$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Section
@@ -2546,11 +2736,170 @@ Just start at
 \end_layout
 
 \begin_layout Section
+Model Probability
+\end_layout
+
+\begin_layout Standard
+R-RANSAC stores up to 
+\begin_inset Formula $\mathcal{M}$
+\end_inset
+
+ models.
+ Some of the models might not represent actual targets, and could have been
+ initialized from clustered noise.
+ Thus, we need a way to measure how likely a model represents an actual
+ target.
+ We will refer to this measure or probability as the model's likelihood.
+ In the previous versions of R-RANSAC, the inlier ratio and the model's
+ lifetime were used to indicate the model's likelihood.
+ In this section, we present a different approach using a binary Bayes filter
+ with static states.
+ 
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $P_{D}^{i}$
+\end_inset
+
+ denote the probability that the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ measurement source produced a true measurement of the target during the
+ sensor scan, let 
+\begin_inset Formula $P_{G}^{i}$
+\end_inset
+
+ denote the probability that the true measurement was validated, i.e.
+ associated with the target during the data association process, then the
+ probability that a true measurement was validated is 
+\begin_inset Formula $P_{D}^{i}P_{G}^{i}$
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $\lambda^{i}$
+\end_inset
+
+ denote the expected number of false measurements from the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ measurement source during a sensor scan, and 
+\begin_inset Formula $P_{\lambda}$
+\end_inset
+
+ denote the probability that a false measurement is validated, then the
+ expected number of validated false measurements is 
+\begin_inset Formula $\lambda P_{\lambda}$
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $\theta_{m}^{i}$
+\end_inset
+
+ denote the set of validated measurements from the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ measurement source at time 
+\begin_inset Formula $m$
+\end_inset
+
+, and 
+\begin_inset Formula $\theta_{m:k}^{i}$
+\end_inset
+
+ denote the set of validated measurements from the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ measurement source from time 
+\begin_inset Formula $m$
+\end_inset
+
+ to time 
+\begin_inset Formula $k$
+\end_inset
+
+ where 
+\begin_inset Formula $m<k$
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $z$
+\end_inset
+
+ be a Bernoulli random variable with 
+\begin_inset Formula $z=1$
+\end_inset
+
+ meaning that the model represents an actual target and 
+\begin_inset Formula $z=0$
+\end_inset
+
+ meaning that the model doesn't represent a target.
+ For notation purposes, we will denote 
+\begin_inset Formula $p\left(z=1\right)$
+\end_inset
+
+ as 
+\begin_inset Formula $p\left(z\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $p\left(z=0\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $p\left(\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $p\left(m\mid y_{0:t}\right)$
+\end_inset
+
+ denote the p
+\end_layout
+
+\begin_layout Section
 Example 
 \begin_inset Formula $\mathbb{R}^{2}$
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+Euclidean spaces equipped with the standard topology and the group operation
+ of addition form a Lie group.
+ We will give an example of this using 
+\begin_inset Formula $\mathbb{R}^{2}$
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $\mathbb{R}^{2}$
+\end_inset
+
+ be a group equipped with addition.
+ Note that this is an abelian group.
+ Its corresponding Lie algebra is simply 
+\begin_inset Formula $\mathbb{R}^{2}$
+\end_inset
+
+.
+ Therefore, the exponential map and its inverse is simply the identity map.
+ This implies that the left and right Jacobians of the exponential map is
+ also the identity map.
+ Lastly, 
 \end_layout
 
 \begin_layout Section
