@@ -50,7 +50,23 @@ end
 
 end
 
-count
+count;
+
+
+%%
+
+n = 4;
+PG = 0.8;
+g = chi2inv(PG,n);
+S = eye(3);
+c = pi^(3/2)/gamma(n/2+1);
+V = c*g^(n/2)*det(S)
+
+
+
+
+
+
 
 function p = poisson(lambda, k)
 

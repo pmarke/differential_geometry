@@ -75,7 +75,7 @@
 \begin_body
 
 \begin_layout Title
-R-RANSAC with Matrix Lie Groups
+R-RANSAC with Lie Groups
 \end_layout
 
 \begin_layout Section
@@ -95,22 +95,35 @@ This note assumes the reader has a basic understanding of the theory relating
 Terminology, Parameters, and Notation
 \end_layout
 
+\begin_layout Standard
+The terminology, parameters, and notation used is previous version of R-RANSAC
+ have varied which has created confusion and inconsistencies.
+ In this section, we hope to solidify certain terminology, parameters and
+ notation that are suitable for expanding R-RANSAC to work with Lie Groups,
+ and incorporating other improvements we have made to the general algorithm.
+\end_layout
+
 \begin_layout Subsection
 Terminology
 \end_layout
 
 \begin_layout Standard
 R-RANSAC has very specific terminology that we that will facilitate the
- discussion in this note.
- We now present the main terminology.
+ discussion.
+ 
 \end_layout
 
 \begin_layout Itemize
 
 \series bold
-Target
+Phenomenon
 \series default
-: A physical object that has the capability of moving.
+: Something that produces an observable signal.
+ In the case of target tracking, the phenomenon is referred to as a 
+\series bold
+target
+\series default
+, which is an object that exists in physical space.
 \end_layout
 
 \begin_layout Itemize
@@ -233,6 +246,14 @@ hypothesis
 hypothesis
 \series default
 .
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Model Likelihood
+\series default
+: The probability that a model represents an actual target.
 \end_layout
 
 \begin_layout Itemize
@@ -408,8 +429,15 @@ Model Management Parameters
  - Good track threshold
 \end_layout
 
+\begin_layout Itemize
+\begin_inset Formula $\tau_{\alpha}$
+\end_inset
+
+- Missed detection threshold
+\end_layout
+
 \begin_layout Standard
-JPDAF
+PDAF
 \end_layout
 
 \begin_layout Itemize
@@ -427,11 +455,11 @@ JPDAF
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\lambda_{E}$
+\begin_inset Formula $\lambda$
 \end_inset
 
- - Expected number of false measurements from a measurement source per sensor
- scan.
+ - The spacial density of false measurements in a local surveillance region
+ per sensor scan
 \end_layout
 
 \begin_layout Standard
@@ -536,7 +564,7 @@ Let
 \begin_inset Formula $G$
 \end_inset
 
- denote a Lie group.
+ denote a Lie group
 \end_layout
 
 \begin_layout Itemize
@@ -548,15 +576,15 @@ Let
 \begin_inset Formula $G$
 \end_inset
 
-.
+
 \end_layout
 
 \begin_layout Itemize
 Let 
-\begin_inset Formula $V$
+\begin_inset Formula $E$
 \end_inset
 
- denote the vector space isomorphic to 
+ denote the Euclidean vector space isomorphic to 
 \begin_inset Formula $\mathfrak{g}$
 \end_inset
 
@@ -565,96 +593,18 @@ Let
 
 \begin_layout Itemize
 Let 
-\begin_inset Formula $\boxplus:G\times\mathfrak{g}\to\mathfrak{g}$
+\begin_inset Formula $x\in G\times\mathfrak{g}$
 \end_inset
 
- be defined as 
-\begin_inset Formula $\left(g,u\right)\mapsto g\exp\left(u\right)$
-\end_inset
-
-
+ denote the state of the system
 \end_layout
 
 \begin_layout Itemize
 Let 
-\begin_inset Formula $\boxminus:G\times G\to\mathfrak{g}$
+\begin_inset Formula $N$
 \end_inset
 
- be defined as 
-\begin_inset Formula $\left(g_{1},g_{2}\right)\mapsto\log\left(g_{2}^{-1}\bullet g_{1}\right)$
-\end_inset
-
- where the operator 
-\begin_inset Formula $\bullet$
-\end_inset
-
- is matrix multiplication.
-\end_layout
-
-\begin_layout Itemize
-Let 
-\begin_inset Formula $\left[\cdot\right]_{\times}:\mathbb{R}^{n}\to\mathbb{R}^{n}\times\mathbb{R}^{n}$
-\end_inset
-
- be the map that takes elements of 
-\begin_inset Formula $\mathbb{R}^{n}$
-\end_inset
-
- and maps them into skew symmetric matrix in 
-\begin_inset Formula $\mathbb{R}^{n}\times\mathbb{R}^{n}$
-\end_inset
-
- written as 
-\begin_inset Formula $\left[a\right]_{\times}$
-\end_inset
-
- where 
-\begin_inset Formula $a\in\mathbb{R}^{n}$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Itemize
-Let the adjoint of the group be denoted 
-\begin_inset Formula $Ad:G\times G\to G$
-\end_inset
-
- and defined as 
-\begin_inset Formula $\left(g_{1},g_{2}\right)\mapsto g_{1}g_{2}g_{1}^{-1}$
-\end_inset
-
-.
- A variant of the map is 
-\begin_inset Formula $Ad_{g_{1}}:G\to G$
-\end_inset
-
- defined as 
-\begin_inset Formula $\left(g_{2}\right)\mapsto g_{1}g_{2}g_{1}^{-1}$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Itemize
-Let the adjoint of the Lie algebra be denoted 
-\begin_inset Formula $ad:G\times\mathfrak{g}\to\mathfrak{g}$
-\end_inset
-
- and defined as 
-\begin_inset Formula $\left(g,u\right)\mapsto gug^{-1}$
-\end_inset
-
-.
- A variant of the map is 
-\begin_inset Formula $ad_{g}:\mathfrak{g}\to\mathfrak{g}$
-\end_inset
-
- and is defined as 
-\begin_inset Formula $\left(u\right)\mapsto gug^{-1}$
-\end_inset
-
-.
+ denote the measurement space which is a Lie group
 \end_layout
 
 \begin_layout Itemize
@@ -792,8 +742,8 @@ Lie Theory Review
 \end_layout
 
 \begin_layout Standard
-The objective of this section is to provide a review of the important concepts
- of Lie theory that we will use along with the notation.
+The objective of this section is to provide a review of the pertinent concepts
+ of Lie theory that we will use.
  We assume that the reader is familiar with Lie group and Lie algebra theory.
  For those unfamiliar with this material, we refer the interested reader
  primarily to 
@@ -806,8 +756,14 @@ key "Sola2018"
 .
  Solá offers a very gentle introduction to Lie theory that covers the majority
  of information needed to understand this paper.
- We also follow much of the notation prescribed by Solá and Hertzberg who
- proposed the box plus and minus notation in 
+ We also follow much of the notation prescribed by Solá and Hertzberg in
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Sola2018"
+
+\end_inset
+
+ and 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Hertzberg2013"
@@ -830,25 +786,25 @@ key "Barfoot2019,Stillwell2008,Hall2003,Bullo2005a,Lee2013,Abraham1998"
  With no loss in generality, everything we present can be extended to targets
  with a continuous system model and constant acceleration by using a semidirect
  product group formed from a Lie group and its Lie algebra to form a new
- Lie group and numerical integration on the manifold.
- Engo in 
+ Lie group.
+ A good discussion of the semidirect product group formed from a Lie group
+ and its Lie algebra can be found in 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Engo2003"
 
 \end_inset
 
- provides a good overview of the semidirect product group formed from a
- Lie group and its Lie algebra in addition to numerical integration on the
- manifold using the Runge-Kutta-Munthe-Kaas method originally developed
- in the series of papers 
+.
+ If using a continuous system that requires numerical integration on the
+ manifold, we refer the reader to 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Munthe-Kaas1995,Munthe-Kaas1998,Munthe-Kaas1999"
 
 \end_inset
 
-.
+ which describe the Runge-Kutta-Muthe-Kass numerical integration technique.
  
 \end_layout
 
@@ -862,9 +818,10 @@ Let
 \end_inset
 
  denote it's corresponding Lie algebra.
- The exponential map maps elements of the Lie algebra to an element of the
- Lie group, and the logarithmic map is the inverse of the exponential map
- and are defined as
+ The exponential function is a surjective function that maps an element
+ of the Lie algebra to an element of the Lie group, and the logarithmic
+ map is the inverse of the exponential map.
+ We denote both as
 \begin_inset ERT
 status open
 
@@ -899,12 +856,9 @@ end{subequations}
 
 \end_inset
 
-
-\begin_inset Newline newline
-\end_inset
-
-Depending on the Lie group, these functions may only be defined locally
- around the identity.
+ The definition of these maps is dependent on the Lie group.
+ For matrix Lie groups, the exponential and logarithm maps are defined as
+ the matrix exponential and matrix logarithm.
  
 \end_layout
 
@@ -924,8 +878,7 @@ The Lie algebra is isomorphic to the Euclidean space
 
 .
  The Wedge function maps an element from the Euclidean space to the Lie
- algebra, and the Vee function is the inverse function which are defined
- as
+ algebra, and the Vee function is the inverse function which we denote as
 \begin_inset ERT
 status open
 
@@ -961,23 +914,24 @@ end{subequations}
 \end_inset
 
 .
- To distinguish between an element of a Lie algebra and an element of the
- corresponding Euclidean space, the element of the Lie group will always
- be accompanied by the Vee.
- For example, let 
-\begin_inset Formula $v\in E$
+ The definition of these maps is dependent on the Lie algebra.
+ We will rely on context to distinguish between elements of 
+\begin_inset Formula $E$
 \end_inset
 
- then we denote the corresponding element in the Lie algebra as 
-\begin_inset Formula $v^{\wedge}\in\mathfrak{g}$
+ and 
+\begin_inset Formula $\mathfrak{g}$
 \end_inset
 
 .
 \end_layout
 
 \begin_layout Standard
-When working with the Euclidean space, we define additional the exponential
- and logarithmic maps as 
+Let 
+\begin_inset Formula $\text{Exp}:E\to G$
+\end_inset
+
+ and its inverse be defined as the composite function 
 \begin_inset ERT
 status open
 
@@ -1036,10 +990,10 @@ begin{subequations}
  
 \begin_inset Formula 
 \begin{align*}
-\boxplus:G\times\mathfrak{g}\to G & \quad\left(g,v^{\wedge}\right)\mapsto g\bullet\exp\left(v^{\wedge}\right)\\
-\boxminus:G\times G\to\mathfrak{g} & \quad\left(g,h\right)\mapsto\log\left(h^{-1}\bullet g\right)\\
+\boxplus:G\times\mathfrak{g}\to G & \quad\left(g,u\right)\mapsto g\bullet\exp\left(u\right)\\
+\boxminus:G\times G\to\mathfrak{g} & \quad\left(g_{1},g_{2}\right)\mapsto\log\left(g_{2}^{-1}\bullet g_{1}\right)\\
 \oplus:G\times E\to G & \quad\left(g,v\right)\mapsto g\bullet\text{Exp}\left(v\right)\\
-\ominus:G\times G\to E & \quad\left(g,h\right)\mapsto\text{Log}\left(h^{-1}\bullet g\right).
+\ominus:G\times G\to E & \quad\left(g_{1},g_{2}\right)\mapsto\text{Log}\left(g_{2}^{-1}\bullet g\right).
 \end{align*}
 
 \end_inset
@@ -1062,30 +1016,37 @@ end{subequations}
 \end_inset
 
  represents the group operator which we will omit in the future, and 
-\begin_inset Formula $h^{-1}$
+\begin_inset Formula $g_{2}^{-1}$
 \end_inset
 
  is the inverse element of 
-\begin_inset Formula $h$
+\begin_inset Formula $g_{2}$
 \end_inset
 
 .
  We have based the definition of these function on left trivializations
- (using vector fields that are left invariant).
- They could also be defined on right trivializations (using vector fields
- that are right invariant).
- 
+ (using vector fields that are left invariant) since we will present the
+ material using the left trivialization.
+ Note that we could easily use the right trivialization as well.
 \end_layout
 
 \begin_layout Standard
-The big adjoint is a representation of 
+The adjoint of 
 \begin_inset Formula $G$
 \end_inset
 
- that acts on the Lie algebra defined as 
+ is a representation of 
+\begin_inset Formula $G$
+\end_inset
+
+ that acts on 
+\begin_inset Formula $\mathfrak{g}$
+\end_inset
+
+, and is denoted and generically defined as 
 \begin_inset Formula 
 \begin{align*}
-Ad_{g}:\mathfrak{g} & \to\mathfrak{g}\quad\left(v^{\wedge}\right)\mapsto gv^{\wedge}g^{-1}
+Ad_{g}:\mathfrak{g} & \to\mathfrak{g}\quad\left(u\right)\mapsto gug^{-1}
 \end{align*}
 
 \end_inset
@@ -1095,8 +1056,8 @@ where
 \end_inset
 
 .
- Since the big adjoint is a linear function, we can find a matrix version
- that operates on the associated Euclidean space defined as 
+ Since the adjoint is a linear function, we can find a matrix version that
+ operates on the associated Euclidean space generically defined as 
 \begin_inset Formula 
 \[
 \mathbf{Ad}_{g}:E\to E\quad\left(v\right)\mapsto\mathbf{Ad}_{g}v
@@ -1117,37 +1078,41 @@ where
 \end_layout
 
 \begin_layout Standard
-The little adjoint is a representation of 
+The adjoint of 
 \begin_inset Formula $\mathfrak{g}$
 \end_inset
 
- that acts on itself.
+ is a representation of 
+\begin_inset Formula $\mathfrak{g}$
+\end_inset
+
+ that acts on 
+\begin_inset Formula $\mathfrak{g}$
+\end_inset
+
+.
  It is also the Lie bracket 
 \begin_inset Formula $\left[\cdot,\cdot\right]$
 \end_inset
 
- which we will also denote as 
+ which we will denoted and generically define as 
 \begin_inset Formula 
 \[
-ad_{v^{\wedge}}:\mathfrak{g}\to\mathfrak{g}\quad\left(u^{\wedge}\right)\mapsto\left[u^{\wedge},v^{\wedge}\right]
+ad_{u}:\mathfrak{g}\to\mathfrak{g}\quad\left(v\right)\mapsto\left[u,v\right]
 \]
 
 \end_inset
 
 where 
-\begin_inset Formula $v^{\wedge}\in\mathfrak{g}$
+\begin_inset Formula $u\in\mathfrak{g}$
 \end_inset
 
 .
- Since the little adjoint is a linear function, we can find a matrix version
- that operates on the space 
-\begin_inset Formula $V$
-\end_inset
-
- defined as 
+ Since the adjoint is a linear function, we can find a matrix version that
+ operates on the associated Euclidean space generically defined as 
 \begin_inset Formula 
 \[
-\mathbf{ad}_{v^{\wedge}}:V\to V\quad\left(u\right)\mapsto\mathbf{ad}_{v^{\wedge}}u
+\mathbf{ad}_{u}:E\to E\quad\left(v\right)\mapsto\mathbf{ad}_{u}v
 \]
 
 \end_inset
@@ -1157,7 +1122,11 @@ where
 
 \begin_layout Standard
 where 
-\begin_inset Formula $\mathbf{ad}_{v^{\wedge}}$
+\begin_inset Formula $u\in\mathfrak{g}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathbf{ad}_{u}$
 \end_inset
 
  is the matrix adjoint representation of 
@@ -1165,8 +1134,7 @@ where
 \end_inset
 
 .
- We understand that we have abused notation, but we believe that our meaning
- is clear.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -1181,82 +1149,98 @@ key "Iserles2000a"
  trivialized' tangent of the exponential map or as the right trivialized'
  tangent of the exponential map.
  These differentials are also commonly called the right and left Jacobians.
- Since we are defining everything using the left trivialization, we will
- define only the right Jacobian, 
-\begin_inset Formula $J_{r}:V\to GL\left(V\right)$
+ The right Jacobian, 
+\begin_inset Formula $J_{r}:E\to GL\left(E\right)$
 \end_inset
 
-, using a similar definition in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Sola2018"
-
-\end_inset
-
-.
+, is defined as
 \begin_inset Formula 
 \[
-J_{r}\left(v\right)=\frac{^{r}\partial\text{Exp}\left(v\right)}{\partial\tau}.
+J_{r}\left(v\right)=\frac{^{r}\partial\text{Exp}\left(v\right)}{\partial v},
 \]
 
 \end_inset
 
-Since the space 
-\begin_inset Formula $V$
-\end_inset
-
- is isomorphic to the Lie algebra, we can easily define a right Jacobian
- 
-\begin_inset Formula $J_{r}\left(v^{\wedge}\right):\mathfrak{g}\to GL\left(\mathfrak{g}\right)$
-\end_inset
-
-, where we overloaded the notation 
-\begin_inset Formula $J_{r}$
-\end_inset
-
-, to be 
+and the left Jacobian is defined as 
 \begin_inset Formula 
 \[
-J_{r}\left(v^{\wedge}\right)=J_{r}\left(\left(v^{\wedge}\right)^{\vee}\right)^{\wedge}.
+J_{l}\left(v\right)=\frac{^{l}\partial\text{Exp}\left(v\right)}{\partial v}.
 \]
 
 \end_inset
 
- The right Jacobian has the property that for small 
-\begin_inset Formula $u\in V$
+
+\end_layout
+
+\begin_layout Standard
+Their inverses are defined as 
+\begin_inset Formula 
+\[
+J_{r}^{-1}\left(v\right)=\frac{^{r}\partial\text{Log}\left(v\right)}{\partial v}
+\]
+
+\end_inset
+
+and 
+\begin_inset Formula 
+\[
+J_{l}^{-1}\left(v\right)=\frac{^{l}\partial\text{Log}\left(v\right)}{\partial v}.
+\]
+
+\end_inset
+
+The right Jacobian has the property that for small 
+\begin_inset Formula $\delta v\in E$
 \end_inset
 
  given 
-\begin_inset Formula $v\in V$
+\begin_inset Formula $v\in E$
 \end_inset
 
  we get that 
 \begin_inset Formula 
 \begin{align*}
-\text{Exp}\left(v+u\right) & \approx\text{Exp}\left(v\right)\text{Exp}\left(J_{r}\left(v\right)u\right)\\
-\text{Exp}\left(v\right)\text{Exp}\left(u\right) & \approx\text{Exp}\left(v+J_{r}^{-1}\left(v\right)u\right)\\
-\text{Log}\left(\text{Exp}\left(v\right)\text{Exp}\left(u\right)\right) & \approx v+J_{r}^{-1}\left(v\right)u,
+\text{Exp}\left(\delta v+u\right) & \approx\text{Exp}\left(v\right)\text{Exp}\left(J_{r}\left(v\right)\delta v\right)\\
+\text{Exp}\left(v\right)\text{Exp}\left(\delta v\right) & \approx\text{Exp}\left(v+J_{r}^{-1}\left(v\right)\delta v\right)\\
+\text{Log}\left(\text{Exp}\left(v\right)\text{Exp}\left(\delta v\right)\right) & \approx v+J_{r}^{-1}\left(v\right)\delta v.
 \end{align*}
 
 \end_inset
 
-where 
-\begin_inset Formula $J_{r}^{-1}$
+The left Jacobian has the similar property that for small 
+\begin_inset Formula $\delta v\in E$
 \end_inset
 
- is the inverse Jacobian.
- The derivation of the left and right Jacobians stems from the Baker-Campbell-Ha
-usdorff formula and can be studied in 
+ given 
+\begin_inset Formula $v\in E$
+\end_inset
+
+ we get that
+\begin_inset Formula 
+\begin{align*}
+\text{Exp}\left(v+\delta v\right) & \approx\text{Exp}\left(J_{l}\left(v\right)\delta v\right)\text{Exp}\left(v\right)\\
+\text{Exp}\left(\delta v\right)\text{Exp}\left(v\right) & \approx\text{Exp}\left(v+J_{l}^{-1}\left(v\right)\delta v\right)\\
+\text{Log}\left(\text{Exp}\left(\delta v\right)\text{Exp}\left(v\right)\right) & \approx v+J_{l}^{-1}\left(v\right)\delta v.
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The derivation of the left and right Jacobians stems from the Baker-Campbell-Hau
+sdorff formula and can be studied in 
 \begin_inset CommandInset citation
 LatexCommand cite
-key "Barfoot2019"
+key "Hall2003"
 
 \end_inset
 
  and 
 \begin_inset CommandInset citation
 LatexCommand cite
-key "Hall2003"
+key "Barfoot2019"
 
 \end_inset
 
@@ -1269,7 +1253,11 @@ Problem Description
 \end_layout
 
 \begin_layout Standard
-We assume a discrete, constant velocity, time invariant system of the form
+The objective is to estimate the states of multiple dynamic targets given
+ a set of measurements from multiple sensors and a dynamic model without
+ a prior information about the number of targets in the global surveillance
+ region.
+ We assume a discrete, constant velocity, time invariant system of the form
 \begin_inset ERT
 status open
 
@@ -1312,7 +1300,7 @@ end{subequations}
 \end_inset
 
 
-\begin_inset Formula $x_{k}=\left(g_{k},u\right)$
+\begin_inset Formula $x_{k}=\left(g_{k},u\right)\in G\times E$
 \end_inset
 
  is the state of the system at time 
@@ -1323,12 +1311,8 @@ end{subequations}
 \begin_inset Formula $g_{k}\in G$
 \end_inset
 
- is the pose of the system at time 
-\begin_inset Formula $k$
-\end_inset
-
-, 
-\begin_inset Formula $u^{\wedge}\in\mathfrak{g}$
+ is the pose of the system, 
+\begin_inset Formula $u\in E$
 \end_inset
 
  is the constant velocity of the system, 
@@ -1352,7 +1336,7 @@ f\left(x_{k^{-}},w_{k},\delta_{k}\right)=\left(g_{k^{-}}\oplus\left(\delta_{k}u+
 \end_inset
 
  is a Lie group, 
-\begin_inset Formula $h:G\to M$
+\begin_inset Formula $h:G\to N$
 \end_inset
 
  is the observation model, 
@@ -1377,7 +1361,7 @@ on with covariance
 
 \begin_layout Standard
 The state 
-\begin_inset Formula $x=\left(g,u\right)$
+\begin_inset Formula $x$
 \end_inset
 
  is a new Lie group generated from the Cartesian product of 
@@ -1385,28 +1369,33 @@ The state
 \end_inset
 
  and 
-\begin_inset Formula $\mathfrak{g}$
+\begin_inset Formula $E$
 \end_inset
 
 .
  The Lie algebra of 
-\begin_inset Formula $G\times\mathfrak{g}$
+\begin_inset Formula $G\times E$
 \end_inset
 
  is simply 
-\begin_inset Formula $\mathfrak{g}\times\mathfrak{g}$
+\begin_inset Formula $\mathfrak{g}\times E$
 \end_inset
 
  which is isomorphic to 
-\begin_inset Formula $\mathbb{R}^{m}$
+\begin_inset Formula $\mathbb{R}^{2n}$
 \end_inset
 
- for some 
-\begin_inset Formula $m$
+ with 
+\begin_inset Formula $n$
 \end_inset
 
- which we will denote as 
-\begin_inset Formula $\bar{E}$
+ being the dimension of 
+\begin_inset Formula $G$
+\end_inset
+
+.
+ We will denote this space as 
+\begin_inset Formula $E^{*}$
 \end_inset
 
 .
@@ -1416,14 +1405,15 @@ The state
 \end_inset
 
  and 
-\begin_inset Formula $v\in\bar{E}$
+\begin_inset Formula $v=\left(a,b\right)^{\vee}\in E^{*}$
 \end_inset
 
 , then 
 \begin_inset Formula 
 \begin{align*}
-x\oplus v & =\left(g,u\right)\oplus\left(a,b\right)\\
- & =\left(g\text{Exp}\left(a\right),u+b\right),
+x\oplus v & =\left(g,u\right)\oplus v\\
+ & =\left(g,u\right)\boxplus\left(a,b\right)\\
+ & =\left(g\exp\left(a\right),u+b\right),
 \end{align*}
 
 \end_inset
@@ -1432,24 +1422,27 @@ where
 \begin_inset Formula $g\in G$
 \end_inset
 
+, 
+\begin_inset Formula $a\in\mathfrak{g}$
+\end_inset
+
 , and 
-\begin_inset Formula $u,a,b\in E$
+\begin_inset Formula $u,b\in E$
 \end_inset
 
 .
 \end_layout
 
-\begin_layout Standard
-Given a set of measurements 
-\begin_inset Formula $\Psi_{T_{W}}$
-\end_inset
-
- which contains true and false measurements, we want to estimate the current
- state of the system.
-\end_layout
-
 \begin_layout Section
 Lie Group Probability
+\end_layout
+
+\begin_layout Standard
+In this section we define the prior distribution of the state 
+\begin_inset Formula $x$
+\end_inset
+
+, the state transition distribution,  
 \end_layout
 
 \begin_layout Standard
@@ -2736,7 +2729,7 @@ Just start at
 \end_layout
 
 \begin_layout Section
-Model Probability
+Model Likelihood
 \end_layout
 
 \begin_layout Standard
@@ -2773,7 +2766,7 @@ Let
 
  denote the probability that the true measurement was validated, i.e.
  associated with the target during the data association process, then the
- probability that a true measurement was validated is 
+ probability that a true measurement was received and validated is 
 \begin_inset Formula $P_{D}^{i}P_{G}^{i}$
 \end_inset
 
@@ -2787,12 +2780,12 @@ Let
 \end_inset
 
  measurement source during a sensor scan, and 
-\begin_inset Formula $P_{\lambda}$
+\begin_inset Formula $P_{\lambda}^{i}$
 \end_inset
 
  denote the probability that a false measurement is validated, then the
  expected number of validated false measurements is 
-\begin_inset Formula $\lambda P_{\lambda}$
+\begin_inset Formula $\lambda^{i}P_{\lambda}^{i}$
 \end_inset
 
 .
@@ -2800,7 +2793,7 @@ Let
 \begin_inset Formula $\theta_{m}^{i}$
 \end_inset
 
- denote the set of validated measurements from the 
+ denote the number of validated measurements from the 
 \begin_inset Formula $i^{th}$
 \end_inset
 
@@ -2812,7 +2805,7 @@ Let
 \begin_inset Formula $\theta_{m:k}^{i}$
 \end_inset
 
- denote the set of validated measurements from the 
+ denote the number of validated measurements from the 
 \begin_inset Formula $i^{th}$
 \end_inset
 
@@ -2828,20 +2821,442 @@ Let
 \begin_inset Formula $m<k$
 \end_inset
 
+, and 
+\begin_inset Formula $\theta_{m:k}$
+\end_inset
+
+ the set of validated measurements from all the measurement sources from
+ time 
+\begin_inset Formula $m$
+\end_inset
+
+ to time 
+\begin_inset Formula $k$
+\end_inset
+
 .
  Let 
-\begin_inset Formula $p\left(x\right)$
+\begin_inset Formula $z$
+\end_inset
+
+ be a Bernoulli random variable with 
+\begin_inset Formula $z=1$
+\end_inset
+
+ meaning that the model represents an actual target and 
+\begin_inset Formula $z=0$
+\end_inset
+
+ meaning that the model doesn't represent a target.
+ For notation purposes, we will denote 
+\begin_inset Formula $p\left(z=1\right)$
+\end_inset
+
+ as 
+\begin_inset Formula $p\left(z\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $p\left(z=0\right)$
+\end_inset
+
+ as 
+\begin_inset Formula $p\left(\neg z\right)$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+We are interested in calculating the probability that the model represents
+ an actual target conditioned on the validated measurements.
+ We denote this probability as 
+\begin_inset Formula $p\left(z\mid\theta_{m:k}\right)$
+\end_inset
+
+.
+ Using Bayes rule we get 
+\begin_inset Formula 
+\[
+p\left(z\mid\theta_{m:k}\right)=\frac{p\left(\theta_{k}\mid z,\theta_{m:k^{-}}\right)p\left(z\mid\theta_{m:k^{-}}\right)}{p\left(\theta_{k}\mid\theta_{m:k^{-}}\right)}=\frac{p\left(\theta_{k}\mid z\right)p\left(z\mid\theta_{m:k^{-}}\right)}{p\left(\theta_{k}\mid\theta_{m:k^{-}}\right)}.
+\]
+
+\end_inset
+
+The probability 
+\begin_inset Formula $p\left(\theta_{k}\mid\theta_{m:k^{-}}\right)$
+\end_inset
+
+ can be difficult to calculate; however, we can work around needing to know
+ this probability by using a log odds ratio.
+ For this method, we need 
+\begin_inset Formula $p\left(\neg z\mid\theta_{m:k}\right)$
+\end_inset
+
+ which is 
+\begin_inset Formula 
+\[
+p\left(\neg z\mid\theta_{m:k}\right)=\frac{p\left(\theta_{k}\mid\neg z\right)p\left(\neg z\mid\theta_{m:k^{-}}\right)}{p\left(\theta_{k}\mid\theta_{m:k^{-}}\right)}.
+\]
+
+\end_inset
+
+Taking the log ratio of the probabilities 
+\begin_inset Formula $p\left(z\mid\theta_{m:k}\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $p\left(\neg z\mid\theta_{m:k}\right)$
+\end_inset
+
+, we get 
+\begin_inset Formula 
+\begin{align*}
+\log\left(\frac{p\left(z\mid\theta_{m:k}\right)}{p\left(\neg z\mid\theta_{m:k}\right)}\right) & =\log\left(\frac{p\left(\theta_{k}\mid z\right)p\left(z\mid\theta_{m:k^{-}}\right)}{p\left(\theta_{k}\mid\neg z\right)p\left(\neg z\mid\theta_{m:k^{-}}\right)}\right)\\
+ & =\log\left(\frac{p\left(\theta_{k}\mid z\right)}{p\left(\theta_{k}\mid\neg z\right)}\right)+\sum_{n=m}^{k^{-}}\log\left(\frac{p\left(\theta_{n}\mid z\right)}{p\left(\theta_{n}\mid\neg z\right)}\right).
+\end{align*}
+
 \end_inset
 
 
 \end_layout
 
 \begin_layout Standard
-Let 
-\begin_inset Formula $p\left(m\mid y_{0:t}\right)$
+Whenever new validated measurements are received, we calculate the term
+ 
+\begin_inset Formula 
+\[
+l_{k}=\log\left(\frac{p\left(\theta_{k}\mid z\right)}{p\left(\theta_{k}\mid\neg z\right)}\right)
+\]
+
 \end_inset
 
- denote the p
+and add it to the previous log odds ratio 
+\begin_inset Formula 
+\begin{align*}
+l_{k^{-}=} & \log\left(\frac{p\left(z\mid\theta_{m:k^{-}}\right)}{p\left(\neg z\mid\theta_{m:k^{-}}\right)}\right)\\
+ & =\sum_{n=m}^{k^{-}}\log\left(\frac{p\left(\theta_{n}\mid z\right)}{p\left(\theta_{n}\mid\neg z\right)}\right).
+\end{align*}
+
+\end_inset
+
+The term 
+\begin_inset Formula $l_{k}$
+\end_inset
+
+ can be written as
+\begin_inset Formula 
+\[
+\log\left(\frac{p\left(\theta_{k}\mid z\right)}{p\left(\theta_{k}\mid\neg z\right)}\right)=\sum_{i\in S}\log\left(\frac{p\left(\theta_{k}^{i}\mid z\right)}{p\left(\theta_{k}^{i}\mid\neg z\right)}\right),
+\]
+
+\end_inset
+
+under the assumption that the measurement sources are independent.
+ Thus we are left with calculating 
+\begin_inset Formula $p\left(\theta_{k}^{i}\mid z\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $p\left(\theta_{k}^{i}\mid\neg z\right)$
+\end_inset
+
+ for each measurement source.
+ We assume that a measurement source can only produce at most one true measureme
+nt during a sensor scan.
+ Therefore, we have the two possibilities for 
+\begin_inset Formula $p\left(\theta_{k}^{i}\mid z\right)$
+\end_inset
+
+, that all 
+\begin_inset Formula $\theta_{k}^{i}$
+\end_inset
+
+ measurements are false or all but one are false.
+ Thus 
+\begin_inset Formula 
+\[
+p\left(\theta_{k}^{i}\mid z\right)=P_{G}^{i}P_{D}^{i}\exp\left(\lambda^{i}P_{\lambda}^{i}\right)\frac{\left(\lambda^{i}P_{\lambda}^{i}\right)^{\theta_{k}^{i}-1}}{\left(\theta_{k}^{i}-1\right)!}+\left(1-P_{G}^{i}P_{D}^{i}\right)\exp\left(\lambda^{i}P_{\lambda}^{i}\right)\frac{\left(\lambda^{i}P_{\lambda}^{i}\right)^{\theta_{k}^{i}}}{\left(\theta_{k}^{i}\right)!}.
+\]
+
+\end_inset
+
+There is only one possibility for 
+\begin_inset Formula $p\left(\theta_{k}^{i}\mid\neg z\right)$
+\end_inset
+
+, that is the probability of all of the measurements being false 
+\begin_inset Formula 
+\[
+p\left(\theta_{k}^{i}\mid\neg z\right)=\exp\left(\lambda^{i}P_{\lambda}^{i}\right)\frac{\left(\lambda^{i}P_{\lambda}^{i}\right)^{\theta_{k}^{i}}}{\left(\theta_{k}^{i}\right)!}.
+\]
+
+\end_inset
+
+Taking the ratio of the two, we get 
+\begin_inset Formula 
+\[
+\frac{p\left(\theta_{k}^{i}\mid z\right)}{p\left(\theta_{k}^{i}\mid\neg z\right)}=1+P_{G}^{i}P_{D}^{i}\left(\frac{\theta_{k}^{i}}{\lambda^{i}P_{\lambda}^{i}}-1\right).
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note that if the target is not in the local surveillance region of a measurement
+ source, then 
+\begin_inset Formula $P_{D}^{i}=0$
+\end_inset
+
+.
+ The model likelihood, 
+\begin_inset Formula $p\left(z\mid\theta_{m:k}\right)$
+\end_inset
+
+, can be recovered from the log odds ratio by 
+\begin_inset Formula 
+\[
+p\left(z\mid\theta_{m:k}\right)=1-\frac{1}{1-\exp\left(t_{k}\right)}.
+\]
+
+\end_inset
+
+A model is considered a good model if the 
+\begin_inset Formula $p\left(z\mid\theta_{m:k}\right)>\tau_{\rho}$
+\end_inset
+
+; otherwise, it is considered a poor model.
+ The parameters 
+\begin_inset Formula $\lambda^{i}$
+\end_inset
+
+ and 
+\begin_inset Formula $P_{D}^{i}$
+\end_inset
+
+ can be easily estimated.
+ The parameters 
+\begin_inset Formula $P_{G}^{i}$
+\end_inset
+
+ and 
+\begin_inset Formula $P_{\lambda}^{i}$
+\end_inset
+
+ depend on the volume of the validation region.
+\end_layout
+
+\begin_layout Standard
+In the case that the target leaves the global surveillance region, we need
+ a way to kill the model in order to make room for other models to be initialize
+d.
+ Thus, a model that has not received a measurement within 
+\begin_inset Formula $\tau_{\alpha}$
+\end_inset
+
+ seconds is removed.
+ 
+\end_layout
+
+\begin_layout Section
+Validation Region
+\end_layout
+
+\begin_layout Standard
+The validation region is a volume around an estimated state used for data
+ association.
+ Measurements that fall within the validation region are associated to the
+ model and are used to update the model.
+ We will use the validation region described in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Bar-Shalom2011"
+
+\end_inset
+
+.
+ We assume that the probability of a measurement conditioned on the previous
+ state, 
+\begin_inset Formula $p\left(y_{k}\mid x_{k^{-}}\right)$
+\end_inset
+
+, is Normally distributed with mean 
+\begin_inset Formula $\hat{y}_{k}=h\left(f\left(\hat{x}_{k^{-}},\delta_{k}\right)\right)$
+\end_inset
+
+ and covariance 
+\begin_inset Formula $S$
+\end_inset
+
+ where 
+\begin_inset Formula $S$
+\end_inset
+
+ is the innovation covariance.
+ The measurement is an element of the space 
+\begin_inset Formula $N$
+\end_inset
+
+ of dimension 
+\begin_inset Formula $n$
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $z_{k}$
+\end_inset
+
+ be the random variable defined as 
+\begin_inset Formula 
+\[
+z_{k}=S^{-\frac{1}{2}}y_{k}\ominus\hat{y}_{k},
+\]
+
+\end_inset
+
+then 
+\begin_inset Formula $z_{k}$
+\end_inset
+
+ is a zero mean Gaussian distribution with covariance 
+\begin_inset Formula $I$
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $d:N\times N\to\mathbb{R}$
+\end_inset
+
+ be the metric defined as 
+\begin_inset Formula 
+\begin{align*}
+d\left(y,\hat{y}\right) & =z_{k}^{\top}z_{k}\\
+ & =\left(y\ominus\hat{y}\right)^{\top}S^{-1}\left(y\ominus\hat{y}\right).
+\end{align*}
+
+\end_inset
+
+Note that the metric 
+\begin_inset Formula $d$
+\end_inset
+
+ is simply the sum of the square of 
+\begin_inset Formula $n$
+\end_inset
+
+ Gaussian distributions.
+ Thus, using the metric 
+\begin_inset Formula $d$
+\end_inset
+
+ has a chi-square distribution with probability density function (PDF)
+\begin_inset Formula 
+\[
+p\left(d\left(y,\hat{y}\right)\right)=\frac{d\left(y,\hat{y}\right)^{n/2-1}\exp^{-n/2}}{2^{n/2}\Gamma\left(n/2\right)}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The validation region is defined as 
+\begin_inset Formula 
+\[
+\nu\left(\hat{y},\gamma\right)=\left\{ y\in N\,:\,d\left(y,\hat{y}\right)\leq\gamma\right\} ,
+\]
+
+\end_inset
+
+where parameter 
+\begin_inset Formula $\gamma$
+\end_inset
+
+ is called the gate threshold.
+ The gate probability 
+\begin_inset Formula $P_{G}$
+\end_inset
+
+ is 
+\begin_inset Formula $p\left(d\left(y_{k},\hat{y}_{k}\right)\leq\gamma\right)$
+\end_inset
+
+, thus 
+\begin_inset Formula $P_{G}$
+\end_inset
+
+ is the value of the cumulative distribution function (CDF) of the chi-square
+ distribution with parameter 
+\begin_inset Formula $\gamma$
+\end_inset
+
+.
+ In other words, 
+\begin_inset Formula $P_{G}$
+\end_inset
+
+ is the probability that 
+\begin_inset Formula $y_{k}\in\nu\left(\hat{y},\gamma\right)$
+\end_inset
+
+.
+ Since the CDF is a bijective function , given 
+\begin_inset Formula $P_{G}$
+\end_inset
+
+ we can solve for 
+\begin_inset Formula $\gamma$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The volume 
+\begin_inset Formula $V$
+\end_inset
+
+ of the validation region parametrized by 
+\begin_inset Formula $n$
+\end_inset
+
+ and 
+\begin_inset Formula $\gamma$
+\end_inset
+
+ is 
+\begin_inset Formula 
+\[
+V=c_{n}\gamma^{n/2}\left|S\right|^{1/2},
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $c_{n}$
+\end_inset
+
+ is the volume of the unit hypersphere of dimension 
+\begin_inset Formula $n$
+\end_inset
+
+ calculated as 
+\begin_inset Formula 
+\[
+c_{n}=\frac{\pi^{n/2}}{\Gamma\left(n/2+1\right)}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+PDAF
 \end_layout
 
 \begin_layout Section
