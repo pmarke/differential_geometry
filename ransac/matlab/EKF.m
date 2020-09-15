@@ -92,6 +92,13 @@ zz = (vee(logm(inv(gd)*ym))- vee(logm(inv(gm)*ym)))/dt;
 -Jr_inv(vee(logm(inv(gm)*ym)))*Ad(inv(ym))*Jr(-dd*u)
 
 
+%%
+dt = 0.1;
+v = rand(3,1);
+V = wedge(v);
+g = expm(dt*V);
+inv(g)*V*g
+
 
 
 function [P,g,u] = propagate(P,g,u,Q,dt)

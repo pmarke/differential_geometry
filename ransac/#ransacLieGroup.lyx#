@@ -3,7 +3,6 @@
 \begin_document
 \begin_header
 \textclass IEEEtran
-\options onecolumn
 \use_default_options true
 \maintain_unincluded_children false
 \language english
@@ -1322,7 +1321,7 @@ end{subequations}
  the system model defined as 
 \begin_inset Formula 
 \begin{equation}
-f\left(x_{k^{-}},w_{k},\delta_{k}\right)=\left(g_{k^{-}}\oplus\left(\delta_{k}u+\delta_{k}w_{k}\right),u\right)\label{eq:system_model}
+f\left(x_{k^{-}},w_{k},\delta_{k}\right)=\left(g_{k^{-}}\oplus\left(\delta_{k}u+\delta_{k}w_{k}\right),u+\delta_{k}w_{k}\right)\label{eq:system_model}
 \end{equation}
 
 \end_inset
@@ -1442,20 +1441,9 @@ In this section we define the prior distribution of the state
 \begin_inset Formula $x$
 \end_inset
 
-, the state transition distribution,  
-\end_layout
-
-\begin_layout Standard
-Given our model defined in 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:system"
-
-\end_inset
-
- we need to know how to calculate certain probabilities that will be useful
- when propagating the system forward in time and updating the state estimate
- when more measurements are received.
+, the state transition distribution, the likelihood distribution of the
+ measurement and other distributions in a Lie group framework necessary
+ to develop the theory.
  We follow the convention, notation and terminology from 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -1472,7 +1460,7 @@ We denote the state estimate at time
 \end_inset
 
  as 
-\begin_inset Formula $\hat{x}_{m}\in G\times\mathfrak{g}$
+\begin_inset Formula $\hat{x}_{m}\in G\times E$
 \end_inset
 
  and the actual state at time 
@@ -1480,12 +1468,12 @@ We denote the state estimate at time
 \end_inset
 
  as 
-\begin_inset Formula $x_{m}\in G\times\mathfrak{g}$
+\begin_inset Formula $x_{m}\in G\times E$
 \end_inset
 
 .
  Let 
-\begin_inset Formula $\delta x_{m}\in\bar{V}$
+\begin_inset Formula $\delta x_{m}\in E^{*}$
 \end_inset
 
  denote a local perturbation around 
@@ -1526,7 +1514,7 @@ where
 \end_inset
 
  is a normalizing coefficient corresponding to the Gaussian distribution.
- We will overload 
+ We will use
 \begin_inset Formula $\eta$
 \end_inset
 
@@ -1538,16 +1526,20 @@ where
  and define it as 
 \begin_inset Formula 
 \[
-p\left(x_{m}\mid x_{m^{-}}\right)=\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus f\left(x_{m^{-}},w_{k},\delta_{m}\right)\right)^{\top}\bar{Q}^{-1}\left(x_{m}\ominus f\left(x_{m^{-}},w_{k},\delta_{m}\right)\right)\right),
+p\left(x_{m}\mid x_{m^{-}}\right)=\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus f\right)^{\top}\bar{Q}^{-1}\left(x_{m}\ominus f\right)\right),
 \]
 
 \end_inset
 
 where 
+\begin_inset Formula $x_{m}\ominus f=x_{m}\ominus f\left(x_{m^{-}},w_{k},\delta_{m}\right)$
+\end_inset
+
+ and 
 \begin_inset Formula $\bar{Q}^{-1}$
 \end_inset
 
- is positive semi-definite defined as 
+ is positive semi-definite and defined as 
 \begin_inset Formula 
 \[
 \bar{Q}^{-1}=\begin{bmatrix}Q^{-1} & 0\\
@@ -1557,29 +1549,41 @@ where
 
 \end_inset
 
-It is often useful to approximate the probability by using the Taylor series
- expansion of 
-\begin_inset Formula $x_{m}\ominus f\left(x_{m^{-}}\right)$
+We can approximate 
+\begin_inset Formula $p\left(x_{m}\mid x_{m^{-}}\right)$
 \end_inset
 
- treating 
-\begin_inset Formula $\delta k_{m^{-}}$
+ with a Gaussian distribution by using the first order Taylor series expansion
+ of 
+\begin_inset Formula $x_{m}\ominus f$
+\end_inset
+
+ and treating 
+\begin_inset Formula $\delta x_{m^{-}}$
 \end_inset
 
  and 
-\begin_inset Formula $w_{k}$
+\begin_inset Formula $w_{m}$
 \end_inset
 
  as perturbations.
  Doing so, yields
 \begin_inset Formula 
 \[
-p\left(x_{m}\mid x_{m^{-}}\right)\approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus f\left(\hat{x}_{m^{-}},\hat{w}_{m},\delta_{m}\right)+F_{m}\delta x_{m^{-}}+G_{m}\delta_{m}w_{m}\right)^{\top}\bar{Q}^{-1}\left(x_{m}\ominus f\left(\hat{x}_{m^{-}},\hat{w}_{m},\delta_{m}\right)+F_{m}\delta x_{m^{-}}+G_{m}\delta_{m}w_{m}\right)\right),
+p\left(x_{m}\mid x_{m^{-}}\right)\approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus\tilde{f}\right)^{\top}\bar{Q}^{-1}\left(x_{m}\ominus\tilde{f}\right)\right),
 \]
 
 \end_inset
 
-where 
+where
+\begin_inset Formula 
+\[
+x_{m}\ominus\tilde{f}=x_{m}\ominus f\left(\hat{x}_{m},0,\delta_{m}\right)+F_{m}\delta x_{m^{-}}+G_{m}\delta_{m}w_{m},
+\]
+
+\end_inset
+
+ 
 \begin_inset Formula 
 \begin{align*}
 F_{m} & =\left.\frac{\partial x_{m}\ominus f\left(x_{m^{-}},w_{k},\delta_{m}\right)}{\partial x_{m^{-}}}\right|_{\hat{x}_{m^{-}},\hat{w}_{m},\delta_{m}}\\
@@ -1590,7 +1594,7 @@ J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)
 
 \end_inset
 
-and
+
 \begin_inset Formula 
 \begin{align*}
 G_{m} & =\left.\frac{\partial x_{m}\ominus f\left(x_{m^{-}},w_{k},\delta_{m}\right)}{\partial w_{m}}\right|_{\hat{x}_{m^{-}},\hat{w}_{m},\delta_{m}}\\
@@ -1601,7 +1605,7 @@ G_{m} & =\left.\frac{\partial x_{m}\ominus f\left(x_{m^{-}},w_{k},\delta_{m}\rig
 
 \end_inset
 
-where 
+and 
 \begin_inset Formula $\hat{w}$
 \end_inset
 
