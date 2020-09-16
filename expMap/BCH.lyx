@@ -1783,8 +1783,8 @@ Let
 \begin{align*}
 J_{r}\left(u\right) & =I+\frac{\cos\left(\theta\right)-1}{\theta^{2}}u+\frac{\theta-\sin\left(\theta\right)}{\theta^{3}}u^{2}\\
 J_{l}\left(u\right) & =I+\frac{1-\cos\left(\theta\right)}{\theta^{2}}u+\frac{\theta-\sin\left(\theta\right)}{\theta^{3}}u^{2}\\
-J_{r}^{-1}\left(u\right) & =I+\frac{1}{2}u-\frac{\left\Vert \theta\right\Vert \cot\left(\frac{\left\Vert \theta\right\Vert }{2}\right)-2}{2\left\Vert \theta\right\Vert ^{2}}u^{2}\\
-J_{l}^{-1}\left(u\right) & =I-\frac{1}{2}u-\frac{\left\Vert \theta\right\Vert \cot\left(\frac{\left\Vert \theta\right\Vert }{2}\right)-2}{2\left\Vert \theta\right\Vert ^{2}}u^{2}.
+J_{r}^{-1}\left(u\right) & =I+\frac{1}{2}u-\frac{\theta\cot\left(\frac{\theta}{2}\right)-2}{2\theta^{2}}u^{2}\\
+J_{l}^{-1}\left(u\right) & =I-\frac{1}{2}u-\frac{\theta\cot\left(\frac{\theta}{2}\right)-2}{2\theta^{2}}u^{2}.
 \end{align*}
 
 \end_inset

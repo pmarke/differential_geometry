@@ -5952,7 +5952,7 @@ STATE
 \end_inset
 
  
-\begin_inset Formula $\tilde{k}_{3}=\text{dexpinv}\left(u_{2},k_{2}\right)$
+\begin_inset Formula $\tilde{k}_{2}=\text{dexpinv}\left(u_{2},k_{2}\right)$
 \end_inset
 
 
@@ -8899,7 +8899,7 @@ The derivative of the matrix exponential also have their geometric series
 Their inverses are 
 \begin_inset Formula 
 \begin{align*}
-\text{dexp}_{X\left(t\right),l}^{-1} & =\frac{I-\exp\left(-ad_{X\left(t\right)}\right)}{ad_{X\left(t\right)}}\\
+\text{dexp}_{X\left(t\right),l}^{-1} & =\\
  & =\sum_{k=0}^{\infty}\left(-1\right)^{k}\frac{B_{k}}{k!}ad_{X\left(t\right)}^{k}
 \end{align*}
 

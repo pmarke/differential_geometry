@@ -1546,24 +1546,28 @@ where
 
 \end_inset
 
-It is often useful to approximate the probability by using the Taylor series
- expansion of 
+We can approximate 
+\begin_inset Formula $p\left(x_{m}\mid x_{m^{-}}\right)$
+\end_inset
+
+ with a Gaussian distribution by using the first order Taylor series expansion
+ of 
 \begin_inset Formula $x_{m}\ominus f\left(x_{m^{-}}\right)$
 \end_inset
 
- treating 
+ and treating 
 \begin_inset Formula $\delta x_{m^{-}}$
 \end_inset
 
  and 
-\begin_inset Formula $w_{k}$
+\begin_inset Formula $w_{m}$
 \end_inset
 
  as perturbations.
  Doing so, yields
 \begin_inset Formula 
 \[
-p\left(x_{m}\mid x_{m^{-}}\right)\approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus f\left(\hat{x}_{m^{-}},\hat{w}_{m},\delta_{m}\right)+F_{m}\delta x_{m^{-}}+G_{m}\delta_{m}w_{m}\right)^{\top}\bar{Q}^{-1}\left(x_{m}\ominus f\left(\hat{x}_{m^{-}},\hat{w}_{m},\delta_{m}\right)+F_{m}\delta x_{m^{-}}+G_{m}\delta_{m}w_{m}\right)\right),
+p\left(x_{m}\mid x_{m^{-}}\right)\approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus f+F_{m}\delta x_{m^{-}}+G_{m}\delta_{m}w_{m}\right)^{\top}\bar{Q}^{-1}\left(x_{m}\ominus f+F_{m}\delta x_{m^{-}}+G_{m}\delta_{m}w_{m}\right)\right),
 \]
 
 \end_inset

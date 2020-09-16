@@ -1256,7 +1256,109 @@ The objective is to estimate the states of multiple dynamic targets given
  a set of measurements from multiple sensors and a dynamic model without
  a prior information about the number of targets in the global surveillance
  region.
- We assume a discrete, constant velocity, time invariant system of the form
+ Let the state of the system at time 
+\begin_inset Formula $k$
+\end_inset
+
+ be given by 
+\begin_inset Formula $x_{k}=\left(g_{k},u_{k}\right)$
+\end_inset
+
+ where 
+\begin_inset Formula $g_{k}\in G$
+\end_inset
+
+ and 
+\begin_inset Formula $u_{k}\in E$
+\end_inset
+
+.
+ We assume the system model to be continuous, near constant velocity, and
+ time invariant of the form
+\begin_inset Formula 
+\begin{align*}
+\dot{g}_{k} & =g_{k}\left(u_{k}+w_{k}^{g}\right)^{\wedge}\\
+\dot{u}_{k} & =w_{k}^{u},
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $w_{k}=\begin{bmatrix}w_{k}^{g}\\
+w_{k}^{u}
+\end{bmatrix}$
+\end_inset
+
+ is process noise sampled from a zero-mean, white-noise, Gaussian distribution
+ with covariance 
+\begin_inset Formula $Q$
+\end_inset
+
+.
+ Under the assumption that 
+\begin_inset Formula $w_{k}$
+\end_inset
+
+ stays constant over a time period 
+\begin_inset Formula $\delta_{k}$
+\end_inset
+
+ we can discretize the model to get the discrete system model of the form
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{subequations}
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "eq:system-model"
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+g_{k} & =g_{k^{-}}\oplus\left(\delta_{k}u_{k^{-}}+\delta_{k}w_{k}^{g}+\frac{\delta_{k}^{2}}{2}w_{k}^{u}\right)\\
+u_{k} & =u_{k^{-}}+\delta_{k}w_{k}^{u}.
+\end{align*}
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{subequations}
+\end_layout
+
+\end_inset
+
+ This form is similar to the one found in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "SjÃžberg2019"
+
+\end_inset
+
+, and is an exact solution provided that the Lie group is commutative; otherwise
+, it is a very good approximation.
+\end_layout
+
+\begin_layout Standard
+The complete discrete system is defined as
 \begin_inset ERT
 status open
 
@@ -1280,7 +1382,7 @@ name "eq:system"
 \begin_inset Formula 
 \begin{align}
 x_{k} & =f\left(x_{k^{-}},w_{k},\delta_{k}\right)\\
-y_{k} & =h\left(x_{k},v_{k}\right)+v_{k}
+y_{k} & =h\left(x_{k},v_{k}\right)+v_{k},
 \end{align}
 
 \end_inset
@@ -1298,35 +1400,11 @@ end{subequations}
 
 \end_inset
 
-
-\begin_inset Formula $x_{k}=\left(g_{k},u\right)\in G\times E$
-\end_inset
-
- is the state of the system at time 
-\begin_inset Formula $k$
-\end_inset
-
-, 
-\begin_inset Formula $g_{k}\in G$
-\end_inset
-
- is the pose of the system, 
-\begin_inset Formula $u\in E$
-\end_inset
-
- is the constant velocity of the system, 
+ where 
 \begin_inset Formula $f$
 \end_inset
 
- the system model defined as 
-\begin_inset Formula 
-\begin{equation}
-f\left(x_{k^{-}},w_{k},\delta_{k}\right)=\left(g_{k^{-}}\oplus\left(\delta_{k}u+\delta_{k}w_{k}\right),u+\delta_{k}w_{k}\right)\label{eq:system_model}
-\end{equation}
-
-\end_inset
-
-
+ is the system model defined in 
 \begin_inset Formula $y_{k}\in N$
 \end_inset
 
@@ -1338,24 +1416,16 @@ f\left(x_{k^{-}},w_{k},\delta_{k}\right)=\left(g_{k^{-}}\oplus\left(\delta_{k}u+
 \begin_inset Formula $h:G\to N$
 \end_inset
 
- is the observation model, 
-\begin_inset Formula $w_{k}$
-\end_inset
-
- is process noise and 
+ is the observation model, and 
 \begin_inset Formula $v_{k}$
 \end_inset
 
  is measurement noise sampled from a zero-mean, white-noise, Gaussian distributi
 on with covariance 
-\begin_inset Formula $Q$
-\end_inset
-
- (respectively 
 \begin_inset Formula $R$
 \end_inset
 
-).
+.
 \end_layout
 
 \begin_layout Standard

@@ -5006,7 +5006,7 @@ STATE
 \end_inset
 
  
-\begin_inset Formula $\tilde{k}_{3}=\text{dexpinv}\left(u_{2},k_{2}\right)$
+\begin_inset Formula $\tilde{k}_{2}=\text{dexpinv}\left(u_{2},k_{2}\right)$
 \end_inset
 
 

@@ -3,7 +3,6 @@
 \begin_document
 \begin_header
 \textclass IEEEtran
-\options onecolumn
 \use_default_options true
 \maintain_unincluded_children false
 \language english
@@ -1257,7 +1256,109 @@ The objective is to estimate the states of multiple dynamic targets given
  a set of measurements from multiple sensors and a dynamic model without
  a prior information about the number of targets in the global surveillance
  region.
- We assume a discrete, constant velocity, time invariant system of the form
+ Let the state of the system at time 
+\begin_inset Formula $k$
+\end_inset
+
+ be given by 
+\begin_inset Formula $x_{k}=\left(g_{k},u_{k}\right)$
+\end_inset
+
+ where 
+\begin_inset Formula $g_{k}\in G$
+\end_inset
+
+ and 
+\begin_inset Formula $u_{k}\in E$
+\end_inset
+
+.
+ We assume the system model to be continuous, near constant velocity, and
+ time invariant of the form
+\begin_inset Formula 
+\begin{align*}
+\dot{g}_{k} & =g_{k}\left(u_{k}+w_{k}^{g}\right)^{\wedge}\\
+\dot{u}_{k} & =w_{k}^{u},
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $w_{k}=\begin{bmatrix}w_{k}^{g}\\
+w_{k}^{u}
+\end{bmatrix}$
+\end_inset
+
+ is process noise sampled from a zero-mean, white-noise, Gaussian distribution
+ with covariance 
+\begin_inset Formula $Q$
+\end_inset
+
+.
+ Under the assumption that 
+\begin_inset Formula $w_{k}$
+\end_inset
+
+ stays constant over a time period 
+\begin_inset Formula $\delta_{k}$
+\end_inset
+
+ we can discretize the model to get the discrete system model of the form
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{subequations}
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "eq:system-model"
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align}
+g_{k} & =g_{k^{-}}\oplus\left(\delta_{k}u_{k^{-}}+\delta_{k}w_{k}^{g}+\frac{\delta_{k}^{2}}{2}w_{k}^{u}\right)\\
+u_{k} & =u_{k^{-}}+\delta_{k}w_{k}^{u}.
+\end{align}
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{subequations}
+\end_layout
+
+\end_inset
+
+ This form is similar to the one found in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "SjÃžberg2019"
+
+\end_inset
+
+, and is an exact solution provided that the Lie group is commutative; otherwise
+, it is a very good approximation.
+\end_layout
+
+\begin_layout Standard
+The complete discrete system is defined as
 \begin_inset ERT
 status open
 
@@ -1281,7 +1382,7 @@ name "eq:system"
 \begin_inset Formula 
 \begin{align}
 x_{k} & =f\left(x_{k^{-}},w_{k},\delta_{k}\right)\\
-y_{k} & =h\left(x_{k},v_{k}\right)+v_{k}
+y_{k} & =h\left(x_{k},v_{k}\right)+v_{k},
 \end{align}
 
 \end_inset
@@ -1299,35 +1400,18 @@ end{subequations}
 
 \end_inset
 
-
-\begin_inset Formula $x_{k}=\left(g_{k},u\right)\in G\times E$
-\end_inset
-
- is the state of the system at time 
-\begin_inset Formula $k$
-\end_inset
-
-, 
-\begin_inset Formula $g_{k}\in G$
-\end_inset
-
- is the pose of the system, 
-\begin_inset Formula $u\in E$
-\end_inset
-
- is the constant velocity of the system, 
+ where 
 \begin_inset Formula $f$
 \end_inset
 
- the system model defined as 
-\begin_inset Formula 
-\begin{equation}
-f\left(x_{k^{-}},w_{k},\delta_{k}\right)=\left(g_{k^{-}}\oplus\left(\delta_{k}u+\delta_{k}w_{k}\right),u\right)\label{eq:system_model}
-\end{equation}
+ is the system model defined in 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:system-model"
 
 \end_inset
 
-
+, 
 \begin_inset Formula $y_{k}\in N$
 \end_inset
 
@@ -1339,24 +1423,16 @@ f\left(x_{k^{-}},w_{k},\delta_{k}\right)=\left(g_{k^{-}}\oplus\left(\delta_{k}u+
 \begin_inset Formula $h:G\to N$
 \end_inset
 
- is the observation model, 
-\begin_inset Formula $w_{k}$
-\end_inset
-
- is process noise and 
+ is the observation model, and 
 \begin_inset Formula $v_{k}$
 \end_inset
 
  is measurement noise sampled from a zero-mean, white-noise, Gaussian distributi
 on with covariance 
-\begin_inset Formula $Q$
-\end_inset
-
- (respectively 
 \begin_inset Formula $R$
 \end_inset
 
-).
+.
 \end_layout
 
 \begin_layout Standard
@@ -1515,7 +1591,7 @@ where
 \end_inset
 
  is a normalizing coefficient corresponding to the Gaussian distribution.
- We will overload 
+ We will use
 \begin_inset Formula $\eta$
 \end_inset
 
@@ -1527,12 +1603,16 @@ where
  and define it as 
 \begin_inset Formula 
 \[
-p\left(x_{m}\mid x_{m^{-}}\right)=\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus f\left(x_{m^{-}},w_{k},\delta_{m}\right)\right)^{\top}\bar{Q}^{-1}\left(x_{m}\ominus f\left(x_{m^{-}},w_{k},\delta_{m}\right)\right)\right),
+p\left(x_{m}\mid x_{m^{-}}\right)=\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus f\right)^{\top}\bar{Q}^{-1}\left(x_{m}\ominus f\right)\right),
 \]
 
 \end_inset
 
 where 
+\begin_inset Formula $x_{m}\ominus f=x_{m}\ominus f\left(x_{m^{-}},w_{k},\delta_{m}\right)$
+\end_inset
+
+ and 
 \begin_inset Formula $\bar{Q}^{-1}$
 \end_inset
 
@@ -1552,7 +1632,7 @@ We can approximate
 
  with a Gaussian distribution by using the first order Taylor series expansion
  of 
-\begin_inset Formula $x_{m}\ominus f\left(x_{m^{-}}\right)$
+\begin_inset Formula $x_{m}\ominus f$
 \end_inset
 
  and treating 
@@ -1567,12 +1647,20 @@ We can approximate
  Doing so, yields
 \begin_inset Formula 
 \[
-p\left(x_{m}\mid x_{m^{-}}\right)\approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus f+F_{m}\delta x_{m^{-}}+G_{m}\delta_{m}w_{m}\right)^{\top}\bar{Q}^{-1}\left(x_{m}\ominus f+F_{m}\delta x_{m^{-}}+G_{m}\delta_{m}w_{m}\right)\right),
+p\left(x_{m}\mid x_{m^{-}}\right)\approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus\tilde{f}\right)^{\top}\bar{Q}^{-1}\left(x_{m}\ominus\tilde{f}\right)\right),
 \]
 
 \end_inset
 
-where 
+where
+\begin_inset Formula 
+\[
+x_{m}\ominus\tilde{f}=x_{m}\ominus f\left(\hat{x}_{m},0,\delta_{m}\right)+F_{m}\delta x_{m^{-}}+G_{m}\delta_{m}w_{m},
+\]
+
+\end_inset
+
+ 
 \begin_inset Formula 
 \begin{align*}
 F_{m} & =\left.\frac{\partial x_{m}\ominus f\left(x_{m^{-}},w_{k},\delta_{m}\right)}{\partial x_{m^{-}}}\right|_{\hat{x}_{m^{-}},\hat{w}_{m},\delta_{m}}\\
@@ -1583,7 +1671,7 @@ J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)
 
 \end_inset
 
-and
+
 \begin_inset Formula 
 \begin{align*}
 G_{m} & =\left.\frac{\partial x_{m}\ominus f\left(x_{m^{-}},w_{k},\delta_{m}\right)}{\partial w_{m}}\right|_{\hat{x}_{m^{-}},\hat{w}_{m},\delta_{m}}\\
@@ -1594,7 +1682,7 @@ G_{m} & =\left.\frac{\partial x_{m}\ominus f\left(x_{m^{-}},w_{k},\delta_{m}\rig
 
 \end_inset
 
-where 
+and 
 \begin_inset Formula $\hat{w}$
 \end_inset
 

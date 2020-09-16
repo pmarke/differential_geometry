@@ -1301,7 +1301,7 @@ J_{r}\left(u\right) & =\sum_{n=0}^{\infty}\frac{1}{\left(n+1\right)!}\left(-\mat
 We can brake up Jacobian to facilitate the process as 
 \begin_inset Formula 
 \[
-J_{r}\left(u\right)=\begin{bmatrix}W\left(\theta\right) & D\left(\theta\right)\rho\\
+J_{r}\left(u\right)=\begin{bmatrix}W_{r}\left(\theta\right) & D_{r}\left(\theta\right)\rho\\
 0 & 1
 \end{bmatrix}
 \]
@@ -1367,7 +1367,7 @@ Looking closely at the first few terms of
 , we begin to notice another pattern 
 \begin_inset Formula 
 \[
-D_{r}\left(\theta\right)=\frac{1}{2!}\left[1\right]_{\times}+\frac{1}{3!}\theta I-\frac{1}{4!}\theta^{2}\left[1\right]_{\times}-\frac{1}{5!}\theta^{3}I+\frac{1}{6!}\theta^{4}\left[1\right]_{\times}+\frac{1}{7!}\theta^{5}I+\cdots.
+D_{r}\left(\theta\right)=\frac{1}{2!}\left[1\right]_{\times}-\frac{1}{3!}\theta I-\frac{1}{4!}\theta^{2}\left[1\right]_{\times}+\frac{1}{5!}\theta^{3}I+\frac{1}{6!}\theta^{4}\left[1\right]_{\times}-\frac{1}{7!}\theta^{5}I+\cdots.
 \]
 
 \end_inset
@@ -1385,12 +1385,25 @@ D_{r}\left(\theta\right)=\frac{1-\cos\left(\theta\right)}{\theta^{2}}\left[1\rig
 \end_layout
 
 \begin_layout Standard
-The left Jacobian can derived in a similar manner and is 
+The left Jacobian can derived in a similar manner.
+ Recall that the left Jacobian is defined as 
+\begin_inset Formula 
+\[
+J_{l}\left(u\right)=\sum_{n=0}^{\infty}\frac{1}{\left(n+1\right)!}\left(\mathbf{ad}_{u}\right)^{k}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We can brake up Jacobian to facilitate the process as 
 \begin_inset Formula 
 \[
 J_{l}\left(u\right)=\begin{bmatrix}W_{l}\left(\theta\right) & D_{l}\left(\theta\right)\rho\\
 0 & 1
-\end{bmatrix},
+\end{bmatrix}
 \]
 
 \end_inset
@@ -1398,12 +1411,69 @@ J_{l}\left(u\right)=\begin{bmatrix}W_{l}\left(\theta\right) & D_{l}\left(\theta\
 where 
 \begin_inset Formula 
 \[
-W_{l}\left(\theta\right)=\frac{1-\cos\left(\theta\right)}{\theta}\left[1\right]_{\times}+\frac{\sin\left(\theta\right)}{\theta}I
+W_{l}\left(\theta\right)=\sum_{n=0}^{\infty}\frac{1}{\left(n+1\right)!}\theta^{k}\left(\left[1\right]_{\times}\right)^{k},
 \]
 
 \end_inset
 
 and 
+\begin_inset Formula 
+\[
+D_{l}\left(\theta\right)=-\frac{1}{2!}\left[1\right]_{\times}+\sum_{n=2}^{\infty}\frac{\theta^{n-1}}{\left(n+1\right)!}\left(\left[1\right]_{\times}\right)^{n}.
+\]
+
+\end_inset
+
+Looking closely at the first few terms of 
+\begin_inset Formula $W_{l}\left(\theta\right)$
+\end_inset
+
+, we begin to notice a pattern in the power series 
+\begin_inset Formula 
+\begin{align*}
+W_{l}\left(\theta\right) & =I+\frac{1}{2!}\theta\left[1\right]_{\times}-\frac{1}{3!}\theta^{2}I-\frac{1}{4!}\theta^{3}\left[1\right]_{\times}+\frac{1}{5!}\theta^{4}I+\frac{1}{6!}\theta^{5}\left[1\right]_{\times}-\frac{1}{7!}\theta^{6}I+\cdots.\\
+ & =I+\left(+\frac{1}{2!}\theta-\frac{1}{4!}\theta^{3}+\frac{1}{6!}\theta^{5}+\cdots\right)\left[1\right]_{\times}+\left(-\frac{1}{3!}\theta^{2}+\frac{1}{5!}\theta^{4}-\frac{1}{7!}\theta^{6}+\cdots\right)I\\
+ & =I+\frac{1}{\theta}\left(1-1+\frac{1}{2!}\theta^{2}-\frac{1}{4!}\theta^{4}+\frac{1}{6!}\theta^{6}+\cdots\right)\left[1\right]_{\times}+\frac{1}{\theta}\left(\theta-\theta-\frac{1}{3!}\theta^{3}+\frac{1}{5!}\theta^{5}-\frac{1}{7!}\theta^{7}+\cdots\right)I\\
+ & =\frac{1}{\theta}\left(-1+\frac{1}{2!}\theta^{2}-\frac{1}{4!}\theta^{4}+\frac{1}{6!}\theta^{6}+\cdots\right)\left[1\right]_{\times}+\frac{1}{\theta}\left[1\right]_{\times}+\frac{1}{\theta}\left(\theta-\frac{1}{3!}\theta^{3}+\frac{1}{5!}\theta^{5}-\frac{1}{7!}\theta^{7}+\cdots\right)I.
+\end{align*}
+
+\end_inset
+
+We notice that there is a cosine and a sine power series which allows us
+ to write 
+\begin_inset Formula 
+\[
+W_{l}\left(\theta\right)=\frac{1}{\theta}\left[1\right]_{\times}\sum_{n=0}^{\infty}\left(-1\right)^{n+1}\frac{\theta^{2n}}{\left(2n\right)!}+\frac{1}{\theta}\left[1\right]_{\times}+\frac{1}{\theta}I\sum_{n=0}^{\infty}\left(-1\right)^{n}\frac{\theta^{2n+1}}{\left(2n+1\right)!}.
+\]
+
+\end_inset
+
+Which can be simplified to 
+\begin_inset Formula 
+\[
+W_{l}\left(\theta\right)=\frac{1-\cos\left(\theta\right)}{\theta}\left[1\right]_{\times}+\frac{\sin\left(\theta\right)}{\theta}I.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Looking closely at the first few terms of 
+\begin_inset Formula $D_{l}\left(\theta\right)$
+\end_inset
+
+, we begin to notice another pattern 
+\begin_inset Formula 
+\[
+D_{l}\left(\theta\right)=-\frac{1}{2!}\left[1\right]_{\times}-\frac{1}{3!}\theta I+\frac{1}{4!}\theta^{2}\left[1\right]_{\times}+\frac{1}{5!}\theta^{3}I-\frac{1}{6!}\theta^{4}\left[1\right]_{\times}-\frac{1}{7!}\theta^{5}I+\cdots.
+\]
+
+\end_inset
+
+Once again we notice that there is a cosine and a sine power series which
+ allows us to write
 \begin_inset Formula 
 \[
 D_{l}\left(\theta\right)=\frac{\cos\left(\theta\right)-1}{\theta^{2}}\left[1\right]_{\times}+\frac{\theta-\sin\left(\theta\right)}{\theta^{2}}I.
@@ -1843,9 +1913,6 @@ J_{r}\left(u\right) & =\sum_{n=0}^{\infty}\left(-1\right)^{n}\frac{\mathbf{ad}{}
 \end{bmatrix}\right)+\sum_{n=0}^{\infty}\frac{\left(-1\right)^{2n+2}}{\left(2n+3\right)!}\left(-1\right)^{n}\left(\theta^{2n}\mathbf{ad}{}_{u}^{2}+\begin{bmatrix}0 & \alpha\left(n\right)\omega^{2}\\
 0 & 0
 \end{bmatrix}\right)\\
- & =1+\sum_{n=0}^{\infty}\frac{\left(-1\right)^{2n+1}}{\left(2n+2\right)!}\left(-1\right)^{n}\left(\theta^{2n}\mathbf{ad}_{u}+\begin{bmatrix}0 & \alpha\left(n\right)w\\
-0 & 0
-\end{bmatrix}\right)+\sum_{n=0}^{\infty}\frac{\left(-1\right)^{2n+2}}{\left(2n+3\right)!}\left(-1\right)^{n}\left(\theta^{2n}\mathbf{ad}{}_{u}^{2}+\right)\\
  & =1+\sum_{n=0}^{\infty}\frac{\left(-1\right)^{n+1}}{\left(2n+2\right)!}\theta^{2n}\mathbf{ad}_{u}+\sum_{n=0}^{\infty}\frac{\left(-1\right)^{n+2}}{\left(2n+3\right)!}\theta^{2n}\mathbf{ad}_{u}^{2}+\sum_{n=0}^{\infty}\frac{\left(-1\right)^{n+1}}{\left(2n+2\right)!}\begin{bmatrix}0 & \alpha\left(n\right)\omega\\
 0 & 0
 \end{bmatrix}+\sum_{n=0}^{\infty}\frac{\left(-1\right)^{n+2}}{\left(2n+3\right)!}\begin{bmatrix}0 & \alpha\left(n\right)\omega^{2}\\
