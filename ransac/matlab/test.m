@@ -1,6 +1,6 @@
 
 
-
+rng('default')
 PD = 0.9;
 PG = 0.95;
 
@@ -13,7 +13,7 @@ count = 0;
 
 for kk = 1:100
 ll = 0;
-for jj = 1:100
+for jj = 1:10
 
     if rand(1) > PD*PG
         mT = 0;
@@ -24,17 +24,21 @@ for jj = 1:100
 %     mT = poissrnd(lT);
     mF = poissrnd(lF);
     
-m = mT*0+mF;
+m = mT+mF;
 
-    s = 0;
-    for ii = 0:m
-
-        s = s+ poisson(lT,ii)*poisson(lF, m-ii);
-
-    end
-    s;
-    % ln = log(s/poisson(lF,m));
+%     s = 0;
+%     for ii = 0:m
+% 
+%         s = s+ poisson(lT,ii)*poisson(lF, m-ii);
+% 
+%     end
+%     s;
+%     % ln = log(s/poisson(lF,m));
+if m >0
     ln = log(PD*PG/lF*m+1-PD*PG);
+else
+    ln = log(1-PD*PG);
+end
 
     ll = ln+ll;
 
@@ -42,6 +46,7 @@ end
 
 ll;
 p = 1 - 1/(1+exp(ll));
+% p = 1 - 1/(1+10^ll);
 
 if p < 0.5
     count = count + 1;
@@ -50,17 +55,17 @@ end
 
 end
 
-count;
+count
 
 
 %%
 
-n = 4;
-PG = 0.8;
-g = chi2inv(PG,n);
-S = eye(3);
-c = pi^(3/2)/gamma(n/2+1);
-V = c*g^(n/2)*det(S)
+% n = 4;
+% PG = 0.8;
+% g = chi2inv(PG,n);
+% S = eye(3);
+% c = pi^(3/2)/gamma(n/2+1);
+% V = c*g^(n/2)*det(S)
 
 %%
 

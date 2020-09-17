@@ -5,48 +5,82 @@
 
 rng('default');
 
-p = rand(3,1);
+p = rand(3,1)*0;
 R = expm(ssm(rand(3,1)));
 v = rand(3,1);
 w = rand(3,1);
-a = rand(3,1);
+a = rand(3,1)*0;
 g = [0;0;-9.81];
 h = 2;
 
 Pf = p + h*v + h^2/2*g + h^2*R*A(h*w)*a
+vf = v + h*g + h^2*R*A(h*w)*a
 Rf = R*expm(ssm(w)*h);
 
 
 g0 = [R p; 0 0 0 1];
-u = [ssm(w) R'*v; zeros(1,4)];
-int = 100;
+u = R'*v;
+int = 1000;
 dt = h/int;
 
 
-
+U = zeros(4,4);
+U(1:3,1:3) = ssm(w);
+U(1:3,4) = R'*u;
+t = 0;
 for ii = 1:int
     
-
-    g0 = g0*expm( dt*u);
-    Rt = g0(1:3,1:3);
-    du = [zeros(3,3) a+Rt'*g; zeros(1,4)];
-    u = u + dt*du;
     
+    g0 = g0*myexp( dt*U);
+    Rt = g0(1:3,1:3);
+    du =  a+Jl_inv(t*w)*R';
+    u = u + dt*du;
+    U(1:3,4) = u;
+    t = t+dt;
+
 end
 
 
 g0
 
+W = U;
+W(1:3,4) = rand(3,1);
 
 
 
 
 
+function X = myexp(u)
+
+w = u(1:3,1:3);
+v = u(1:3,4);
+
+th = norm(w);
+R = eye(3) + sin(th)*w + (1-sin(th))*w^2;
+
+if th < 0.000001
+    B = eye(3);
+else
+    B = eye(3) + (1-cos(th))/th^2*w + (1-sin(th)/th)*w^2/th^2;
+end
+
+X = [R B*v; zeros(1,3) 1];
+
+end
 
 
+function J = Jl_inv(u)
 
+th = norm(u);
+U = wedge(u);
 
+if th < 0.0000001
+    J = eye(3)
+else
 
+J = eye(3) - 0.5*U + (2-th*cot(th/2))/(2*th^2)*U^2;
+end
+end
 
 
 
