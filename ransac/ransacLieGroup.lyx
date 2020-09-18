@@ -3572,9 +3572,17 @@ Example
 \end_layout
 
 \begin_layout Standard
-Euclidean spaces equipped with the standard topology and the group operation
- of addition form a Lie group.
- We will give an example of this using 
+This is a brief section to show how the Lie group theory applies to Euclidean
+ spaces of 
+\begin_inset Formula $\mathbb{R}^{m}$
+\end_inset
+
+, where 
+\begin_inset Formula $m\in\mathbb{N}$
+\end_inset
+
+, equipped with the standard topology and the group operation of addition.
+ The example given is 
 \begin_inset Formula $\mathbb{R}^{2}$
 \end_inset
 
@@ -3616,20 +3624,22 @@ where
 \end_layout
 
 \begin_layout Standard
-The system model is then
+We can write the system model as 
 \begin_inset Formula 
 \begin{align*}
 g_{k} & =g_{k^{-}}+\delta_{k}\left(u_{k^{-}}+w_{k}^{g}\right)+\frac{\delta_{k}^{2}}{2}w_{k}^{u}\\
-u_{k} & =u_{k^{-}}+\delta_{k}w_{k}^{u}.
+u_{k} & =u_{k^{-}}+\delta_{k}w_{k}^{u}\\
+y_{k} & =g_{k}+v_{k},
 \end{align*}
 
 \end_inset
 
 We can write this in the familiar matrix notation as 
 \begin_inset Formula 
-\[
-x_{k}=A_{k}x_{k^{-}}+B_{k}w_{k},
-\]
+\begin{align*}
+x_{k} & =A_{k}x_{k^{-}}+B_{k}w_{k}\\
+y_{k} & =Cx_{k}+v_{k}
+\end{align*}
 
 \end_inset
 
@@ -3637,22 +3647,99 @@ where
 \begin_inset Formula $x_{k}=\left[g_{k}^{\top},u_{k}^{\top}\right]^{\top}$
 \end_inset
 
-, 
+,
 \begin_inset Formula 
-\[
+\begin{align*}
 A_{k}=\begin{bmatrix}I_{2\times2} & \delta_{k}I\\
 0 & I_{2\times2}
+\end{bmatrix}, & \thinspace & B_{k}=\begin{bmatrix}\delta_{k}I & \frac{\delta_{k}^{2}}{2}I\\
+0 & \delta_{k}I
 \end{bmatrix},
+\end{align*}
+
+\end_inset
+
+and 
+\begin_inset Formula 
+\[
+C=\begin{bmatrix}I_{2\times2} & 0_{2\times2}\end{bmatrix}.
 \]
 
 \end_inset
 
-and
+In this form, we can easily recognize it as an linear time-invariant system
+ with near constant velocity.
+\end_layout
+
+\begin_layout Standard
+The Jacobians are easily computed and are 
+\begin_inset Formula $F_{k}=A_{k}$
+\end_inset
+
+, 
+\begin_inset Formula $G_{k}=B_{k}$
+\end_inset
+
+ , 
+\begin_inset Formula $H_{k}=C$
+\end_inset
+
+, 
+\begin_inset Formula $F_{k:m}=CA_{k:m}$
+\end_inset
+
+, and 
+\begin_inset Formula $G_{k:m}=CB_{k:m}$
+\end_inset
+
+.
+ The LMLE simplifies to a least squares problem.
+ This type of system used with R-RANSAC is thoroughly discussed in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Niedfeldt2014a"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+LMLE Simplification
+\end_layout
+
+\begin_layout Standard
+Recall that the purpose of the LMLE is to generate a current state estimate
+ 
+\begin_inset Formula $x_{k}$
+\end_inset
+
+ of a model hypothesis.
+ Using state estimates we build the consensus set which is later used to
+ refine the estimate using a filtering technique.
+ So the estimate of LMLE doesn't have to be super refined, and we can simplify
+ the optimization process in different ways.
+ 
+\end_layout
+
+\begin_layout Standard
+Let's assume that the pose of the system is measurable.
+ In other words, your observation model 
+\begin_inset Formula $h_{k}$
+\end_inset
+
+ is defined as 
 \begin_inset Formula 
 \[
-B_{k}=\begin{bmatrix}\delta_{k}I & \frac{\delta_{k}^{2}}{2}I\\
-0 & I
-\end{bmatrix}.
+h_{k}\left(x_{k},v_{k}\right)=g_{k}\exp\left(v_{k}\right),
+\]
+
+\end_inset
+
+thus
+\begin_inset Formula 
+\[
+y_{k}=g_{k}\exp\left(v_{k}\right).
 \]
 
 \end_inset
@@ -3660,8 +3747,180 @@ B_{k}=\begin{bmatrix}\delta_{k}I & \frac{\delta_{k}^{2}}{2}I\\
 
 \end_layout
 
+\begin_layout Standard
+When generating a model hypothesis, we always use a measurement from the
+ current time.
+ This allows us to use a measurement from the current time as our estimated
+ pose 
+\begin_inset Formula $g_{k}$
+\end_inset
+
+.
+ All that remains is estimating the velocity term 
+\begin_inset Formula $u_{k}$
+\end_inset
+
+ using one other measurement 
+\begin_inset Formula $y_{m}$
+\end_inset
+
+.
+ Under the assumption that 
+\begin_inset Formula $g_{k}$
+\end_inset
+
+ is the true current state, the measurement 
+\begin_inset Formula $y_{m}$
+\end_inset
+
+ is 
+\begin_inset Formula 
+\[
+y_{m}=g_{k}\exp\left(\delta_{k:m}u_{k}+\delta_{k:m}w_{k}^{g}+\frac{\delta_{k:m}^{2}}{2}w_{k}^{u}\right)\exp\left(v_{m}\right),
+\]
+
+\end_inset
+
+which can be approximated as 
+\begin_inset Formula 
+\[
+y_{m}\approx g_{k}\exp\left(\delta_{k:m}u_{k}+\delta_{k:m}w_{k}^{g}+\frac{\delta_{k:m}^{2}}{2}w_{k}^{u}+v_{m}\right)
+\]
+
+\end_inset
+
+By calculating the error between the measurement and the current state we
+ get 
+\begin_inset Formula 
+\begin{align*}
+y_{m}\ominus g_{k} & =\log\left(g_{k}^{-1}y_{m}\right)\\
+e_{k:m} & \approx\delta_{k:m}u_{k}+\delta_{k:m}w_{k}^{g}+\frac{\delta_{k:m}^{2}}{2}w_{k}^{u}+v_{m}.
+\end{align*}
+
+\end_inset
+
+The expected value of 
+\begin_inset Formula $e_{k:m}$
+\end_inset
+
+ is 
+\begin_inset Formula 
+\[
+\text{E}\left[e_{k:m}\right]=\delta_{k:m}u_{k},
+\]
+
+\end_inset
+
+and the covariance is 
+\begin_inset Formula 
+\begin{align*}
+\text{cov}\left[e_{k:m}\right] & \approx\delta_{k:m}^{2}Q^{g}+\frac{\delta_{k:m}^{2}}{2}Q^{u}+R\\
+ & =R_{k:m}
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula 
+\[
+Q=\begin{bmatrix}Q^{g} & 0\\
+0 & Q^{u}
+\end{bmatrix}.
+\]
+
+\end_inset
+
+We can simply estimate 
+\begin_inset Formula $u_{k}$
+\end_inset
+
+ by letting 
+\begin_inset Formula $u_{k}=e_{k:m}/\delta_{k:m}$
+\end_inset
+
+.
+ We can improve the estimate using multiple measurements.
+ Let 
+\begin_inset Formula $\Lambda$
+\end_inset
+
+ be and index such that 
+\begin_inset Formula $\cup_{m\in\Lambda}\left\{ y_{m}\right\} $
+\end_inset
+
+ is the set of measurements we will use to estimate 
+\begin_inset Formula $u_{k}$
+\end_inset
+
+ and the subscript denotes the time the measurement was taken, then 
+\begin_inset Formula 
+\[
+u_{k}=\left(\sum_{j\in\Lambda}\delta_{k:j}R_{k:j}^{-1}\right)^{-1}\left(\sum_{j\in\Lambda}R_{k:j}^{-1}e_{k:j}\right).
+\]
+
+\end_inset
+
+We can simplify the estimation further by letting 
+\begin_inset Formula 
+\[
+u_{k}=\frac{1}{\left|\Lambda\right|}\sum_{j\in\Lambda}e_{k:j}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Another possible simplification for any approach is by setting 
+\begin_inset Formula $R_{k:m}^{i}$
+\end_inset
+
+,defined in 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:meas_cov_time"
+
+\end_inset
+
+, to identity element to get the simplified optimization problem
+\begin_inset Formula 
+\[
+\arg\min_{x_{k}}\left(\sum_{m=0}^{k}\sum_{j=1}^{\ell\left(m\right)}\left(\hat{e}_{k:m}^{j}\right)^{\top}\hat{e}_{k:m}^{j}\right).
+\]
+
+\end_inset
+
+ We propose this simplification because computing the covariance 
+\begin_inset Formula $R_{k:m}^{j}$
+\end_inset
+
+ can be CPU costly when it has to be done thousands of times whenever RANSAC
+ is performed.
+ 
+\end_layout
+
+\begin_layout Standard
+If you want the estimation to be as accurate as possible using the original
+ optimization problem to solve the LMLE defined in 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:likelihood_inverse"
+
+\end_inset
+
+, we suggest you use the simplified approaches to seed the original optimization
+ problem, unless the system is linear since the optimization problem is
+ already simple.
+ 
+\end_layout
+
 \begin_layout Section
-Constrained Problem for SE(n)
+Constrained Problem for SE
+\begin_inset Formula $\left(n\right)$
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -4475,450 +4734,40 @@ which is full rank provided that
 .
 \end_layout
 
-\begin_layout Section
-Formulas
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{align*}
-x_{k+1} & =f\left(x_{k},u\right)+w_{k}\\
-y_{k+1} & =h\left(x_{k+1}\right)+v_{k}
-\end{align*}
-
-\end_inset
-
-
-\begin_inset Formula 
-\[
-\arg\max_{x_{0},u}p\left(x_{0}\right)\prod_{j=0}^{m}p\left(y_{j}\mid x_{j}\right)
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Appendix
+\begin_layout Appendices
 
 \end_layout
 
 \begin_layout Section
-Quick Review of Lie Group and Lie Algebra
-\end_layout
-
-\begin_layout Subsection
-Probability
-\end_layout
-
-\begin_layout Subsection
-Euclidean Group 
-\begin_inset Formula $\mathbb{R}^{n}$
+SE
+\begin_inset Formula $\left(2\right)$
 \end_inset
 
 
+\end_layout
+
+\begin_layout Subsection
+Group Operations
+\end_layout
+
+\begin_layout Subsection
+Exponential Map
+\end_layout
+
+\begin_layout Subsection
+Adjoint
+\end_layout
+
+\begin_layout Subsection
+Left and Right Jacobians
+\end_layout
+
+\begin_layout Section
+asdfasdfasdf
 \end_layout
 
 \begin_layout --Separator--
 
-\end_layout
-
-\begin_layout Subsection
-Special Orthogonal Group 
-\begin_inset Formula $SO\left(n\right)$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Suppose that we can measure the pose of the system.
- That is 
-\begin_inset Formula 
-\[
-y_{k}=x_{k}\oplus v_{k}.
-\]
-
-\end_inset
-
-where 
-\begin_inset Formula $y_{k}$
-\end_inset
-
- is the output, 
-\begin_inset Formula $x_{k}$
-\end_inset
-
- is the state and 
-\begin_inset Formula $v_{k}$
-\end_inset
-
- is measurement noise.
- The probability of the output condition on the state is denoted 
-\begin_inset Formula $p\left(y\mid x\right)$
-\end_inset
-
- and is defined as 
-\begin_inset Formula 
-\[
-p\left(y\mid x\right)=\eta\exp\left(-\frac{1}{2}\left(y\ominus x\right)^{\top}R^{-1}\left(y\ominus x\right)\right).
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Recall that 
-\begin_inset Formula $x=\hat{x}\exp\left(\delta x\right)$
-\end_inset
-
-.
- We do not know 
-\begin_inset Formula $x$
-\end_inset
-
- exactly but we have our estimate 
-\begin_inset Formula $\hat{x}$
-\end_inset
-
-.
- Thus we want to estimate 
-\begin_inset Formula $\left(y\ominus x\right)$
-\end_inset
-
- using the Taylor series expansion around 
-\begin_inset Formula $\hat{x}$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-We can approximate the probability by computing the Taylor series of 
-\begin_inset Formula $\left(y\ominus x\right)$
-\end_inset
-
-.
-\begin_inset Formula 
-\begin{align*}
-\frac{\partial y\ominus x}{\partial x} & =\frac{\partial\log\left(x^{-1}y\right)}{\partial x}\\
- & =J_{r}^{-1}\left(\log\left(x^{-1}y\right)\right)\left(\mathbf{Ad}_{y}^{-1}\right)\left(-\mathbf{Ad}_{x}\right)\\
- & =-J_{r}^{-1}\left(\log\left(x^{-1}y\right)\right)\mathbf{Ad}y^{-1}x\\
- & =-J_{r}^{-1}\left(\log\left(x^{-1}y\right)\mathbf{Ad}_{\left(xy\right)^{-1}}\right)\\
- & =-J_{l}^{-1}\left(\log\left(x^{-1}y\right)\right).
-\end{align*}
-
-\end_inset
-
-Using a first order Taylor series expansion, we can approximate 
-\begin_inset Formula $p\left(y\mid x\right)$
-\end_inset
-
- as 
-\begin_inset Formula 
-\[
-p\left(y\mid x\right)\approx\eta\exp\left(-\frac{1}{2}\left(y\ominus x-J_{l}^{-1}\left(y\ominus x\right)\delta x\right)^{\top}R^{-1}\left(y\ominus x-J_{l}^{-1}\left(y\ominus x\right)\delta x\right)\right).
-\]
-
-\end_inset
-
-Our objective is to calculate the posterior 
-\begin_inset Formula $p\left(x\mid y\right)$
-\end_inset
-
-.
- Using Bayes rule we get 
-\begin_inset Formula 
-\[
-p\left(x\mid y\right)=\frac{p\left(y\mid x\right)p\left(x\right)}{p\left(y\right)}.
-\]
-
-\end_inset
-
-Since we are trying to maximize the posterior probability we can write 
-\begin_inset Formula $p\left(x\mid y\right)$
-\end_inset
-
- as 
-\begin_inset Formula 
-\[
-p\left(x\mid y\right)=\eta p\left(y\mid x\right)p\left(x\right).
-\]
-
-\end_inset
-
-Note that 
-\begin_inset Formula 
-\begin{align*}
-p\left(y\mid x\right)p\left(x\right) & \approx\eta\exp\left(-\frac{1}{2}\left(y\ominus x-J_{l}^{-1}\left(y\ominus x\right)\delta x\right)^{\top}R^{-1}\left(y\ominus x-J_{l}^{-1}\left(y\ominus x\right)\delta x\right)\right)\exp\left(-\frac{1}{2}\delta x^{\top}P^{-1}\delta x\right)\\
- & =\eta\exp\left(-\frac{1}{2}\left(y\ominus x-J_{l}^{-1}\left(y\ominus x\right)\delta x\right)^{\top}R^{-1}\left(y\ominus x-J_{l}^{-1}\left(y\ominus x\right)\delta x\right)-\frac{1}{2}\delta x^{\top}P^{-1}\delta x\right).
-\end{align*}
-
-\end_inset
-
-We are interested in maximizing the posterior distribution.
- To do this we 
-\begin_inset Formula 
-\[
-\frac{\partial L}{\partial\delta x}=e^{\top}R^{-1}J_{l}^{-1}\left(e\right)+\delta x^{\top}\left(J_{l}^{-1}\left(e\right)\right)^{\top}R^{-1}J_{l}^{-1}\left(e\right)+\delta x^{\top}P^{-1}.
-\]
-
-\end_inset
-
-where 
-\begin_inset Formula $e=y\ominus x$
-\end_inset
-
-.
- Setting it to zero and solving for 
-\begin_inset Formula $\delta x$
-\end_inset
-
- we get 
-\begin_inset Formula 
-\[
-\delta x=\left(\left(J_{l}^{-1}\left(e\right)\right)^{\top}R^{-1}J_{l}^{-1}\left(e\right)+P^{-1}\right)\left(J_{l}^{-1}\left(e\right)\right)^{\top}R^{-1}e.
-\]
-
-\end_inset
-
-Which can be written as 
-\begin_inset Formula 
-\[
-\delta x=Ke
-\]
-
-\end_inset
-
-where 
-\begin_inset Formula 
-\begin{align*}
-S & =\left(J_{l}^{-1}\left(e\right)\right)P\left(J_{l}^{-1}\left(e\right)\right)^{\top}+R\\
-K & =P\left(J_{l}^{-1}\left(e\right)\right)^{\top}S^{-1}.
-\end{align*}
-
-\end_inset
-
- 
-\end_layout
-
-\begin_layout --Separator--
-
-\end_layout
-
-\begin_layout Subsection
-Special Euclidean Group 
-\begin_inset Formula $SE\left(n\right)$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-We begin with the definition of a Lie Group taken from 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Lee"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Definition
-A 
-\series bold
-Lie group
-\series default
- is a smooth manifold 
-\begin_inset Formula $G$
-\end_inset
-
- that is also a group in the algebraic sens, with the property that the
- multiplication map 
-\begin_inset Formula $m:G\times G\to G$
-\end_inset
-
- and inversion map 
-\begin_inset Formula $i:G\to G$
-\end_inset
-
-, given by 
-\begin_inset Formula 
-\[
-m\left(g,h\right)=g\bullet h,\quad i\left(g\right)=g^{-1}
-\]
-
-\end_inset
-
-are both smooth where 
-\begin_inset Formula $\bullet$
-\end_inset
-
- denotes the group operation.
-\end_layout
-
-\begin_layout --Separator--
-
-\end_layout
-
-\begin_layout Standard
-Some examples of Lie groups that we focus on are the Euclidean space 
-\begin_inset Formula $\mathbb{R}^{n}$
-\end_inset
-
- with the group operation being addition and the inverse being the additive
- inverse, the special orthogonal group of dimension 
-\begin_inset Formula $n$
-\end_inset
-
-, 
-\begin_inset Formula $SO\left(n\right)$
-\end_inset
-
- with the group operation being matrix multiplication and the inverse being
- the matrix inverse.
- , and the special Euclidean group of dimension 
-\begin_inset Formula $n$
-\end_inset
-
-,
-\begin_inset Formula $SE\left(n\right)$
-\end_inset
-
- with the group operation being matrix multiplication and the inverse being
- the matrix inverse.
- 
-\end_layout
-
-\begin_layout Standard
-Every Lie group has a corresponding Lie algebra.
- Depending on the author, the Lie algebra is defined differently but equivalentl
-y.
- We define it according to 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Abraham1998"
-
-\end_inset
-
- and 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Lee"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Definition
-The 
-\series bold
-Lie algebra
-\series default
- 
-\begin_inset Formula $\mathfrak{g}$
-\end_inset
-
- of a Lie group 
-\begin_inset Formula $G$
-\end_inset
-
- is the set of all left invariant vector fields endowed with the Lie bracket.
- The Lie algebra is isomorphic to the tangent space of the Lie group at
- identity.
- 
-\end_layout
-
-\begin_layout Standard
-The Lie algebra is also isomorphic to the canonical coordinates of the 1st
- kind 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Engo2000"
-
-\end_inset
-
- or exponential coordinates of the first kind 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Bullo2005"
-
-\end_inset
-
-.
- We will overload the term Lie algebra to mean the set of all left invariant
- vector fields, the tangent space of the Lie group at identity or the canonical
- coordinates of the 1st kind and we rely on the context to make clear which
- isomorphic space of the Lie algebra we are referring to.
- 
-\end_layout
-
-\begin_layout Standard
-Some examples of Lie algebras that we focus on is the Lie algebra of 
-\begin_inset Formula $\mathbb{R}^{n}$
-\end_inset
-
- which is 
-\begin_inset Formula $\mathbb{R}^{n}$
-\end_inset
-
- equipped with the Lie bracket 
-\begin_inset Formula $\left[\cdot,\cdot\right]:\mathbb{R}^{n}\times\mathbb{R}^{n}\to\mathbb{R}^{n}$
-\end_inset
-
- defined by 
-\begin_inset Formula $\left(a,b\right)\mapsto\left[a\right]_{\times}b$
-\end_inset
-
-; the Lie algebra of 
-\begin_inset Formula $SO\left(n\right)$
-\end_inset
-
- which is the set of skew symmetric matrices of dimension 
-\begin_inset Formula $n$
-\end_inset
-
- denoted as 
-\begin_inset Formula $\mathfrak{so}\left(n\right)$
-\end_inset
-
- equipped with the Lie bracket 
-\begin_inset Formula $\left[\cdot,\cdot\right]:\mathfrak{so}\left(n\right)\times\mathfrak{so}\left(n\right)\to\mathfrak{so}\left(n\right)$
-\end_inset
-
- defined by 
-\begin_inset Formula $\left(a,b\right)\mapsto ab-ba$
-\end_inset
-
-; the Lie algebra of 
-\begin_inset Formula $SE\left(n\right)$
-\end_inset
-
- which is 
-\begin_inset Formula $\mathfrak{se}\left(n\right)=\left\{ \begin{bmatrix}\omega & \rho\\
-0_{n\times1} & 0_{1\times1}
-\end{bmatrix}\,:\,\omega\in\mathfrak{so\left(n\right)}\text{ and }\rho\in\mathbb{R}^{n}\right\} $
-\end_inset
-
-.
- 
-\end_layout
-
-\begin_layout Standard
-The exponential map is the function 
-\begin_inset Formula $\exp:\mathfrak{g}\to G$
-\end_inset
-
-.
- In the case of 
-\begin_inset Formula $\mathbb{R}^{n}$
-\end_inset
-
-, the 
 \end_layout
 
 \begin_layout Standard
