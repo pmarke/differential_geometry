@@ -3584,7 +3584,8 @@ Euclidean spaces equipped with the standard topology and the group operation
 \end_inset
 
  be a group equipped with addition.
- Note that this is an abelian group.
+ Note that this is an abelian group; thus the adjoint map is the identity
+ map.
  Its corresponding Lie algebra is simply 
 \begin_inset Formula $\mathbb{R}^{2}$
 \end_inset
@@ -3593,7 +3594,70 @@ Euclidean spaces equipped with the standard topology and the group operation
  Therefore, the exponential map and its inverse is simply the identity map.
  This implies that the left and right Jacobians of the exponential map is
  also the identity map.
- Lastly, 
+ The box plus/minus and o plus/minus mapping are trivially derived; for
+ example
+\begin_inset Formula 
+\begin{align*}
+g\oplus u & =g+u\\
+g_{1}\ominus g_{2} & =g_{1}-g_{2}
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $g,g_{1},g_{2}\in G=\mathbb{R}^{2}$
+\end_inset
+
+ and 
+\begin_inset Formula $u\in\mathfrak{g}=\mathbb{R}^{2}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The system model is then
+\begin_inset Formula 
+\begin{align*}
+g_{k} & =g_{k^{-}}+\delta_{k}\left(u_{k^{-}}+w_{k}^{g}\right)+\frac{\delta_{k}^{2}}{2}w_{k}^{u}\\
+u_{k} & =u_{k^{-}}+\delta_{k}w_{k}^{u}.
+\end{align*}
+
+\end_inset
+
+We can write this in the familiar matrix notation as 
+\begin_inset Formula 
+\[
+x_{k}=A_{k}x_{k^{-}}+B_{k}w_{k},
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $x_{k}=\left[g_{k}^{\top},u_{k}^{\top}\right]^{\top}$
+\end_inset
+
+, 
+\begin_inset Formula 
+\[
+A_{k}=\begin{bmatrix}I_{2\times2} & \delta_{k}I\\
+0 & I_{2\times2}
+\end{bmatrix},
+\]
+
+\end_inset
+
+and
+\begin_inset Formula 
+\[
+B_{k}=\begin{bmatrix}\delta_{k}I & \frac{\delta_{k}^{2}}{2}I\\
+0 & I
+\end{bmatrix}.
+\]
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
