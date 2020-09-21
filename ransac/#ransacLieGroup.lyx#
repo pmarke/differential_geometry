@@ -3564,14 +3564,7 @@ d.
 \end_layout
 
 \begin_layout Section
-LMLE Simplification 
-\begin_inset CommandInset label
-LatexCommand label
-name "sec:LMLE-Simplification"
-
-\end_inset
-
-
+LMLE Simplification
 \end_layout
 
 \begin_layout Standard
@@ -4182,80 +4175,10 @@ Regardless of the constrained system we use, the rotation matrix can be
  In order to avoid calculating the wrong rotation matrix, we can seed the
  LMLE with approximate values.
  Let 
-\begin_inset Formula $\theta=\text{Log}\left(R\right)$
+\begin_inset Formula $ $
 \end_inset
 
- and 
-\begin_inset Formula $\dot{t}$
-\end_inset
-
- be the derivative of 
-\begin_inset Formula $t$
-\end_inset
-
-, then 
-\begin_inset Formula 
-\begin{align*}
-\dot{t}=\begin{bmatrix}\dot{t}_{x}\\
-\dot{t}_{y}
-\end{bmatrix} & =\text{Exp}\left(\theta\right)\rho\\
- & =\begin{bmatrix}\cos\left(\theta\right) & -\sin\left(\theta\right)\\
-\sin\left(\theta\right) & \cos\left(\theta\right)
-\end{bmatrix}\begin{bmatrix}\rho_{x}\\
-0
-\end{bmatrix}\\
- & =\begin{bmatrix}\rho_{x}\cos\left(\theta\right)\\
-\rho_{x}\sin\left(\theta\right)
-\end{bmatrix},
-\end{align*}
-
-\end_inset
-
-dividing the two gives us 
-\begin_inset Formula 
-\[
-\theta=\arctan\left(\dot{t}_{y}/\dot{t}_{x}\right).
-\]
-
-\end_inset
-
-The value of 
-\begin_inset Formula $\dot{t}$
-\end_inset
-
- can be numerically approximated, and the estimation for 
-\begin_inset Formula $\theta$
-\end_inset
-
- can be enhanced by using multiple measurements.
- Once 
-\begin_inset Formula $\theta$
-\end_inset
-
- is estimated, you can use a method described in section 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "sec:LMLE-Simplification"
-
-\end_inset
-
- to estimate 
-\begin_inset Formula $\omega$
-\end_inset
-
- and 
-\begin_inset Formula $\rho$
-\end_inset
-
-.
- These estimates are used to see the LMLE during the RANSAC step of the
- algorithm.
-\end_layout
-
-\begin_layout Standard
-
-\series bold
-Hardware Results
+ 
 \end_layout
 
 \begin_layout Section

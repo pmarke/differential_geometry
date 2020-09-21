@@ -47,7 +47,27 @@ W = U;
 W(1:3,4) = rand(3,1);
 
 
+%%
+w = rand(3,1);
+p = rand(3,1);
+W = ssm(w);
+P = ssm(p);
+U = [W P; zeros(3,3) W]
+u = [p;w];
 
+norm(u)
+norm(U)
+
+%%
+th = rand(1)-0.5
+TH = [0 -th; th 0];
+
+x = [0 -1; 1 0];
+I = eye(2);
+
+W = ( cos(th)-1 )/th*x + sin(th)/th*I;
+W2 = (cos(norm(th)) -1)/norm(th)^2*TH + sin(norm(th))/norm(th)*I;
+W-W2
 
 
 function X = myexp(u)

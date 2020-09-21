@@ -2599,13 +2599,13 @@ key "Niedfeldt2014a"
 
  with respect to the state.
  We denote this derivative as 
-\begin_inset Formula $F_{k:m}$
+\begin_inset Formula $H_{k:m}$
 \end_inset
 
  which is defined as 
 \begin_inset Formula 
 \begin{align*}
-F_{k:m} & =\left.\frac{\partial y_{m}\ominus h\left(f^{-1},v_{m}\right)}{\partial x_{k}}\right|_{\hat{x}_{k},\hat{w}_{k},\hat{v}_{m}}\\
+H_{k:m} & =\left.\frac{\partial y_{m}\ominus h\left(f^{-1},v_{m}\right)}{\partial x_{k}}\right|_{\hat{x}_{k},\hat{w}_{k},\hat{v}_{m}}\\
  & =\left.J_{r}^{-1}\left(\hat{e}_{k:m}\right)\mathbf{Ad}_{y_{m}^{-1}}\frac{\partial h\left(f^{-1},v_{m}\right)}{\partial x_{k}}\right|_{\hat{x}_{k},\hat{w}_{k},\hat{v}_{m}}.
 \end{align*}
 
@@ -3564,148 +3564,14 @@ d.
 \end_layout
 
 \begin_layout Section
-Example 
-\begin_inset Formula $\mathbb{R}^{2}$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-This is a brief section to show how the Lie group theory applies to Euclidean
- spaces of 
-\begin_inset Formula $\mathbb{R}^{m}$
-\end_inset
-
-, where 
-\begin_inset Formula $m\in\mathbb{N}$
-\end_inset
-
-, equipped with the standard topology and the group operation of addition.
- The example given is 
-\begin_inset Formula $\mathbb{R}^{2}$
-\end_inset
-
-.
- Let 
-\begin_inset Formula $\mathbb{R}^{2}$
-\end_inset
-
- be a group equipped with addition.
- Note that this is an abelian group; thus the adjoint map is the identity
- map.
- Its corresponding Lie algebra is simply 
-\begin_inset Formula $\mathbb{R}^{2}$
-\end_inset
-
-.
- Therefore, the exponential map and its inverse is simply the identity map.
- This implies that the left and right Jacobians of the exponential map is
- also the identity map.
- The box plus/minus and o plus/minus mapping are trivially derived; for
- example
-\begin_inset Formula 
-\begin{align*}
-g\oplus u & =g+u\\
-g_{1}\ominus g_{2} & =g_{1}-g_{2}
-\end{align*}
+LMLE Simplification 
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:LMLE-Simplification"
 
 \end_inset
 
-where 
-\begin_inset Formula $g,g_{1},g_{2}\in G=\mathbb{R}^{2}$
-\end_inset
 
- and 
-\begin_inset Formula $u\in\mathfrak{g}=\mathbb{R}^{2}$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-We can write the system model as 
-\begin_inset Formula 
-\begin{align*}
-g_{k} & =g_{k^{-}}+\delta_{k}\left(u_{k^{-}}+w_{k}^{g}\right)+\frac{\delta_{k}^{2}}{2}w_{k}^{u}\\
-u_{k} & =u_{k^{-}}+\delta_{k}w_{k}^{u}\\
-y_{k} & =g_{k}+v_{k},
-\end{align*}
-
-\end_inset
-
-We can write this in the familiar matrix notation as 
-\begin_inset Formula 
-\begin{align*}
-x_{k} & =A_{k}x_{k^{-}}+B_{k}w_{k}\\
-y_{k} & =Cx_{k}+v_{k}
-\end{align*}
-
-\end_inset
-
-where 
-\begin_inset Formula $x_{k}=\left[g_{k}^{\top},u_{k}^{\top}\right]^{\top}$
-\end_inset
-
-,
-\begin_inset Formula 
-\begin{align*}
-A_{k}=\begin{bmatrix}I_{2\times2} & \delta_{k}I\\
-0 & I_{2\times2}
-\end{bmatrix}, & \thinspace & B_{k}=\begin{bmatrix}\delta_{k}I & \frac{\delta_{k}^{2}}{2}I\\
-0 & \delta_{k}I
-\end{bmatrix},
-\end{align*}
-
-\end_inset
-
-and 
-\begin_inset Formula 
-\[
-C=\begin{bmatrix}I_{2\times2} & 0_{2\times2}\end{bmatrix}.
-\]
-
-\end_inset
-
-In this form, we can easily recognize it as an linear time-invariant system
- with near constant velocity.
-\end_layout
-
-\begin_layout Standard
-The Jacobians are easily computed and are 
-\begin_inset Formula $F_{k}=A_{k}$
-\end_inset
-
-, 
-\begin_inset Formula $G_{k}=B_{k}$
-\end_inset
-
- , 
-\begin_inset Formula $H_{k}=C$
-\end_inset
-
-, 
-\begin_inset Formula $F_{k:m}=CA_{k:m}$
-\end_inset
-
-, and 
-\begin_inset Formula $G_{k:m}=CB_{k:m}$
-\end_inset
-
-.
- The LMLE simplifies to a least squares problem.
- This type of system used with R-RANSAC is thoroughly discussed in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Niedfeldt2014a"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Section
-LMLE Simplification
 \end_layout
 
 \begin_layout Standard
@@ -3916,11 +3782,488 @@ reference "eq:likelihood_inverse"
 \end_layout
 
 \begin_layout Section
-Constrained Problem for SE
-\begin_inset Formula $\left(n\right)$
+Examples
+\end_layout
+
+\begin_layout Standard
+In this section we provide three examples of increasing complexity.
+ The first example is to show how LG-R-RANSAC applies to Euclidean space
+ of 
+\begin_inset Formula $\mathbb{R}^{n}$
+\end_inset
+
+ with 
+\begin_inset Formula $n\in\mathbb{N}$
+\end_inset
+
+.
+ The second example applies LG-R-RANSAC to tracking targets on an image
+ plane using 
+\begin_inset Formula $SE\left(2\right)$
+\end_inset
+
+, and the third example applies LG-R-RANSAC to tracking UAVs using radar
+ sensors.
+ 
+\end_layout
+
+\begin_layout Subsection
+Euclidean Space 
+\begin_inset Formula $\mathbb{R}^{n}$
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+This is a brief section to show how the Lie group theory applies to Euclidean
+ spaces of 
+\begin_inset Formula $\mathbb{R}^{n}$
+\end_inset
+
+, where 
+\begin_inset Formula $n\in\mathbb{N}$
+\end_inset
+
+, equipped with the standard topology and the group operation of addition.
+ 
+\begin_inset Formula $\mathbb{R}^{n}$
+\end_inset
+
+ equipped with addition is an abelian group; thus the adjoint map is the
+ identity map.
+ Its corresponding Lie algebra is 
+\begin_inset Formula $\mathbb{R}^{n}$
+\end_inset
+
+.
+ Therefore, the exponential map and its inverse is simply the identity map.
+ This implies that the left and right Jacobians of the exponential map is
+ also the identity map.
+ The box plus/minus and o plus/minus mapping are trivially derived; for
+ example
+\begin_inset Formula 
+\begin{align*}
+g\oplus u & =g+u\\
+g_{1}\ominus g_{2} & =g_{1}-g_{2}
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $g,g_{1},g_{2}\in G=\mathbb{R}^{2}$
+\end_inset
+
+ and 
+\begin_inset Formula $u\in\mathfrak{g}=\mathbb{R}^{2}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+We can write the system model as 
+\begin_inset Formula 
+\begin{align*}
+g_{k} & =g_{k^{-}}+\delta_{k}\left(u_{k^{-}}+w_{k}^{g}\right)+\frac{\delta_{k}^{2}}{2}w_{k}^{u}\\
+u_{k} & =u_{k^{-}}+\delta_{k}w_{k}^{u}\\
+y_{k} & =g_{k}+v_{k},
+\end{align*}
+
+\end_inset
+
+We can write this in the familiar matrix notation as 
+\begin_inset Formula 
+\begin{align*}
+x_{k} & =A_{k}x_{k^{-}}+B_{k}w_{k}\\
+y_{k} & =Cx_{k}+v_{k}
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $x_{k}=\left[g_{k}^{\top},u_{k}^{\top}\right]^{\top}$
+\end_inset
+
+,
+\begin_inset Formula 
+\begin{align*}
+A_{k}=\begin{bmatrix}I_{2\times2} & \delta_{k}I\\
+0 & I_{2\times2}
+\end{bmatrix}, & \thinspace & B_{k}=\begin{bmatrix}\delta_{k}I & \frac{\delta_{k}^{2}}{2}I\\
+0 & \delta_{k}I
+\end{bmatrix},
+\end{align*}
+
+\end_inset
+
+and 
+\begin_inset Formula 
+\[
+C=\begin{bmatrix}I_{2\times2} & 0_{2\times2}\end{bmatrix}.
+\]
+
+\end_inset
+
+In this form, we can easily recognize it as an linear time-invariant system
+ with near constant velocity.
+\end_layout
+
+\begin_layout Standard
+The Jacobians are easily computed and are 
+\begin_inset Formula $F_{k}=A_{k}$
+\end_inset
+
+, 
+\begin_inset Formula $G_{k}=B_{k}$
+\end_inset
+
+ , 
+\begin_inset Formula $H_{k}=C$
+\end_inset
+
+, 
+\begin_inset Formula $F_{k:m}=CA_{k:m}$
+\end_inset
+
+, and 
+\begin_inset Formula $G_{k:m}=CB_{k:m}$
+\end_inset
+
+.
+ The LMLE simplifies to a least squares problem.
+ This type of system used with R-RANSAC is thoroughly discussed in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Niedfeldt2014a"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Tracking on an Image Plane
+\end_layout
+
+\begin_layout Standard
+Camera's are widely used as a sensor for target tracking.
+ A popular application is to mount a camera on a UAV and track a moving
+ target in the normalized image plane.
+ For this example, we assume that the normalized image plane is the GSR,
+ the global frame is coincident with the camera frame, and that measurements
+ are point measurements, i.e.
+ position only measurements.
+ Since the global frame is coincident with the camera frame, a transformation
+ must be provided to LG-R-RANSAC to transform all the measurements and models
+ to the current global frame.
+ We will use the Homography for this transformation.
+\end_layout
+
+\begin_layout Standard
+The Lie group configuration of a target moving in the normalized image plane
+ is 
+\begin_inset Formula $SE\left(2\right)$
+\end_inset
+
+, see appendix 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:SE"
+
+\end_inset
+
+ for the system function and important Jacobians.
+ Let 
+\begin_inset Formula $g_{k}\in SE\left(2\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $u_{k}\in\mathfrak{se}\left(2\right)$
+\end_inset
+
+.
+ They can be written as 
+\begin_inset Formula 
+\begin{align*}
+g_{k} & =\begin{bmatrix}R_{k} & t_{k}\\
+0_{1\times2} & 1
+\end{bmatrix}\\
+u_{k} & =\begin{bmatrix}\omega_{k} & \rho_{k}\\
+0_{1\times2} & 1
+\end{bmatrix},
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $R_{k}\in SO\left(2\right)$
+\end_inset
+
+, 
+\begin_inset Formula $\omega_{k}\in\mathfrak{se}\left(2\right)$
+\end_inset
+
+, and 
+\begin_inset Formula $t_{k},\rho_{k}\in\mathbb{R}^{2}$
+\end_inset
+
+.
+ The observation model is 
+\begin_inset Formula 
+\begin{align*}
+y_{k} & =h\left(x_{k},v_{k}\right)\\
+ & =t_{k}+v_{k},
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $y_{k}\in\mathbb{R}^{2}$
+\end_inset
+
+.
+ The inverse observation model is 
+\begin_inset Formula 
+\begin{align*}
+y_{m} & =h\left(f^{-1}\left(x_{k},\delta_{k:m},w_{k}\right),v_{k}\right)\\
+ & =R_{k}V\left(\delta_{k:m}\left(\omega_{k}+w_{k}^{R}\right)+\frac{\delta_{k:m}^{2}w_{k}^{\omega}}{2}\right)\left(\delta_{k:m}\rho_{k}+\delta_{k:m}w_{k}^{\rho}\right)+t_{k}+w_{k}^{t}+v_{m},
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $w_{k}=\left[\left(w_{k}^{t}\right)^{\top},\left(w_{k}^{R}\right)^{\top},\left(w_{k}^{\rho}\right)^{\top},\left(w_{k}^{u}\right)^{\top}\right]^{\top}$
+\end_inset
+
+ and 
+\begin_inset Formula $V$
+\end_inset
+
+ is defined in equation 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:se2_v"
+
+\end_inset
+
+.
+ Based on the observation model, we have three Jacobians to compute: 
+\begin_inset Formula $G_{k:m}$
+\end_inset
+
+, 
+\begin_inset Formula $H_{k:m}$
+\end_inset
+
+ and 
+\begin_inset Formula $V_{m}$
+\end_inset
+
+.
+ 
+\begin_inset Formula 
+\begin{align*}
+H_{k:m}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial x} & =\begin{bmatrix}H_{k:m}^{t} & H_{k:m}^{R} & H_{k:m}^{\rho} & H_{k:m}^{\omega}\end{bmatrix},
+\end{align*}
+
+\end_inset
+
+where
+\begin_inset Formula 
+\begin{align*}
+H_{k:m}^{t}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial t_{k}} & =I\\
+H_{k:m}^{R}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial R} & =\delta_{k:m}R_{k}\left[1\right]_{\times}V\left(\delta_{k:m}\omega\right)\rho\\
+H_{k:m}^{\rho}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\rho} & =\delta_{k:m}R_{k}V\left(\delta_{k:m}\omega\right)\\
+H_{k:m}^{\omega}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\omega} & =\delta_{k:m}^{2}R_{k}V^{'}\left(\delta_{k:m}\omega\right)\rho
+\end{align*}
+
+\end_inset
+
+and 
+\begin_inset Formula 
+\[
+V^{'}\left(\omega\right)=\frac{\cos\left(\theta\right)\theta-\sin\left(\theta\right)}{\theta^{2}}I+\frac{\sin\left(\theta\right)\theta-\left(1-\cos\left(\theta\right)\right)}{\theta^{2}}\left[1\right]_{\times}.
+\]
+
+\end_inset
+
+We quickly note that 
+\begin_inset Formula 
+\[
+H_{k}=H_{k:k}=\begin{bmatrix}I & 0_{2\times1} & R_{k} & 0_{2\times1}\end{bmatrix}.
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+G_{k:m}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}}=\begin{bmatrix}G_{k:m}^{t} & H_{k:m}^{R} & H_{k:m}^{\rho} & H_{k:m}^{\omega}\end{bmatrix},
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula 
+\begin{align*}
+G_{k:m}^{t} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{t}}=I\\
+G_{k:m}^{R} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{R}}=\delta_{k:m}^{2}R_{k}V^{'}\left(\delta_{k:m}\omega\right)\rho\\
+G_{k:m}^{\rho} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{\rho}}=\delta_{k:m}R_{k}V\left(\delta_{k:m}\omega\right)\\
+G_{k:m}^{\omega} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{\omega}}=\frac{\delta_{k:m}^{3}}{2}R_{k}V^{'}\left(\delta_{k:m}\omega\right)\rho.
+\end{align*}
+
+\end_inset
+
+Lastly 
+\begin_inset Formula $V_{m}=I$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Now that we have the Jacobians computed, we need to ensure that the system
+ is observable.
+ Since the system is nonlinear, the best we can do is ensure local observability.
+ Given measurements from three different time steps, the observability matrix
+ is 
+\begin_inset Formula 
+\[
+\mathcal{O}=\begin{bmatrix}H_{k:m_{1}}\\
+H_{k:m_{2}}\\
+H_{k:m_{3}}
+\end{bmatrix}.
+\]
+
+\end_inset
+
+The observability matrix is not full rank.
+ However, if the target has a circular trajectory and the target's heading
+ is oriented along the body frame velocity, we can make the assumptions
+ that 
+\begin_inset Formula $\rho=\left[\rho_{x},0\right]^{\top}$
+\end_inset
+
+ and 
+\begin_inset Formula $\rho_{x},\omega\neq0$
+\end_inset
+
+.
+ Using these assumptions, the system is observable.
+ In addition, if the target is moving in a straight line, then we can make
+ the assumptions that 
+\begin_inset Formula $\rho=\left[\rho_{x},0\right]^{\top}$
+\end_inset
+
+, 
+\begin_inset Formula $\rho_{x}\neq0$
+\end_inset
+
+ and 
+\begin_inset Formula $\omega=0$
+\end_inset
+
+.
+ Under these assumptions and constraints, the system is observable.
+ We can identify which constrained measurement we are trying to track by
+ looking at three different measurements from different times.
+ If the three measurement do not form a line, then the system has first
+ constrains; otherwise, the latter.
+\end_layout
+
+\begin_layout Standard
+Regardless of the constrained system we use, the rotation matrix can be
+ off by a rotation of 
+\begin_inset Formula $\pi$
+\end_inset
+
+ since the matrix exponential is surjective.
+ In order to avoid calculating the wrong rotation matrix, we can seed the
+ LMLE with approximate values.
+ Let 
+\begin_inset Formula $\theta=\text{Log}\left(R\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $\dot{t}$
+\end_inset
+
+ be the derivative of 
+\begin_inset Formula $t$
+\end_inset
+
+, then 
+\begin_inset Formula 
+\begin{align*}
+\dot{t}=\begin{bmatrix}\dot{t}_{x}\\
+\dot{t}_{y}
+\end{bmatrix} & =\text{Exp}\left(\theta\right)\rho\\
+ & =\begin{bmatrix}\cos\left(\theta\right) & -\sin\left(\theta\right)\\
+\sin\left(\theta\right) & \cos\left(\theta\right)
+\end{bmatrix}\begin{bmatrix}\rho_{x}\\
+0
+\end{bmatrix}\\
+ & =\begin{bmatrix}\rho_{x}\cos\left(\theta\right)\\
+\rho_{x}\sin\left(\theta\right)
+\end{bmatrix},
+\end{align*}
+
+\end_inset
+
+dividing the two gives us 
+\begin_inset Formula 
+\[
+\theta=\arctan\left(\dot{t}_{y}/\dot{t}_{x}\right).
+\]
+
+\end_inset
+
+The value of 
+\begin_inset Formula $\dot{t}$
+\end_inset
+
+ can be numerically approximated, and the estimation for 
+\begin_inset Formula $\theta$
+\end_inset
+
+ can be enhanced by using multiple measurements.
+ Once 
+\begin_inset Formula $\theta$
+\end_inset
+
+ is estimated, you can use a method described in section 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "sec:LMLE-Simplification"
+
+\end_inset
+
+ to estimate 
+\begin_inset Formula $\omega$
+\end_inset
+
+ and 
+\begin_inset Formula $\rho$
+\end_inset
+
+.
+ These estimates are used to see the LMLE during the RANSAC step of the
+ algorithm.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Hardware Results
+\end_layout
+
+\begin_layout Section
+Constrained Problem for SE
+\begin_inset Formula $\left(3\right)$
+\end_inset
+
+: Tracking UAV with Radar
 \end_layout
 
 \begin_layout Standard
@@ -4654,86 +4997,6 @@ v_{3}p_{1}-2v_{1}p_{3} & v_{3}p_{2}-2v_{2}p_{3} & v_{1}p_{1}+v_{2}p_{2}
 
 \end_layout
 
-\begin_layout Section
-SE(2) Observability
-\end_layout
-
-\begin_layout Standard
-Assume the state 
-\begin_inset Formula 
-\[
-x=\begin{bmatrix}\alpha\\
-P\\
-\omega\\
-\rho
-\end{bmatrix},
-\]
-
-\end_inset
-
-where 
-\begin_inset Formula $R=\exp\left(\alpha^{\wedge}\right)$
-\end_inset
-
-, 
-\begin_inset Formula $P$
-\end_inset
-
- is the position, 
-\begin_inset Formula $\omega$
-\end_inset
-
- is the angular velocity and 
-\begin_inset Formula $\rho$
-\end_inset
-
- is the body 
-\begin_inset Formula $x$
-\end_inset
-
- velocity.
- The derivative is 
-\begin_inset Formula 
-\[
-\dot{x}=\begin{bmatrix}\omega\\
-\cos\left(\alpha\right)\rho\\
-\sin\left(\alpha\right)\rho\\
-0\\
-0
-\end{bmatrix}.
-\]
-
-\end_inset
-
-Then the observability matrix is
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\[
-O=\begin{bmatrix}0 & 1 & 0 & 0 & 0\\
-0 & 0 & 1 & 0 & 0\\
--\sin\left(\alpha\right)\rho & 0 & 0 & 0 & \cos\left(\alpha\right)\\
-\cos\left(\alpha\right)\rho & 0 & 0 & 0 & \sin\left(\alpha\right)\\
--\cos\left(\alpha\right)\rho\omega & 0 & 0 & -\sin\left(\alpha\right)\rho & -\sin\left(\alpha\right)\omega\\
-\sin\left(\alpha\right)\rho\omega & 0 & 0 & -\cos\left(\alpha\right)\rho & -\cos\left(\alpha\right)\omega
-\end{bmatrix},
-\]
-
-\end_inset
-
-which is full rank provided that 
-\begin_inset Formula $\rho,\omega\neq0$
-\end_inset
-
-.
- Thus the system is locally observable provided 
-\begin_inset Formula $\rho,\omega\neq0$
-\end_inset
-
-.
-\end_layout
-
 \begin_layout Appendices
 
 \end_layout
@@ -4744,26 +5007,585 @@ SE
 \end_inset
 
 
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:SE"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The special Euclidean group of two dimensions is a matrix Lie group and
+ is the set 
+\begin_inset Formula 
+\[
+SE\left(2\right)=\left\{ \left.\begin{bmatrix}R & t\\
+0_{1\times2} & 1_{1\times1}
+\end{bmatrix}\,\right|\,R\in SO\left(2\right)\text{ and }t\in\mathbb{R}^{2}\right\} 
+\]
+
+\end_inset
+
+equipped with matrix multiplication.
+ The Lie algebra is 
+\begin_inset Formula 
+\[
+\mathfrak{se}\left(2\right)=\left\{ \left.\begin{bmatrix}\omega & \rho\\
+0 & 0
+\end{bmatrix}\,\right|\,\omega\in\mathfrak{s0}\left(2\right)\text{ and }\rho\in\mathbb{R}^{2}\right\} ,
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\theta\in\mathbb{R},$
+\end_inset
+
+
+\begin_inset Formula $\omega=\left[\theta\right]_{\times}$
+\end_inset
+
+, and 
+\begin_inset Formula $\left[\cdot\right]_{\times}$
+\end_inset
+
+ is the skew symmetric operator defined as 
+\begin_inset Formula 
+\[
+\left[\theta\right]_{\times}=\begin{bmatrix}0 & -\theta\\
+\theta & 0
+\end{bmatrix},
+\]
+
+\end_inset
+
+and 
+\begin_inset Formula 
+\[
+\begin{bmatrix}\rho\\
+\theta
+\end{bmatrix}\in\mathbb{R}^{3}
+\]
+
+\end_inset
+
+which is the Cartesian vector space.
+ 
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $g\in SE\left(2\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $u\in\mathfrak{se}\left(2\right)$
+\end_inset
+
+.
+ Using an element of the Lie algebra, we can define the infinitesimal generator
+ 
+\begin_inset Formula $\xi_{u}:G\to TG$
+\end_inset
+
+ as 
+\begin_inset Formula 
+\begin{align*}
+\xi_{u}\left(g\right) & =gu\\
+ & =\dot{g}.
+\end{align*}
+
+\end_inset
+
+The discretized system function 
+\begin_inset Formula $f:SE\left(2\right)\times\mathbb{R}^{2}\to SE\left(2\right)\times\mathbb{R}^{2}$
+\end_inset
+
+ is 
+\begin_inset Formula 
+\begin{align*}
+g_{k} & =\text{\exp}\left(\delta_{k}\left(u_{k^{-}}+w_{k}^{g}\right)+\frac{\delta_{k}^{2}}{2}w_{k}^{u}\right)\\
+u_{k} & =u_{k^{-}}+\delta_{k}w_{k}^{u}
+\end{align*}
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
 Group Operations
 \end_layout
 
+\begin_layout Standard
+Let 
+\begin_inset Formula $g_{1},g_{2}\in SE\left(2\right)$
+\end_inset
+
+.
+ The inversion and group multiplication is matrix inversion and matrix multiplic
+ation as follows
+\begin_inset Formula 
+\begin{align*}
+g_{1}^{-1} & =\begin{bmatrix}R_{1}^{\top} & -R_{1}^{\top}t_{1}\\
+0 & 1
+\end{bmatrix}\\
+g_{1}g_{2} & =\begin{bmatrix}R_{1}R_{2} & R_{1}t_{2}+t_{1}\\
+0 & 1
+\end{bmatrix}.
+\end{align*}
+
+\end_inset
+
+ 
+\end_layout
+
 \begin_layout Subsection
 Exponential Map
 \end_layout
 
+\begin_layout Standard
+The exponential map is the matrix exponential and it's inverse is the matrix
+ logarithm.
+ The matrix exponential is a surjective function; however, by restricting
+ the domain to 
+\begin_inset Formula 
+\[
+U=\left\{ u\in\mathfrak{se}\left(2\right)\,\mid\,\left\Vert u\right\Vert <\pi\right\} ,
+\]
+
+\end_inset
+
+it becomes a bijection.
+ In this case, the exponential map and its inverse have a simplified form
+ 
+\begin_inset Formula 
+\begin{align*}
+\text{\exp}\left(u\right) & =\begin{bmatrix}\exp\left(\omega\right) & V\left(\omega\right)\rho\\
+0_{1\times2} & 1
+\end{bmatrix}\\
+\text{\log}\left(g\right) & =\begin{bmatrix}\log\left(R\right) & V^{-1}\left(\omega\right)t\\
+0_{1\times2} & 0
+\end{bmatrix}
+\end{align*}
+
+\end_inset
+
+with
+\begin_inset Formula 
+\begin{align}
+\exp\left(\omega\right) & =\begin{bmatrix}\cos\left(\theta\right) & -\sin\left(\theta\right)\\
+\sin\left(\theta\right) & \cos\left(\theta\right)
+\end{bmatrix}\\
+\log\left(R\right) & =\arctan\left(R_{21},R_{11}\right)\\
+\omega & =\log\left(R\right)\\
+V\left(\omega\right) & =\begin{cases}
+I & \text{if }\theta=0\\
+\frac{\sin\left(\theta\right)}{\theta}I+\frac{1-\cos\left(\theta\right)}{\theta}\left[1\right]_{\times} & \text{else}
+\end{cases}\label{eq:se2_v}\\
+V^{-1}\left(\omega\right) & =\begin{cases}
+I & \text{if }\theta=0\\
+\frac{\theta\sin\left(\theta\right)}{2\left(1-\cos\left(\theta\right)\right)}I-\frac{\theta}{2}\left[1\right]_{\times} & \text{else}
+\end{cases}.
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
+Jacobians
+\end_layout
+
+\begin_layout Subsubsection
 Adjoint
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Standard
+The group adjoint representation is
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\mathbf{Ad}_{g}=\begin{bmatrix}R & -\left[1\right]_{\times}t\\
+0_{1\times2} & 1
+\end{bmatrix}
+\]
+
+\end_inset
+
+with inverse 
+\begin_inset Formula 
+\[
+\mathbf{Ad}_{g}^{-1}=\begin{bmatrix}R^{\top} & R^{\top}\left[1\right]_{\times}t\\
+0_{1\times2} & 1
+\end{bmatrix}.
+\]
+
+\end_inset
+
+The Lie algebra adjoint representation is 
+\begin_inset Formula 
+\[
+\mathbf{ad}_{u}=\begin{bmatrix}\left[\omega\right]_{\times} & -\left[1\right]_{\times}\rho\\
+0_{1\times2} & 0
+\end{bmatrix}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
 Left and Right Jacobians
 \end_layout
 
+\begin_layout Standard
+Let 
+\begin_inset Formula 
+\begin{align*}
+W_{r}\left(\theta\right) & =\frac{\cos\left(\theta\right)-1}{\theta}\left[1\right]_{\times}+\frac{\sin\left(\theta\right)}{\theta}I\\
+D_{r}\left(\theta\right) & =\frac{1-\cos\left(\theta\right)}{\theta^{2}}\left[1\right]_{\times}+\frac{\theta-\sin\left(\theta\right)}{\theta^{2}}I\\
+W_{l}\left(\theta\right) & =\frac{1-\cos\left(\theta\right)}{\theta}\left[1\right]_{\times}+\frac{\sin\left(\theta\right)}{\theta}I\\
+D_{l}\left(\theta\right) & =\frac{\cos\left(\theta\right)-1}{\theta^{2}}\left[1\right]_{\times}+\frac{\theta-\sin\left(\theta\right)}{\theta^{2}}I,
+\end{align*}
+
+\end_inset
+
+then 
+\begin_inset Formula 
+\begin{align*}
+J_{r}\left(u\right) & =\begin{bmatrix}W_{r}\left(\theta\right) & D_{r}\left(\theta\right)\rho\\
+0 & 1
+\end{bmatrix},\\
+J_{l}\left(u\right) & =\begin{bmatrix}W_{l}\left(\theta\right) & D_{l}\left(\theta\right)\rho\\
+0 & 1
+\end{bmatrix}\\
+J_{r}^{-1}\left(u\right) & =\begin{bmatrix}W_{r}^{-1}\left(\theta\right) & -W_{r}^{-1}\left(\theta\right)D_{r}\left(\theta\right)\rho\\
+0 & 1
+\end{bmatrix}\\
+J_{l}^{-1}\left(u\right) & =\begin{bmatrix}W_{l}^{-1}\left(\theta\right) & -W_{l}^{-1}\left(\theta\right)D_{l}\left(\theta\right)\rho\\
+0 & 1
+\end{bmatrix}.
+\end{align*}
+
+\end_inset
+
+If 
+\begin_inset Formula $\theta=0$
+\end_inset
+
+, then the Jacobians and their inverses are 
+\begin_inset Formula 
+\[
+J_{r}\left(u\right)=J_{l}\left(u\right)=J_{r}^{-1}\left(u\right)=J_{l}^{-1}\left(u\right)=I.
+\]
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
-asdfasdfasdf
+SE
+\begin_inset Formula $\left(3\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The special Euclidean group of three dimensions is a matrix Lie group and
+ is the set 
+\begin_inset Formula 
+\[
+SE\left(3\right)=\left\{ \left.\begin{bmatrix}R & t\\
+0_{1\times2} & 1_{1\times1}
+\end{bmatrix}\,\right|\,R\in SO\left(3\right)\text{ and }t\in\mathbb{R}^{3}\right\} 
+\]
+
+\end_inset
+
+equipped with matrix multiplication.
+ The Lie algebra is 
+\begin_inset Formula 
+\[
+\mathfrak{se}\left(3\right)=\left\{ \left.\begin{bmatrix}\omega & \rho\\
+0 & 0
+\end{bmatrix}\,\right|\,\omega\in\mathfrak{s0}\left(3\right)\text{ and }\rho\in\mathbb{R}^{3}\right\} ,
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\theta=\left[\theta_{1},\theta_{2},\theta_{2}\right]^{\top}\in\mathbb{R}^{3}$
+\end_inset
+
+, 
+\begin_inset Formula $\omega=\left[\theta\right]_{\times}$
+\end_inset
+
+ and 
+\begin_inset Formula $\left[\cdot\right]_{\times}$
+\end_inset
+
+ is the skew symmetric operator defined as 
+\begin_inset Formula 
+\[
+\left[\theta\right]_{\times}=\begin{bmatrix}0 & -\theta_{3} & \theta_{2}\\
+\theta_{3} & 0 & -\theta_{1}\\
+-\theta_{2} & \theta_{1} & 0
+\end{bmatrix},
+\]
+
+\end_inset
+
+and 
+\begin_inset Formula 
+\[
+\begin{bmatrix}\rho\\
+\theta
+\end{bmatrix}\in\mathbb{R}^{6}
+\]
+
+\end_inset
+
+which is the Cartesian vector space.
+ 
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $g\in SE\left(3\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $u\in\mathfrak{se}\left(3\right)$
+\end_inset
+
+.
+ Using an element of the Lie algebra, we can define the infinitesimal generator
+ 
+\begin_inset Formula $\xi_{u}:G\to TG$
+\end_inset
+
+ as 
+\begin_inset Formula 
+\begin{align*}
+\xi_{u}\left(g\right) & =gu\\
+ & =\dot{g}.
+\end{align*}
+
+\end_inset
+
+The discretized system function 
+\begin_inset Formula $f:SE\left(3\right)\times\mathbb{R}^{3}\to SE\left(3\right)\times\mathbb{R}^{3}$
+\end_inset
+
+ is 
+\begin_inset Formula 
+\begin{align*}
+g_{k} & =\exp\left(\delta_{k}\left(u_{k^{-}}+w_{k}^{g}\right)+\frac{\delta_{k}^{2}}{2}w_{k}^{u}\right)\\
+u_{k} & =u_{k^{-}}+\delta_{k}w_{k}^{u}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Group Operations
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $g_{1},g_{2}\in SE\left(3\right)$
+\end_inset
+
+.
+ The inversion and group multiplication is matrix inversion and matrix multiplic
+ation as follows
+\begin_inset Formula 
+\begin{align*}
+g_{1}^{-1} & =\begin{bmatrix}R_{1}^{\top} & -R_{1}^{\top}t_{1}\\
+0 & 1
+\end{bmatrix}\\
+g_{1}g_{2} & =\begin{bmatrix}R_{1}R_{2} & R_{1}t_{2}+t_{1}\\
+0 & 1
+\end{bmatrix}.
+\end{align*}
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Subsection
+Exponential Map
+\end_layout
+
+\begin_layout Standard
+The exponential map is the matrix exponential and it's inverse is the matrix
+ logarithm.
+ The matrix exponential is a surjective function; however, by restricting
+ the domain to 
+\begin_inset Formula 
+\[
+U=\left\{ u\in\mathfrak{se}\left(3\right)\,\mid\,\left\Vert u\right\Vert <\pi\right\} ,
+\]
+
+\end_inset
+
+it becomes a bijection.
+ In this case, the exponential map and its inverse have a simplified form
+ 
+\begin_inset Formula 
+\begin{align*}
+\exp\left(u\right) & =\begin{bmatrix}\exp\left(\left[\omega\right]_{\times}\right) & V\left(\omega\right)\rho\\
+0 & 1
+\end{bmatrix}\\
+\text{\log}\left(g\right) & =\begin{bmatrix}V^{-1}\left(\omega\right)t\\
+\log\left(R\right)
+\end{bmatrix}
+\end{align*}
+
+\end_inset
+
+with 
+\begin_inset Formula $g=\exp\left(u\right)$
+\end_inset
+
+,
+\begin_inset Formula 
+\begin{align*}
+\phi & =\sqrt{\omega^{\top}\omega}\\
+\exp\left(\omega\right) & =I+\frac{\sin\left(\theta\right)}{\theta}\omega+\frac{1-\cos\left(\theta\right)}{\theta^{2}}\omega^{2}\\
+\phi & =\arccos\left(\frac{\text{trace}\left(R\right)-1}{2}\right)\\
+\log\left(R\right) & =\begin{cases}
+0_{2\times2} & \text{if }\phi=0\\
+\frac{\phi}{2\sin\left(\phi\right)}\left(R-R^{\top}\right) & \text{else}
+\end{cases}\\
+V\left(\omega\right) & =\begin{cases}
+I & \text{if }\phi=0\\
+I+\frac{1-\cos\left(\phi\right)}{\phi^{2}}\omega+\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\omega^{2} & \text{else}
+\end{cases}\\
+V^{-1}\left(\omega\right) & =\begin{cases}
+I & \text{if }\theta=0\\
+I-\frac{1}{2}\omega+\frac{1}{\phi^{2}}\left(1-\frac{\phi\sin\left(\phi\right)}{2\left(1-\cos\left(\phi\right)\right)}\right)\omega^{2} & \text{else}
+\end{cases}.
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Jacobians
+\end_layout
+
+\begin_layout Subsubsection
+Adjoint
+\end_layout
+
+\begin_layout Standard
+The group adjoint representation is
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\mathbf{Ad}_{g}=\begin{bmatrix}R & \left[t\right]_{\times}R\\
+0_{3\times3} & R
+\end{bmatrix}
+\]
+
+\end_inset
+
+with inverse 
+\begin_inset Formula 
+\[
+\mathbf{Ad}_{g}^{-1}=\begin{bmatrix}R^{\top} & -R^{\top}\left[t\right]_{\times}\\
+0_{3\times3} & R^{\top}
+\end{bmatrix}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The Lie algebra representation is 
+\begin_inset Formula 
+\[
+\mathbf{ad}_{u}=\begin{bmatrix}\left[\omega\right]_{\times} & \left[\rho\right]_{\times}\\
+0_{3\times3} & \left[\omega\right]_{\times}
+\end{bmatrix}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Left and Right Jacobians
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $u=\begin{bmatrix}\omega & \rho\\
+0 & 0
+\end{bmatrix}\in\mathfrak{se}\left(3\right)$
+\end_inset
+
+ and 
+\begin_inset Formula 
+\begin{align*}
+\phi & =\sqrt{\omega^{\top}\omega}\\
+a_{\phi} & =\frac{\cos\left(\phi\right)-1}{\phi^{2}}\\
+b_{\phi} & =\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\\
+c_{\phi} & =-\frac{1}{\phi^{3}}\sin\left(\phi\right)+2\left(\frac{1-\cos\left(\phi\right)}{\phi^{4}}\right)\\
+d_{\theta} & =-\frac{2}{\phi^{4}}+\frac{3}{\phi^{5}}\sin\left(\phi\right)-\frac{1}{\phi^{4}}\cos\left(\phi\right)\\
+q_{r}\left(\omega\right) & =\left(\left(\omega^{\vee}\right)^{\top}\rho\right)\left(d_{\phi}\omega^{2}+c_{\phi}\omega\right)\\
+q_{l}\left(\omega\right) & =\left(\left(\omega^{\vee}\right)^{\top}\rho\right)\left(d_{\phi}\omega^{2}-c_{\phi}\omega\right)\\
+B_{r}\left(u\right) & =q_{r}\left(\omega\right)+a_{\phi}\left[\rho\right]_{\times}+b_{\phi}\left(\omega\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\omega\right)\\
+B_{l}\left(u\right) & =q_{l}\left(\omega\right)-a_{\phi}\left[\rho\right]_{\times}+b_{\phi}\left(\omega\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\omega\right)\\
+J_{r}\left(\omega\right) & =I+\frac{\cos\left(\phi\right)-1}{\phi^{2}}\omega+\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\omega^{2}\\
+J_{l}\left(\omega\right) & =I+\frac{1-\cos\left(\phi\right)}{\phi^{2}}\omega+\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\omega^{2}\\
+J_{r}^{-1}\left(\omega\right) & =I+\frac{1}{2}\omega-\frac{\phi\cot\left(\frac{\phi}{2}\right)-2}{2\phi^{2}}\omega^{2}\\
+J_{l}^{-1}\left(\omega\right) & =I-\frac{1}{2}\omega-\frac{\phi\cot\left(\frac{\phi}{2}\right)-2}{2\phi^{2}}\omega^{2}.
+\end{align*}
+
+\end_inset
+
+then 
+\begin_inset Formula 
+\begin{align*}
+J_{r}\left(u\right) & =\begin{bmatrix}J_{r}\left(\omega\right) & B_{r}\left(u\right)\\
+0 & J_{r}\left(\omega\right)
+\end{bmatrix}\\
+J_{l}\left(u\right) & =\begin{bmatrix}J_{l}\left(\omega\right) & B_{l}\left(u\right)\\
+0 & J_{l}\left(\omega\right)
+\end{bmatrix}\\
+J_{r}^{-1}\left(u\right) & =\begin{bmatrix}J_{r}^{-1}\left(\omega\right) & J_{r}^{-1}\left(\omega\right)B_{r}\left(u\right)J_{r}^{-1}\left(\omega\right)\\
+0 & J_{r}^{-1}\left(\omega\right)
+\end{bmatrix}\\
+J_{l}^{-1}\left(u\right) & =\begin{bmatrix}J_{l}^{-1}\left(\omega\right) & J_{l}^{-1}\left(\omega\right)B_{l}\left(u\right)J_{l}^{-1}\left(\omega\right)\\
+0 & J_{l}^{-1}\left(\omega\right)
+\end{bmatrix}.
+\end{align*}
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout --Separator--

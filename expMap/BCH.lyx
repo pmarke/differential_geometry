@@ -1895,7 +1895,7 @@ for
 \end_inset
 
 and 
-\begin_inset Formula $\theta=\left\Vert \mathbf{ad}_{u}\right\Vert $
+\begin_inset Formula $\theta=\left\Vert \omega\right\Vert $
 \end_inset
 
 .
@@ -2174,7 +2174,7 @@ where
  
 \begin_inset Formula 
 \begin{align*}
-\theta & =\left\Vert \mathbf{ad}_{u}\right\Vert \\
+\theta & =\left\Vert \omega\right\Vert \\
 a_{\theta} & =\frac{\cos\left(\theta\right)-1}{\theta^{2}}\\
 b_{\theta} & =\frac{\theta-\sin\left(\theta\right)}{\theta^{3}}\\
 c_{\theta} & =-\frac{1}{\theta^{3}}\sin\left(\theta\right)+2\left(\frac{1-\cos\left(\theta\right)}{\theta^{4}}\right)\\
@@ -2190,10 +2190,10 @@ B_{l}\left(u\right) & =\left(-a_{\theta}\left[\rho\right]_{\times}+b_{\theta}\le
 then 
 \begin_inset Formula 
 \begin{align*}
-J_{r}\left(u\right) & =\begin{bmatrix}J_{r}\left(\omega\right) & \left(a_{\theta}\left[\rho\right]_{\times}+b_{\theta}\left(\omega\rho_{\times}+\left[\rho\right]_{\times}\omega\right)+q_{r}\left(\omega\right)\right)\\
+J_{r}\left(u\right) & =\begin{bmatrix}J_{r}\left(\omega\right) & B_{r}\left(u\right)\\
 0 & J_{r}\left(\omega\right)
 \end{bmatrix}\\
-J_{l}\left(u\right) & =\begin{bmatrix}J_{l}\left(\omega\right) & \left(-a_{\theta}\left[\rho\right]_{\times}+b_{\theta}\left(\omega\rho_{\times}+\left[\rho\right]_{\times}\omega\right)+q_{l}\left(\omega\right)\right)\\
+J_{l}\left(u\right) & =\begin{bmatrix}J_{l}\left(\omega\right) & B_{l}\left(u\right)\\
 0 & J_{l}\left(\omega\right)
 \end{bmatrix}\\
 J_{r}^{-1}\left(u\right) & =\begin{bmatrix}J_{r}^{-1}\left(\omega\right) & J_{r}^{-1}\left(\omega\right)B_{r}\left(u\right)J_{r}^{-1}\left(\omega\right)\\
