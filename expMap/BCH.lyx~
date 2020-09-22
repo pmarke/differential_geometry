@@ -2190,10 +2190,10 @@ B_{l}\left(u\right) & =\left(-a_{\theta}\left[\rho\right]_{\times}+b_{\theta}\le
 then 
 \begin_inset Formula 
 \begin{align*}
-J_{r}\left(u\right) & =\begin{bmatrix}J_{r}\left(\omega\right) & \left(a_{\theta}\left[\rho\right]_{\times}+b_{\theta}\left(\omega\rho_{\times}+\left[\rho\right]_{\times}\omega\right)+q_{r}\left(\omega\right)\right)\\
+J_{r}\left(u\right) & =\begin{bmatrix}J_{r}\left(\omega\right) & B_{r}\left(u\right)\\
 0 & J_{r}\left(\omega\right)
 \end{bmatrix}\\
-J_{l}\left(u\right) & =\begin{bmatrix}J_{l}\left(\omega\right) & \left(-a_{\theta}\left[\rho\right]_{\times}+b_{\theta}\left(\omega\rho_{\times}+\left[\rho\right]_{\times}\omega\right)+q_{l}\left(\omega\right)\right)\\
+J_{l}\left(u\right) & =\begin{bmatrix}J_{l}\left(\omega\right) & B_{l}\left(u\right)\\
 0 & J_{l}\left(\omega\right)
 \end{bmatrix}\\
 J_{r}^{-1}\left(u\right) & =\begin{bmatrix}J_{r}^{-1}\left(\omega\right) & J_{r}^{-1}\left(\omega\right)B_{r}\left(u\right)J_{r}^{-1}\left(\omega\right)\\
@@ -2203,6 +2203,35 @@ J_{l}^{-1}\left(u\right) & =\begin{bmatrix}J_{l}^{-1}\left(\omega\right) & J_{l}
 0 & J_{l}^{-1}\left(\omega\right)
 \end{bmatrix}.
 \end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+\begin_inset Formula $SO\left(3\right)$
+\end_inset
+
+ Other Jacobians
+\end_layout
+
+\begin_layout Standard
+It is sometimes needful to take the second derivative of the left and right
+ Jacobian.
+ We can derive 
+\begin_inset Formula $\frac{\partial J_{l}\left(u\right)}{\partial u}$
+\end_inset
+
+ using the power series representation of 
+\begin_inset Formula $J_{l}\left(u\right)$
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{\partial J_{l}\left(u\right)}{\partial u}
+\]
 
 \end_inset
 

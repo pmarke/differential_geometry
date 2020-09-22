@@ -2244,6 +2244,80 @@ where
 \end_inset
 
 .
+ Next, we are going to manipulate the two power series to get closed form
+ solutions.
+ We first calculate the closed form solution to 
+\begin_inset Formula $\sum_{i=0}^{\infty}\frac{\left(2i+2\right)\left(-1\right)^{i}\theta^{2i}}{\left(2i+3\right)!}$
+\end_inset
+
+ by multiplying it by 
+\begin_inset Formula $\left(-1\right)\left(-1\right)\frac{\theta^{2}}{\theta^{2}}$
+\end_inset
+
+ and adding and subtracting 
+\begin_inset Formula $\frac{\sin\left(\theta\right)}{\theta^{3}}$
+\end_inset
+
+ to it.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\left(-1\right)\left(-1\right)\frac{\theta^{3}}{\theta^{3}}\sum_{i=0}^{\infty}\frac{\left(2i+2\right)\left(-1\right)^{i}\theta^{2i}}{\left(2i+3\right)!} & =\frac{-1}{\theta^{3}}\sum_{i=0}^{\infty}\frac{\left(2i+2\right)\left(-1\right)^{i+1}\theta^{2i+3}}{\left(2i+3\right)!}\\
+ & =\frac{\sin\left(\theta\right)}{\theta^{3}}-\frac{\sin\left(\theta\right)}{\theta^{3}}-\frac{1}{\theta^{3}}\sum_{i=0}^{\infty}\frac{\left(2i+2\right)\left(-1\right)^{i+1}\theta^{2i+3}}{\left(2i+3\right)!}\\
+ & =\frac{\sin\left(\theta\right)}{\theta^{3}}-\frac{1}{\theta^{3}}\left(\sum_{i=0}^{\infty}\frac{\left(-1\right)^{i}\theta^{2i+1}}{\left(2n+1\right)!}+\sum_{i=0}^{\infty}\frac{\left(2i+2\right)\left(-1\right)^{i+1}\theta^{2i+3}}{\left(2i+3\right)!}\right)\\
+ & =\frac{\sin\left(\theta\right)}{\theta^{3}}-\frac{1}{\theta^{3}}\theta\sum_{i=0}^{\infty}\frac{\left(-1\right)^{n}\theta^{2i}}{2i!}\\
+ & =\frac{\sin\left(\theta\right)}{\theta^{3}}-\frac{1}{\theta^{2}}\cos\left(\theta\right).
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Next we are going to do a similar process to 
+\begin_inset Formula $\sum_{i=0}^{\infty}\frac{\left(2i+3\right)\left(-1\right)^{i}\theta^{2i}}{\left(2i+4\right)!}$
+\end_inset
+
+ by multiply it by 
+\begin_inset Formula $\frac{\theta^{4}}{\theta^{4}}$
+\end_inset
+
+ and then adding and subtracting 
+\begin_inset Formula $\frac{\cos\left(\theta\right)}{\theta^{4}}$
+\end_inset
+
+ to it.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\frac{\theta^{4}}{\theta^{4}}\sum_{i=0}^{\infty}\frac{\left(2i+3\right)\left(-1\right)^{i}\theta^{2i}}{\left(2i+4\right)!} & =\frac{1}{\theta^{4}}\sum_{i=0}^{\infty}\frac{\left(2i+3\right)\left(-1\right)^{i}\theta^{2i+4}}{\left(2i+4\right)!}\\
+ & =\frac{-\cos\left(\theta\right)}{\theta^{4}}+\frac{\cos\left(\theta\right)}{\theta^{4}}+\frac{1}{\theta^{4}}\sum_{i=0}^{\infty}\frac{\left(2i+3\right)\left(-1\right)^{i}\theta^{2i+4}}{\left(2i+4\right)!}\\
+ & =\frac{-\cos\left(\theta\right)}{\theta^{4}}+\frac{1}{\theta^{4}}\left(\sum_{i=0}^{\infty}\frac{\left(-1\right)^{i}\theta^{2i}}{2i!}+\sum_{i=0}^{\infty}\frac{\left(2i+3\right)\left(-1\right)^{i}\theta^{2i+4}}{\left(2i+4\right)!}\right)\\
+ & =\frac{-\cos\left(\theta\right)}{\theta^{4}}+\frac{1}{\theta^{4}}\left(1+\frac{\theta^{2}}{2}-\theta\sin\left(\theta\right)\right)\\
+ & =\frac{1-\cos\left(\theta\right)}{\theta^{4}}-\frac{\sin\left(\theta\right)}{\theta^{3}}+\frac{1}{2\theta^{2}}.
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Combining everything together we get 
+\begin_inset Formula 
+\[
+\frac{\partial J_{l}\left(u\right)}{\partial u}=\frac{I}{2}+\left(\frac{\sin\left(\theta\right)}{\theta^{3}}-\frac{1}{\theta^{2}}\cos\left(\theta\right)\right)\mathbf{ad}_{u}+\left(\frac{1-\cos\left(\theta\right)}{\theta^{4}}-\frac{\sin\left(\theta\right)}{\theta^{3}}+\frac{1}{2\theta^{2}}\right)\mathbf{ad}_{u}^{2}.
+\]
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard

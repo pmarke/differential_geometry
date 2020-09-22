@@ -3802,8 +3802,12 @@ In this section we provide three examples of increasing complexity.
 \begin_inset Formula $SE\left(2\right)$
 \end_inset
 
-, and the third example applies LG-R-RANSAC to tracking UAVs using radar
- sensors.
+, and the third example applies LG-R-RANSAC to tracking UAVs moving on the
+ configuration manifold 
+\begin_inset Formula $SE\left(3\right)$
+\end_inset
+
+ using radar sensors.
  
 \end_layout
 
@@ -3943,7 +3947,18 @@ key "Niedfeldt2014a"
 \end_layout
 
 \begin_layout Subsection
-Tracking on an Image Plane
+Constrained Problem for 
+\begin_inset Formula $SE\left(2\right)$
+\end_inset
+
+: Tracking in the Image Plane 
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:tracking_image_plane"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -3969,7 +3984,7 @@ The Lie group configuration of a target moving in the normalized image plane
 , see appendix 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sec:SE"
+reference "sec:SE2"
 
 \end_inset
 
@@ -4258,7 +4273,7 @@ reference "sec:LMLE-Simplification"
 Hardware Results
 \end_layout
 
-\begin_layout Section
+\begin_layout Subsection
 Constrained Problem for SE
 \begin_inset Formula $\left(3\right)$
 \end_inset
@@ -4267,224 +4282,99 @@ Constrained Problem for SE
 \end_layout
 
 \begin_layout Standard
-The LMLE presented in the previous section relied on the measurement being
- an element of the group.
- This is not always possible depending on the sensors available.
- In this section we assume that the system can be modeled on the manifold
- 
-\begin_inset Formula $SE\left(n\right)$
+In this example, there are multiple fixed radar sensors with overlapping
+ LSR.
+ Their measurements are point measurements and are converted to the fixed
+ global frame before being given to R-RANSAC.
+ We also assume that the measurement covariance can vary.
+ The objective is to track multiple UAVs that are in the GSR.
+ This is a similar example as the one in subsection 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "sub:tracking_image_plane"
+
 \end_inset
 
-, only the position of the system is observable, system has constant angular
- and translational velocity.
+, except that the UAVs's configuration manifold is 
+\begin_inset Formula $SE\left(3\right)$
+\end_inset
+
+ instead of 
+\begin_inset Formula $SE\left(2\right)$
+\end_inset
+
+, making the problem a little more difficult; see appendix 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:SE3"
+
+\end_inset
+
+ for the system function and important Jacobians.
+\end_layout
+
+\begin_layout Standard
+With only point measurements, the system is not observable unless constraints
+ are made.
  
 \end_layout
 
 \begin_layout Standard
 Let 
-\begin_inset Formula $x\in SE\left(n\right)$
-\end_inset
-
-, then 
-\begin_inset Formula $x$
-\end_inset
-
- can be written in matrix form as 
-\begin_inset Formula 
-\[
-x=\begin{bmatrix}R & P\\
-0_{n\times1} & 1
-\end{bmatrix},
-\]
-
-\end_inset
-
-where 
-\begin_inset Formula $R\in SO\left(n\right)$
-\end_inset
-
- represents the attitude and 
-\begin_inset Formula $P\in\mathbb{R}^{n}$
-\end_inset
-
- represents the position.
- 
-\end_layout
-
-\begin_layout Standard
-Let 
-\begin_inset Formula $u\in\mathfrak{se}\left(n\right)$
-\end_inset
-
-, then 
-\begin_inset Formula $u$
-\end_inset
-
- can be written in matrix form as 
-\begin_inset Formula 
-\[
-u=\begin{bmatrix}\omega & \rho\\
-0_{n\times1} & 0
-\end{bmatrix},
-\]
-
-\end_inset
-
-where 
-\begin_inset Formula $\omega\in\mathfrak{so}\left(n\right)$
-\end_inset
-
- represents the angular velocity in the body frame, and 
-\begin_inset Formula $\rho\in\mathbb{R}^{n}$
-\end_inset
-
- denotes the translational velocity in the body frame.
- 
-\end_layout
-
-\begin_layout Standard
-The system can be described as
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{subequations}
-\end_layout
-
-\end_inset
-
-
-\begin_inset CommandInset label
-LatexCommand label
-name "eq:system_se_n"
-
-\end_inset
-
- 
-\begin_inset Formula 
-\begin{align}
-x_{k} & =x_{k-1}\boxplus\left(\delta_{k}u+\delta_{k}w_{k}\right)\\
-y_{k} & =x_{k}C+v_{k},
-\end{align}
-
-\end_inset
-
-
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{subequations}
-\end_layout
-
-\end_inset
-
-where 
-\begin_inset Formula 
-\[
-C=\begin{bmatrix}0\\
-0\\
-0\\
-1
-\end{bmatrix}
-\]
-
-\end_inset
-
-so that 
-\begin_inset Formula $y_{k}\in\mathbb{R}^{n+1}$
-\end_inset
-
-.
- We can write the output at time 
-\begin_inset Formula $k$
-\end_inset
-
- as 
-\begin_inset Formula 
-\begin{align*}
-y_{k} & =x_{k-1}\boxplus\left(\delta_{k}u+\delta_{k}w_{k}\right)C+v_{k}\\
- & =x_{k-1}\exp\left(\delta_{k}u+\delta_{k}w_{k}\right)C+v_{k}.
-\end{align*}
-
-\end_inset
-
-Since 
-\begin_inset Formula $w_{k}\in\mathfrak{se}\left(n\right)$
-\end_inset
-
- we can represent it as 
-\begin_inset Formula 
-\[
-w_{k}=\begin{bmatrix}\nu & \eta\\
-0 & 0
-\end{bmatrix},
-\]
-
-\end_inset
-
-where 
-\begin_inset Formula $\omega\in\mathfrak{so}\left(n\right)$
+\begin_inset Formula $g_{k}\in SE\left(3\right)$
 \end_inset
 
  and 
-\begin_inset Formula $\eta\in\mathbb{R}^{n}$
+\begin_inset Formula $u_{k}\in\mathfrak{se}\left(3\right)$
 \end_inset
 
 .
-\end_layout
-
-\begin_layout Standard
-Using the exponential map, we can write 
-\begin_inset Formula 
-\[
-x_{k-1}\exp\left(\delta_{k}u+\delta_{k}w_{k}\right)
-\]
-
-\end_inset
-
-as
+ These elements can be written as 
 \begin_inset Formula 
 \begin{align*}
-\begin{bmatrix}R_{k-1} & P_{k-1}\\
-0 & 1
-\end{bmatrix}\begin{bmatrix}\exp\left(\delta_{k}\left(\omega_{k}+\nu_{k}\right)\right) & V\left(\delta_{k}\left(\omega_{k}+\nu_{k}\right)\right)\delta_{k}\left(\rho_{k}+\eta_{k}\right)\\
-0 & 1
+g_{k} & =\begin{bmatrix}R_{k} & t_{k}\\
+0_{1\times2} & 1
 \end{bmatrix}\\
-=\begin{bmatrix}R_{k-1}\exp\left(\delta_{k}\left(\omega_{k}+\nu_{k}\right)\right) & P_{k-1}+R_{k-1}V\left(\delta_{k}\left(\omega_{k}+\nu_{k}\right)\right)\delta_{k}\left(\rho_{k}+\eta_{k}\right)\\
-0 & 1
-\end{bmatrix}
+u_{k} & =\begin{bmatrix}\omega_{k} & \rho_{k}\\
+0_{1\times2} & 1
+\end{bmatrix},
 \end{align*}
 
 \end_inset
 
-
-\end_layout
-
-\begin_layout Standard
-Let 
-\begin_inset Formula $v\in\mathfrak{so}\left(n\right)$
+where 
+\begin_inset Formula $R_{k}\in SO\left(3\right)$
 \end_inset
 
 , 
-\begin_inset Formula $\theta=\left\Vert v\right\Vert $
+\begin_inset Formula $\omega_{k}\in\mathfrak{se}\left(3\right)$
 \end_inset
 
 , and 
-\begin_inset Formula $I$
+\begin_inset Formula $t_{k},\rho_{k}\in\mathbb{R}^{3}$
 \end_inset
 
- be the identity matrix, then 
+.
+ The observation model is 
 \begin_inset Formula 
-\[
-V\left(v\right)=I+\left(\frac{1-\cos\left(\theta\right)}{\theta^{2}}\right)v+\left(\frac{\theta-\sin\left(\theta\right)}{\theta^{3}}\right)v^{2}.
-\]
+\begin{align*}
+y_{k} & =h\left(x_{k},v_{k}\right)\\
+ & =t_{k}+v_{k},
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $y_{k}\in\mathbb{R}^{3}$
+\end_inset
+
+.
+ The inverse observation model is 
+\begin_inset Formula 
+\begin{align*}
+y_{m} & =h\left(f^{-1}\left(x_{k},\delta_{k:m},w_{k}\right),v_{k}\right)\\
+ & =R_{k}V\left(\delta_{k:m}\left(\omega_{k}+w_{k}^{R}\right)+\frac{\delta_{k:m}^{2}w_{k}^{\omega}}{2}\right)\left(\delta_{k:m}\rho_{k}+\delta_{k:m}w_{k}^{\rho}\right)+t_{k}+w_{k}^{t}+v_{m},
+\end{align*}
 
 \end_inset
 
@@ -4492,207 +4382,79 @@ V\left(v\right)=I+\left(\frac{1-\cos\left(\theta\right)}{\theta^{2}}\right)v+\le
 \end_layout
 
 \begin_layout Standard
-Using the expanded from, we get that 
-\begin_inset Formula 
-\[
-x_{k-1}\exp\left(\delta_{k}u+\delta_{k}w_{k}\right)C=P_{k-1}+R_{k-1}V\left(\delta_{k}\left(\omega_{k}+\nu_{k}\right)\right)\delta_{k}\left(\rho_{k}+\eta_{k}\right),
-\]
-
+where 
+\begin_inset Formula $w_{k}=\left[\left(w_{k}^{t}\right)^{\top},\left(w_{k}^{R}\right)^{\top},\left(w_{k}^{\rho}\right)^{\top},\left(w_{k}^{u}\right)^{\top}\right]^{\top}$
 \end_inset
 
-thus 
-\begin_inset Formula 
-\[
-y_{k}=P_{k-1}+R_{k-1}V\left(\delta_{k}\left(\omega_{k}+\nu_{k}\right)\right)\delta_{k}\left(\rho_{k}+\eta_{k}\right)+v_{k}.
-\]
-
+ and 
+\begin_inset Formula $V$
 \end_inset
 
-Notice that 
-\begin_inset Formula $\nu_{k}$
-\end_inset
+ is defined in equation 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:V_se3"
 
- acts like a small deviation from 
-\begin_inset Formula $\omega_{k}$
 \end_inset
 
 .
- We can approximate 
-\begin_inset Formula $V\left(\delta_{k}\left(\omega_{k}+\nu_{k}\right)\right)$
+ Based on the observation model, we have three Jacobians to compute: 
+\begin_inset Formula $G_{k:m}$
 \end_inset
 
- by taking it's Taylor series expansion.
- The series form for 
-\begin_inset Formula $V\left(v\right)$
+, 
+\begin_inset Formula $H_{k:m}$
 \end_inset
 
- is 
-\begin_inset Formula 
-\[
-V=I+\frac{v}{2!}+\frac{v^{2}}{3!}+\frac{v^{3}}{4!}+\cdots,
-\]
-
+ and 
+\begin_inset Formula $V_{m}$
 \end_inset
 
-thus 
-\begin_inset Formula 
-\begin{align*}
-\frac{\partial V}{\partial v} & =\frac{I}{2!}+\frac{2v}{3!}+\frac{3v^{2}}{4!}+\frac{4v^{3}}{5!}+\cdots\\
- & =\frac{I}{2}+\sum_{i=0}^{\infty}\frac{\left(2i+2\right)v^{2i+1}}{\left(2i+3\right)!}+\sum_{i=0}^{\infty}\frac{\left(2i+3\right)v^{2i+2}}{\left(2i+4\right)!}\\
- & =\frac{I}{2}+\sum_{i=0}^{\infty}\frac{\left(2i+2\right)\left(-1\right)^{i}\theta^{2i}}{\left(2i+3\right)!}v+\sum_{i=0}^{\infty}\frac{\left(2i+3\right)\left(-1\right)^{i}\theta^{2i}}{\left(2i+4\right)!}v^{2}.
-\end{align*}
-
-\end_inset
-
-Notice that 
-\begin_inset Formula 
-\[
-\sum_{i=0}^{\infty}\frac{\left(2i+2\right)\left(-1\right)^{i}\theta^{2i}}{\left(2i+3\right)!}
-\]
-
-\end_inset
-
-is similar to the Taylor Series of the 
-\begin_inset Formula $\sin$
-\end_inset
-
- function.
- We are going to manipulate it to get a closed form by first multiplying
- it by 
-\begin_inset Formula $\left(-1\right)\left(-1\right)\frac{\theta^{2}}{\theta^{2}}$
-\end_inset
-
- and adding and subtracting 
-\begin_inset Formula $\frac{\sin\left(\theta\right)}{\theta^{3}}$
-\end_inset
-
- to it.
+.
  
 \begin_inset Formula 
 \begin{align*}
-\left(-1\right)\left(-1\right)\frac{\theta^{3}}{\theta^{3}}\sum_{i=0}^{\infty}\frac{\left(2i+2\right)\left(-1\right)^{i}\theta^{2i}}{\left(2i+3\right)!} & =\frac{-1}{\theta^{3}}\sum_{i=0}^{\infty}\frac{\left(2i+2\right)\left(-1\right)^{i+1}\theta^{2i+3}}{\left(2i+3\right)!}\\
- & =\frac{\sin\left(\theta\right)}{\theta^{3}}-\frac{\sin\left(\theta\right)}{\theta^{3}}-\frac{1}{\theta^{3}}\sum_{i=0}^{\infty}\frac{\left(2i+2\right)\left(-1\right)^{i+1}\theta^{2i+3}}{\left(2i+3\right)!}\\
- & \frac{\sin\left(\theta\right)}{\theta^{3}}-\frac{1}{\theta^{3}}\left(\sum_{i=0}^{\infty}\frac{\left(-1\right)^{i}x^{2i+1}}{\left(2n+1\right)!}+\sum_{i=0}^{\infty}\frac{\left(2i+2\right)\left(-1\right)^{i+1}\theta^{2i+3}}{\left(2i+3\right)!}\right)\\
- & =\frac{\sin\left(\theta\right)}{\theta^{3}}-\frac{1}{\theta^{3}}\theta\sum_{i=0}^{\infty}\frac{\left(-1\right)^{n}\theta^{2i}}{2i!}\\
- & =\frac{\sin\left(\theta\right)}{\theta^{3}}-\frac{1}{\theta^{2}}\cos\left(\theta\right).
+H_{k:m}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial x} & =\begin{bmatrix}H_{k:m}^{t} & H_{k:m}^{R} & H_{k:m}^{\rho} & H_{k:m}^{\omega}\end{bmatrix},
 \end{align*}
 
 \end_inset
 
-Next we are going to do a similar process to 
-\begin_inset Formula 
-\[
-\sum_{i=0}^{\infty}\frac{\left(2i+3\right)\left(-1\right)^{i}\theta^{2i}}{\left(2i+4\right)!}
-\]
-
-\end_inset
-
-in order to get a closed form solution.
- We are going to first multiply it by 
-\begin_inset Formula $\frac{\theta^{4}}{\theta^{4}}$
-\end_inset
-
- and then adding and subtracting 
-\begin_inset Formula $\frac{\cos\left(\theta\right)}{\theta^{4}}$
-\end_inset
-
- to it 
+where
 \begin_inset Formula 
 \begin{align*}
-\frac{\theta^{4}}{\theta^{4}}\sum_{i=0}^{\infty}\frac{\left(2i+3\right)\left(-1\right)^{i}\theta^{2i}}{\left(2i+4\right)!} & =\frac{1}{\theta^{4}}\sum_{i=0}^{\infty}\frac{\left(2i+3\right)\left(-1\right)^{i}\theta^{2i+4}}{\left(2i+4\right)!}\\
- & =\frac{-\cos\left(\theta\right)}{\theta^{4}}+\frac{\cos\left(\theta\right)}{\theta^{4}}+\frac{1}{\theta^{4}}\sum_{i=0}^{\infty}\frac{\left(2i+3\right)\left(-1\right)^{i}\theta^{2i+4}}{\left(2i+4\right)!}\\
- & =\frac{-\cos\left(\theta\right)}{\theta^{4}}+\frac{1}{\theta^{4}}\left(\sum_{i=0}^{\infty}\frac{\left(-1\right)^{i}\theta^{2i}}{2i!}+\sum_{i=0}^{\infty}\frac{\left(2i+3\right)\left(-1\right)^{i}\theta^{2i+4}}{\left(2i+4\right)!}\right)\\
- & =\frac{-\cos\left(\theta\right)}{\theta^{4}}+\frac{1}{\theta^{4}}\left(1+\frac{\theta^{2}}{2}-\theta\sin\left(\theta\right)\right)\\
- & =\frac{1-\cos\left(\theta\right)}{\theta^{4}}-\frac{\sin\left(\theta\right)}{\theta^{3}}+\frac{1}{2\theta^{2}}.
+H_{k:m}^{t}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial t_{k}} & =I\\
+H_{k:m}^{R}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial R} & =\delta_{k:m}R_{k}\left[-V\left(\delta_{k:m}\omega\right)\rho\right]_{\times}\\
+H_{k:m}^{\rho}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\rho} & =\delta_{k:m}R_{k}V\left(\delta_{k:m}\omega\right)\\
+H_{k:m}^{\omega}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\omega} & =\delta_{k:m}^{2}R_{k}V^{'}\left(\delta_{k:m}\omega\right)\rho,
 \end{align*}
 
 \end_inset
 
-Combining everything together we get 
-\begin_inset Formula 
-\[
-\frac{\partial V}{\partial v}=\frac{I}{2}+\left(\frac{\sin\left(\theta\right)}{\theta^{3}}-\frac{1}{\theta^{2}}\cos\left(\theta\right)\right)v+\left(\frac{1-\cos\left(\theta\right)}{\theta^{4}}-\frac{\sin\left(\theta\right)}{\theta^{3}}+\frac{1}{2\theta^{2}}\right)v^{2}.
-\]
-
-\end_inset
-
-We can now approximate the observed position 
-\begin_inset Formula 
-\[
-y_{k}\approx P_{k-1}+R_{k-1}V\left(\delta_{k}\left(\omega_{k}\right)\right)\delta_{k}\left(\rho_{k}+\eta_{k}\right)+\frac{\partial V}{\partial v}\left(\delta\omega_{k}\right)\delta_{k}\nu_{k}\delta_{k}\left(\rho_{k}+\eta_{k}\right)+v_{k}.
-\]
-
-\end_inset
-
-We will make one last simplification to get the final output by assuming
- that 
-\begin_inset Formula $\delta_{k}^{2}v_{k}\eta_{k}$
-\end_inset
-
- is negligible relative to everything else.
  
 \begin_inset Formula 
-\begin{align*}
-y_{k} & \approx P_{k-1}+R_{k-1}V\left(\delta_{k}\omega_{k}\right)\delta_{k}\left(\rho_{k}+\eta_{k}\right)+\frac{\partial V}{\partial v}\left(\delta_{k}\omega_{k}\right)\delta_{k}^{2}\nu_{k}\rho_{k}+v_{k}\\
- & =P_{k-1}+R_{k-1}V\left(\delta_{k}\omega_{k}\right)\delta_{k}\left(\rho_{k}+\eta_{k}\right)-\frac{\partial V}{\partial v}\left(\delta_{k}\omega_{k}\right)\delta_{k}^{2}\rho_{k}^{\wedge}\nu_{k}^{\vee}+v_{k}
-\end{align*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Calculating the mean and covariance under the assumption that 
-\begin_inset Formula $E\left[\nu_{k}\eta_{k}^{\top}\right]=0$
-\end_inset
-
- yields
-\begin_inset Formula 
-\begin{align*}
-E\left[y_{k}\mid x_{k-1}\right] & =P_{k-1}+R_{k-1}V\left(\delta_{k}\left(\omega_{k}\right)\right)\delta_{k}\rho_{k}\\
-\text{cov}\left(y_{k},y_{k}\mid x_{k-1}\right) & =\delta_{k}^{2}R_{k-1}^{\top}V\left(\delta_{k}\omega_{k}\right)E\left[\eta_{k}\eta_{k}^{\top}\right]V\left(\delta_{k}\omega_{k}\right)^{\top}R_{k-1}^{\top}+\delta_{k}^{4}\frac{\partial V}{\partial v}\left(\delta_{k}\omega_{k}\right)\rho_{k}^{\wedge}E\left[\nu_{k}^{\vee}\left(\nu_{k}^{\vee}\right)^{\top}\right]\left(\rho_{k}^{\wedge}\right)^{\top}\frac{\partial V}{\partial v}\left(\delta_{k}\omega_{k}\right)^{\top}+E\left[v_{k}v_{k}^{\top}\right].
-\end{align*}
-
-\end_inset
-
-In order to calculate the LMLE, we need 
-\begin_inset Formula $p\left(y_{k-n}\mid x_{k}\right)$
-\end_inset
-
-.
- This easily follows from the results above.
-\begin_inset Formula 
-\begin{align*}
-E\left[y_{k-n}\mid x_{k}\right] & =P_{k}-\Delta_{k-n}R_{k}V\left(-\Delta_{k-n}\omega\right)\rho\\
-\text{cov}\left(y_{k-n},y_{k-n}\mid x_{k}\right) & =\Delta_{k-n}^{2}R_{k}V\left(-\Delta_{k-n}\omega_{k}\right)E\left[\eta_{k}\eta_{k}^{\top}\right]V\left(-\Delta_{k-n}\omega_{k}\right)^{\top}R_{k}^{\top}+\Delta_{k-n}^{4}\frac{\partial V}{\partial v}\left(-\Delta_{k-n}\omega_{k}\right)\rho_{k}^{\wedge}E\left[\nu_{k}^{\vee}\left(\nu_{k}^{\vee}\right)^{\top}\right]\left(\rho_{k}^{\wedge}\right)^{\top}\frac{\partial V}{\partial v}\left(-\Delta_{k-n}\omega_{k}\right)^{\top}+E\left[v_{k}v_{k}^{\top}\right]\\
- & =\bar{Q}+R.
-\end{align*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Once again, we can represent 
-\begin_inset Formula $R_{k}$
-\end_inset
-
- in terms on an element in the Lie algebra so that 
-\begin_inset Formula $R_{k}=\exp\left(\tau_{k}\right)$
-\end_inset
-
-.
- Thus the LMLE is 
-\begin_inset Formula 
 \[
-\text{arg}\min_{P_{k},\tau_{k},\omega_{k},\rho_{k}}\sum_{n=1}^{k}\left(y_{k-n}-\hat{y}_{k-n}\right)^{\top}\left(\bar{Q}+R\right)^{-1}\left(y_{k-n}-\hat{y}_{k-n}\right).
+V'\left(\omega\right)=\frac{I}{2}+\left(\frac{\sin\left(\theta\right)}{\theta^{3}}-\frac{1}{\theta^{2}}\cos\left(\theta\right)\right)\mathbf{ad}_{\omega}+\left(\frac{1-\cos\left(\theta\right)}{\theta^{4}}-\frac{\sin\left(\theta\right)}{\theta^{3}}+\frac{1}{2\theta^{2}}\right)\mathbf{ad}_{\omega}^{2},
 \]
 
 \end_inset
 
-The question remains under what conditions is the system observable.
+ and 
+\begin_inset Formula $\theta=\left\Vert \mathbf{ad}_{\omega}\right\Vert $
+\end_inset
+
+.
+ The derivation of 
+\begin_inset Formula $V'\left(\omega\right)$
+\end_inset
+
+ is shown in Lemma 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "lem:dJl"
+
+\end_inset
+
+.
  
 \end_layout
 
@@ -5009,7 +4771,7 @@ SE
 
 \begin_inset CommandInset label
 LatexCommand label
-name "sec:SE"
+name "sec:SE2"
 
 \end_inset
 
@@ -5297,6 +5059,13 @@ SE
 \end_inset
 
 
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:SE3"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -5463,7 +5232,7 @@ with
 
 ,
 \begin_inset Formula 
-\begin{align*}
+\begin{align}
 \phi & =\sqrt{\omega^{\top}\omega}\\
 \exp\left(\omega\right) & =I+\frac{\sin\left(\theta\right)}{\theta}\omega+\frac{1-\cos\left(\theta\right)}{\theta^{2}}\omega^{2}\\
 \phi & =\arccos\left(\frac{\text{trace}\left(R\right)-1}{2}\right)\\
@@ -5474,12 +5243,12 @@ with
 V\left(\omega\right) & =\begin{cases}
 I & \text{if }\phi=0\\
 I+\frac{1-\cos\left(\phi\right)}{\phi^{2}}\omega+\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\omega^{2} & \text{else}
-\end{cases}\\
+\end{cases}\label{eq:V_se3}\\
 V^{-1}\left(\omega\right) & =\begin{cases}
 I & \text{if }\theta=0\\
 I-\frac{1}{2}\omega+\frac{1}{\phi^{2}}\left(1-\frac{\phi\sin\left(\phi\right)}{2\left(1-\cos\left(\phi\right)\right)}\right)\omega^{2} & \text{else}
 \end{cases}.
-\end{align*}
+\end{align}
 
 \end_inset
 
@@ -5588,11 +5357,142 @@ J_{l}^{-1}\left(u\right) & =\begin{bmatrix}J_{l}^{-1}\left(\omega\right) & J_{l}
 
 \end_layout
 
-\begin_layout --Separator--
+\begin_layout Section
+Derivative of the Left Jacobian of 
+\begin_inset Formula $SO\left(3\right)$
+\end_inset
+
 
 \end_layout
 
-\begin_layout Standard
+\begin_layout Lemma
+\begin_inset CommandInset label
+LatexCommand label
+name "lem:dJl"
+
+\end_inset
+
+Let 
+\begin_inset Formula $J_{l}\left(u\right)$
+\end_inset
+
+ denote the left Jacobian of 
+\begin_inset Formula $SO\left(3\right)$
+\end_inset
+
+.
+ The derivative of 
+\begin_inset Formula $J_{l}\left(u\right)$
+\end_inset
+
+ is 
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial J_{l}\left(u\right)}{\partial u} & =\frac{I}{2}+\left(\frac{\sin\left(\theta\right)}{\theta^{3}}-\frac{1}{\theta^{2}}\cos\left(\theta\right)\right)\mathbf{ad}_{u}\\
+ & +\left(\frac{1-\cos\left(\theta\right)}{\theta^{4}}-\frac{\sin\left(\theta\right)}{\theta^{3}}+\frac{1}{2\theta^{2}}\right)\mathbf{ad}_{u}^{2},
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $u\in\mathfrak{se}\left(3\right)$
+\end_inset
+
+, 
+\begin_inset Formula $\theta=\left\Vert u\right\Vert $
+\end_inset
+
+ and 
+\begin_inset Formula $\mathbf{ad}_{u}$
+\end_inset
+
+ is the Lie algebra adjoint representation.
+\end_layout
+
+\begin_layout Proof
+We assume directly that 
+\begin_inset Formula $J_{l}\left(u\right)=\sum_{n=0}^{\infty}\frac{1}{\left(n+1\right)!}\left(\mathbf{ad}_{u}\right)^{n}$
+\end_inset
+
+, it follows directly that 
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial J_{l}\left(u\right)}{\partial u} & =\frac{\partial\sum_{n=0}^{\infty}\frac{1}{\left(n+1\right)!}\left(\mathbf{ad}_{u}\right)^{n}}{\partial u}\\
+ & =\frac{\partial}{\partial u}\left(I+\frac{\mathbf{ad}_{u}}{2!}+\frac{\mathbf{ad}_{u}^{2}}{3!}+\frac{\mathbf{ad}_{u}^{3}}{4!}+\cdots\right)\\
+ & =\frac{I}{2!}+\frac{2\mathbf{ad}_{u}}{3!}+\frac{3\mathbf{ad}_{u}^{2}}{4!}+\frac{4\mathbf{ad}_{u}^{3}}{5!}+\cdots\\
+ & =\frac{I}{2}+\sum_{i=0}^{\infty}\frac{\left(2i+2\right)\mathbf{ad}_{u}^{2i+1}}{\left(2i+3\right)!}+\sum_{i=0}^{\infty}\frac{\left(2i+3\right)\mathbf{ad}_{u}^{2i+2}}{\left(2i+4\right)!}\\
+ & =\frac{I}{2}+\sum_{i=0}^{\infty}\frac{\left(2i+2\right)\left(-1\right)^{i}\theta^{2i}}{\left(2i+3\right)!}\mathbf{ad}_{u}\\
+ & +\sum_{i=0}^{\infty}\frac{\left(2i+3\right)\left(-1\right)^{i}\theta^{2i}}{\left(2i+4\right)!}\mathbf{ad}_{u}^{2}.
+\end{align*}
+
+\end_inset
+
+Next, we are going to manipulate the two power series to get closed form
+ solutions.
+ We first calculate the closed form solution to 
+\begin_inset Formula $\sum_{i=0}^{\infty}\frac{\left(2i+2\right)\left(-1\right)^{i}\theta^{2i}}{\left(2i+3\right)!}$
+\end_inset
+
+ by multiplying it by 
+\begin_inset Formula $\left(-1\right)\left(-1\right)\frac{\theta^{2}}{\theta^{2}}$
+\end_inset
+
+ and adding and subtracting 
+\begin_inset Formula $\frac{\sin\left(\theta\right)}{\theta^{3}}$
+\end_inset
+
+ to it.
+ 
+\begin_inset Formula 
+\begin{alignat*}{1}
+ & \left(-1\right)\left(-1\right)\frac{\theta^{3}}{\theta^{3}}\sum_{i=0}^{\infty}\frac{\left(2i+2\right)\left(-1\right)^{i}\theta^{2i}}{\left(2i+3\right)!}\\
+ & =\frac{-1}{\theta^{3}}\sum_{i=0}^{\infty}\frac{\left(2i+2\right)\left(-1\right)^{i+1}\theta^{2i+3}}{\left(2i+3\right)!}\\
+ & =\frac{\sin\left(\theta\right)}{\theta^{3}}-\frac{\sin\left(\theta\right)}{\theta^{3}}-\frac{1}{\theta^{3}}\sum_{i=0}^{\infty}\frac{\left(2i+2\right)\left(-1\right)^{i+1}\theta^{2i+3}}{\left(2i+3\right)!}\\
+ & =\frac{\sin\left(\theta\right)}{\theta^{3}}-\frac{1}{\theta^{3}}\left(\sum_{i=0}^{\infty}\frac{\left(-1\right)^{i}\theta^{2i+1}}{\left(2n+1\right)!}+\sum_{i=0}^{\infty}\frac{\left(2i+2\right)\left(-1\right)^{i+1}\theta^{2i+3}}{\left(2i+3\right)!}\right)\\
+ & =\frac{\sin\left(\theta\right)}{\theta^{3}}-\frac{1}{\theta^{3}}\theta\sum_{i=0}^{\infty}\frac{\left(-1\right)^{n}\theta^{2i}}{2i!}\\
+ & =\frac{\sin\left(\theta\right)}{\theta^{3}}-\frac{1}{\theta^{2}}\cos\left(\theta\right).
+\end{alignat*}
+
+\end_inset
+
+Next we are going to do a similar process to 
+\begin_inset Formula $\sum_{i=0}^{\infty}\frac{\left(2i+3\right)\left(-1\right)^{i}\theta^{2i}}{\left(2i+4\right)!}$
+\end_inset
+
+ by multiply it by 
+\begin_inset Formula $\frac{\theta^{4}}{\theta^{4}}$
+\end_inset
+
+ and then adding and subtracting 
+\begin_inset Formula $\frac{\cos\left(\theta\right)}{\theta^{4}}$
+\end_inset
+
+ to it.
+\begin_inset Formula 
+\begin{align*}
+ & \frac{\theta^{4}}{\theta^{4}}\sum_{i=0}^{\infty}\frac{\left(2i+3\right)\left(-1\right)^{i}\theta^{2i}}{\left(2i+4\right)!}\\
+ & =\frac{1}{\theta^{4}}\sum_{i=0}^{\infty}\frac{\left(2i+3\right)\left(-1\right)^{i}\theta^{2i+4}}{\left(2i+4\right)!}\\
+ & =\frac{-\cos\left(\theta\right)}{\theta^{4}}+\frac{\cos\left(\theta\right)}{\theta^{4}}+\frac{1}{\theta^{4}}\sum_{i=0}^{\infty}\frac{\left(2i+3\right)\left(-1\right)^{i}\theta^{2i+4}}{\left(2i+4\right)!}\\
+ & =\frac{-\cos\left(\theta\right)}{\theta^{4}}+\sum_{i=0}^{\infty}\frac{\left(-1\right)^{i}\theta^{2i}}{2i!\theta^{4}}+\sum_{i=0}^{\infty}\frac{\left(2i+3\right)\left(-1\right)^{i}\theta^{2i+4}}{\left(2i+4\right)!\theta^{4}}\\
+ & =\frac{-\cos\left(\theta\right)}{\theta^{4}}+\frac{1}{\theta^{4}}\left(1+\frac{\theta^{2}}{2}-\theta\sin\left(\theta\right)\right)\\
+ & =\frac{1-\cos\left(\theta\right)}{\theta^{4}}-\frac{\sin\left(\theta\right)}{\theta^{3}}+\frac{1}{2\theta^{2}}.
+\end{align*}
+
+\end_inset
+
+Combining everything together we get
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial J_{l}\left(u\right)}{\partial u} & =\frac{I}{2}+\left(\frac{\sin\left(\theta\right)}{\theta^{3}}-\frac{1}{\theta^{2}}\cos\left(\theta\right)\right)\mathbf{ad}_{u}.\\
+ & +\left(\frac{1-\cos\left(\theta\right)}{\theta^{4}}-\frac{\sin\left(\theta\right)}{\theta^{3}}+\frac{1}{2\theta^{2}}\right)\mathbf{ad}_{u}^{2}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout --Separator--
 \begin_inset CommandInset bibtex
 LatexCommand bibtex
 bibfiles "/home/mark/Documents/mendeley/library"
