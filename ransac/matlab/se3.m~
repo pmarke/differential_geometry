@@ -72,7 +72,7 @@ W-W2
 %% Measurement Jacobian Test
 rng('default');
 
-dt = 0.000001;
+dt = 0.0001;
 
 R = expm(ssm(rand(3,1)));
 w = rand(3,1);
@@ -94,18 +94,19 @@ hw1 = (R*myV(w+[1;0;0]*dt)*(p) - R*myV(w)*p)/dt;
 hw2 = (R*myV(w+[0;1;0]*dt)*(p) - R*myV(w)*p)/dt;
 hw3 = (R*myV(w+[0;0;1]*dt)*(p) - R*myV(w)*p)/dt;
 
-hh = [eye(3), hr1, hr2, hr3, hrho1, hrho2, hrho3, hw1, hw2, hw3]
+hh = [eye(3), hr1, hr2, hr3, hrho1, hrho2, hrho3, hw1, hw2, hw3];
 
-% d1 = 0.1;
-% d2 = 0.2;
-% d3 = 0.3;
+d1 = 0.1;
+d2 = 0.2;
+d3 = 0.3;
+d4 = 0.4;
 % 
-h = H(R,w,p)
-h - hh
+h = H(R,w,p);
+h - hh;
 % w = w*0
 % 
-% O = [H(R,d1*w,d1*p); H(R,d2*w,d2*p); H(R,d3*w,d3*p)]
-
+O = [H(R,d1*w,d1*p); H(R,d2*w,d2*p); H(R,d3*w,d3*p);H(R,d4*w,d4*p)]
+rank(O([1:7,10:12],[1:12]))
 % expm(ssm(-t))*myV(w)
 % myV(w)*expm(ssm(-t))
 
@@ -119,6 +120,8 @@ y2 = (1-cos(th))/th^2*ssm(-p) + (th-sin(th))/th^3*( -2*W*ssm(p)+ssm(p)*W) + (sin
 % 
 y2
 
+y3 = (1-cos(th))/th^3*ssm(p) + (w'*p)*(4*cos(th) - 4 + th*sin(th))/(2*th^4)*ssm(w) + (th-sin(th))/th^3*(ssm(w)*ssm(p) + ssm(p)*ssm(w)) + (w'*p)*(3*sin(th)-th*cos(th)-2*th)/th^5*ssm(w)^2
+
 % th^2*eye(3) +ssm(w)^2
 % w*w'
 % pV(w)*ssm(ssm(p)*w)
@@ -126,8 +129,19 @@ y2
 % myV(w)*myV(pV(w)*[0;0;1]*dt)
 % myV(w) + pV(w)*dt
 
+%%
+% rng('default');
+w = (rand(3,1)-0.5);
+th = norm(w);
+V = myV(w)
+v = V(:,1)-[1;0;0];
+t = v'*v
+th;
+t/th;
 
-
+(1-cos(th))^2/th^4*(th^2-w(1)^2)+(th-sin(th))^2/th^6*(th^4-w(1)^2*th^2)
+m = v(1);
+-m*(2-2*cos(th)-sin(th)*th)/(th^2-sin(th)*th)-m
 %%
 syms a b c x y z phi real
 
@@ -165,6 +179,62 @@ ssm(p)*ssm(w)*w-ssm(w)*ssm(p)*w;
 % 
 % T = (1-cos(th))/th^2*ssm(w)*p + (th - sin(th))/th^3*ssm(w)^2*p+eye(3)*p;
 % subs(simplify(diff(T,x)),th,phi)
+
+%% Seeding test
+
+rng('default')
+t = (rand(3,1)-0.5)*10;
+phi = rand(1)*0;
+th = rand(1);
+psi = rand(1);
+R = rot(phi,th,psi);
+w = (rand(3,1)-0.5)*2.5;
+p = [(rand(1,1)-0.5)*30;0;0];
+% p = (rand(3,1)-0.5)*30;
+
+g = [R t; zeros(1,3) 1];
+u = [ssm(w) p; zeros(1,4)];
+
+dt = 0.01;
+
+g1 = g*expm(u*dt);
+g2 = g*expm(u*2*dt);
+
+y0 = t;
+y1 = g1(1:3,4);
+y2 = g2(1:3,4);
+
+
+td0 = (y1-y0)/dt;
+td1 = (y2-y1)/dt;
+
+psi0 = atan2(td0(2),td0(1));
+th0 = atan2(-sin(psi0)*td0(3),td0(2));
+phi0 = 0;
+R0 = rot(phi0,th0,psi0);
+Rx = R0(:,1);
+px = Rx'*td0/(Rx'*Rx);
+
+psi1 = atan2(td1(2),td1(1));
+th1 = atan2(-sin(psi1)*td1(3),td1(2));
+phi1 = 0;
+R1 = rot(phi1,th1,psi1);
+W0 = logm(R0'*R1)/dt;
+
+ge0 = [R0 y0; zeros(1,3) 1];
+ue0 = [W0 [px;0;0]; zeros(1,4)];
+
+R2 = g2(1:3,1:3);
+th2 = asin(-R2(3,1));
+phi2 = asin(R2(3,2)/cos(th2))
+% psi2 = 
+
+
+
+ge0*expm(ue0*3);
+g*expm(u*3);
+
+
 
 function X = myexp(u)
 
@@ -240,21 +310,30 @@ end
 
 end
 
-function V = pV(u)
+function V = pV(w,p)
 
-th = norm(u);
-U = ssm(u);
+th = norm(w);
+W = ssm(w);
 
 if abs(th) < 0.000001
-    V = eye(3);
+    V = eye(3)*ssm(p);
 else
-    V = eye(3)/2 + (sin(th)/th^3 - cos(th)/th^2)*U + ( (1-cos(th))/th^4 - sin(th)/th^3 + 1/(2*th^2))*U^2;
+    V = (1-cos(th))/th^2*ssm(-p) + (th - sin(th))/th^3*(-2*W*ssm(p) + ssm(p)*W) + (sin(th)*th +2*(cos(th)-1))/th^4*W*p*w' + (3*sin(th)-cos(th)*th -2*th)/th^5*W^2*p*w';
 end
 
 end
 
 function h = H(R,w,p)
 
-h = [eye(3) R*ssm(-myV(w)*p) R*myV(w) R*-pV(w)*ssm(-p)];
+h = [eye(3) R*ssm(-myV(w)*p) R*myV(w) R*pV(w,p)];
+
+end
+
+function R = rot(phi,th,psi)
+
+
+R = [cos(th)*cos(psi)   sin(phi)*sin(th)*cos(psi)-cos(phi)*sin(psi)   cos(phi)*sin(th)*cos(psi)+sin(phi)*sin(psi);...
+     cos(th)*sin(psi)   sin(phi)*sin(th)*sin(psi)+cos(phi)*cos(psi)   cos(phi)*sin(th)*sin(psi)-sin(phi)*cos(psi);...
+     -sin(th)             sin(phi)*cos(th)                             cos(phi)*cos(th)];
 
 end

@@ -4089,7 +4089,7 @@ where
 \begin{align*}
 H_{k:m}^{t}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial t_{k}} & =I\\
 H_{k:m}^{R}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial R} & =\delta_{k:m}R_{k}\left[1\right]_{\times}V\left(\delta_{k:m}\omega\right)\rho\\
-H_{k:m}^{\rho}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\rho} & =\delta_{k:m}R_{k}V\left(\delta_{k:m}\omega\right)\\
+H_{k:m}^{\rho}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\rho} & =\delta_{k:m}^{2}R_{k}V\left(\delta_{k:m}\omega\right)\\
 H_{k:m}^{\omega}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\omega} & =\delta_{k:m}^{2}R_{k}V^{'}\left(\delta_{k:m}\omega\right)\rho
 \end{align*}
 
@@ -4106,7 +4106,7 @@ V^{'}\left(\omega\right)=\frac{\cos\left(\theta\right)\theta-\sin\left(\theta\ri
 We quickly note that 
 \begin_inset Formula 
 \[
-H_{k}=H_{k:k}=\begin{bmatrix}I & 0_{2\times1} & R_{k} & 0_{2\times1}\end{bmatrix}.
+H_{k}=H_{k:k}=\begin{bmatrix}I & 0_{2\times4}\end{bmatrix}.
 \]
 
 \end_inset
@@ -4114,7 +4114,7 @@ H_{k}=H_{k:k}=\begin{bmatrix}I & 0_{2\times1} & R_{k} & 0_{2\times1}\end{bmatrix
 
 \begin_inset Formula 
 \[
-G_{k:m}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}}=\begin{bmatrix}G_{k:m}^{t} & H_{k:m}^{R} & H_{k:m}^{\rho} & H_{k:m}^{\omega}\end{bmatrix},
+G_{k:m}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}}=\begin{bmatrix}G_{k:m}^{t} & G_{k:m}^{R} & G_{k:m}^{\rho} & G_{k:m}^{\omega}\end{bmatrix},
 \]
 
 \end_inset
@@ -4124,7 +4124,7 @@ where
 \begin{align*}
 G_{k:m}^{t} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{t}}=I\\
 G_{k:m}^{R} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{R}}=\delta_{k:m}^{2}R_{k}V^{'}\left(\delta_{k:m}\omega\right)\rho\\
-G_{k:m}^{\rho} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{\rho}}=\delta_{k:m}R_{k}V\left(\delta_{k:m}\omega\right)\\
+G_{k:m}^{\rho} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{\rho}}=\delta_{k:m}^{2}R_{k}V\left(\delta_{k:m}\omega\right)\\
 G_{k:m}^{\omega} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{\omega}}=\frac{\delta_{k:m}^{3}}{2}R_{k}V^{'}\left(\delta_{k:m}\omega\right)\rho.
 \end{align*}
 
@@ -4278,7 +4278,7 @@ Constrained Problem for SE
 \begin_inset Formula $\left(3\right)$
 \end_inset
 
-: Tracking UAV with Radar
+: Tracking UAVs with Radar
 \end_layout
 
 \begin_layout Standard
@@ -4287,7 +4287,8 @@ In this example, there are multiple fixed radar sensors with overlapping
  Their measurements are point measurements and are converted to the fixed
  global frame before being given to R-RANSAC.
  We also assume that the measurement covariance can vary.
- The objective is to track multiple UAVs that are in the GSR.
+ The objective is to track multiple fixed wing aircrafts (FWAs) that are
+ in the GSR.
  This is a similar example as the one in subsection 
 \begin_inset CommandInset ref
 LatexCommand eqref
@@ -4295,7 +4296,7 @@ reference "sub:tracking_image_plane"
 
 \end_inset
 
-, except that the UAVs's configuration manifold is 
+, except that the FWAs' configuration manifold is 
 \begin_inset Formula $SE\left(3\right)$
 \end_inset
 
@@ -4311,6 +4312,7 @@ reference "sec:SE3"
 \end_inset
 
  for the system function and important Jacobians.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -4347,7 +4349,7 @@ where
 \end_inset
 
 , 
-\begin_inset Formula $\omega_{k}\in\mathfrak{se}\left(3\right)$
+\begin_inset Formula $\omega_{k}\in\mathfrak{so}\left(3\right)$
 \end_inset
 
 , and 
@@ -4423,31 +4425,18 @@ where
 \begin_inset Formula 
 \begin{align*}
 H_{k:m}^{t}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial t_{k}} & =I\\
-H_{k:m}^{R}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial R} & =\delta_{k:m}R_{k}\left[1_{3\times1}\right]_{\times}V\left(\delta_{k:m}\omega\right)\rho\\
-H_{k:m}^{\rho}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\rho} & =\delta_{k:m}R_{k}V\left(\delta_{k:m}\omega\right)\\
-H_{k:m}^{\omega}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\omega} & =\delta_{k:m}^{2}R_{k}V^{'}\left(\delta_{k:m}\omega\right)\rho,
+H_{k:m}^{R}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial R} & =\delta_{k:m}R_{k}\left[-V\left(\delta_{k:m}\omega\right)\rho\right]_{\times}\\
+H_{k:m}^{\rho}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\rho} & =\delta_{k:m}^{2}R_{k}V\left(\delta_{k:m}\omega\right)\\
+H_{k:m}^{\omega}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\omega} & =\delta_{k:m}^{2}R_{k}\partial V_{\delta_{k:m}\omega}\left(\delta_{k:m}\rho\right),
 \end{align*}
 
 \end_inset
 
- 
-\begin_inset Formula 
-\[
-V'\left(\omega\right)=\frac{I}{2}+\left(\frac{\sin\left(\theta\right)}{\theta^{3}}-\frac{1}{\theta^{2}}\cos\left(\theta\right)\right)\mathbf{ad}_{\omega}+\left(\frac{1-\cos\left(\theta\right)}{\theta^{4}}-\frac{\sin\left(\theta\right)}{\theta^{3}}+\frac{1}{2\theta^{2}}\right)\mathbf{ad}_{\omega}^{2},
-\]
-
+and
+\begin_inset Formula $\partial V_{\delta_{k:m}\omega}\left(\rho\right)$
 \end_inset
 
- and 
-\begin_inset Formula $\theta=\left\Vert \mathbf{ad}_{\omega}\right\Vert $
-\end_inset
-
-.
- The derivation of 
-\begin_inset Formula $V'\left(\omega\right)$
-\end_inset
-
- is shown in Lemma 
+ is defined in Lemma 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "lem:dJl"
@@ -4455,308 +4444,286 @@ reference "lem:dJl"
 \end_inset
 
 .
- 
-\end_layout
+ We quickly note that 
+\begin_inset Formula 
+\[
+H_{k}=H_{k:k}=\begin{bmatrix}I & 0_{2\times9}\end{bmatrix}.
+\]
 
-\begin_layout Subsection
-Observability
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
-In order to calculate the observability of the system, we are going to model
- the system in an alternate, continuous-time, equivalent form.
- Let the state of the system at time 
-\begin_inset Formula $t$
-\end_inset
-
- be 
 \begin_inset Formula 
 \[
-x=\begin{bmatrix}\tau\\
-P\\
-\omega\\
-\rho_{x}
-\end{bmatrix},
+G_{k:m}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}}=\begin{bmatrix}G_{k:m}^{t} & G_{k:m}^{R} & G_{k:m}^{\rho} & G_{k:m}^{\omega}\end{bmatrix},
 \]
 
 \end_inset
 
 where 
-\begin_inset Formula $R=\exp\left(\tau^{\wedge}\right)$
+\begin_inset Formula 
+\begin{align*}
+G_{k:m}^{t} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{t}}=I\\
+G_{k:m}^{R} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{R}}=\delta_{k:m}^{2}R_{k}\partial V_{\delta_{k:m}\omega}\left(\delta_{k:m}\rho\right)\\
+G_{k:m}^{\rho} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{\rho}}=\delta_{k:m}^{2}R_{k}V\left(\delta_{k:m}\omega\right)\\
+G_{k:m}^{\omega} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{\omega}}=\frac{\delta_{k:m}^{3}}{2}R_{k}\partial V_{\delta_{k:m}\omega}\left(\delta_{k:m}\rho\right).
+\end{align*}
+
 \end_inset
 
- is the attitude, 
-\begin_inset Formula $P$
-\end_inset
-
- is the position, 
-\begin_inset Formula $\omega$
-\end_inset
-
- is the angular velocity in the body frame, and 
-\begin_inset Formula $\rho_{x}$
-\end_inset
-
- is the translational velocity along the x-axis.
- We assume that 
-\begin_inset Formula $\rho_{y}=\rho_{z}=0$
+Lastly 
+\begin_inset Formula $V_{m}=I$
 \end_inset
 
 .
- The kinematics for 
-\begin_inset Formula $SE\left(3\right)$
-\end_inset
+\end_layout
 
+\begin_layout Standard
+Now that we have the Jacobians computed, we need to ensure that the system
+ is observable.
+ Since the system is nonlinear, the best we can do is ensure local observability.
+ Given measurements from four different time steps, the observability matrix
  is 
 \begin_inset Formula 
 \[
-\begin{bmatrix}\dot{R} & \dot{P}\\
-0 & 0
-\end{bmatrix}=\begin{bmatrix}\exp\left(\tau^{\wedge}\right) & P\\
-0 & 1
-\end{bmatrix}\begin{bmatrix}\omega^{\wedge} & \rho\\
-0 & 0
-\end{bmatrix},
-\]
-
-\end_inset
-
-whose solution is 
-\begin_inset Formula 
-\[
-\begin{bmatrix}\exp\left(\tau^{\wedge}\right)\exp\left(\delta\omega^{\wedge}\right) & P+\delta RV\left(\delta\omega^{\wedge}\right)\rho\\
-0 & 1
+\mathcal{O}=\begin{bmatrix}H_{k:m_{1}}\\
+H_{k:m_{2}}\\
+H_{k:m_{3}}\\
+H_{k:m_{4}}
 \end{bmatrix}.
 \]
 
 \end_inset
 
-An equivariant flow on the Lie algebra for the rotation is 
-\begin_inset Formula 
-\[
-\log\left(\exp\left(\tau^{\wedge}\right)\exp\left(\delta\omega^{\wedge}\right)\right),
-\]
-
+The observability matrix is not full rank.
+ However, certain constraints, the system is observable.
+ We described these constraints using two configuration.
+ In the first configuration the FWA is making a coordinated turn or a spiral
+ trajectory and we assume that that 
+\begin_inset Formula $\rho=\left[\rho_{x},0,0\right]$
 \end_inset
 
-taking the derivative with respect to time yields 
-\begin_inset Formula 
-\[
-\left(J_{r}^{-1}\left(\tau^{\wedge}\right)\omega\right)^{\wedge}.
-\]
-
+ and 
+\begin_inset Formula $\omega\neq0$
 \end_inset
 
-Thus, the state derivative is 
-\begin_inset Formula 
-\[
-\dot{x}=\begin{bmatrix}J_{r}^{-1}\left(\tau^{\wedge}\right)\omega\\
-\exp\left(\tau^{\wedge}\right)\rho\\
-0\\
-0
-\end{bmatrix}.
-\]
-
+.
+ In the second configuration, the FWA is moving in a straight line and we
+ assume that 
+\begin_inset Formula $\rho=\left[\rho_{x},0,0\right]$
 \end_inset
 
-We are assuming that we can only observe the position of the system, thus
+, 
+\begin_inset Formula $\omega=0$
+\end_inset
+
+, and the roll in attitude (using roll, pitch, yaw) is zero.
+ To determine which configuration to use, we can look at four measurements,
+ and see if they form a line.
+ If they don't, then we use the first configuration; otherwise, the second.
  
+\end_layout
+
+\begin_layout Standard
+Since the system is nonlinear, the LMLE can take a while to converge, and
+ can converge to an undesirable state.
+ To minimize these issues we can seed the optimization method.
+ To do this, we will use the Euler angles (roll 
+\begin_inset Formula $\phi$
+\end_inset
+
+, pitch 
+\begin_inset Formula $\theta$
+\end_inset
+
+, yaw 
+\begin_inset Formula $\psi$
+\end_inset
+
+) as local coordinates instead of 
+\begin_inset Formula $\mathfrak{so}\left(3\right)$
+\end_inset
+
+.
+ The map from Euler angles to 
+\begin_inset Formula $SO\left(3\right)$
+\end_inset
+
+ is defined as 
 \begin_inset Formula 
 \[
-y=Cx,
+\mathcal{R}\left(\phi,\theta,\psi\right)=\begin{bmatrix}c_{\theta}c_{\psi} & s_{\phi}s_{\theta}c_{\psi}-c_{\phi}s_{\psi} & c_{\phi}s_{\theta}c_{\psi}+s_{\phi}s_{\psi}\\
+c_{\theta}s_{\psi} & s_{\phi}s_{\theta}s_{\psi}+c_{\phi}c_{\psi} & c_{\phi}s_{\theta}s_{\psi}-s_{\phi}c_{\psi}\\
+-s_{\theta} & s_{\phi}c_{\theta} & c_{\phi}c_{\theta}
+\end{bmatrix}.
+\]
+
+\end_inset
+
+The derivative of the position vector 
+\begin_inset Formula $t$
+\end_inset
+
+ is related to 
+\begin_inset Formula $\rho$
+\end_inset
+
+ through the rotation matrix 
+\begin_inset Formula $R$
+\end_inset
+
+.
+ This allows us to write the constraints
+\begin_inset Formula 
+\begin{align*}
+\dot{t} & =R\rho\\
+ & =\mathcal{R}\left(\phi,\theta,\psi\right)\rho.
+\end{align*}
+
+\end_inset
+
+Letting 
+\begin_inset Formula $\dot{t}=\left[\dot{t}_{x},\dot{t}_{y},\dot{t}_{z}\right]^{\top}$
+\end_inset
+
+, we get 
+\begin_inset Formula 
+\[
+\begin{bmatrix}\dot{t}_{x}\\
+\dot{t}_{y}\\
+\dot{t}_{z}
+\end{bmatrix}=\underbrace{\begin{bmatrix}c_{\theta}c_{\psi}\\
+c_{\theta}s_{\psi}\\
+-s_{\theta}
+\end{bmatrix}}_{\mathcal{R}_{x}}\rho_{x}.
+\]
+
+\end_inset
+
+Since we receive position measurements, we can numerically estimate 
+\begin_inset Formula $\dot{t}$
+\end_inset
+
+ from two measurements and solve for 
+\begin_inset Formula $\theta$
+\end_inset
+
+, 
+\begin_inset Formula $\psi$
+\end_inset
+
+, and 
+\begin_inset Formula $\rho_{x}$
+\end_inset
+
+ using the equations 
+\begin_inset Formula 
+\begin{align*}
+\psi & =\arctan\left(\frac{\dot{t}_{y}}{\dot{t}_{x}}\right)\\
+\theta & =\arctan\left(\frac{-\sin\left(\psi\right)\dot{t}_{z}}{\dot{t}_{y}}\right)\\
+\rho_{x} & =\frac{\mathcal{R}_{x}^{\top}\dot{t}}{\mathcal{R}_{x}^{\top}\mathcal{R}_{x}}.
+\end{align*}
+
+\end_inset
+
+If the system is in configuration 2, then we are done; otherwise, we assume
+ the FWA is making a coordinated turn as described in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Beard2008"
+
+\end_inset
+
+.
+ In the absence of sideslip, a coordinated turn has the constraint
+\begin_inset Formula 
+\[
+\dot{\psi}=\frac{g}{\left\Vert \dot{t}\right\Vert }\tan\left(\phi\right),
 \]
 
 \end_inset
 
 where 
-\begin_inset Formula 
-\[
-C=\begin{bmatrix}0_{3\times3} & I_{3\times3} & 0_{3\times3} & 0_{3\times1}\end{bmatrix}.
-\]
-
+\begin_inset Formula $g$
 \end_inset
 
-
-\end_layout
-
-\begin_layout Standard
-The observability of a nonlinear system can only be determined locally using
- the Lie derivatives.
- Let 
-\begin_inset Formula 
-\begin{align*}
-\dot{x} & =f\left(x\right),\\
-y & =h\left(x\right),
-\end{align*}
-
+ is the gravitational constant.
+ Since we can estimate 
+\begin_inset Formula $\psi$
 \end_inset
 
-then the observability matrix is calculated as follows:
-\begin_inset Formula 
-\[
-A=\begin{bmatrix}L_{f}^{0}h\\
-L_{f}^{1}h\\
-L_{f}^{2}h\\
-L_{f}^{3}h\\
-\vdots\\
-L_{f}^{n}h
-\end{bmatrix},
-\]
-
-\end_inset
-
-and 
-\begin_inset Formula 
-\[
-\mathcal{O}=\frac{\partial A}{\partial x}.
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-If the matrix 
-\begin_inset Formula $\mathcal{O}$
-\end_inset
-
- is full rank after, then the system is locally observable.
- We are going to calculate the first four terms of the matrix 
-\begin_inset Formula $A$
-\end_inset
-
-
-\begin_inset Formula 
-\[
-A=\begin{bmatrix}P\\
-\exp\left(\tau^{\wedge}\right)\rho\\
-G\left(\tau,\rho\right)J_{r}^{-1}\left(\alpha\right)\omega\\
-L_{f}^{3}h
-\end{bmatrix}.
-\]
-
-\end_inset
-
-The calculations become very tedious by hand, so we used MATLAB to calculate
+ at two different time periods, we can numerically estimate its derivative
  
-\begin_inset Formula $L_{f}^{3}h$
+\begin_inset Formula $\dot{\psi}$
 \end_inset
 
- and the matrix 
-\begin_inset Formula $\mathcal{O}$
+.
+ Solving for 
+\begin_inset Formula $\phi$
 \end_inset
 
- for us.
- We found that the system is observable under the conditions that 
-\begin_inset Formula $\rho_{x}\neq0$
+ we get 
+\begin_inset Formula 
+\[
+\phi=\arctan\left(\frac{\dot{\psi}\left\Vert \dot{t}\right\Vert }{g}\right).
+\]
+
 \end_inset
 
-, and 
-\begin_inset Formula $\omega_{y}$
+
+\end_layout
+
+\begin_layout Standard
+The choice of 
+\begin_inset Formula $\phi$
 \end_inset
 
- or 
-\begin_inset Formula $\omega_{z}$
+ doesn't really matter if we are only interested is reconstructing the position,
+ in which case we could set 
+\begin_inset Formula $\phi=0$
 \end_inset
 
- are non zero.
+.
+\end_layout
+
+\begin_layout Standard
+Since we can calculate estimate 
+\begin_inset Formula $R$
+\end_inset
+
+, we can estimate 
+\begin_inset Formula $\dot{R}$
+\end_inset
+
+.
+ Using the identity 
+\begin_inset Formula $\dot{R}=R\omega$
+\end_inset
+
+, we can estimate 
+\begin_inset Formula $\omega$
+\end_inset
+
+ as 
+\begin_inset Formula 
+\[
+\omega=R\dot{R}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The numerical accuracies are dependent on measurement and system process
+ noise and the time interval between measurements.
+ But that is fine since these estimates are being used to seed the LMLE
+ optimization process.
  
-\end_layout
-
-\begin_layout Subsection
-Seeding
-\end_layout
-
-\begin_layout Standard
-When seeding the algorithm , we are going to ignore the probability aspect
- of the system.
- We also assume that the measurement 
-\begin_inset Formula $y_{k}$
-\end_inset
-
- is available, that the body velocity is 
-\begin_inset Formula $\rho=\left[x,0,0\right]^{\top}$
-\end_inset
-
- with 
-\begin_inset Formula $x$
-\end_inset
-
- being positive, and that we have at least three distinct measurements.
- Under these assumptions, the system will either move in a straight line
- if the angular velocity is 
-\begin_inset Formula $0$
-\end_inset
-
- or orbit if it is non zero.
- 
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{align*}
-z_{1}=\left(y_{k}-y_{k-1}\right)/\Delta_{k-1} & =R_{k}V\left(\Delta_{k-1}\omega\right)\rho\\
-z_{2}=\left(y_{k}-y_{k-2}\right)/\Delta_{k-2} & =R_{k}V\left(\Delta_{k-2}\omega\right)\rho\\
-z_{3}=\left(y_{k}-y_{k-3}\right)/\Delta_{k-3} & =R_{k}V\left(\Delta_{k-3}\omega\right)\rho
-\end{align*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Section
-Derivative
-\end_layout
-
-\begin_layout Standard
-Let 
-\begin_inset Formula 
-\[
-v=\begin{bmatrix}v_{1}\\
-v_{2}\\
-v_{3}
-\end{bmatrix},\quad p=\begin{bmatrix}p_{1}\\
-p_{2}\\
-p_{3}
-\end{bmatrix},\quad\theta=\sqrt{v^{\top}v}.
-\]
-
-\end_inset
-
-Consider the Rodriquez formula for the exponential matrix 
-\begin_inset Formula 
-\[
-\exp\left(v^{\wedge}\right)=I+\frac{\sin\left(\theta\right)}{\theta}v^{\wedge}+\frac{1-\cos\left(\theta\right)}{\theta^{2}}\left(v^{\wedge}\right)^{2},
-\]
-
-\end_inset
-
-then 
-\begin_inset Formula 
-\[
-\frac{d\exp\left(v^{\wedge}\right)p}{dv}=\alpha\left(\theta\right)\left(-p\right)^{\wedge}+\beta\left(\theta\right)v^{\wedge}pv^{\top}+\gamma\left(\theta\right)G+\delta\left(\theta\right)\left(v^{\wedge}\right)^{2}pv^{\top},
-\]
-
-\end_inset
-
-with
-\begin_inset Formula 
-\begin{align*}
-\alpha\left(\theta\right) & =\frac{\sin\left(\theta\right)}{\theta},\\
-\beta\left(\theta\right) & =\frac{\cos\left(\theta\right)}{\theta^{2}}-\frac{\sin\left(\theta\right)}{\theta^{3}},\\
-\gamma\left(\theta\right) & =\frac{1-\cos\left(\theta\right)}{\theta^{2}},\\
-\delta\left(\theta\right) & =\frac{\sin\left(\theta\right)}{\theta^{3}}-2\frac{1-\cos\left(\theta\right)}{\theta^{4}}\\
-G & =\begin{bmatrix}v_{2}p_{2}+v_{3}p_{3} & -2v_{2}p_{1}+v_{1}p_{2} & -2v_{3}p_{1}+v_{1}p_{3}\\
-v_{2}p_{1}-2v_{1}p_{2} & v_{1}p_{1}+v_{3}p_{3} & -2v_{3}p_{2}+v_{2}p_{3}\\
-v_{3}p_{1}-2v_{1}p_{3} & v_{3}p_{2}-2v_{2}p_{3} & v_{1}p_{1}+v_{2}p_{2}
-\end{bmatrix}
-\end{align*}
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Appendices
@@ -5246,7 +5213,7 @@ I+\frac{1-\cos\left(\phi\right)}{\phi^{2}}\omega+\frac{\phi-\sin\left(\phi\right
 \end{cases}\label{eq:V_se3}\\
 V^{-1}\left(\omega\right) & =\begin{cases}
 I & \text{if }\theta=0\\
-I-\frac{1}{2}\omega+\frac{1}{\phi^{2}}\left(1-\frac{\phi\sin\left(\phi\right)}{2\left(1-\cos\left(\phi\right)\right)}\right)\omega^{2} & \text{else}
+I-\frac{\omega}{2}+\left(\frac{1}{\phi^{2}}-\frac{\phi\sin\left(\phi\right)}{2\phi^{2}\left(1-\cos\left(\phi\right)\right)}\right)\omega^{2} & \text{else}
 \end{cases}.
 \end{align}
 
@@ -5317,21 +5284,21 @@ Let
 
  and 
 \begin_inset Formula 
-\begin{align*}
-\phi & =\sqrt{\omega^{\top}\omega}\\
-a_{\phi} & =\frac{\cos\left(\phi\right)-1}{\phi^{2}}\\
-b_{\phi} & =\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\\
-c_{\phi} & =-\frac{1}{\phi^{3}}\sin\left(\phi\right)+2\left(\frac{1-\cos\left(\phi\right)}{\phi^{4}}\right)\\
-d_{\theta} & =-\frac{2}{\phi^{4}}+\frac{3}{\phi^{5}}\sin\left(\phi\right)-\frac{1}{\phi^{4}}\cos\left(\phi\right)\\
-q_{r}\left(\omega\right) & =\left(\left(\omega^{\vee}\right)^{\top}\rho\right)\left(d_{\phi}\omega^{2}+c_{\phi}\omega\right)\\
-q_{l}\left(\omega\right) & =\left(\left(\omega^{\vee}\right)^{\top}\rho\right)\left(d_{\phi}\omega^{2}-c_{\phi}\omega\right)\\
-B_{r}\left(u\right) & =q_{r}\left(\omega\right)+a_{\phi}\left[\rho\right]_{\times}+b_{\phi}\left(\omega\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\omega\right)\\
-B_{l}\left(u\right) & =q_{l}\left(\omega\right)-a_{\phi}\left[\rho\right]_{\times}+b_{\phi}\left(\omega\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\omega\right)\\
-J_{r}\left(\omega\right) & =I+\frac{\cos\left(\phi\right)-1}{\phi^{2}}\omega+\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\omega^{2}\\
-J_{l}\left(\omega\right) & =I+\frac{1-\cos\left(\phi\right)}{\phi^{2}}\omega+\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\omega^{2}\\
-J_{r}^{-1}\left(\omega\right) & =I+\frac{1}{2}\omega-\frac{\phi\cot\left(\frac{\phi}{2}\right)-2}{2\phi^{2}}\omega^{2}\\
-J_{l}^{-1}\left(\omega\right) & =I-\frac{1}{2}\omega-\frac{\phi\cot\left(\frac{\phi}{2}\right)-2}{2\phi^{2}}\omega^{2}.
-\end{align*}
+\begin{align}
+\phi & =\sqrt{\omega^{\top}\omega}\nonumber \\
+a_{\phi} & =\frac{\cos\left(\phi\right)-1}{\phi^{2}}\nonumber \\
+b_{\phi} & =\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\nonumber \\
+c_{\phi} & =-\frac{1}{\phi^{3}}\sin\left(\phi\right)+2\left(\frac{1-\cos\left(\phi\right)}{\phi^{4}}\right)\nonumber \\
+d_{\theta} & =-\frac{2}{\phi^{4}}+\frac{3}{\phi^{5}}\sin\left(\phi\right)-\frac{1}{\phi^{4}}\cos\left(\phi\right)\nonumber \\
+q_{r}\left(\omega\right) & =\left(\left(\omega^{\vee}\right)^{\top}\rho\right)\left(d_{\phi}\omega^{2}+c_{\phi}\omega\right)\nonumber \\
+q_{l}\left(\omega\right) & =\left(\left(\omega^{\vee}\right)^{\top}\rho\right)\left(d_{\phi}\omega^{2}-c_{\phi}\omega\right)\nonumber \\
+B_{r}\left(u\right) & =q_{r}\left(\omega\right)+a_{\phi}\left[\rho\right]_{\times}+b_{\phi}\left(\omega\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\omega\right)\nonumber \\
+B_{l}\left(u\right) & =q_{l}\left(\omega\right)-a_{\phi}\left[\rho\right]_{\times}+b_{\phi}\left(\omega\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\omega\right)\nonumber \\
+J_{r}\left(\omega\right) & =I+\frac{\cos\left(\phi\right)-1}{\phi^{2}}\omega+\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\omega^{2}\nonumber \\
+J_{l}\left(\omega\right) & =I+\frac{1-\cos\left(\phi\right)}{\phi^{2}}\omega+\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\omega^{2}\label{eq:Jl_so3}\\
+J_{r}^{-1}\left(\omega\right) & =I+\frac{1}{2}\omega-\frac{\phi\cot\left(\frac{\phi}{2}\right)-2}{2\phi^{2}}\omega^{2}\nonumber \\
+J_{l}^{-1}\left(\omega\right) & =I-\frac{1}{2}\omega-\frac{\phi\cot\left(\frac{\phi}{2}\right)-2}{2\phi^{2}}\omega^{2}.\nonumber 
+\end{align}
 
 \end_inset
 
@@ -5358,11 +5325,7 @@ J_{l}^{-1}\left(u\right) & =\begin{bmatrix}J_{l}^{-1}\left(\omega\right) & J_{l}
 \end_layout
 
 \begin_layout Section
-Derivative of the Left Jacobian of 
-\begin_inset Formula $SO\left(3\right)$
-\end_inset
-
-
+Lemma
 \end_layout
 
 \begin_layout Lemma
@@ -5373,123 +5336,110 @@ name "lem:dJl"
 \end_inset
 
 Let 
-\begin_inset Formula $J_{l}\left(u\right)$
+\begin_inset Formula $J_{l}\left(\omega\right)$
 \end_inset
 
  denote the left Jacobian of 
 \begin_inset Formula $SO\left(3\right)$
 \end_inset
 
-.
- The derivative of 
-\begin_inset Formula $J_{l}\left(u\right)$
+ and 
+\begin_inset Formula $\rho\in\mathbb{R}^{3}$
 \end_inset
 
- is 
+.
+ The derivative of 
+\begin_inset Formula $J_{l}\left(\omega\right)p$
+\end_inset
+
+ with respect to 
+\begin_inset Formula $\omega$
+\end_inset
+
+, denote 
+\begin_inset Formula $\partial V_{\omega}\left(\rho\right)$
+\end_inset
+
+, is 
 \begin_inset Formula 
 \begin{align*}
-\frac{\partial J_{l}\left(u\right)}{\partial u} & =\frac{I}{2}+\left(\frac{\sin\left(\theta\right)}{\theta^{3}}-\frac{1}{\theta^{2}}\cos\left(\theta\right)\right)\mathbf{ad}_{u}\\
- & +\left(\frac{1-\cos\left(\theta\right)}{\theta^{4}}-\frac{\sin\left(\theta\right)}{\theta^{3}}+\frac{1}{2\theta^{2}}\right)\mathbf{ad}_{u}^{2},
+\partial V_{\omega}\left(\rho\right) & =\left(\frac{1-\cos\left(\theta\right)}{\theta^{2}}\right)\left[-\rho\right]_{\times}\\
+ & +\left(\frac{\theta-\sin\left(\theta\right)}{\theta^{3}}\right)\left(-2\omega\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\omega_{\times}\right)\\
+ & +\left(\frac{\sin\left(\theta\right)\theta+2\left(\cos\left(\theta\right)-1\right)}{\theta^{4}}\right)\omega\rho\left(\omega^{\vee}\right)^{\top}\\
+ & +\left(\frac{3\sin\left(\theta\right)-\cos\left(\theta\right)\theta-2\theta}{\theta^{5}}\right)\omega^{2}\rho\left(\omega^{\vee}\right)^{\top}.
 \end{align*}
 
 \end_inset
 
 where 
-\begin_inset Formula $u\in\mathfrak{se}\left(3\right)$
+\begin_inset Formula $\omega\in\mathfrak{s0}\left(3\right)$
 \end_inset
 
-, 
-\begin_inset Formula $\theta=\left\Vert u\right\Vert $
+, and 
+\begin_inset Formula $\theta=\sqrt{\left(\omega^{\vee}\right)^{\top}\omega^{\vee}}$
 \end_inset
 
- and 
-\begin_inset Formula $\mathbf{ad}_{u}$
-\end_inset
-
- is the Lie algebra adjoint representation.
+.
 \end_layout
 
 \begin_layout Proof
-We assume directly that 
-\begin_inset Formula $J_{l}\left(u\right)=\sum_{n=0}^{\infty}\frac{1}{\left(n+1\right)!}\left(\mathbf{ad}_{u}\right)^{n}$
+We first note that 
+\begin_inset Formula $V\left(\omega\right)=J_{l}\left(\omega\right)$
 \end_inset
 
-, it follows directly that 
+ where 
+\begin_inset Formula $J_{l}\left(\omega\right)$
+\end_inset
+
+ is defined in equation 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:Jl_so3"
+
+\end_inset
+
+.
+ It follows directly that 
 \begin_inset Formula 
-\begin{align*}
-\frac{\partial J_{l}\left(u\right)}{\partial u} & =\frac{\partial\sum_{n=0}^{\infty}\frac{1}{\left(n+1\right)!}\left(\mathbf{ad}_{u}\right)^{n}}{\partial u}\\
- & =\frac{\partial}{\partial u}\left(I+\frac{\mathbf{ad}_{u}}{2!}+\frac{\mathbf{ad}_{u}^{2}}{3!}+\frac{\mathbf{ad}_{u}^{3}}{4!}+\cdots\right)\\
- & =\frac{I}{2!}+\frac{2\mathbf{ad}_{u}}{3!}+\frac{3\mathbf{ad}_{u}^{2}}{4!}+\frac{4\mathbf{ad}_{u}^{3}}{5!}+\cdots\\
- & =\frac{I}{2}+\sum_{i=0}^{\infty}\frac{\left(2i+2\right)\mathbf{ad}_{u}^{2i+1}}{\left(2i+3\right)!}+\sum_{i=0}^{\infty}\frac{\left(2i+3\right)\mathbf{ad}_{u}^{2i+2}}{\left(2i+4\right)!}\\
- & =\frac{I}{2}+\sum_{i=0}^{\infty}\frac{\left(2i+2\right)\left(-1\right)^{i}\theta^{2i}}{\left(2i+3\right)!}\mathbf{ad}_{u}\\
- & +\sum_{i=0}^{\infty}\frac{\left(2i+3\right)\left(-1\right)^{i}\theta^{2i}}{\left(2i+4\right)!}\mathbf{ad}_{u}^{2}.
-\end{align*}
+\[
+\frac{\partial J_{l}\left(\omega\right)}{\partial\omega}=\frac{\partial}{\partial\omega}\left(I+\frac{1-\cos\left(\theta\right)}{\theta^{2}}\omega+\frac{\theta-\sin\left(\theta\right)}{\theta^{3}}\omega^{2}\right)\rho.
+\]
 
 \end_inset
 
-Next, we are going to manipulate the two power series to get closed form
- solutions.
- We first calculate the closed form solution to 
-\begin_inset Formula $\sum_{i=0}^{\infty}\frac{\left(2i+2\right)\left(-1\right)^{i}\theta^{2i}}{\left(2i+3\right)!}$
-\end_inset
-
- by multiplying it by 
-\begin_inset Formula $\left(-1\right)\left(-1\right)\frac{\theta^{2}}{\theta^{2}}$
-\end_inset
-
- and adding and subtracting 
-\begin_inset Formula $\frac{\sin\left(\theta\right)}{\theta^{3}}$
-\end_inset
-
- to it.
- 
+Using the product rule, we can break up the derivation into parts: 
 \begin_inset Formula 
-\begin{alignat*}{1}
- & \left(-1\right)\left(-1\right)\frac{\theta^{3}}{\theta^{3}}\sum_{i=0}^{\infty}\frac{\left(2i+2\right)\left(-1\right)^{i}\theta^{2i}}{\left(2i+3\right)!}\\
- & =\frac{-1}{\theta^{3}}\sum_{i=0}^{\infty}\frac{\left(2i+2\right)\left(-1\right)^{i+1}\theta^{2i+3}}{\left(2i+3\right)!}\\
- & =\frac{\sin\left(\theta\right)}{\theta^{3}}-\frac{\sin\left(\theta\right)}{\theta^{3}}-\frac{1}{\theta^{3}}\sum_{i=0}^{\infty}\frac{\left(2i+2\right)\left(-1\right)^{i+1}\theta^{2i+3}}{\left(2i+3\right)!}\\
- & =\frac{\sin\left(\theta\right)}{\theta^{3}}-\frac{1}{\theta^{3}}\left(\sum_{i=0}^{\infty}\frac{\left(-1\right)^{i}\theta^{2i+1}}{\left(2n+1\right)!}+\sum_{i=0}^{\infty}\frac{\left(2i+2\right)\left(-1\right)^{i+1}\theta^{2i+3}}{\left(2i+3\right)!}\right)\\
- & =\frac{\sin\left(\theta\right)}{\theta^{3}}-\frac{1}{\theta^{3}}\theta\sum_{i=0}^{\infty}\frac{\left(-1\right)^{n}\theta^{2i}}{2i!}\\
- & =\frac{\sin\left(\theta\right)}{\theta^{3}}-\frac{1}{\theta^{2}}\cos\left(\theta\right).
-\end{alignat*}
+\[
+\frac{\partial}{\partial\omega}\frac{1-\cos\left(\theta\right)}{\theta^{2}}=\frac{\sin\left(\theta\right)\theta+2\left(\cos\left(\theta\right)+1\right)}{\theta^{3}}\left(\omega^{\vee}\right)^{\top}
+\]
 
 \end_inset
 
-Next we are going to do a similar process to 
-\begin_inset Formula $\sum_{i=0}^{\infty}\frac{\left(2i+3\right)\left(-1\right)^{i}\theta^{2i}}{\left(2i+4\right)!}$
-\end_inset
 
- by multiply it by 
-\begin_inset Formula $\frac{\theta^{4}}{\theta^{4}}$
-\end_inset
-
- and then adding and subtracting 
-\begin_inset Formula $\frac{\cos\left(\theta\right)}{\theta^{4}}$
-\end_inset
-
- to it.
 \begin_inset Formula 
-\begin{align*}
- & \frac{\theta^{4}}{\theta^{4}}\sum_{i=0}^{\infty}\frac{\left(2i+3\right)\left(-1\right)^{i}\theta^{2i}}{\left(2i+4\right)!}\\
- & =\frac{1}{\theta^{4}}\sum_{i=0}^{\infty}\frac{\left(2i+3\right)\left(-1\right)^{i}\theta^{2i+4}}{\left(2i+4\right)!}\\
- & =\frac{-\cos\left(\theta\right)}{\theta^{4}}+\frac{\cos\left(\theta\right)}{\theta^{4}}+\frac{1}{\theta^{4}}\sum_{i=0}^{\infty}\frac{\left(2i+3\right)\left(-1\right)^{i}\theta^{2i+4}}{\left(2i+4\right)!}\\
- & =\frac{-\cos\left(\theta\right)}{\theta^{4}}+\sum_{i=0}^{\infty}\frac{\left(-1\right)^{i}\theta^{2i}}{2i!\theta^{4}}+\sum_{i=0}^{\infty}\frac{\left(2i+3\right)\left(-1\right)^{i}\theta^{2i+4}}{\left(2i+4\right)!\theta^{4}}\\
- & =\frac{-\cos\left(\theta\right)}{\theta^{4}}+\frac{1}{\theta^{4}}\left(1+\frac{\theta^{2}}{2}-\theta\sin\left(\theta\right)\right)\\
- & =\frac{1-\cos\left(\theta\right)}{\theta^{4}}-\frac{\sin\left(\theta\right)}{\theta^{3}}+\frac{1}{2\theta^{2}}.
-\end{align*}
+\[
+\frac{\partial}{\partial\omega}\frac{\theta-\sin\left(\theta\right)}{\theta^{3}}=\frac{3\sin\left(\theta\right)-\cos\left(\theta\right)\theta-2\theta}{\theta^{5}}
+\]
 
 \end_inset
 
-Combining everything together we get
+
 \begin_inset Formula 
-\begin{align*}
-\frac{\partial J_{l}\left(u\right)}{\partial u} & =\frac{I}{2}+\left(\frac{\sin\left(\theta\right)}{\theta^{3}}-\frac{1}{\theta^{2}}\cos\left(\theta\right)\right)\mathbf{ad}_{u}.\\
- & +\left(\frac{1-\cos\left(\theta\right)}{\theta^{4}}-\frac{\sin\left(\theta\right)}{\theta^{3}}+\frac{1}{2\theta^{2}}\right)\mathbf{ad}_{u}^{2}
-\end{align*}
+\[
+\frac{\partial}{\partial\omega}\omega\rho=\left[-\rho\right]_{\times}
+\]
 
 \end_inset
 
+and 
+\begin_inset Formula 
+\[
+\frac{\partial}{\partial\omega}\omega^{2}\rho=-2\omega\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\omega_{\times}.
+\]
 
+\end_inset
+
+Putting the pieces together, we get solution stated in the lemma.
 \end_layout
 
 \begin_layout --Separator--

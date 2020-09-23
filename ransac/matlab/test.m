@@ -1,4 +1,4 @@
-
+%% Testing my model likelihood
 
 rng('default')
 PD = 0.9;
@@ -68,6 +68,35 @@ count
 % V = c*g^(n/2)*det(S)
 
 %%
+x = rand(1)*5;
+h = rand(1)*2;
+func((2*x+2*h))
+funcT(2*x,h)
+
+%%
+
+syms x y z th real
+assumeAlso(x^2+y^2+z^2 == th);
+
+a = (1-cos(th))/th^2;
+b = (th - sin(th))/th^3;
+
+t =  [1;0;0]+a*[0 -z y]' + b*[-z^2-y^2 x*y x*z]';
+simplify(t'*t)
+
+
+function y = func(x)
+
+y = 2*x^2 + x  +1;
+
+end
+
+function y = funcT(x,h)
+
+y = func(x) + 2*(4*x +1)*h + 4*2*h^2;
+
+end
+
 
 
 
