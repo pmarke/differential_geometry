@@ -1331,44 +1331,52 @@ where
 \end_layout
 
 \begin_layout Standard
-Each sensor extracts data from a subset of the measurement space called
- a local surveillance region (LSR).
- When data is captured, it is represented in the sensor's frame (local frame).
- Algorithms are then used to extract measurements from the data.
- Depending on the sensor, more than one algorithm can be employed to extract
- measurements.
+Each sensor perceives a subset of the measurement space called a local surveilla
+nce region (LSR) which has a local frame that the data is expressed in and
+ a volume denoted 
+\begin_inset Formula $V_{vol}$
+\end_inset
+
+.
+ Measurements are extracted from the data using algorithms.
  We call the unique sensor and algorithm pair a measurement source or source
- for short which we will denote as 
-\begin_inset Formula $s^{i}$
-\end_inset
-
- where the superscript 
-\begin_inset Formula $i$
-\end_inset
-
- indicates the 
-\begin_inset Formula $i^{th}$
-\end_inset
-
- source.
+ for short.
  In the case that multiple measurement sources have the same sensor, it
  is possible for duplication of information which, when incorporated into
- a state estimate of a target, would lead to overconfidence of the target.
- We do not have a way to account for this, since we assume that measurements
- from each measurement source are independent.
- 
+ a state estimate of a target, would lead to overconfidence of the state
+ estimate.
+ We do not have a way to account for this except to assume it is minimal.
 \end_layout
 
 \begin_layout Standard
 A sensor scan occurs when a measurement source captures new data and has
  new measurements to provide R-RANSAC.
  Measurements from a source can either false or true measurements.
- We assume that the expected number of false measurements from a source
- per sensor scan 
+ We assume that false measurements are uniformly distributed in the LSR
+ and that the number of false measurements from a source per sensor scan
+ can be modeled using a Poisson distribution with parameter 
+\begin_inset Formula $\Lambda$
+\end_inset
+
+ being the expected value.
+ The expected number of false measurements per unit volume is called the
+ spacial density and is 
+\begin_inset Formula $\lambda=\frac{\Lambda}{V_{vol}}$
+\end_inset
+
+.
+ We also assume that a measurement source provides at most one true measurement
+ per target every sensor scan with probability 
+\begin_inset Formula $P_{D}$
+\end_inset
+
+, i.e.
+ the probability of detection.
+ 
 \end_layout
 
 \begin_layout Standard
-R-RANSAC works in a single frame, requiring all of the measurements to be
+R-RANSAC works in a single frame requiring all of the measurements to be
  transformed and expressed in a single global frame before being given to
  R-RANSAC.
  In the case that the global frame changes, a transformation 
@@ -1387,11 +1395,49 @@ R-RANSAC uses the new measurements along with all the previous measurements
 \begin_inset Formula $T_{W}$
 \end_inset
 
-.
+ to track targets.
  As time progresses, old measurements fall outside the time window and are
  removed.
  These measurements are called expired measurements.
+ Below is a summary of our assumptions.
+\end_layout
+
+\begin_layout Enumerate
+We assume that the system is observable.
+\end_layout
+
+\begin_layout Enumerate
+We assume that the process and measurement noises are represented by a white-noi
+se, zero-mean, Gaussian distribution and that their covariances are known.
+\end_layout
+
+\begin_layout Enumerate
+We assume that all measurements are independent.
+\end_layout
+
+\begin_layout Enumerate
+We assume that the expected number of false measurements from each measurement
+ source per sensor scan is modeled using a Poisson distribution with spatial
+ parameter 
+\begin_inset Formula $\lambda$
+\end_inset
+
+, and that the false measurements are uniformly distributed in the LSR.
+\end_layout
+
+\begin_layout Enumerate
+We assume that every measurement given to R-RANSAC is expressed in the current
+ global frame.
  
+\end_layout
+
+\begin_layout Enumerate
+If the global frame moves, a transformation is provided to R-RANSAC in order
+ to transform the measurements and models to the current global frame.
+\end_layout
+
+\begin_layout Section
+Modular Paradigm
 \end_layout
 
 \begin_layout Section

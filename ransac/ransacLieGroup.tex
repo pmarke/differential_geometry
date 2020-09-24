@@ -167,7 +167,7 @@ is familiar with Lie group and Lie algebra theory. For those unfamiliar
 with this material, we refer the interested reader primarily to \cite{Sola2018}.
 Solá offers a very gentle introduction to Lie theory that covers the
 majority of information needed to understand this paper. We also follow
-much of the notation prescribed by Solá and Hertzberg in\cite{Sola2018}
+much of the notation prescribed by Solá and Hertzberg in \cite{Sola2018}
 and \cite{Hertzberg2013}. For those who are interested in a more
 rigorous treatment of Lie theory, we refer the reader to \cite{Barfoot2019,Stillwell2008,Hall2003,Bullo2005a,Lee2013,Abraham1998}.
 In this document we will focus on targets with a discrete system model
@@ -333,10 +333,10 @@ the model to get the discrete system model described as \begin{subequations}\lab
 g_{k} & =g_{k^{-}}\oplus\left(\delta_{k}u_{k^{-}}+\delta_{k}w_{k}^{g}+\frac{\delta_{k}^{2}}{2}w_{k}^{u}\right)\\
 u_{k} & =u_{k^{-}}+\delta_{k}w_{k}^{u}.
 \end{align}
-\end{subequations} This form is similar to the one found in \cite{SjÃžberg2019},
+\end{subequations} This form is similar to the one found in \cite{Sj=0000C3=00017Eberg2019},
 and is an exact solution provided that the Lie group is commutative.
 If the Lie group is not commutative, the exact numeric solution is
-cumbersome if not impossible to derive, thus we will use the system
+cumbersome if not impossible to derive, in which case we use the system
 model as an approximate numerical solution.
 
 The complete discrete system is defined as\begin{subequations}\label{eq:system}
@@ -345,9 +345,10 @@ x_{k} & =f\left(x_{k^{-}},w_{k},\delta_{k}\right)\\
 y_{k} & =h\left(x_{k},v_{k}\right),
 \end{align}
 \end{subequations} where $f$ is the system model defined in (\ref{eq:system-model}),
-$y_{k}\in N$ is the output and $N$ is a Lie group, $h:G\to N$ is
-the observation model, and $v_{k}$ is measurement noise sampled from
-a zero-mean, white-noise, Gaussian distribution with covariance $R$.
+$y_{k}\in N$ is a measurement and $N$ is a Lie group, $h:G\to N$
+is the observation model, and $v_{k}$ is measurement noise sampled
+from a zero-mean, white-noise, Gaussian distribution with covariance
+$R$.
 
 The state $x$ is a new Lie group generated from the Cartesian product
 of $G$ and $E$. The Lie algebra of $G\times E$ is simply $\mathfrak{g}\times E$
@@ -361,6 +362,59 @@ x\oplus v & =\left(g,u\right)\oplus v\\
  & =\left(g\exp\left(a\right),u+b\right),
 \end{align*}
 where $g\in G$, $a\in\mathfrak{g}$, and $u,b\in E$.
+
+Each sensor perceives a subset of the measurement space called a local
+surveillance region (LSR) which has a local frame that the data is
+expressed in and a volume denoted $V_{vol}$. Measurements are extracted
+from the data using algorithms. We call the unique sensor and algorithm
+pair a measurement source or source for short. In the case that multiple
+measurement sources have the same sensor, it is possible for duplication
+of information which, when incorporated into a state estimate of a
+target, would lead to overconfidence of the state estimate. We do
+not have a way to account for this except to assume it is minimal.
+
+A sensor scan occurs when a measurement source captures new data and
+has new measurements to provide R-RANSAC. Measurements from a source
+can either false or true measurements. We assume that false measurements
+are uniformly distributed in the LSR and that the number of false
+measurements from a source per sensor scan can be modeled using a
+Poisson distribution with parameter $\Lambda$ being the expected
+value. The expected number of false measurements per unit volume is
+called the spacial density and is $\lambda=\frac{\Lambda}{V_{vol}}$.
+We also assume that a measurement source provides at most one true
+measurement per target every sensor scan with probability $P_{D}$,
+i.e. the probability of detection. 
+
+R-RANSAC works in a single frame requiring all of the measurements
+to be transformed and expressed in a single global frame before being
+given to R-RANSAC. In the case that the global frame changes, a transformation
+$T$ must be provided to R-RANSAC that contains the information necessary
+to transform all the past measurements and models, stored in R-RANSAC,
+into the new global frame. 
+
+R-RANSAC uses the new measurements along with all the previous measurements
+from the time window $T_{W}$ to track targets. As time progresses,
+old measurements fall outside the time window and are removed. These
+measurements are called expired measurements. Below is a summary of
+our assumptions.
+\begin{enumerate}
+\item We assume that the system is observable.
+\item We assume that the process and measurement noises are represented
+by a white-noise, zero-mean, Gaussian distribution and that their
+covariances are known.
+\item We assume that all measurements are independent.
+\item We assume that the expected number of false measurements from each
+measurement source per sensor scan is modeled using a Poisson distribution
+with spatial parameter $\lambda$, and that the false measurements
+are uniformly distributed in the LSR.
+\item We assume that every measurement given to R-RANSAC is expressed in
+the current global frame. 
+\item If the global frame moves, a transformation is provided to R-RANSAC
+in order to transform the measurements and models to the current global
+frame.
+\end{enumerate}
+
+\section{Paradigm}
 
 
 \section{Lie Group Probability}
