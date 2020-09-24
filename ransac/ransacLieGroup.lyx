@@ -91,7 +91,7 @@ This note assumes the reader has a basic understanding of the theory relating
 \end_layout
 
 \begin_layout Section
-Terminology, Parameters, and Notation
+Terminology, Parameters, and Time Notation
 \end_layout
 
 \begin_layout Standard
@@ -477,7 +477,7 @@ Other
 \end_layout
 
 \begin_layout Subsection
-Notation
+Time Notation
 \end_layout
 
 \begin_layout Standard
@@ -487,11 +487,11 @@ In this note we are assuming a discrete system whose measurements arrive
 \begin_inset Formula $k$
 \end_inset
 
-, the previous time using a subscript 
+, the next previous time using a subscript 
 \begin_inset Formula $k^{-}$
 \end_inset
 
-, and a previous time using the subscript 
+, and an arbitrary previous time using the subscript 
 \begin_inset Formula $m$
 \end_inset
 
@@ -500,21 +500,11 @@ In this note we are assuming a discrete system whose measurements arrive
 \end_inset
 
 .
- We denote the time at the beginning of the time window using 
-\begin_inset Formula $0$
-\end_inset
-
-.
- For example 
-\begin_inset Formula $x_{0}$
-\end_inset
-
- is the state of the system at the beginning of the time window.
- Let 
+ We use 
 \begin_inset Formula $\delta_{k}$
 \end_inset
 
- denote the time elapsed from 
+ to denote the time elapsed from 
 \begin_inset Formula $k^{-}$
 \end_inset
 
@@ -526,7 +516,7 @@ In this note we are assuming a discrete system whose measurements arrive
 \begin_inset Formula $\delta_{m:k}$
 \end_inset
 
- denote the time elapsed from 
+ to denote the time elapsed from 
 \begin_inset Formula $m$
 \end_inset
 
@@ -534,14 +524,8 @@ In this note we are assuming a discrete system whose measurements arrive
 \begin_inset Formula $k$
 \end_inset
 
-.
- Note that 
+ such that 
 \begin_inset Formula $\delta_{m:k},\delta_{k^{-}}\geq0$
-\end_inset
-
-.
- Lastly, let 
-\begin_inset Formula $\delta_{-k}=-\delta_{k}$
 \end_inset
 
  and 
@@ -549,184 +533,7 @@ In this note we are assuming a discrete system whose measurements arrive
 \end_inset
 
 .
-\end_layout
-
-\begin_layout Itemize
-Let 
-\begin_inset Formula $G$
-\end_inset
-
- denote a Lie group
-\end_layout
-
-\begin_layout Itemize
-Let 
-\begin_inset Formula $\mathfrak{g}$
-\end_inset
-
- denote the Lie algebra of 
-\begin_inset Formula $G$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-Let 
-\begin_inset Formula $E$
-\end_inset
-
- denote the Euclidean vector space isomorphic to 
-\begin_inset Formula $\mathfrak{g}$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-Let 
-\begin_inset Formula $x\in G\times\mathfrak{g}$
-\end_inset
-
- denote the state of the system
-\end_layout
-
-\begin_layout Itemize
-Let 
-\begin_inset Formula $N$
-\end_inset
-
- denote the measurement space which is a Lie group
-\end_layout
-
-\begin_layout Itemize
-Let 
-\begin_inset Formula $p\left(x\right)$
-\end_inset
-
- denote the probability of 
-\begin_inset Formula $x$
-\end_inset
-
-, 
-\begin_inset Formula $p\left(x,y\right)$
-\end_inset
-
- the joint probability of 
-\begin_inset Formula $x$
-\end_inset
-
- and 
-\begin_inset Formula $y$
-\end_inset
-
-, and 
-\begin_inset Formula $p\left(x|y\right)$
-\end_inset
-
- the probability of 
-\begin_inset Formula $x$
-\end_inset
-
- conditioned on 
-\begin_inset Formula $y$
-\end_inset
-
-.
  
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $\psi_{k}^{i}$
-\end_inset
-
- The set of measurements received at time 
-\begin_inset Formula $k$
-\end_inset
-
- from the 
-\begin_inset Formula $i^{th}$
-\end_inset
-
- measurement sensor.
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $\Psi_{k}$
-\end_inset
-
- The set of measurements received at time 
-\begin_inset Formula $k$
-\end_inset
-
-.
- 
-\begin_inset Formula $\Psi_{k}=\cup_{i\in J}\psi_{k}^{i}$
-\end_inset
-
- where 
-\begin_inset Formula $J$
-\end_inset
-
- is an index associated with the measurement sources.
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $\Psi_{m:k}$
-\end_inset
-
- The set of measurements received from time 
-\begin_inset Formula $m$
-\end_inset
-
- to time 
-\begin_inset Formula $k$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $\Psi_{T_{W}}$
-\end_inset
-
- The set of measurements received over the current time window.
- 
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $Y^{i}$
-\end_inset
-
- The set of measurements pertaining to the 
-\begin_inset Formula $i^{th}$
-\end_inset
-
- cluster during the time window.
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $y_{0:k}^{i}$
-\end_inset
-
- A minimum subset of 
-\begin_inset Formula $Y^{i}$
-\end_inset
-
- such that the model can be observed using the measurements from 
-\begin_inset Formula $y_{0:k}^{i}$
-\end_inset
-
-.
- One measurement from 
-\begin_inset Formula $y_{0:k}^{i}$
-\end_inset
-
- must be a new measurement and the others are randomly sampled from 
-\begin_inset Formula $Y^{i}$
-\end_inset
-
-.
 \end_layout
 
 \begin_layout Section
@@ -735,7 +542,7 @@ Lie Theory Review
 
 \begin_layout Standard
 The objective of this section is to provide a review of the pertinent concepts
- of Lie theory that we will use.
+ of Lie theory to establish notation.
  We assume that the reader is familiar with Lie group and Lie algebra theory.
  For those unfamiliar with this material, we refer the interested reader
  primarily to 
@@ -749,6 +556,7 @@ key "Sola2018"
  Solá offers a very gentle introduction to Lie theory that covers the majority
  of information needed to understand this paper.
  We also follow much of the notation prescribed by Solá and Hertzberg in
+ 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Sola2018"
@@ -777,10 +585,8 @@ key "Barfoot2019,Stillwell2008,Hall2003,Bullo2005a,Lee2013,Abraham1998"
  material.
  With no loss in generality, everything we present can be extended to targets
  with a continuous system model and constant acceleration by using a semidirect
- product group formed from a Lie group and its Lie algebra to form a new
- Lie group.
- A good discussion of the semidirect product group formed from a Lie group
- and its Lie algebra can be found in 
+ product group formed from a Lie group and its Lie algebra.
+ A good discussion of the semidirect product group can be found in 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Engo2003"
@@ -810,10 +616,10 @@ Let
 \end_inset
 
  denote it's corresponding Lie algebra.
- The exponential function is a surjective function that maps an element
- of the Lie algebra to an element of the Lie group, and the logarithmic
- map is the inverse of the exponential map.
- We denote both as
+ The exponential function is a surjection that maps an element of the Lie
+ algebra to an element of the Lie group, and the logarithmic map is the
+ inverse of the exponential map.
+ We denote these maps as
 \begin_inset ERT
 status open
 
@@ -906,7 +712,7 @@ end{subequations}
 \end_inset
 
 .
- The definition of these maps is dependent on the Lie algebra.
+ The definitions of these maps are dependent on the Lie algebra.
  We will rely on context to distinguish between elements of 
 \begin_inset Formula $E$
 \end_inset
@@ -936,11 +742,11 @@ begin{subequations}
 
 \end_inset
 
- 
+
 \begin_inset Formula 
 \begin{align*}
-\text{Exp}:E\to G & \quad\left(v\right)\mapsto\exp\left(v^{\wedge}\right)\\
-\text{Log}:G\to V & \quad\left(g\right)\mapsto\log\left(g\right)^{\vee}.
+\text{Exp}\left(v\right) & =\exp\left(v^{\wedge}\right)\\
+\text{Log}\left(g\right) & =\log\left(g\right)^{\vee}.
 \end{align*}
 
 \end_inset
@@ -1038,7 +844,7 @@ The adjoint of
 , and is denoted and generically defined as 
 \begin_inset Formula 
 \begin{align*}
-Ad_{g}:\mathfrak{g} & \to\mathfrak{g}\quad\left(u\right)\mapsto gug^{-1}
+Ad_{g}:\mathfrak{g} & \to\mathfrak{g};\quad\left(u\right)\mapsto gug^{-1}
 \end{align*}
 
 \end_inset
@@ -1049,10 +855,10 @@ where
 
 .
  Since the adjoint is a linear function, we can find a matrix version that
- operates on the associated Euclidean space generically defined as 
+ operates on the associated Euclidean space generically such that 
 \begin_inset Formula 
 \[
-\mathbf{Ad}_{g}:E\to E\quad\left(v\right)\mapsto\mathbf{Ad}_{g}v
+\mathbf{Ad}_{g}:E\to E;\quad\left(v\right)\mapsto\mathbf{Ad}_{g}v
 \]
 
 \end_inset
@@ -1090,7 +896,7 @@ The adjoint of
  which we will denoted and generically define as 
 \begin_inset Formula 
 \[
-ad_{u}:\mathfrak{g}\to\mathfrak{g}\quad\left(v\right)\mapsto\left[u,v\right]
+ad_{u}:\mathfrak{g}\to\mathfrak{g};\quad\left(v\right)\mapsto\left[u,v\right]
 \]
 
 \end_inset
@@ -1137,27 +943,19 @@ key "Iserles2000a"
 
 \end_inset
 
-, we can defined the differential of the exponential mapping as the 'left
- trivialized' tangent of the exponential map or as the right trivialized'
+, we can define the differential of the exponential mapping as the 'left
+ trivialized' tangent of the exponential map or as the 'right trivialized'
  tangent of the exponential map.
  These differentials are also commonly called the right and left Jacobians.
- The right Jacobian, 
-\begin_inset Formula $J_{r}:E\to GL\left(E\right)$
+ The right and left Jacobians , 
+\begin_inset Formula $J_{r},J_{l}:E\to GL\left(E\right)$
 \end_inset
 
-, is defined as
+, are defined as
 \begin_inset Formula 
-\[
-J_{r}\left(v\right)=\frac{^{r}\partial\text{Exp}\left(v\right)}{\partial v},
-\]
-
-\end_inset
-
-and the left Jacobian is defined as 
-\begin_inset Formula 
-\[
-J_{l}\left(v\right)=\frac{^{l}\partial\text{Exp}\left(v\right)}{\partial v}.
-\]
+\begin{align*}
+J_{r}\left(v\right) & =\frac{^{r}\partial\text{Exp}\left(v\right)}{\partial v} &  & J_{l}\left(v\right)=\frac{^{l}\partial\text{Exp}\left(v\right)}{\partial v}.
+\end{align*}
 
 \end_inset
 
@@ -1167,17 +965,9 @@ J_{l}\left(v\right)=\frac{^{l}\partial\text{Exp}\left(v\right)}{\partial v}.
 \begin_layout Standard
 Their inverses are defined as 
 \begin_inset Formula 
-\[
-J_{r}^{-1}\left(v\right)=\frac{^{r}\partial\text{Log}\left(v\right)}{\partial v}
-\]
-
-\end_inset
-
-and 
-\begin_inset Formula 
-\[
-J_{l}^{-1}\left(v\right)=\frac{^{l}\partial\text{Log}\left(v\right)}{\partial v}.
-\]
+\begin{align*}
+J_{r}^{-1}\left(v\right) & =\frac{^{r}\partial\text{Log}\left(v\right)}{\partial v} &  & J_{l}^{-1}\left(v\right)=\frac{^{l}\partial\text{Log}\left(v\right)}{\partial v}.
+\end{align*}
 
 \end_inset
 
@@ -1185,7 +975,7 @@ The right Jacobian has the property that for small
 \begin_inset Formula $\delta v\in E$
 \end_inset
 
- given 
+ and 
 \begin_inset Formula $v\in E$
 \end_inset
 
@@ -1203,7 +993,7 @@ The left Jacobian has the similar property that for small
 \begin_inset Formula $\delta v\in E$
 \end_inset
 
- given 
+ and 
 \begin_inset Formula $v\in E$
 \end_inset
 
@@ -1237,6 +1027,34 @@ key "Barfoot2019"
 \end_inset
 
 .
+ 
+\end_layout
+
+\begin_layout Standard
+An infinitesimal generator corresponding to 
+\begin_inset Formula $u\in\mathfrak{g}$
+\end_inset
+
+ is a smooth vector field on 
+\begin_inset Formula $G$
+\end_inset
+
+ defined as 
+\begin_inset Formula 
+\[
+\xi_{u}\left(g\right)=\left.\frac{d}{dt}\right|_{t=0}g\boxplus\left(tu\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This is a very simplified definition that serves our purpose in deriving
+ the discrete system model.
+ For a more formal and encompassing definition of an infinitesimal generator,
+ we refer the reader to the authors already mentioned.
  
 \end_layout
 
@@ -1356,8 +1174,8 @@ key "SjÃžberg2019"
 
 , and is an exact solution provided that the Lie group is commutative.
  If the Lie group is not commutative, the exact numeric solution is cumbersome
- if not impossible to derive, thus we will use the system model as an approximat
-e numerical solution.
+ if not impossible to derive, in which case we use the system model as an
+ approximate numerical solution.
 \end_layout
 
 \begin_layout Standard
@@ -1418,7 +1236,7 @@ reference "eq:system-model"
 \begin_inset Formula $y_{k}\in N$
 \end_inset
 
- is the output and 
+ is a measurement and 
 \begin_inset Formula $N$
 \end_inset
 
@@ -1510,6 +1328,70 @@ where
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Standard
+Each sensor extracts data from a subset of the measurement space called
+ a local surveillance region (LSR).
+ When data is captured, it is represented in the sensor's frame (local frame).
+ Algorithms are then used to extract measurements from the data.
+ Depending on the sensor, more than one algorithm can be employed to extract
+ measurements.
+ We call the unique sensor and algorithm pair a measurement source or source
+ for short which we will denote as 
+\begin_inset Formula $s^{i}$
+\end_inset
+
+ where the superscript 
+\begin_inset Formula $i$
+\end_inset
+
+ indicates the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ source.
+ In the case that multiple measurement sources have the same sensor, it
+ is possible for duplication of information which, when incorporated into
+ a state estimate of a target, would lead to overconfidence of the target.
+ We do not have a way to account for this, since we assume that measurements
+ from each measurement source are independent.
+ 
+\end_layout
+
+\begin_layout Standard
+A sensor scan occurs when a measurement source captures new data and has
+ new measurements to provide R-RANSAC.
+ Measurements from a source can either false or true measurements.
+ We assume that the expected number of false measurements from a source
+ per sensor scan 
+\end_layout
+
+\begin_layout Standard
+R-RANSAC works in a single frame, requiring all of the measurements to be
+ transformed and expressed in a single global frame before being given to
+ R-RANSAC.
+ In the case that the global frame changes, a transformation 
+\begin_inset Formula $T$
+\end_inset
+
+ must be provided to R-RANSAC that contains the information necessary to
+ transform all the past measurements and models, stored in R-RANSAC, into
+ the new global frame.
+ 
+\end_layout
+
+\begin_layout Standard
+R-RANSAC uses the new measurements along with all the previous measurements
+ from the time window 
+\begin_inset Formula $T_{W}$
+\end_inset
+
+.
+ As time progresses, old measurements fall outside the time window and are
+ removed.
+ These measurements are called expired measurements.
+ 
 \end_layout
 
 \begin_layout Section
@@ -4543,27 +4425,44 @@ Since the system is nonlinear, the LMLE can take a while to converge, and
 \begin_inset Formula $\psi$
 \end_inset
 
-) as local coordinates instead of 
-\begin_inset Formula $\mathfrak{so}\left(3\right)$
+) as local coordinates, assume 
+\begin_inset Formula $\rho_{x}>0$
 \end_inset
 
-.
- The map from Euler angles to 
+, and align the pitch and yaw angles with the translational velocities.
+ The map from Euler angles configured in an NED frame to 
 \begin_inset Formula $SO\left(3\right)$
 \end_inset
 
  is defined as 
 \begin_inset Formula 
-\[
+\begin{equation}
 \mathcal{R}\left(\phi,\theta,\psi\right)=\begin{bmatrix}c_{\theta}c_{\psi} & s_{\phi}s_{\theta}c_{\psi}-c_{\phi}s_{\psi} & c_{\phi}s_{\theta}c_{\psi}+s_{\phi}s_{\psi}\\
 c_{\theta}s_{\psi} & s_{\phi}s_{\theta}s_{\psi}+c_{\phi}c_{\psi} & c_{\phi}s_{\theta}s_{\psi}-s_{\phi}c_{\psi}\\
 -s_{\theta} & s_{\phi}c_{\theta} & c_{\phi}c_{\theta}
-\end{bmatrix}.
-\]
+\end{bmatrix}.\label{eq:euler_to_so3}
+\end{equation}
 
 \end_inset
 
-The derivative of the position vector 
+Let 
+\begin_inset Formula $t_{k},t_{m},t_{n}$
+\end_inset
+
+ denote measured positions at times 
+\begin_inset Formula $n,m,k$
+\end_inset
+
+ with 
+\begin_inset Formula $k$
+\end_inset
+
+ being the current time and 
+\begin_inset Formula $n<m<k$
+\end_inset
+
+.
+ The derivative of the position vector 
 \begin_inset Formula $t$
 \end_inset
 
@@ -4586,7 +4485,7 @@ The derivative of the position vector
 \end_inset
 
 Letting 
-\begin_inset Formula $\dot{t}=\left[\dot{t}_{x},\dot{t}_{y},\dot{t}_{z}\right]^{\top}$
+\begin_inset Formula $\dot{t}_{k}=\left[\dot{t}_{k_{x}},\dot{t}_{k_{y}},\dot{t}_{k_{z}}\right]^{\top}$
 \end_inset
 
 , we get 
@@ -4598,39 +4497,62 @@ Letting
 \end{bmatrix}=\underbrace{\begin{bmatrix}c_{\theta}c_{\psi}\\
 c_{\theta}s_{\psi}\\
 -s_{\theta}
-\end{bmatrix}}_{\mathcal{R}_{x}}\rho_{x}.
+\end{bmatrix}}_{R_{k_{x}}}\rho_{x}.
 \]
 
 \end_inset
 
-Since we receive position measurements, we can numerically estimate 
-\begin_inset Formula $\dot{t}$
+Since we receive position measurements, we can numerically estimate the
+ positional derivatives 
+\begin_inset Formula $\dot{t}_{k}=\frac{t_{m}-t_{k}}{\delta_{k:m}}$
 \end_inset
 
- from two measurements and solve for 
-\begin_inset Formula $\theta$
+ and 
+\begin_inset Formula $\dot{t}_{m}=\frac{t_{n}-t_{m}}{\delta_{m:n}}$
+\end_inset
+
+.
+ Using 
+\begin_inset Formula $\dot{t}_{k}$
+\end_inset
+
+ we can estimate 
+\begin_inset Formula $R_{k}$
+\end_inset
+
+ by solving for solve for 
+\begin_inset Formula $\phi_{k}$
+\end_inset
+
+,
+\begin_inset Formula $\theta_{k}$
 \end_inset
 
 , 
-\begin_inset Formula $\psi$
+\begin_inset Formula $\psi_{k}$
 \end_inset
 
 , and 
-\begin_inset Formula $\rho_{x}$
+\begin_inset Formula $\rho_{k_{x}}$
 \end_inset
 
  using the equations 
 \begin_inset Formula 
 \begin{align*}
-\psi & =\arctan\left(\frac{\dot{t}_{y}}{\dot{t}_{x}}\right)\\
-\theta & =\arctan\left(\frac{-\sin\left(\psi\right)\dot{t}_{z}}{\dot{t}_{y}}\right)\\
-\rho_{x} & =\frac{\mathcal{R}_{x}^{\top}\dot{t}}{\mathcal{R}_{x}^{\top}\mathcal{R}_{x}}.
+\psi_{k} & =\text{atan2}\left(\dot{t}_{k_{y}},\left|\dot{t}_{k_{x}}\right|\right)\\
+\theta_{k} & =\arctan\left(\frac{-\cos\left(\psi_{k}\right)\dot{t}_{k_{z}}}{\dot{t}_{k_{x}}}\right)\\
+\phi_{k} & =0\\
+\rho_{k_{x}} & =\frac{R_{k_{x}}^{\top}\dot{t}}{R_{k_{x}}^{\top}R_{k_{x}}}
 \end{align*}
 
 \end_inset
 
-If the system is in configuration 2, then we are done; otherwise, we assume
- the FWA is making a coordinated turn as described in 
+We have set 
+\begin_inset Formula $\phi_{k}=0$
+\end_inset
+
+ since we cannot easily estimate it unless we assume the FWA is making a
+ coordinated turn as described in 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Beard2008"
@@ -4668,62 +4590,85 @@ where
  we get 
 \begin_inset Formula 
 \[
-\phi=\arctan\left(\frac{\dot{\psi}\left\Vert \dot{t}\right\Vert }{g}\right).
+\phi_{k}=\arctan\left(\frac{\frac{\psi_{k}-\psi_{m}}{\delta_{k:m}}\left\Vert \dot{t}_{k}\right\Vert }{g}\right).
 \]
 
 \end_inset
 
-
-\end_layout
-
-\begin_layout Standard
-The choice of 
-\begin_inset Formula $\phi$
+From the estimated Euler angles 
+\begin_inset Formula $\phi_{k}$
 \end_inset
 
- doesn't really matter if we are only interested is reconstructing the position,
- in which case we could set 
-\begin_inset Formula $\phi=0$
+, 
+\begin_inset Formula $\theta_{k}$
 \end_inset
 
-.
-\end_layout
-
-\begin_layout Standard
-Since we can calculate estimate 
-\begin_inset Formula $R$
+ and 
+\begin_inset Formula $\psi_{k}$
 \end_inset
 
- at two different time periods, we can estimate 
-\begin_inset Formula $\omega$
+ we can construct the estimated rotation 
+\begin_inset Formula $R_{k}$
 \end_inset
 
- using the fact that 
-\begin_inset Formula $R_{m}=R_{k}\exp\left(\delta_{k:m}\omega\right)$
+ using equation 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:euler_to_so3"
+
 \end_inset
 
 .
- Solving for 
-\begin_inset Formula $\omega$
+\end_layout
+
+\begin_layout Standard
+Lastly we estimate 
+\begin_inset Formula $\omega_{k}$
 \end_inset
 
- gives us 
+ using the constraint 
 \begin_inset Formula 
 \[
-\omega=\log\left(R_{k}^{\top}R_{m}\right)/\delta_{k:m}
+\dot{t}_{m}=R_{k}\exp\left(\delta_{k:m}\omega_{k}\right)\rho.
 \]
 
 \end_inset
 
+Using a first order Taylor series approximation for the matrix exponential,
+ we get 
+\begin_inset Formula 
+\[
+\frac{R_{k}^{\top}\dot{t}_{m}}{\rho_{k_{x}}}=\begin{bmatrix}1\\
+0\\
+0
+\end{bmatrix}+\begin{bmatrix}0\\
+\omega_{k_{z}}\\
+-\omega_{k_{y}}
+\end{bmatrix}\delta_{k:m},
+\]
 
+\end_inset
+
+From which we can estimate the angular rates 
+\begin_inset Formula $\omega_{k_{z}}$
+\end_inset
+
+ and 
+\begin_inset Formula $\omega_{k_{y}}$
+\end_inset
+
+, and we simply set 
+\begin_inset Formula $\omega_{k_{x}}=0$
+\end_inset
+
+.
+ We use these estimations to seed the LMLE optimization problem.
 \end_layout
 
 \begin_layout Standard
-The numerical accuracies are dependent on measurement and system process
- noise and the time interval between measurements.
- But that is fine since these estimates are being used to seed the LMLE
- optimization process.
- 
+
+\series bold
+Hardware Results
 \end_layout
 
 \begin_layout Appendices

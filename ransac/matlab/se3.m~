@@ -149,21 +149,22 @@ w = [x;y;z];
 p = [a;b;c];
 th = sqrt(w'*w);
 
+ssm(w)^3
 
-T = ssm(w)^3*p;
-
-dT = [diff(T,x),diff(T,y),diff(T,z)];
-dT = simplify(dT);
-simplify(subs(dT,th^2,phi^2))
-
-test = simplify(-2*ssm(w)^2*ssm(p)-ssm(ssm(w)^2*p)+ssm(w)*ssm(p)*ssm(w))
+% T = ssm(w)^3*p;
+% 
+% dT = [diff(T,x),diff(T,y),diff(T,z)];
+% dT = simplify(dT);
+% simplify(subs(dT,th^2,phi^2))
+% 
+% test = simplify(-2*ssm(w)^2*ssm(p)-ssm(ssm(w)^2*p)+ssm(w)*ssm(p)*ssm(w))
 
 % ssm(ssm(w)^2*p)
 % ssm(p)*ssm(w)^2
 % ssm(w)*ssm(p)*ssm(w)
 
-ssm(w)*ssm(p)*w;
-ssm(p)*ssm(w)*w-ssm(w)*ssm(p)*w;
+% ssm(w)*ssm(p)*w;
+% ssm(p)*ssm(w)*w-ssm(w)*ssm(p)*w;
 % T = w*w'*ssm(p)*ssm(w);
 % simplify(T)
 
@@ -182,14 +183,16 @@ ssm(p)*ssm(w)*w-ssm(w)*ssm(p)*w;
 
 %% Seeding test
 
-rng('default')
+% rng('default')
 t = (rand(3,1)-0.5)*10;
 phi = rand(1)*0;
-th = rand(1);
-psi = rand(1);
+th = (rand(1)-0.5)*2;
+psi = (rand(1)-0.5)*2;
 R = rot(phi,th,psi);
-w = (rand(3,1)-0.5)*2.5;
-p = [(rand(1,1)-0.5)*30;0;0];
+w = (rand(3,1)-0.5)*2;
+% w(3)=0;
+% w(1)=0;
+p = [(rand(1,1))*15;0;0];
 % p = (rand(3,1)-0.5)*30;
 
 g = [R t; zeros(1,3) 1];
@@ -208,33 +211,53 @@ y2 = g2(1:3,4);
 td0 = (y1-y0)/dt;
 td1 = (y2-y1)/dt;
 
-psi0 = atan2(td0(2),td0(1));
-th0 = atan2(-sin(psi0)*td0(3),td0(2));
+psi0 = atan2(td0(2),abs(td0(1)));
+th0 = atan(-td0(3)*sin(psi0)/td0(2));
 phi0 = 0;
 R0 = rot(phi0,th0,psi0);
 Rx = R0(:,1);
-px = Rx'*td0/(Rx'*Rx);
+px = Rx'*td0/(Rx'*Rx)
 
-psi1 = atan2(td1(2),td1(1));
-th1 = atan2(-sin(psi1)*td1(3),td1(2));
-phi1 = 0;
-R1 = rot(phi1,th1,psi1);
-W0 = logm(R0'*R1)/dt;
+% R*p
+% p(1)
+% 
+% th
+% th0
+% psi
+% psi0
+
+
+tmp = R0'*td1/px/dt;
+ye = -tmp(3);
+ze = tmp(2);
+
+
+
+
+% ye-w(2)
+% ze - w(3)
+
+w0 = [0;ye;ze];
+% fun = @(xx) myfunc( R0'*td1/px ,dt,xx);
+fun = @(xx) myfunc( expm(dt*ssm(u)) ,dt,xx);
+ww = fsolve(fun,w0);
+ww
+w
+
+% tmp = R0'*td1/px;
+% ze =sqrt( -2*(tmp(1)-1+W0(1,3)^2/2*dt^2)/dt^2);
+% abs(ze)-abs(w(3))
+% xe = 2*(tmp(2)-ze*dt)/W0(1,3)/dt^2
+% xe = 2*(tmp(3)+ye)/ze/dt
+
+% C = [1, -ye*3/(dt*ze), 6/dt^3/ze*(tmp(2)-ze*dt + (ze*ye^2+ze^3)*dt^3/6)];
+% roots(C)
 
 ge0 = [R0 y0; zeros(1,3) 1];
-ue0 = [W0 [px;0;0]; zeros(1,4)];
+ue0 = [ssm(w0) [px;0;0]; zeros(1,4)];
 
-R2 = g2(1:3,1:3);
-th2 = asin(-R2(3,1));
-phi2 = asin(R2(3,2)/cos(th2))
-% psi2 = 
-
-
-
-ge0*expm(ue0*3);
-g*expm(u*3);
-
-
+ge0*expm(ue0*3)
+g*expm(u*3)
 
 function X = myexp(u)
 
