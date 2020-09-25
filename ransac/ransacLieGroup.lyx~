@@ -3,6 +3,14 @@
 \begin_document
 \begin_header
 \textclass IEEEtran
+\begin_preamble
+\usepackage{algorithm,algpseudocode,tabularx}
+\newcommand{\multiline}[1]{%
+  \begin{tabularx}{\dimexpr\linewidth-\ALG@thistlm}[t]{@{}X@{}}
+    #1
+  \end{tabularx}
+}
+\end_preamble
 \use_default_options true
 \maintain_unincluded_children false
 \language english
@@ -91,7 +99,7 @@ This note assumes the reader has a basic understanding of the theory relating
 \end_layout
 
 \begin_layout Section
-Terminology, Parameters, and Time Notation
+Terminology and Parameters
 \end_layout
 
 \begin_layout Standard
@@ -385,19 +393,27 @@ noindent
  - RANSAC inlier threshold
 \end_layout
 
+\begin_layout Itemize
+\begin_inset Formula $\tau_{RM}$
+\end_inset
+
+ - The minimum size of a track hypothesis's consensus set in order for the
+ hypothesis to become a track
+\end_layout
+
 \begin_layout Standard
 Cluster parameters
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\tau_{D}$
+\begin_inset Formula $\tau_{CD}$
 \end_inset
 
  - neighborhood distance threshold
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\tau_{C}$
+\begin_inset Formula $\tau_{CM}$
 \end_inset
 
  - cluster min cardinality threshold
@@ -474,66 +490,6 @@ Other
 
 \begin_layout --Separator--
 
-\end_layout
-
-\begin_layout Subsection
-Time Notation
-\end_layout
-
-\begin_layout Standard
-In this note we are assuming a discrete system whose measurements arrive
- at non-fixed time intervals.
- We denote the current time using a subscript 
-\begin_inset Formula $k$
-\end_inset
-
-, the next previous time using a subscript 
-\begin_inset Formula $k^{-}$
-\end_inset
-
-, and an arbitrary previous time using the subscript 
-\begin_inset Formula $m$
-\end_inset
-
- such that 
-\begin_inset Formula $m\leq k$
-\end_inset
-
-.
- We use 
-\begin_inset Formula $\delta_{k}$
-\end_inset
-
- to denote the time elapsed from 
-\begin_inset Formula $k^{-}$
-\end_inset
-
- to 
-\begin_inset Formula $k$
-\end_inset
-
-, and 
-\begin_inset Formula $\delta_{m:k}$
-\end_inset
-
- to denote the time elapsed from 
-\begin_inset Formula $m$
-\end_inset
-
- to 
-\begin_inset Formula $k$
-\end_inset
-
- such that 
-\begin_inset Formula $\delta_{m:k},\delta_{k^{-}}\geq0$
-\end_inset
-
- and 
-\begin_inset Formula $\delta_{k:m}=-\delta_{m:k}$
-\end_inset
-
-.
- 
 \end_layout
 
 \begin_layout Section
@@ -1063,10 +1019,59 @@ Problem Description
 \end_layout
 
 \begin_layout Standard
-The objective is to estimate the states of multiple dynamic targets given
- a set of measurements from multiple sensors and a dynamic model without
- a prior information about the number of targets in the global surveillance
- region.
+The objective is to track multiply dynamic targets by estimating their states
+ given a set of measurements from multiple sensors without a prior information
+ about the number of targets.
+ We denote the current time using a subscript 
+\begin_inset Formula $k$
+\end_inset
+
+, the next previous time using a subscript 
+\begin_inset Formula $k^{-}$
+\end_inset
+
+, and an arbitrary previous time using the subscript 
+\begin_inset Formula $m$
+\end_inset
+
+ such that 
+\begin_inset Formula $m\leq k$
+\end_inset
+
+.
+ We use 
+\begin_inset Formula $\delta_{k}$
+\end_inset
+
+ to denote the time elapsed from 
+\begin_inset Formula $k^{-}$
+\end_inset
+
+ to 
+\begin_inset Formula $k$
+\end_inset
+
+, and 
+\begin_inset Formula $\delta_{m:k}$
+\end_inset
+
+ to denote the time elapsed from 
+\begin_inset Formula $m$
+\end_inset
+
+ to 
+\begin_inset Formula $k$
+\end_inset
+
+ such that 
+\begin_inset Formula $\delta_{m:k},\delta_{k^{-}}\geq0$
+\end_inset
+
+ and 
+\begin_inset Formula $\delta_{k:m}=-\delta_{m:k}$
+\end_inset
+
+.
  Let the state of the system at time 
 \begin_inset Formula $k$
 \end_inset
@@ -1331,26 +1336,27 @@ where
 \end_layout
 
 \begin_layout Standard
-Each sensor perceives a subset of the measurement space called a local surveilla
-nce region (LSR) which has a local frame that the data is expressed in and
- a volume denoted 
-\begin_inset Formula $V_{vol}$
+Targets are observed via sensors.
+ Each sensor perceives a subset of the measurement space called a local
+ surveillance region (LSR) which has a local frame that the data is expressed
+ in and a volume denoted 
+\begin_inset Formula $S_{vol}$
 \end_inset
 
 .
+ The union of all LSRs is called the global surveillance region (GSR).
  Measurements are extracted from the data using algorithms.
  We call the unique sensor and algorithm pair a measurement source or source
  for short.
- In the case that multiple measurement sources have the same sensor, it
- is possible for duplication of information which, when incorporated into
- a state estimate of a target, would lead to overconfidence of the state
- estimate.
+ In the case that multiple sources have the same sensor, it is possible
+ for duplication of information which, when incorporated into a state estimate
+ of a target, would lead to overconfidence of the state estimate.
  We do not have a way to account for this except to assume it is minimal.
 \end_layout
 
 \begin_layout Standard
-A sensor scan occurs when a measurement source captures new data and has
- new measurements to provide R-RANSAC.
+A sensor scan occurs when a source captures new data and has new measurements
+ to provide R-RANSAC.
  Measurements from a source can either false or true measurements.
  We assume that false measurements are uniformly distributed in the LSR
  and that the number of false measurements from a source per sensor scan
@@ -1361,7 +1367,7 @@ A sensor scan occurs when a measurement source captures new data and has
  being the expected value.
  The expected number of false measurements per unit volume is called the
  spacial density and is 
-\begin_inset Formula $\lambda=\frac{\Lambda}{V_{vol}}$
+\begin_inset Formula $\lambda=\frac{\Lambda}{S_{vol}}$
 \end_inset
 
 .
@@ -1437,7 +1443,553 @@ If the global frame moves, a transformation is provided to R-RANSAC in order
 \end_layout
 
 \begin_layout Section
-Paradigm
+Modular Paradigm
+\end_layout
+
+\begin_layout Standard
+The paradigm for R-RANSAC is designed to be very modular.
+ In this section we will present the data structures used and modular framework.
+ R-RANSAC can be broken down into three main parts: data management, Track
+ initialization, and Track management.
+\end_layout
+
+\begin_layout Subsection
+Data Structures
+\end_layout
+
+\begin_layout Standard
+In R-RANSAC, we use three different data structures: the data tree, clusters,
+ and consensus sets.
+ The structure of the data tree and clusters is a list of R*-Trees 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Daszykowski2009"
+
+\end_inset
+
+.
+ Each R*-Tree contains measurements obtained at a unique time.
+ This allows us to easily remove and add measurements that have the same
+ time stamp while being able to search the data structures quickly.
+ The data tree, 
+\begin_inset Formula $\mathcal{T}$
+\end_inset
+
+, contains all of the measurements within the time window that are not in
+ a cluster or a consensus set.
+ A cluster, 
+\begin_inset Formula $\mathcal{C}$
+\end_inset
+
+, contains neighboring measurements as described in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Yang2017"
+
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $d_{C}:N\times N\to\mathbb{R}$
+\end_inset
+
+ be a metric 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Moon2000"
+
+\end_inset
+
+ on the measurement space.
+ A measurement 
+\begin_inset Formula $y_{j}$
+\end_inset
+
+ is a neighboring measurement of 
+\begin_inset Formula $y_{k}$
+\end_inset
+
+ if 
+\begin_inset Formula $d_{C}\left(y_{j},y_{k}\right)<\tau_{CD}$
+\end_inset
+
+.
+ A consensus set, 
+\begin_inset Formula $\mathcal{CS}^{i}$
+\end_inset
+
+, is a list that contains all of the measurements within the time window
+ that were associated with the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ track.
+ A track is a model of a target consisting of the state estimate 
+\begin_inset Formula $\hat{x}$
+\end_inset
+
+, error covariance 
+\begin_inset Formula $P$
+\end_inset
+
+, consensus set 
+\begin_inset Formula $\mathcal{CS}$
+\end_inset
+
+, track likelihood, and label.
+ The track likelihood is a measurement of how 
+\begin_inset Quotes eld
+\end_inset
+
+good
+\begin_inset Quotes erd
+\end_inset
+
+ a track is.
+ Previously, this was based on the inlier ratio and track lifetime, see
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Niedfeldt2017"
+
+\end_inset
+
+; however, we will present a more probabilistic approach in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Track-Likelihood"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Data Management
+\end_layout
+
+\begin_layout Standard
+Data management occurs after a sensor scan provides such that there are
+ new measurements 
+\begin_inset Formula $\Psi_{k}$
+\end_inset
+
+ and possibly a new transformation 
+\begin_inset Formula $T$
+\end_inset
+
+.
+ First, expired measurements are removed from the data structures and models
+ are propagated forward in time.
+ If a transformation was provided, all of the measurements (not including
+ the new measurements since they should already be expressed in the current
+ global frame) and models are transformed to the current global frame.
+ 
+\end_layout
+
+\begin_layout Standard
+The new measurements are checked to see if they should be associated to
+ a track and used to update the track's state estimate and likelihood.
+ The data association and track update could be implemented using various
+ methods: PDAF, JPDAF, MPDAF, NN, GNN, etc.
+ In this paper, we use a PDAF.
+ Unassociated new measurements are then checked to see if they belong to
+ an existing cluster using the metric 
+\begin_inset Formula $d_{C}$
+\end_inset
+
+.
+ Those that don't belong to a cluster are then used to seed possible new
+ clusters.
+\end_layout
+
+\begin_layout Standard
+New clusters are created by taking an unassociated new measurement and finding
+ neighboring measurements from either the list of unassociated new measurements
+ or the data tree.
+ For every measurement added to the cluster, the process is repeated by
+ finding neighboring measurements to the measurement just added to the cluster.
+\end_layout
+
+\begin_layout Standard
+If the possible cluster has at least 
+\begin_inset Formula $\tau_{CM}$
+\end_inset
+
+ measurements, then the cluster is kept, and the associated measurements
+ are removed from the data tree and the unassociated list.
+ The remaining unassociated measurements are then placed on the data tree
+ creating a new element in the list.
+\end_layout
+
+\begin_layout Subsection
+Track Initialization and Track Management
+\end_layout
+
+\begin_layout Standard
+Track initialization and track management occurs at specified times by the
+ user.
+ The Track Initialization phase performs RANSAC, see section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:RANSAC"
+
+\end_inset
+
+, on each cluster to try to generate new tracks.
+ If RANSAC generates a new track, the new track's state estimate 
+\begin_inset Formula $\hat{x}$
+\end_inset
+
+ is filtered and the track's likelihood is initialized using the measurements
+ in the consensus set.
+ The measurements in the consensus set are removed from the respective cluster.
+ Since measurements are taken from a cluster in order to create a new track,
+ we must verify that the remaining measurements in the cluster still form
+ a valid cluster, i.e.
+ the cluster has at least 
+\begin_inset Formula $\tau_{CM}$
+\end_inset
+
+ measurements.
+ If it does, the cluster is kept.
+ If it doesn't then we check the time stamp of the measurements.
+ If the measurements are old (i.e.
+ near being expired), then we remove them; otherwise, we place them back
+ on the data tree.
+ 
+\end_layout
+
+\begin_layout Standard
+The last phase of R-RANSAC is track management which consists of merging
+ and pruning tracks, promoting and demoting tracks, and assigning new good
+ tracks a unique label.
+ Some tracks will begin to coalesce as they are propagated and updated.
+ Tracks that are deemed similar are merged together using the track-to-track
+ fusion method discussed in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Track-to-Track-fusion"
+
+\end_inset
+
+.
+ Since R-RANSAC stores up to 
+\begin_inset Formula $M$
+\end_inset
+
+ Tracks, if there are more than 
+\begin_inset Formula $M$
+\end_inset
+
+ tracks we delete the tracks with the lowest likelihood.
+ If a track's likelihood is above the threshold 
+\begin_inset Formula $\tau_{\rho}$
+\end_inset
+
+ then it is promoted to a good track; otherwise, it is a poor track.
+ Good tracks receive a unique numerical label to identify it , see 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Ingersoll2015a"
+
+\end_inset
+
+.
+ At the end of these phases, a list of good tracks is published to the user.
+ 
+\end_layout
+
+\begin_layout Subsection
+Modular Algorithm
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float algorithm
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{algorithmic}[1]
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+Require{Parameters $M$, $T_W$, $
+\backslash
+ell$, $
+\backslash
+tau_E$, $
+\backslash
+tau_I$, $
+\backslash
+tau_{CD}$, $
+\backslash
+tau_{CM}$, $
+\backslash
+tau_S$, $
+\backslash
+tau_{
+\backslash
+rho}$, $
+\backslash
+tau_{
+\backslash
+alpha}$, $P_D$ and $
+\backslash
+lambda$.}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+For{each sensor scan}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{Remove expired measurements}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{Propagate tracks}
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+If{Transform $T$ provided}
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+State{Transform measurements and tracks}
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+EndIf
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{Associate new measurements to tracks}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State
+\backslash
+multiline{Update track's state estimate and likelihood using associated
+ measurements}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State
+\backslash
+multiline{Associate unassociated measurements to clusters using metric $d_C$}
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+For{ $y
+\backslash
+in 
+\backslash
+{
+\backslash
+text{ unassociated measurements}
+\backslash
+}$ }
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+State
+\backslash
+multiline{Try generating possible new clusters $C^p$ from $y$ using unassociated
+ measurements and data tree}
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\backslash
+If{$
+\backslash
+mid C^p 
+\backslash
+mid 
+\backslash
+geq 
+\backslash
+tau_{CM}$}
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\backslash
+State{Let $C^p$ be a new cluster}
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\backslash
+State
+\backslash
+multiline{Remove measurements in $C^p$ from data tree}
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\backslash
+EndIf
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+EndFor
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+State{Add remaining measurements to data tree}
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+If{specified by user}
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\backslash
+State
+\backslash
+multiline{Perform RANSAC on each cluster}
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\backslash
+State{Manage clusters}
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\backslash
+State{Merge and prune tracks}
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\backslash
+State{Promote and demote tracks}
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\backslash
+State{Assign new good tracks a unique ID}
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\backslash
+State{Publish good tracks}
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+EndIf
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+EndFor
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{algorithmic}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+R-RANSAC
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
@@ -1445,13 +1997,16 @@ Lie Group Probability
 \end_layout
 
 \begin_layout Standard
-In this section we define the prior distribution of the state 
+Our implementation of R-RANSAC uses a probabilistic framework which requires
+ us to represent certain probabilistic distributions on Lie groups.
+ Therefore, in this section we define the prior distribution of the state
+ 
 \begin_inset Formula $x$
 \end_inset
 
 , the state transition distribution, the likelihood distribution of the
- measurement and other distributions in a Lie group framework necessary
- to develop the theory.
+ measurement and other distributions in a Lie group framework that are necessary
+ for our implementation.
  We follow the convention, notation and terminology from 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -1467,7 +2022,7 @@ key "Bourmaud2013a,Bourmaud2014"
 
 \end_inset
 
-; however, our derivation is suited for our system model.
+; however, our derivation is suited for our purposes.
  
 \end_layout
 
@@ -1609,7 +2164,7 @@ I\delta_{m} & 0
 \end_inset
 
 and 
-\begin_inset Formula $\hat{w}$
+\begin_inset Formula $\hat{w}_{m}$
 \end_inset
 
  is the expected value of the process noise which is zero.
@@ -1653,14 +2208,6 @@ We approximate
 
  and error covariance 
 \begin_inset Formula $\bar{P}_{m}$
-\end_inset
-
-.
- We will not include the tedious derivation, but refer the reader to 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Thrun2006"
-
 \end_inset
 
 .
@@ -1711,7 +2258,7 @@ this calculation is called the propagation or the prediction step.
 
 \begin_layout Standard
 The probability of a measurement conditioned on the state is called the
- measurement probability or likelihood denoted as 
+ measurement probability denoted as 
 \begin_inset Formula $p\left(y_{m}\mid x_{m}\right)$
 \end_inset
 
@@ -1751,7 +2298,7 @@ where
 \begin_inset Formula 
 \begin{align*}
 H_{m} & =\left.\frac{\partial y_{m}\ominus h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{\hat{x}_{m},\hat{v}_{m}},\\
- & =\left.\frac{\partial\log\left(\hat{e}\right)}{\partial z}\frac{\partial z}{\partial h^{-1}\left(x_{m},v_{m}\right)}\frac{\partial h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{\hat{x}_{m},\hat{v}_{m}}\\
+ & =\left.\frac{\partial\log\left(\hat{e}\right)}{\partial z}\frac{\partial e}{\partial h^{-1}\left(x_{m},v_{m}\right)}\frac{\partial h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{\hat{x}_{m},\hat{v}_{m}}\\
  & =J_{r}^{-1}\left(\hat{e}\right)\mathbf{Ad}_{y_{m}^{-1}}\left.\frac{\partial h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{\hat{x}_{m},\hat{v}_{m}}
 \end{align*}
 
@@ -1871,248 +2418,6 @@ Depending on the data associating filter used, the update step will be different
 \end_layout
 
 \begin_layout Section
-RANSAC
-\end_layout
-
-\begin_layout Standard
-The objective of RANSAC is to estimate the parameters of a model given a
- set of measurements which contains both false and true measurements.
- We follow a scheme similar to the one presented in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Yang2017"
-
-\end_inset
-
-; that is, we perform RANSAC on every cluster seeding it with a measurement
- obtained from the current time.
- This process is described for a single cluster.
-\end_layout
-
-\begin_layout Standard
-Let 
-\begin_inset Formula $Y$
-\end_inset
-
- denote the set of measurements pertaining to a cluster, and let 
-\begin_inset Formula $y_{0:k}$
-\end_inset
-
- be a minimum subset of 
-\begin_inset Formula $Y$
-\end_inset
-
- that contains a measurement from the current time 
-\begin_inset Formula $k$
-\end_inset
-
- and other measurements randomly sampled from different times such that
- the system can be observed by the measurements in 
-\begin_inset Formula $y_{0:k}$
-\end_inset
-
-.
- Using the measurements 
-\begin_inset Formula $y_{0:k}$
-\end_inset
-
-, we create a model hypothesis by estimating a current hypothetical state
- 
-\begin_inset Formula $x_{k}$
-\end_inset
-
- that fit the measurements according to they system model described in 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:system-model"
-
-\end_inset
-
-.
- The hypothetical state 
-\begin_inset Formula $x_{k}$
-\end_inset
-
- is estimated using a log maximum likelihood estimate (LMLE) method described
- in section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:LMLE"
-
-\end_inset
-
-.
- Once 
-\begin_inset Formula $x_{k}$
-\end_inset
-
- is estimated, we construct a consensus set for the model hypothesis.
- The consensus set contains all of the measurements that are inliers to
- the model hypothesis.
- An inlier is a measurement that is within some distance of the estimated
- measurement obtained from 
-\begin_inset Formula $x_{k}$
-\end_inset
-
-.
- Let 
-\begin_inset Formula $d_{I}:N\times N\to\mathbb{R}$
-\end_inset
-
- be a metric on the measurement space 
-\begin_inset Formula $N$
-\end_inset
-
-, as described in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Moon2000"
-
-\end_inset
-
-, and let 
-\begin_inset Formula $\tau_{I}\in\mathbb{R}$
-\end_inset
-
- be a threshold, then if 
-\begin_inset Formula 
-\[
-d_{I}\left(y_{m}^{j},\hat{y}_{m}\right)<\tau_{I},
-\]
-
-\end_inset
-
-where 
-\begin_inset Formula $\hat{y}_{m}$
-\end_inset
-
- is the estimated measurement at time 
-\begin_inset Formula $m$
-\end_inset
-
-, and 
-\begin_inset Formula $y_{m}^{j}$
-\end_inset
-
- is the 
-\begin_inset Formula $j^{th}$
-\end_inset
-
- measurement obtained at time 
-\begin_inset Formula $m$
-\end_inset
-
-, then the measurement 
-\begin_inset Formula $y_{m}^{j}$
-\end_inset
-
- is considered an inlier to the model hypothesis and is added to the consensus
- set.
- The estimated measurement 
-\begin_inset Formula $\hat{y}_{m}$
-\end_inset
-
- is calculated using model inversion described in subsection 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sub:Model-Inversion"
-
-\end_inset
-
-.
- The metric that we use is defined as 
-\begin_inset Formula 
-\[
-d_{I}\left(y_{m}^{j},\hat{y}_{m}\right)=\left(y_{m}^{i}\ominus\hat{y}_{m}\right)^{\top}\left(R_{k:m}^{j}\right)^{-1}\left(y_{m}^{i}\ominus\hat{y}_{m}\right),
-\]
-
-\end_inset
-
-where 
-\begin_inset Formula $R_{k:m}^{j}$
-\end_inset
-
- is defined in 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:meas_cov_time"
-
-\end_inset
-
-.
- For help choosing 
-\begin_inset Formula $\tau_{I}$
-\end_inset
-
-, see section 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "sec:Validation-Region"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-This process is repeated at most 
-\begin_inset Formula $\ell$
-\end_inset
-
- times so that we have at most 
-\begin_inset Formula $\ell$
-\end_inset
-
- model hypothesis from each cluster.
- The model hypothesis with the largest consensus set from each cluster is
- kept and used to create a model using a filtering method that incorporates
- all of the measurements in the consensus set to calculate a current state
- estimate and error covariance.
- The size of the consensus set is not necessarily the cardinality of the
- consensus set.
- We define the size of the consensus set as the number of measurements from
- different sources at each time step.
- For example, if a source provided ten measurements at time 
-\begin_inset Formula $k$
-\end_inset
-
- and four of them were added to the consensus set, all four of them would
- count as one.
- The purpose of this definition is to ensure that one source is not weighted
- more heavily than another.
- RANSAC will terminate early if the size of a consensus set is greater than
- or equal to the threshold 
-\begin_inset Formula $\tau_{E}$
-\end_inset
-
-, and the measurements in a model hypothesis's consensus set are removed
- from the data tree if the model hypothesis become a model.
-\end_layout
-
-\begin_layout Standard
-The filtering method that we employ uses the Kalman propagation step described
- in equation 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:Kalman_propagation"
-
-\end_inset
-
- and an update step using centralized measurement fusion described in section
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:Centralized-Measurement-Fusion"
-
-\end_inset
-
-.
- The centralized measurement fusion allows multiple measurements from different
- sources to be fused together.
- 
-\end_layout
-
-\begin_layout Section
 Log Maximum Likelihood Estimate
 \begin_inset CommandInset label
 LatexCommand label
@@ -2132,17 +2437,13 @@ We use LMLE to generate model hypotheses in RANSAC.
 
  which contains one measurement from the current time and other measurements
  which are randomly sampled from different times with enough measurements
- in order to estimate the state, i.e.
- the 
-\begin_inset Formula $\left|y_{0:k}\right|$
-\end_inset
-
- is greater than or equal to the observability index of the system.
+ in order observe the system.
  Using the measurements 
 \begin_inset Formula $y_{0:k}$
 \end_inset
 
- we employ the LMLE method to calculate a hypothetical state estimate, i.e.
+ we use the LMLE method to calculate a hypothetical current state estimate,
+ i.e.
  a possible state estimate of an actual target.
  
 \end_layout
@@ -2159,52 +2460,26 @@ LMLE estimates the joint probability of all the states in the time window,
 
  by maximizing the posterior probability.
  The posterior probability is 
-\begin_inset Formula 
-\[
-p\left(x_{0:k}\mid y_{0:k}\right).
-\]
+\begin_inset Formula $p\left(x_{0:k}\mid y_{0:k}\right).$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Following 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Thrun2006"
 
 \end_inset
 
-Using Bayes rule we get
-\begin_inset Formula 
-\begin{align*}
-p\left(x_{0:k}\mid y_{0:k}\right) & =\frac{p\left(y_{k}\mid x_{0:k},y_{0:k^{-}}\right)p\left(x_{0:k}\mid y_{0:k^{-}}\right)}{p\left(y_{k}\mid y_{0:k^{-}}\right)}.
-\end{align*}
-
-\end_inset
-
-Since 
-\begin_inset Formula $p\left(y_{k}\mid y_{0:k^{-}}\right)$
-\end_inset
-
- does not depend on the parameters we are trying to estimate, we can replace
- it with a constant 
-\begin_inset Formula $\frac{1}{\eta}$
-\end_inset
-
- so that the posterior becomes
-\begin_inset Formula 
-\[
-p\left(x_{0:k}\mid y_{0:k}\right)=\eta p\left(y_{k}\mid x_{0:k},y_{0:k^{-}}\right)p\left(x_{0:k}\mid y_{0:k^{-}}\right).
-\]
-
-\end_inset
-
-Under the assumption that the system is a first order Markov process, we
- can simplify the posterior to
-\begin_inset Formula 
-\[
-p\left(x_{0:k}\mid y_{0:k^{-}}\right)=\eta p\left(y_{k}\mid x_{k}\right)p\left(x_{k}\mid x_{k^{-}}\right)p\left(x_{0:k^{-}}\mid y_{0:k^{-}}\right).
-\]
-
-\end_inset
-
-Repeating the process recursively, we get 
+, using Bayes rule and under the assumption that the system is a first order
+ Markov process, we can calculate the negative log posterior which is 
 \begin_inset Formula 
 \begin{multline*}
-p\left(x_{0:k}\mid y_{0:k}\right)=\\
-\eta p\left(x_{0}\right)\prod_{m=1}^{k}\left[p\left(x_{m}\mid x_{m^{-}}\right)\right]\prod_{m=0}^{k}\prod_{j=1}^{\ell\left(m\right)}\left[p\left(y_{m}^{j}\mid x_{m}\right)\right],
+\log\left(-p\left(x_{0:k}\mid y_{1:k}\right)\right)=\log\left(-\eta\right)+\log\left(-p\left(x_{0}\right)\right)\\
++\sum_{m=1}^{k}\log\left(-p\left(x_{m}\mid x_{m^{-}}\right)\right)+\sum_{m=0}^{k}\sum_{j=1}^{\ell\left(m\right)}\log\left(-p\left(y_{m}^{j}\mid x_{m}\right)\right).
 \end{multline*}
 
 \end_inset
@@ -2222,20 +2497,7 @@ where
 \end_inset
 
 .
-\end_layout
-
-\begin_layout Standard
-Maximizing the posterior is equivalent to minimizing the negative log posterior.
- The negative log posterior is 
-\begin_inset Formula 
-\begin{multline*}
-\log\left(-p\left(x_{0:k}\mid y_{1:k}\right)\right)=\log\left(-\eta\right)+\log\left(-p\left(x_{0}\right)\right)\\
-+\sum_{m=1}^{k}\log\left(-p\left(x_{m}\mid x_{m^{-}}\right)\right)+\sum_{m=0}^{k}\sum_{j=1}^{\ell\left(m\right)}\log\left(-p\left(y_{m}^{j}\mid x_{m}\right)\right).
-\end{multline*}
-
-\end_inset
-
-We can drop the term 
+ We can drop the term 
 \begin_inset Formula $\log\left(-\eta\right)$
 \end_inset
 
@@ -2249,25 +2511,11 @@ We can drop the term
 \begin_inset Formula $x_{0}$
 \end_inset
 
-.
- We thus simplify the negative log posterior to 
-\begin_inset Formula 
-\[
-\sum_{m=1}^{k}\log\left(-p\left(x_{m}\mid x_{m^{-}}\right)\right)+\sum_{m=0}^{k}\sum_{j=1}^{\ell\left(m\right)}\log\left(-p\left(y_{m}^{j}\mid x_{m}\right)\right).
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Since we are only interested in estimating the current state 
+, and since we are only interested in estimating the current state 
 \begin_inset Formula $x_{k}$
 \end_inset
 
- and because there is no input to the system, we simplify the negative log
- posterior to
+ we can simplify the negative log posterior to
 \begin_inset Formula 
 \[
 \sum_{m=0}^{k}\sum_{j=1}^{\ell\left(m\right)}\log\left(-p\left(y_{m}^{j}\mid x_{k}\right)\right).
@@ -2279,7 +2527,7 @@ Since we are only interested in estimating the current state
 \end_layout
 
 \begin_layout Standard
-Using these simplifications, the minimization problem is defined as 
+Using these simplifications, the LMLE problem is 
 \begin_inset Formula 
 \[
 \arg\min_{x_{k}}\left(\sum_{m=0}^{k}\sum_{j=1}^{\ell\left(m\right)}\log\left(-p\left(y_{m}^{j}\mid x_{k}\right)\right)\right).
@@ -2295,7 +2543,7 @@ This requires constructing a map from the current state
 \begin_inset Formula $x_{m}$
 \end_inset
 
- which is done by inverting the model.
+ which is done by model inversion.
 \end_layout
 
 \begin_layout Subsection
@@ -2315,11 +2563,11 @@ Given the current state
 \end_inset
 
  we are interested in calculating the state and output at time 
-\begin_inset Formula $m<n$
+\begin_inset Formula $m\leq n$
 \end_inset
 
 .
- We can easily invert the system model defined in 
+ This is done by inverting the system model defined in 
 \begin_inset CommandInset ref
 LatexCommand eqref
 reference "eq:system-model"
@@ -2410,15 +2658,7 @@ end{subequations}
  is 
 \begin_inset Formula 
 \[
-y_{m}=h\left(f^{-1},v_{m}\right),
-\]
-
-\end_inset
-
-where 
-\begin_inset Formula 
-\[
-f^{-1}=f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right)
+y_{m}=h\left(f^{-1},v_{m}\right).
 \]
 
 \end_inset
@@ -2427,14 +2667,14 @@ f^{-1}=f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right)
 \end_layout
 
 \begin_layout Standard
-We are interested in the linearized likelihood 
+Using the inverted system model we can calculate the linearized probability
+ 
 \begin_inset Formula $p\left(y_{m}^{j}\mid x_{k}\right)$
 \end_inset
 
 .
- Since the likelihood is conditioned on the state, the state is not a random
- variable.
- This simplifies the Taylor series of 
+ We calculate the covariance and mean by taking the first order Tyalor series
+ approximation of 
 \begin_inset Formula 
 \[
 y_{m}^{j}\ominus h\left(f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),v_{m}\right),
@@ -2500,8 +2740,7 @@ therefore, the linearized probability of
 \end_layout
 
 \begin_layout Standard
-Using the linearized probability, we can write the minimization problem
- as 
+Using the linearized probability, we can write the LMLE problem as 
 \begin_inset Formula 
 \begin{equation}
 \arg\min_{x_{k}}\left(\sum_{m=0}^{k}\sum_{j=1}^{\ell\left(m\right)}\left(\hat{e}_{k:m}^{j}\right)^{\top}\left(R_{k:m}^{j}\right)^{-1}\hat{e}_{k:m}^{j}\right).\label{eq:MLE_inverse}
@@ -2542,29 +2781,11 @@ H_{k:m} & =\left.\frac{\partial y_{m}\ominus h\left(f^{-1},v_{m}\right)}{\partia
 
 \end_layout
 
-\begin_layout Standard
-If the optimization is non-linear, a scheme to seed the optimization will
- drastically help.
- In the examples that we will present later, we will show same possible
- seeding methods.
- 
-\end_layout
-
-\begin_layout Standard
-Some of these calculations can be very costly.
- It may be worth increasing computation at a cost of quality by letting
- 
-\begin_inset Formula $R_{k:m}=R$
-\end_inset
-
-.
-\end_layout
-
 \begin_layout Section
-Validation Region
+Data Association 
 \begin_inset CommandInset label
 LatexCommand label
-name "sec:Validation-Region"
+name "sec:Data-Association"
 
 \end_inset
 
@@ -2572,16 +2793,35 @@ name "sec:Validation-Region"
 \end_layout
 
 \begin_layout Standard
-When new measurements are received, they are tested to see if they are inside
- a model's validation region.
- The validation region is a volume around an estimated state used for data
- association.
+As previously discussed, there are many ways to associate new measurements
+ to existing tracks.
+ We use a validation region to indicate if a measurement should be associated
+ with a track.
+ Once measurements are associated, we use a centralized measurement fusion
+ with the PDAF to update the tracks, add the associated measurements to
+ the consensus set and use the associated measurements to update the track's
+ likelihood.
+\end_layout
+
+\begin_layout Subsection
+Validation Region 
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Validation-Region"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The validation region is a volume around a track's estimated state.
  Measurements that fall within the validation region are associated to the
  model and are used to update the model.
  We will use the validation region described in 
 \begin_inset CommandInset citation
 LatexCommand cite
-key "Bar-Shalom2011"
+key "Bar-Shalom2011,Bar-Shalom1988"
 
 \end_inset
 
@@ -2637,44 +2877,32 @@ then
  is a standard multivariate Gaussian distribution.
  For clarity, we will drop the subscripts and superscripts.
  Let 
-\begin_inset Formula $d_{v}:N\times N\to\mathbb{R}$
+\begin_inset Formula $d_{V}:N\times N\to\mathbb{R}$
 \end_inset
 
  be the metric defined as 
 \begin_inset Formula 
 \begin{align*}
-d_{v}\left(y,\hat{y}\right) & =z^{\top}z\\
- & =\left(y\ominus\hat{y}\right)^{\top}S^{-1}\left(y\ominus\hat{y}\right).
+d_{V}\left(y,\hat{y}\right) & =\left(y\ominus\hat{y}\right)^{\top}S^{-1}\left(y\ominus\hat{y}\right)\\
+ & =z^{\top}z.
 \end{align*}
 
 \end_inset
 
 Note that the metric 
-\begin_inset Formula $d_{v}$
+\begin_inset Formula $d_{V}$
 \end_inset
 
  is simply the sum of the square of 
 \begin_inset Formula $n$
 \end_inset
 
- Gaussian distributions.
+ Standard Gaussian distributions.
  Thus, the values of the metric 
-\begin_inset Formula $d_{v}$
+\begin_inset Formula $d_{V}$
 \end_inset
 
- form a chi-square distribution with probability density function (PDF)
-\begin_inset Formula 
-\[
-p\left(d\left(y,\hat{y}\right)\right)=\frac{d\left(y,\hat{y}\right)^{n/2-1}\exp^{-n/2}}{2^{n/2}\Gamma\left(n/2\right)},
-\]
-
-\end_inset
-
-where 
-\begin_inset Formula $\Gamma\left(n/2\right)$
-\end_inset
-
- is the gamma function.
+ form a chi-square distribution.
 \end_layout
 
 \begin_layout Standard
@@ -2705,8 +2933,8 @@ where parameter
 \begin_inset Formula $P_{G}$
 \end_inset
 
- is the value of the cumulative distribution function (CDF) of the chi-square
- distribution with parameter 
+ is the value of the chi-square cumulative distribution function (CDF) with
+ parameter 
 \begin_inset Formula $\gamma$
 \end_inset
 
@@ -2715,7 +2943,7 @@ where parameter
  used to update the corresponding model using centralized measurement fusion
  described in section 
 \begin_inset CommandInset ref
-LatexCommand eqref
+LatexCommand ref
 reference "sec:Centralized-Measurement-Fusion"
 
 \end_inset
@@ -2749,15 +2977,19 @@ where
  (dimension of the measurement space) calculated as 
 \begin_inset Formula 
 \[
-c_{n}=\frac{\pi^{n/2}}{\Gamma\left(n/2+1\right)}.
+c_{n}=\frac{\pi^{n/2}}{\Gamma\left(n/2+1\right)}
 \]
 
 \end_inset
 
+and 
+\begin_inset Formula $\Gamma$
+\end_inset
 
+ is the gamma function.
 \end_layout
 
-\begin_layout Section
+\begin_layout Subsection
 Centralized Measurement Fusion 
 \begin_inset CommandInset label
 LatexCommand label
@@ -2775,7 +3007,7 @@ Validated measurements, or measurements associated to a model, can come
  fusion method, as discussed in 
 \begin_inset CommandInset citation
 LatexCommand cite
-key "Bar-Shalom1988"
+key "Bar-Shalom2011"
 
 \end_inset
 
@@ -2861,7 +3093,7 @@ Recall that
 \begin_inset Formula $H_{m}$
 \end_inset
 
- is the Jacobian of the measurement mode, 
+ is the Jacobian of the measurement function, 
 \begin_inset Formula $R^{i}$
 \end_inset
 
@@ -2878,20 +3110,655 @@ Recall that
 \begin_inset Formula $\beta_{m}^{j}$
 \end_inset
 
- are calculated from the data association filter used such as a PDAF.
+ are calculated from the data association filter used, which in our case
+ is the PDAF described in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Bar-Shalom2011"
+
+\end_inset
+
+.
  
 \end_layout
 
 \begin_layout Section
-Track to Track Fusion
+Track Likelihood
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Track-Likelihood"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
-In the case where R-RANSAC initializes two different tracks and later decides
- that the two tracks represent the same target, the tracks need to be fused
- (merged) together.
- Calculating the cross covariance needed to optimally fuse the two tracks
- can be computationally complex and time expensive, or in our case unknown.
+The track likelihood is a measure of how well a model represents an actual
+ target.
+ In the previous versions of R-RANSAC, the inlier ratio and the track's
+ lifetime were used to indicate the model's likelihood.
+ In this section, we present a different approach using a binary Bayes filter
+ with static states.
+ 
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $P_{D}^{i}$
+\end_inset
+
+ denote the probability that the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ measurement source produced a true measurement of the target during the
+ sensor scan, let 
+\begin_inset Formula $P_{G}^{i}$
+\end_inset
+
+ denote the probability that the true measurement was validated, i.e.
+ associated with the target during the data association process, then the
+ probability that a true measurement was received and validated is 
+\begin_inset Formula $P_{D}^{i}P_{G}^{i}$
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $\lambda^{i}$
+\end_inset
+
+ denote the spatial density of the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ source.
+ The expected number of false measurements within a validation region is
+ 
+\begin_inset Formula $\lambda^{i}V_{vol}$
+\end_inset
+
+ where 
+\begin_inset Formula $V_{vol}$
+\end_inset
+
+ is the volume of the validation region defined in 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:volume_validation_region"
+
+\end_inset
+
+ and is dependent on the measurement source and state estimate.
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $\theta_{m}^{i}$
+\end_inset
+
+ denote the number of validated measurements from the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ measurement source at time 
+\begin_inset Formula $m$
+\end_inset
+
+, 
+\begin_inset Formula $\theta_{m:k}^{i}$
+\end_inset
+
+ denote the number of validated measurements from the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ measurement source from time 
+\begin_inset Formula $m$
+\end_inset
+
+ to time 
+\begin_inset Formula $k$
+\end_inset
+
+ where 
+\begin_inset Formula $m<k$
+\end_inset
+
+, and 
+\begin_inset Formula $\theta_{m:k}$
+\end_inset
+
+ the number of all validated measurements from all the measurement sources
+ from time 
+\begin_inset Formula $m$
+\end_inset
+
+ to time 
+\begin_inset Formula $k$
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $z$
+\end_inset
+
+ be a Bernoulli random variable with 
+\begin_inset Formula $z=1$
+\end_inset
+
+ meaning that the track represents an actual target and 
+\begin_inset Formula $z=0$
+\end_inset
+
+ meaning that the track doesn't represent a target.
+ For notation purposes, we will denote 
+\begin_inset Formula $p\left(z=1\right)$
+\end_inset
+
+ as 
+\begin_inset Formula $p\left(z\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $p\left(z=0\right)$
+\end_inset
+
+ as 
+\begin_inset Formula $p\left(\neg z\right)$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+We are interested in calculating the probability that the track represents
+ an actual target conditioned on the number of validated measurements.
+ We denote this probability as 
+\begin_inset Formula $p\left(z\mid\theta_{m:k}\right)$
+\end_inset
+
+.
+ Using Bayes rule we get 
+\begin_inset Formula 
+\begin{align*}
+p\left(z\mid\theta_{m:k}\right) & =\frac{p\left(\theta_{k}\mid z,\theta_{m:k^{-}}\right)p\left(z\mid\theta_{m:k^{-}}\right)}{p\left(\theta_{k}\mid\theta_{m:k^{-}}\right)}\\
+ & =\frac{p\left(\theta_{k}\mid z\right)p\left(z\mid\theta_{m:k^{-}}\right)}{p\left(\theta_{k}\mid\theta_{m:k^{-}}\right)}.
+\end{align*}
+
+\end_inset
+
+The probability 
+\begin_inset Formula $p\left(\theta_{k}\mid\theta_{m:k^{-}}\right)$
+\end_inset
+
+ can be difficult to calculate; however, we can work around needing to know
+ this probability by using a log odds ratio.
+ For this method, we need 
+\begin_inset Formula $p\left(\neg z\mid\theta_{m:k}\right)$
+\end_inset
+
+ which is 
+\begin_inset Formula 
+\[
+p\left(\neg z\mid\theta_{m:k}\right)=\frac{p\left(\theta_{k}\mid\neg z\right)p\left(\neg z\mid\theta_{m:k^{-}}\right)}{p\left(\theta_{k}\mid\theta_{m:k^{-}}\right)}.
+\]
+
+\end_inset
+
+Taking the log (base 10) ratio of the probabilities 
+\begin_inset Formula $p\left(z\mid\theta_{m:k}\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $p\left(\neg z\mid\theta_{m:k}\right)$
+\end_inset
+
+, we get 
+\begin_inset Formula 
+\begin{align*}
+\log\left(\frac{p\left(z\mid\theta_{m:k}\right)}{p\left(\neg z\mid\theta_{m:k}\right)}\right) & =\log\left(\frac{p\left(\theta_{k}\mid z\right)p\left(z\mid\theta_{m:k^{-}}\right)}{p\left(\theta_{k}\mid\neg z\right)p\left(\neg z\mid\theta_{m:k^{-}}\right)}\right)\\
+ & =\log\left(\frac{p\left(\theta_{k}\mid z\right)}{p\left(\theta_{k}\mid\neg z\right)}\right)+\sum_{n=m}^{k^{-}}\log\left(\frac{p\left(\theta_{n}\mid z\right)}{p\left(\theta_{n}\mid\neg z\right)}\right).
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Whenever new validated measurements are received, we calculate the term
+ 
+\begin_inset Formula 
+\[
+l_{k}=\log\left(\frac{p\left(\theta_{k}\mid z\right)}{p\left(\theta_{k}\mid\neg z\right)}\right)
+\]
+
+\end_inset
+
+and add it to the previous log odds ratio 
+\begin_inset Formula 
+\begin{align*}
+l_{k^{-}=} & \log\left(\frac{p\left(z\mid\theta_{m:k^{-}}\right)}{p\left(\neg z\mid\theta_{m:k^{-}}\right)}\right)\\
+ & =\sum_{n=m}^{k^{-}}\log\left(\frac{p\left(\theta_{n}\mid z\right)}{p\left(\theta_{n}\mid\neg z\right)}\right).
+\end{align*}
+
+\end_inset
+
+The term 
+\begin_inset Formula $l_{k}$
+\end_inset
+
+ can be written as
+\begin_inset Formula 
+\[
+\log\left(\frac{p\left(\theta_{k}\mid z\right)}{p\left(\theta_{k}\mid\neg z\right)}\right)=\sum_{i\in1}^{N_{s}}\log\left(\frac{p\left(\theta_{k}^{i}\mid z\right)}{p\left(\theta_{k}^{i}\mid\neg z\right)}\right),
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $N_{s}$
+\end_inset
+
+ is the number of measurement sources.
+ Thus we are left with calculating 
+\begin_inset Formula $p\left(\theta_{k}^{i}\mid z\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $p\left(\theta_{k}^{i}\mid\neg z\right)$
+\end_inset
+
+ for each measurement source.
+ We assume that a measurement source can only produce at most one true measureme
+nt during a sensor scan.
+ Therefore, we have the two possibilities for 
+\begin_inset Formula $p\left(\theta_{k}^{i}\mid z\right)$
+\end_inset
+
+, that all 
+\begin_inset Formula $\theta_{k}^{i}$
+\end_inset
+
+ measurements are false or all but one are false.
+ Thus 
+\begin_inset Formula 
+\begin{multline*}
+p\left(\theta_{k}^{i}\mid z\right)=P_{G}^{i}P_{D}^{i}\exp\left(\lambda^{i}V_{vol}\right)\frac{\left(\lambda^{i}V_{vol}\right)^{\theta_{k}^{i}-1}}{\left(\theta_{k}^{i}-1\right)!}\\
++\left(1-P_{G}^{i}P_{D}^{i}\right)\exp\left(\lambda^{i}V_{vol}\right)\frac{\left(\lambda^{i}V_{vol}\right)^{\theta_{k}^{i}}}{\left(\theta_{k}^{i}\right)!}.
+\end{multline*}
+
+\end_inset
+
+There is only one possibility for 
+\begin_inset Formula $p\left(\theta_{k}^{i}\mid\neg z\right)$
+\end_inset
+
+, that is the probability of all of the measurements being false 
+\begin_inset Formula 
+\[
+p\left(\theta_{k}^{i}\mid\neg z\right)=\exp\left(\lambda^{i}V_{vol}\right)\frac{\left(\lambda^{i}V_{vol}\right)^{\theta_{k}^{i}}}{\left(\theta_{k}^{i}\right)!}.
+\]
+
+\end_inset
+
+Taking the ratio of the two, we get 
+\begin_inset Formula 
+\[
+\frac{p\left(\theta_{k}^{i}\mid z\right)}{p\left(\theta_{k}^{i}\mid\neg z\right)}=1+P_{G}^{i}P_{D}^{i}\left(\frac{\theta_{k}^{i}}{\lambda^{i}V_{vol}}-1\right).
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The model likelihood, 
+\begin_inset Formula $p\left(z\mid\theta_{m:k}\right)$
+\end_inset
+
+, can be recovered from the log odds ratio by 
+\begin_inset Formula 
+\[
+p\left(z\mid\theta_{m:k}\right)=1-\frac{1}{1+10^{l_{k}}}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note that if a track is outside the surveillance region of the measurement
+ source, then 
+\begin_inset Formula $P_{D}$
+\end_inset
+
+ should be zero and 
+\begin_inset Formula $p\left(z\mid\theta_{m:k}\right)$
+\end_inset
+
+ will not be affected.
+ In the case that the track leaves the global surveillance region, we need
+ a way to kill the track in order to make room for other tracks to be initialize
+d.
+ Thus, we assume that a track that has not received a measurement within
+ 
+\begin_inset Formula $\tau_{\alpha}$
+\end_inset
+
+ seconds is no longer in the GSR and will be removed.
+ A model is considered a good model if the 
+\begin_inset Formula $p\left(z\mid\theta_{m:k}\right)>\tau_{\rho}$
+\end_inset
+
+; otherwise, it is considered a poor model.
+ The parameters 
+\begin_inset Formula $\lambda^{i}$
+\end_inset
+
+ and 
+\begin_inset Formula $P_{D}^{i}$
+\end_inset
+
+ can be easily estimated and 
+\begin_inset Formula $P_{G}^{i}$
+\end_inset
+
+ is defined by the user.
+\end_layout
+
+\begin_layout Section
+RANSAC
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:RANSAC"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The random sample consensus (RANSAC) algorithm 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Fischler1981"
+
+\end_inset
+
+ is a regression algorithm that estimates parameters while mitigating the
+ effect of gross outliers.
+ There has been many developments and adaptations to the RANSAC algorithm
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Choi2009"
+
+\end_inset
+
+.
+ R-RANSAC uses RANSAC to initialize tracks by generating many track hypotheses.
+ We follow a scheme similar to the one presented in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Yang2017"
+
+\end_inset
+
+; that is, we perform RANSAC on every cluster seeding it with a measurement
+ obtained from the current or latest time.
+ We describe this process for a single cluster.
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $Y$
+\end_inset
+
+ denote the set of measurements pertaining to a cluster, and let 
+\begin_inset Formula $y_{0:k}$
+\end_inset
+
+ be a minimum subset of 
+\begin_inset Formula $Y$
+\end_inset
+
+ that contains a measurement from the current time 
+\begin_inset Formula $k$
+\end_inset
+
+ and other measurements randomly sampled from different times such that
+ the system can be observed by the measurements 
+\begin_inset Formula $y_{0:k}$
+\end_inset
+
+.
+ Using the measurements 
+\begin_inset Formula $y_{0:k}$
+\end_inset
+
+, we create a model hypothesis by estimating a current hypothetical state
+ 
+\begin_inset Formula $x_{k}$
+\end_inset
+
+ that fit the measurements according to they system model described in 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:system-model"
+
+\end_inset
+
+.
+ The hypothetical state 
+\begin_inset Formula $x_{k}$
+\end_inset
+
+ is estimated using the LMLE method described in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:LMLE"
+
+\end_inset
+
+.
+ Once 
+\begin_inset Formula $x_{k}$
+\end_inset
+
+ is estimated, we construct a consensus set for the track hypothesis.
+ The consensus set contains all of the measurements that are inliers to
+ the thack hypothesis.
+ An inlier is a measurement that is within some distance of the estimated
+ measurement obtained from 
+\begin_inset Formula $x_{k}$
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $d_{I}:N\times N\to\mathbb{R}$
+\end_inset
+
+ be a metric on the measurement space 
+\begin_inset Formula $N$
+\end_inset
+
+ and let 
+\begin_inset Formula $\tau_{I}\in\mathbb{R}$
+\end_inset
+
+ be a threshold, then if 
+\begin_inset Formula 
+\[
+d_{I}\left(y_{m}^{j},\hat{y}_{m}\right)<\tau_{I},
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\hat{y}_{m}$
+\end_inset
+
+ is the estimated measurement at time 
+\begin_inset Formula $m$
+\end_inset
+
+, and 
+\begin_inset Formula $y_{m}^{j}$
+\end_inset
+
+ is the 
+\begin_inset Formula $j^{th}$
+\end_inset
+
+ measurement obtained at time 
+\begin_inset Formula $m$
+\end_inset
+
+, then the measurement 
+\begin_inset Formula $y_{m}^{j}$
+\end_inset
+
+ is considered an inlier to the track hypothesis and is added to the consensus
+ set.
+ The estimated measurement 
+\begin_inset Formula $\hat{y}_{m}$
+\end_inset
+
+ is calculated using model inversion described in subsection 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Model-Inversion"
+
+\end_inset
+
+.
+ The metric that we use is defined as 
+\begin_inset Formula 
+\[
+d_{I}\left(y_{m}^{j},\hat{y}_{m}\right)=\left(y_{m}^{i}\ominus\hat{y}_{m}\right)^{\top}\left(R_{k:m}^{j}\right)^{-1}\left(y_{m}^{i}\ominus\hat{y}_{m}\right),
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $R_{k:m}^{j}$
+\end_inset
+
+ is defined in 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:meas_cov_time"
+
+\end_inset
+
+.
+ For help choosing 
+\begin_inset Formula $\tau_{I}$
+\end_inset
+
+, see section 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "sub:Validation-Region"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+This process is repeated at most 
+\begin_inset Formula $\ell$
+\end_inset
+
+ times so that we have at most 
+\begin_inset Formula $\ell$
+\end_inset
+
+ track hypotheses from each cluster.
+ The model hypothesis with the largest consensus set from each cluster is
+ kept and used to create a track provided that the size of the consensus
+ set is at least 
+\begin_inset Formula $\tau_{RM}$
+\end_inset
+
+.
+ The size of the consensus set is not necessarily the cardinality of the
+ consensus set.
+ We define the size of the consensus set as the number different source
+ that produced validated measurements at each time step.
+ For example, if a source provided ten measurements at time 
+\begin_inset Formula $k$
+\end_inset
+
+ and four of them were added to the consensus set, all four of them would
+ count as one.
+ The purpose of this definition is to ensure that one source is not weighted
+ more heavily than another.
+ RANSAC will terminate early if the size of a consensus set is greater than
+ or equal to the threshold 
+\begin_inset Formula $\tau_{E}$
+\end_inset
+
+.
+ If a track is initialized, the measurements in its consensus set are removed
+ from the cluster.
+ 
+\end_layout
+
+\begin_layout Standard
+We create a track from a track hypothesis using a filtering method.
+ In our filtering method we use the Kalman propagation step described in
+ equation 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:Kalman_propagation"
+
+\end_inset
+
+ and an update step using centralized measurement fusion described in section
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Centralized-Measurement-Fusion"
+
+\end_inset
+
+.
+ We also initialize the track's likelihood using the consensus set and the
+ method described in section 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "sec:Track-Likelihood"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+Track to Track Fusion
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Track-to-Track-fusion"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+As tracks are propagated and updated, they can begin to coalesce, in which
+ case we need to merge/fuse them.
+ In order to optimally fuse them, we would need to calculate the cross covarianc
+e between two tracks which can be computationally complex and time expensive,
+ or in our case unknown.
  Fortunately, the covariance intersection (CI) method can be used to fuse
  two tracks together without calculating the cross covariance.
  A good introduction to the CI method is presented in 
@@ -3115,380 +3982,6 @@ The fused track will have the state estimate
 \end_inset
 
 .
-\end_layout
-
-\begin_layout Section
-Model Likelihood
-\end_layout
-
-\begin_layout Standard
-R-RANSAC stores up to 
-\begin_inset Formula $\mathcal{M}$
-\end_inset
-
- models.
- Some of the models might not represent actual targets and could have been
- initialized from clustered false measurements.
- To account for this, we need a way to measure how likely a model represents
- an actual target.
- We will refer to this measure or probability as the model's likelihood.
- In the previous versions of R-RANSAC, the inlier ratio and the model's
- lifetime were used to indicate the model's likelihood.
- In this section, we present a different approach using a binary Bayes filter
- with static states.
- 
-\end_layout
-
-\begin_layout Standard
-Let 
-\begin_inset Formula $P_{D}^{i}$
-\end_inset
-
- denote the probability that the 
-\begin_inset Formula $i^{th}$
-\end_inset
-
- measurement source produced a true measurement of the target during the
- sensor scan, let 
-\begin_inset Formula $P_{G}^{i}$
-\end_inset
-
- denote the probability that the true measurement was validated, i.e.
- associated with the target during the data association process, then the
- probability that a true measurement was received and validated is 
-\begin_inset Formula $P_{D}^{i}P_{G}^{i}$
-\end_inset
-
-.
- Let 
-\begin_inset Formula $\lambda^{i}$
-\end_inset
-
- denote the spatial density of the expected number of false measurements
- from the 
-\begin_inset Formula $i^{th}$
-\end_inset
-
- measurement source during a sensor scan.
- For example, let 
-\begin_inset Formula $V_{s}^{i}$
-\end_inset
-
- denote the volume of a surveillance region and 
-\begin_inset Formula $\Lambda^{i}$
-\end_inset
-
- denote the expected number of false measurements per sensor scan from the
- 
-\begin_inset Formula $i^{th}$
-\end_inset
-
- measurement source, then 
-\begin_inset Formula $\lambda^{i}=\frac{\Lambda^{i}}{V_{s}^{i}}$
-\end_inset
-
-.
- The expected number of false measurements within a validation region is
- 
-\begin_inset Formula $\lambda^{i}V_{vol}$
-\end_inset
-
- where 
-\begin_inset Formula $V_{vol}$
-\end_inset
-
- is the volume of the validation region defined in 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:volume_validation_region"
-
-\end_inset
-
- and is depending on the measurement source and state estimate.
-\end_layout
-
-\begin_layout Standard
-Let 
-\begin_inset Formula $\theta_{m}^{i}$
-\end_inset
-
- denote the number of validated measurements from the 
-\begin_inset Formula $i^{th}$
-\end_inset
-
- measurement source at time 
-\begin_inset Formula $m$
-\end_inset
-
-, 
-\begin_inset Formula $\theta_{m:k}^{i}$
-\end_inset
-
- denote the number of validated measurements from the 
-\begin_inset Formula $i^{th}$
-\end_inset
-
- measurement source from time 
-\begin_inset Formula $m$
-\end_inset
-
- to time 
-\begin_inset Formula $k$
-\end_inset
-
- where 
-\begin_inset Formula $m<k$
-\end_inset
-
-, and 
-\begin_inset Formula $\theta_{m:k}$
-\end_inset
-
- the number of all validated measurements from all the measurement sources
- from time 
-\begin_inset Formula $m$
-\end_inset
-
- to time 
-\begin_inset Formula $k$
-\end_inset
-
-.
- Let 
-\begin_inset Formula $z$
-\end_inset
-
- be a Bernoulli random variable with 
-\begin_inset Formula $z=1$
-\end_inset
-
- meaning that the model represents an actual target and 
-\begin_inset Formula $z=0$
-\end_inset
-
- meaning that the model doesn't represent a target.
- For notation purposes, we will denote 
-\begin_inset Formula $p\left(z=1\right)$
-\end_inset
-
- as 
-\begin_inset Formula $p\left(z\right)$
-\end_inset
-
- and 
-\begin_inset Formula $p\left(z=0\right)$
-\end_inset
-
- as 
-\begin_inset Formula $p\left(\neg z\right)$
-\end_inset
-
-.
- 
-\end_layout
-
-\begin_layout Standard
-We are interested in calculating the probability that the model represents
- an actual target conditioned on the validated measurements.
- We denote this probability as 
-\begin_inset Formula $p\left(z\mid\theta_{m:k}\right)$
-\end_inset
-
-.
- Using Bayes rule we get 
-\begin_inset Formula 
-\begin{align*}
-p\left(z\mid\theta_{m:k}\right) & =\frac{p\left(\theta_{k}\mid z,\theta_{m:k^{-}}\right)p\left(z\mid\theta_{m:k^{-}}\right)}{p\left(\theta_{k}\mid\theta_{m:k^{-}}\right)}\\
- & =\frac{p\left(\theta_{k}\mid z\right)p\left(z\mid\theta_{m:k^{-}}\right)}{p\left(\theta_{k}\mid\theta_{m:k^{-}}\right)}.
-\end{align*}
-
-\end_inset
-
-The probability 
-\begin_inset Formula $p\left(\theta_{k}\mid\theta_{m:k^{-}}\right)$
-\end_inset
-
- can be difficult to calculate; however, we can work around needing to know
- this probability by using a log odds ratio.
- For this method, we need 
-\begin_inset Formula $p\left(\neg z\mid\theta_{m:k}\right)$
-\end_inset
-
- which is 
-\begin_inset Formula 
-\[
-p\left(\neg z\mid\theta_{m:k}\right)=\frac{p\left(\theta_{k}\mid\neg z\right)p\left(\neg z\mid\theta_{m:k^{-}}\right)}{p\left(\theta_{k}\mid\theta_{m:k^{-}}\right)}.
-\]
-
-\end_inset
-
-Taking the log (base 10) ratio of the probabilities 
-\begin_inset Formula $p\left(z\mid\theta_{m:k}\right)$
-\end_inset
-
- and 
-\begin_inset Formula $p\left(\neg z\mid\theta_{m:k}\right)$
-\end_inset
-
-, we get 
-\begin_inset Formula 
-\begin{align*}
-\log\left(\frac{p\left(z\mid\theta_{m:k}\right)}{p\left(\neg z\mid\theta_{m:k}\right)}\right) & =\log\left(\frac{p\left(\theta_{k}\mid z\right)p\left(z\mid\theta_{m:k^{-}}\right)}{p\left(\theta_{k}\mid\neg z\right)p\left(\neg z\mid\theta_{m:k^{-}}\right)}\right)\\
- & =\log\left(\frac{p\left(\theta_{k}\mid z\right)}{p\left(\theta_{k}\mid\neg z\right)}\right)+\sum_{n=m}^{k^{-}}\log\left(\frac{p\left(\theta_{n}\mid z\right)}{p\left(\theta_{n}\mid\neg z\right)}\right).
-\end{align*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Whenever new validated measurements are received, we calculate the term
- 
-\begin_inset Formula 
-\[
-l_{k}=\log\left(\frac{p\left(\theta_{k}\mid z\right)}{p\left(\theta_{k}\mid\neg z\right)}\right)
-\]
-
-\end_inset
-
-and add it to the previous log odds ratio 
-\begin_inset Formula 
-\begin{align*}
-l_{k^{-}=} & \log\left(\frac{p\left(z\mid\theta_{m:k^{-}}\right)}{p\left(\neg z\mid\theta_{m:k^{-}}\right)}\right)\\
- & =\sum_{n=m}^{k^{-}}\log\left(\frac{p\left(\theta_{n}\mid z\right)}{p\left(\theta_{n}\mid\neg z\right)}\right).
-\end{align*}
-
-\end_inset
-
-The term 
-\begin_inset Formula $l_{k}$
-\end_inset
-
- can be written as
-\begin_inset Formula 
-\[
-\log\left(\frac{p\left(\theta_{k}\mid z\right)}{p\left(\theta_{k}\mid\neg z\right)}\right)=\sum_{i\in1}^{s}\log\left(\frac{p\left(\theta_{k}^{i}\mid z\right)}{p\left(\theta_{k}^{i}\mid\neg z\right)}\right),
-\]
-
-\end_inset
-
-where 
-\begin_inset Formula $s$
-\end_inset
-
- is the number of measurement sources.
- Thus we are left with calculating 
-\begin_inset Formula $p\left(\theta_{k}^{i}\mid z\right)$
-\end_inset
-
- and 
-\begin_inset Formula $p\left(\theta_{k}^{i}\mid\neg z\right)$
-\end_inset
-
- for each measurement source.
- We assume that a measurement source can only produce at most one true measureme
-nt during a sensor scan.
- Therefore, we have the two possibilities for 
-\begin_inset Formula $p\left(\theta_{k}^{i}\mid z\right)$
-\end_inset
-
-, that all 
-\begin_inset Formula $\theta_{k}^{i}$
-\end_inset
-
- measurements are false or all but one are false.
- Thus 
-\begin_inset Formula 
-\begin{multline*}
-p\left(\theta_{k}^{i}\mid z\right)=P_{G}^{i}P_{D}^{i}\exp\left(\lambda^{i}V_{vol}\right)\frac{\left(\lambda^{i}V_{vol}\right)^{\theta_{k}^{i}-1}}{\left(\theta_{k}^{i}-1\right)!}\\
-+\left(1-P_{G}^{i}P_{D}^{i}\right)\exp\left(\lambda^{i}V_{vol}\right)\frac{\left(\lambda^{i}V_{vol}\right)^{\theta_{k}^{i}}}{\left(\theta_{k}^{i}\right)!}.
-\end{multline*}
-
-\end_inset
-
-There is only one possibility for 
-\begin_inset Formula $p\left(\theta_{k}^{i}\mid\neg z\right)$
-\end_inset
-
-, that is the probability of all of the measurements being false 
-\begin_inset Formula 
-\[
-p\left(\theta_{k}^{i}\mid\neg z\right)=\exp\left(\lambda^{i}V_{vol}\right)\frac{\left(\lambda^{i}V_{vol}\right)^{\theta_{k}^{i}}}{\left(\theta_{k}^{i}\right)!}.
-\]
-
-\end_inset
-
-Taking the ratio of the two, we get 
-\begin_inset Formula 
-\[
-\frac{p\left(\theta_{k}^{i}\mid z\right)}{p\left(\theta_{k}^{i}\mid\neg z\right)}=1+P_{G}^{i}P_{D}^{i}\left(\frac{\theta_{k}^{i}}{\lambda^{i}V_{vol}}-1\right).
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-The model likelihood, 
-\begin_inset Formula $p\left(z\mid\theta_{m:k}\right)$
-\end_inset
-
-, can be recovered from the log odds ratio by 
-\begin_inset Formula 
-\[
-p\left(z\mid\theta_{m:k}\right)=1-\frac{1}{1+10^{l_{k}}}.
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Note that if a model is outside the surveillance region of the measurement
- source, then 
-\begin_inset Formula $P_{D}$
-\end_inset
-
- should be zero and 
-\begin_inset Formula $p\left(z\mid\theta_{m:k}\right)$
-\end_inset
-
- will not be affected since there won't be any measurements and the update
- to the log odds ratio is 
-\begin_inset Formula $0$
-\end_inset
-
-.
- In the case that the target leaves the global surveillance region, we need
- a way to kill the model in order to make room for other models to be initialize
-d.
- Thus, we assume that a model that has not received a measurement within
- 
-\begin_inset Formula $\tau_{\alpha}$
-\end_inset
-
- seconds is no longer the the GSR and will be removed.
- A model is considered a good model if the 
-\begin_inset Formula $p\left(z\mid\theta_{m:k}\right)>\tau_{\rho}$
-\end_inset
-
-; otherwise, it is considered a poor model.
- The parameters 
-\begin_inset Formula $\lambda^{i}$
-\end_inset
-
- and 
-\begin_inset Formula $P_{D}^{i}$
-\end_inset
-
- can be easily estimated and 
-\begin_inset Formula $P_{G}^{i}$
-\end_inset
-
- is defined by the user.
 \end_layout
 
 \begin_layout Section

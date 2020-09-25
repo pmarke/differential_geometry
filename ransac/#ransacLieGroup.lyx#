@@ -3755,7 +3755,7 @@ We can simply estimate
 \begin_inset Formula $u_{k}$
 \end_inset
 
-, then 
+ and the subscript denotes the time the measurement was taken, then 
 \begin_inset Formula 
 \[
 u_{k}=\left(\sum_{j\in\Lambda}\delta_{k:j}R_{k:j}^{-1}\right)^{-1}\left(\sum_{j\in\Lambda}R_{k:j}^{-1}e_{k:j}\right).
@@ -3763,11 +3763,10 @@ u_{k}=\left(\sum_{j\in\Lambda}\delta_{k:j}R_{k:j}^{-1}\right)^{-1}\left(\sum_{j\
 
 \end_inset
 
-We can simplify the estimation further by setting the covariance terms to
- identity which yields 
+We can simplify the estimation further by letting 
 \begin_inset Formula 
 \[
-u_{k}=\frac{1}{\left|\chi\right|}\sum_{j\in\Lambda}e_{k:j}.
+u_{k}=\frac{1}{\left|\Lambda\right|}\sum_{j\in\Lambda}e_{k:j}.
 \]
 
 \end_inset
@@ -3787,7 +3786,7 @@ reference "eq:meas_cov_time"
 
 \end_inset
 
-, to the identity element to get the simplified optimization problem
+, to identity element to get the simplified optimization problem
 \begin_inset Formula 
 \[
 \arg\min_{x_{k}}\left(\sum_{m=0}^{k}\sum_{j=1}^{\ell\left(m\right)}\left(\hat{e}_{k:m}^{j}\right)^{\top}\hat{e}_{k:m}^{j}\right).
@@ -3799,8 +3798,8 @@ reference "eq:meas_cov_time"
 \begin_inset Formula $R_{k:m}^{j}$
 \end_inset
 
- can be computationally costly when it has to be done thousands of times
- whenever RANSAC is performed.
+ can be CPU costly when it has to be done thousands of times whenever RANSAC
+ is performed.
  
 \end_layout
 
@@ -3814,8 +3813,8 @@ reference "eq:likelihood_inverse"
 \end_inset
 
 , we suggest you use the simplified approaches to seed the original optimization
- problem unless the system is linear since the optimization problem is already
- simple.
+ problem, unless the system is linear since the optimization problem is
+ already simple.
  
 \end_layout
 
