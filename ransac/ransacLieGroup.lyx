@@ -5,6 +5,7 @@
 \textclass IEEEtran
 \begin_preamble
 \usepackage{algorithm,algpseudocode,tabularx}
+\usepackage{cite}
 \newcommand{\multiline}[1]{%
   \begin{tabularx}{\dimexpr\linewidth-\ALG@thistlm}[t]{@{}X@{}}
     #1
@@ -90,12 +91,250 @@ Introduction
 \end_layout
 
 \begin_layout Standard
-This note assumes the reader has a basic understanding of the theory relating
- to Matrix Lie Groups and their corresponding Lie algebras.
- This includes the matrix exponential and logarithm map, the vector space
- isomorphic to specific Lie algebras, the adjoint of the group and the algebra,
- and the left and right Jacobians.
- It also assumes that the reader has a basic understanding of R-RANSAC.
+Optimal estimators for the multiple target tracking (MTT) problem are not
+ feasible in real time due to their computational complexities; therefore,
+ many suboptimal approaches have been developed which can be implemented
+ in real time.
+ Some of the common MTT algorithms are the global nearest neighbor (GNN),
+ the joint probabilistic data association filter (JPDAF), variants of the
+ multiple hypothesis tracking (MHT), and the probabilistic multi-hypothesis
+ tracker (PHMT).
+ Each of these algorithms have variants that trade optimality for computational
+ feasibility.
+ There are also many other MTT algorithms which we will not discussed here
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Pulford2005"
+
+\end_inset
+
+ since our purpose is not focused on any of these algorithms.
+ We only briefly discuss some of the common algorithms for comparison.
+ 
+\end_layout
+
+\begin_layout Standard
+The GNN is the simplest MTT method.
+ It is a single-scan tracker that uses hard data association to assign measureme
+nts to tracks based on distance without taking into account statistical
+ information such as the innovation term 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Bar-Shalom2011"
+
+\end_inset
+
+.
+ The GNN filter is a computationally efficient algorithm, but its 
+\begin_inset Quotes eld
+\end_inset
+
+greedy
+\begin_inset Quotes erd
+\end_inset
+
+ data association causes track divergence and loss in clutter.
+ This method requires an additional scheme to kill and initialize tracks.
+ 
+\end_layout
+
+\begin_layout Standard
+The JPDAF is an extension of the probabilistic data association filter (PDAF)
+ to multiple targets.
+ It is a single-scan tracker that uses a soft data association technique
+ to weighs new measurements inside a track's validation region based upon
+ the new measurement's joint data association probability 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Bar-Shalom2009"
+
+\end_inset
+
+.
+ The weights are used to update the tracks.
+ Even though it is a single-scan tracker, calculating the probability of
+ all possible data associations makes it more computationally complex and
+ demanding.
+ In addition, this method requires an additional scheme to kill and initialize
+ tracks.
+ 
+\end_layout
+
+\begin_layout Standard
+The MHT algorithm is a batch tracker that uses a hard data association technique.
+ It is an optimal algorithm since it considers all possible measurement
+ associations, i.e.
+ a measurement either belong to an existing track, a new track, or no track
+ in order to create hypotheses.
+ There are two different versions of MHT: measurement-oriented (MO-MHT)
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Reid1979"
+
+\end_inset
+
+ and track-oriented (TO-MHT) 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Kurien1990"
+
+\end_inset
+
+.
+ While MHT is an optimal algorithm, it is not feasible unless appropriate
+ techniques are used to limit the number of generated hypotheses: pruning,
+ merging, sliding window, etc.
+ When these techniques are used, the algorithm is suboptimal.
+ Lastly, the algorithm is capable of initializing and killing tracks.
+ Hard data association that assumes one measurement per time step.
+\end_layout
+
+\begin_layout Standard
+The PHMT is a soft data association algorithm that relaxes the criteria
+ that a track can only produce at most one measurement per time step.
+ It does this by using a combination of the maximum likelihood and expectation
+ maximization algorithm 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Dempster1977"
+
+\end_inset
+
+ to maximize the posterior probability of the tracks given a batch of measuremen
+ts or a windowed set of measurements.
+ In the original form, it didn't have a method of track initialization or
+ killing, but later variants used the Hugh transform or the MHT as a front
+ end to initialize tracks 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Crousey2009"
+
+\end_inset
+
+.
+ The PHMT performance is similar to that of the PDAF which is a single-scan
+ tracker 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Bar-Shalom2011"
+
+\end_inset
+
+.
+ A variant of the PHMT operates on a windowed batch of data, and can be
+ used as a single-scan tracker.
+ 
+\end_layout
+
+\begin_layout Standard
+Recursive random sample consensus (R-RANSAC) is a recently new MTT algorithm
+ with a modular paradigm.
+ Unlike the MTT algorithms previously discussed that rely on additional
+ initialization scheme or a computationally extensive hypotheses tree to
+ initialize tracks, R-RANSAC uses RANSAC over a windowed batch of data to
+ initialize tracks.
+ Once tracks are initialized, it uses any single-scan tracker (GNN, JPDAF,
+ PDAF, PHMT, ect) to update the tracks.
+ In addition, it manages the tracks by pruning, killing, and merging them.
+ Another novelty of the algorithm is that the surveillance region doesn't
+ need to be fixed, but can be moved provided that a transformation is available
+ to transform measurements and tracks.
+\end_layout
+
+\begin_layout Standard
+R-RANSAC was first designed to estimate the parameters of multiple static
+ signals 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Niedfeldt2013"
+
+\end_inset
+
+ , but it was quickly extended to track multiple dynamic targets 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Niedfeldt"
+
+\end_inset
+
+.
+ Since then, R-RANSAC has been improved, modified and changed by various
+ people 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Niedfeldt2014b,Niedfeldt2014,Niedfeldt2016,Ingersoll2015,Ingersoll2015a,Defranco2015,Lusk2018,Niedfeldt2017,Wikle2017,Millard2017,Yang2017,Yang2018"
+
+\end_inset
+
+.
+ All of these improvements seemed to have stemmed from 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Niedfeldt"
+
+\end_inset
+
+, which resulted in many different versions of R-RANSAC.
+ This paper aims at aggregating the best contributions, while adding some
+ of our own improvements.
+ Our specific contributions include removing the constraint that measurements
+ come at a fixed time interval, improving the criteria for a good model
+ using a probabilistic frame work, allowing the measurement and process
+ noise covariance to change at every time step, extending the theory of
+ R-RANSAC to any Lie group, modifying the model merging method, and give
+ several example implementation.
+\end_layout
+
+\begin_layout Standard
+The rest of the paper is outlined as follows.
+ In section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Lie-Theory-Review"
+
+\end_inset
+
+ we give a brief review of Lie theory to establish important notation, in
+ section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Problem-Description"
+
+\end_inset
+
+ we present a more detailed description of the problem with assumptions,
+ in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Modular-Paradigm"
+
+\end_inset
+
+ we present the modular paradigm.
+ Sections 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Lie-Group-Probability"
+
+\end_inset
+
+- 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:LMLE-Simplification"
+
+\end_inset
+
+ go into more detail on specific parts of R-RANSAC, and in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Examples"
+
+\end_inset
+
+ we present examples.
 \end_layout
 
 \begin_layout --Separator--
@@ -104,6 +343,13 @@ This note assumes the reader has a basic understanding of the theory relating
 
 \begin_layout Section
 Lie Theory Review
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Lie-Theory-Review"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -625,13 +871,21 @@ This is a very simplified definition that serves our purpose in deriving
 \end_layout
 
 \begin_layout Section
-Problem Description
+Problem Description 
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Problem-Description"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
 The objective is to track multiply dynamic targets by estimating their states
  given a set of measurements from multiple sensors without a prior information
  about the number of targets.
+ The following notation is used throughout.
  We denote the current time using a subscript 
 \begin_inset Formula $k$
 \end_inset
@@ -699,8 +953,8 @@ The objective is to track multiply dynamic targets by estimating their states
 \end_inset
 
 .
- We assume the system model to be continuous, near constant velocity, and
- time invariant defined as
+ We assume the state transition model to be continuous, near constant velocity,
+ and time invariant defined as
 \begin_inset Formula 
 \begin{align*}
 \dot{g}_{k} & =\xi_{u_{k}}\left(g_{k}\right)\\
@@ -737,8 +991,7 @@ w_{k}^{u}
 \begin_inset Formula $\delta_{k}$
 \end_inset
 
- we can discretize the model to get the discrete system model described
- as 
+ we can discretize the model to get 
 \begin_inset ERT
 status open
 
@@ -1054,6 +1307,13 @@ If the global frame moves, a transformation is provided to R-RANSAC in order
 
 \begin_layout Section
 Modular Paradigm
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Modular-Paradigm"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -1610,7 +1870,14 @@ R-RANSAC
 \end_layout
 
 \begin_layout Section
-Lie Group Probability
+Lie Group Probability 
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Lie-Group-Probability"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -2754,7 +3021,8 @@ name "sec:Track-Likelihood"
 The track likelihood is a measure of how well a model represents an actual
  target.
  In the previous versions of R-RANSAC, the inlier ratio and the track's
- lifetime were used to indicate the model's likelihood.
+ lifetime were used to indicate the model's likelihood which doesn't have
+ much theoretical basis other than intuition.
  In this section, we present a different approach using a binary Bayes filter
  with static states.
  
@@ -3820,7 +4088,14 @@ reference "eq:likelihood_inverse"
 \end_layout
 
 \begin_layout Section
-Examples
+Examples 
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Examples"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard

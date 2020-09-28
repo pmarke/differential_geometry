@@ -5,6 +5,7 @@
 \textclass IEEEtran
 \begin_preamble
 \usepackage{algorithm,algpseudocode,tabularx}
+\usepackage{cite}
 \newcommand{\multiline}[1]{%
   \begin{tabularx}{\dimexpr\linewidth-\ALG@thistlm}[t]{@{}X@{}}
     #1
@@ -90,402 +91,250 @@ Introduction
 \end_layout
 
 \begin_layout Standard
-This note assumes the reader has a basic understanding of the theory relating
- to Matrix Lie Groups and their corresponding Lie algebras.
- This includes the matrix exponential and logarithm map, the vector space
- isomorphic to specific Lie algebras, the adjoint of the group and the algebra,
- and the left and right Jacobians.
- It also assumes that the reader has a basic understanding of R-RANSAC.
-\end_layout
+Optimal estimators for the multiple target tracking (MTT) problem are not
+ feasible in real time due to their computational complexities; therefore,
+ many suboptimal approaches have been developed which can be implemented
+ in real time.
+ Some of the common MTT algorithms are the global nearest neighbor (GNN),
+ the joint probabilistic data association filter (JPDAF), variants of the
+ multiple hypothesis tracking (MHT), and the probabilistic multi-hypothesis
+ tracker (PHMT).
+ Each of these algorithms have variants that trade optimality for computational
+ feasibility.
+ There are also many other MTT algorithms which we will not discussed here
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Pulford2005"
 
-\begin_layout Section
-Terminology and Parameters
-\end_layout
+\end_inset
 
-\begin_layout Standard
-The terminology, parameters, and notation used is previous version of R-RANSAC
- have varied which has created confusion and inconsistencies.
- In this section, we hope to solidify certain terminology, parameters and
- notation that are suitable for expanding R-RANSAC to work with Lie Groups,
- and incorporating other improvements we have made to the general algorithm.
-\end_layout
-
-\begin_layout Subsection
-Terminology
-\end_layout
-
-\begin_layout Standard
-R-RANSAC has very specific terminology that we that will facilitate the
- discussion.
+ since our purpose is not focused on any of these algorithms.
+ We only briefly discuss some of the common algorithms for comparison.
  
 \end_layout
 
-\begin_layout Itemize
+\begin_layout Standard
+The GNN is the simplest MTT method.
+ It is a single-scan tracker that uses hard data association to assign measureme
+nts to tracks based on distance without taking into account statistical
+ information such as the innovation term 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Bar-Shalom2011"
 
-\series bold
-Phenomenon
-\series default
-: Something that produces an observable signal.
- In the case of target tracking, the phenomenon is referred to as a 
-\series bold
-target
-\series default
-, which is an object that exists in physical space.
-\end_layout
+\end_inset
 
-\begin_layout Itemize
-
-\series bold
-Measurement Source
-\series default
-: A sensor equipped with an algorithm that captures information from the
- environment and produces meaningful measurements used to observe the target.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Surveillance Region
-\series default
-: The portion of the environment that is observable by the measurement sources.
- There is a local surveillance region (LSR) for each measurement source
- and a global surveillance region (GSR) that is a union of all the local
- surveillance regions.
- 
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Frame of reference
-\series default
-: Consists of an abstract coordinate system and the set of physical reference
- points that uniquely fix (locate and orient) the coordinate system and
- standardize measurements within that frame.
- We will often refer to a frame of reference as just 
-\series bold
-frame
-\series default
 .
+ The GNN filter is a computationally efficient algorithm, but its 
+\begin_inset Quotes eld
+\end_inset
+
+greedy
+\begin_inset Quotes erd
+\end_inset
+
+ data association causes track divergence and loss in clutter.
+ This method requires an additional scheme to kill and initialize tracks.
+ 
 \end_layout
 
-\begin_layout Itemize
+\begin_layout Standard
+The JPDAF is an extension of the probabilistic data association filter (PDAF)
+ to multiple targets.
+ It is a single-scan tracker that uses a soft data association technique
+ to weighs new measurements inside a track's validation region based upon
+ the new measurement's joint data association probability 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Bar-Shalom2009"
 
-\series bold
-Local Frame
-\series default
-: The frame that coincides with a local surveillance region.
-\end_layout
+\end_inset
 
-\begin_layout Itemize
-
-\series bold
-Global Frame
-\series default
-: The frame that coincides with the global surveillance region.
- It is possible that the global frame is the same as a local frame.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Sensor Scan
-\series default
-: When a sensor observes its surveillance region and extracts meaningful
- data.
- For example, the sensor scan of a camera occurs when the camera produces
- a new image of its surveillance region.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-False Measurement
-\series default
-: A measurement extracted from a sensor scan that does not correspond to
- a phenomenon of interest.
- For example, motion in a camera can generate false measurements due to
- parallax depending on the algorithm.
- Another example is just noisy sensors.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-True Measurement
-\series default
-: A measurement extracted from a sensor scan that corresponds to a phenomenon
- of interest.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Model
-\series default
-: This is simply a model of the phenomenon.
- In regards to target tracking, a model is referred to as a 
-\series bold
-track
-\series default
 .
+ The weights are used to update the tracks.
+ Even though it is a single-scan tracker, calculating the probability of
+ all possible data associations makes it more computationally complex and
+ demanding.
+ In addition, this method requires an additional scheme to kill and initialize
+ tracks.
+ 
 \end_layout
 
-\begin_layout Itemize
-
-\series bold
-Model Hypothesis
-\series default
-: This is a hypothetical model of the phenomenon (i.e.
- a possible model) created by the RANSAC algorithm.
- A model hypothesis that meets certain criteria becomes a model.
- In regards to target tracking, a model hypothesis is referred to as a 
-\series bold
-track
-\series default
+\begin_layout Standard
+The MHT algorithm is a batch tracker that uses a hard data association technique.
+ It is an optimal algorithm since it considers all possible measurement
+ associations, i.e.
+ a measurement either belong to an existing track, a new track, or no track
+ in order to create hypotheses.
+ There are two different versions of MHT: measurement-oriented (MO-MHT)
  
-\series bold
-hypothesis
-\series default
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Reid1979"
+
+\end_inset
+
+ and track-oriented (TO-MHT) 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Kurien1990"
+
+\end_inset
+
 .
- We will often abbreviate the term and mention only 
-\series bold
-hypothesis
-\series default
+ While MHT is an optimal algorithm, it is not feasible unless appropriate
+ techniques are used to limit the number of generated hypotheses: pruning,
+ merging, sliding window, etc.
+ When these techniques are used, the algorithm is suboptimal.
+ Lastly, the algorithm is capable of initializing and killing tracks.
+ Hard data association that assumes one measurement per time step.
+\end_layout
+
+\begin_layout Standard
+The PHMT is a soft data association algorithm that relaxes the criteria
+ that a track can only produce at most one measurement per time step.
+ It does this by using a combination of the maximum likelihood and expectation
+ maximization algorithm 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Dempster1977"
+
+\end_inset
+
+ to maximize the posterior probability of the tracks given a batch of measuremen
+ts or a windowed set of measurements.
+ In the original form, it didn't have a method of track initialization or
+ killing, but later variants used the Hugh transform or the MHT as a front
+ end to initialize tracks 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Crousey2009"
+
+\end_inset
+
 .
-\end_layout
+ The PHMT performance is similar to that of the PDAF which is a single-scan
+ tracker 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Bar-Shalom2011"
 
-\begin_layout Itemize
+\end_inset
 
-\series bold
-Model Likelihood
-\series default
-: The probability that a model represents an actual target.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Good
-\series default
- 
-\series bold
-Model
-\series default
-: A model that is deemed very likely to correctly describe a phenomenon,
- based on predefined criteria, becomes a good model.
- In regards to target tracking, a good model is referred to as a 
-\series bold
-good
-\series default
- 
-\series bold
-track
-\series default
 .
+ A variant of the PHMT operates on a windowed batch of data, and can be
+ used as a single-scan tracker.
+ 
 \end_layout
 
-\begin_layout Itemize
+\begin_layout Standard
+Recursive random sample consensus (R-RANSAC) is a recently new MTT algorithm
+ with a modular paradigm.
+ Unlike the MTT algorithms previously discussed that rely on additional
+ initialization scheme or a computationally extensive hypotheses tree to
+ initialize tracks, R-RANSAC uses RANSAC over a windowed batch of data to
+ initialize tracks.
+ Once tracks are initialized, it uses any single-scan tracker (GNN, JPDAF,
+ PDAF, PHMT, ect) to update the tracks.
+ In addition, it manages the tracks by pruning, killing, and merging them.
+ Another novelty of the algorithm is that the surveillance region doesn't
+ need to be fixed, but can be moved provided that a transformation is available
+ to transform measurements and tracks.
+\end_layout
 
-\series bold
-Poor
-\series default
- 
-\series bold
-Model
-\series default
-: A model that is not a good model.
- In regards to target tracking, a poor model is referred to as a 
-\series bold
-poor
-\series default
- 
-\series bold
-track
-\series default
+\begin_layout Standard
+R-RANSAC was first designed to estimate the parameters of multiple static
+ signals 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Niedfeldt2013"
+
+\end_inset
+
+ , but it was quickly extended to track multiple dynamic targets 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Niedfeldt"
+
+\end_inset
+
 .
-\end_layout
+ Since then, R-RANSAC has been improved, modified and changed by various
+ people 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Niedfeldt2014b,Niedfeldt2014,Niedfeldt2016,Ingersoll2015,Ingersoll2015a,Defranco2015,Lusk2018,Niedfeldt2017,Wikle2017,Millard2017,Yang2017,Yang2018"
 
-\begin_layout Itemize
+\end_inset
 
-\series bold
-Time Window
-\series default
-: An interval of time extending into the past from the current time.
-\end_layout
+.
+ All of these improvements seemed to have stemmed from 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Niedfeldt"
 
-\begin_layout Itemize
+\end_inset
 
-\series bold
-Expired
-\series default
- 
-\series bold
-Measurement
-\series default
-: A measurement that was observed in the past outside the time window.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Measurement
-\series default
- 
-\series bold
-Source
-\series default
-: An algorithm that takes sensor data and produces a measurement.
- We will often refer to a measurement source as just a source.
+, which resulted in many different versions of R-RANSAC.
+ This paper aims at aggregating the best contributions, while adding some
+ of our own improvements.
+ Our specific contributions include removing the constraint that measurements
+ come at a fixed time interval, improving the criteria for a good model
+ using a probabilistic frame work, allowing the measurement and process
+ noise covariance to change at every time step, extending the theory of
+ R-RANSAC to any Lie group, modifying the model merging method, and give
+ several example implementation.
 \end_layout
 
 \begin_layout Standard
-Don't worry if some of the terms do not make much sense now.
- We will elaborate on them later in the text.
-\end_layout
-
-\begin_layout Subsection
-Parameters
-\end_layout
-
-\begin_layout Standard
-There are various parameters used throughout R-RANSAC.
- A parameter can either be a scalar or a tuple.
- In case the context doesn't make it clear, we will specify which one is
- a scalar and a tuple.
- 
-\end_layout
-
-\begin_layout Standard
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-noindent
-\end_layout
+The rest of the paper is outlined as follows.
+ In section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Lie-Theory-Review"
 
 \end_inset
 
- RANSAC parameters
-\end_layout
+ we give a brief review of Lie theory to establish important notation, in
+ section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Problem-Description"
 
-\begin_layout Itemize
-\begin_inset Formula $\ell$
 \end_inset
 
- - max iterations
-\end_layout
+ we present a more detailed description of the problem with assumptions,
+ in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Modular-Paradigm"
 
-\begin_layout Itemize
-\begin_inset Formula $\tau_{E}$
 \end_inset
 
- - RANSAC early termination threshold
-\end_layout
+ we present the modular paradigm.
+ Sections 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Lie-Group-Probability"
 
-\begin_layout Itemize
-\begin_inset Formula $\tau_{I}$
 \end_inset
 
- - RANSAC inlier threshold
-\end_layout
+- 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:LMLE-Simplification"
 
-\begin_layout Itemize
-\begin_inset Formula $\tau_{RM}$
 \end_inset
 
- - The minimum size of a track hypothesis's consensus set in order for the
- hypothesis to become a track
-\end_layout
+ go into more detail on specific parts of R-RANSAC, and section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Examples"
 
-\begin_layout Standard
-Cluster parameters
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $\tau_{CD}$
 \end_inset
 
- - neighborhood distance threshold
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $\tau_{CM}$
-\end_inset
-
- - cluster min cardinality threshold
-\end_layout
-
-\begin_layout Standard
-Model Management Parameters
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $\tau_{S}$
-\end_inset
-
- - Similarity merge threshold
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $\tau_{\rho}$
-\end_inset
-
- - Good track threshold
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $\tau_{\alpha}$
-\end_inset
-
-- Missed detection threshold
-\end_layout
-
-\begin_layout Standard
-PDAF
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $P_{D}$
-\end_inset
-
- - Probability of detection
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $P_{G}$
-\end_inset
-
- - Probability of being in the validation region
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $\lambda$
-\end_inset
-
- - The spacial density of false measurements in a local surveillance region
- per sensor scan
-\end_layout
-
-\begin_layout Standard
-Other
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $T_{W}$
-\end_inset
-
- - Time window
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $M$
-\end_inset
-
- - The number of models
+ presents examples.
 \end_layout
 
 \begin_layout --Separator--
@@ -494,6 +343,13 @@ Other
 
 \begin_layout Section
 Lie Theory Review
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Lie-Theory-Review"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -1015,13 +871,21 @@ This is a very simplified definition that serves our purpose in deriving
 \end_layout
 
 \begin_layout Section
-Problem Description
+Problem Description 
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Problem-Description"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
 The objective is to track multiply dynamic targets by estimating their states
  given a set of measurements from multiple sensors without a prior information
  about the number of targets.
+ The following notation is used throughout.
  We denote the current time using a subscript 
 \begin_inset Formula $k$
 \end_inset
@@ -1089,8 +953,8 @@ The objective is to track multiply dynamic targets by estimating their states
 \end_inset
 
 .
- We assume the system model to be continuous, near constant velocity, and
- time invariant defined as
+ We assume the state transition model to be continuous, near constant velocity,
+ and time invariant defined as
 \begin_inset Formula 
 \begin{align*}
 \dot{g}_{k} & =\xi_{u_{k}}\left(g_{k}\right)\\
@@ -1127,8 +991,7 @@ w_{k}^{u}
 \begin_inset Formula $\delta_{k}$
 \end_inset
 
- we can discretize the model to get the discrete system model described
- as 
+ we can discretize the model to get 
 \begin_inset ERT
 status open
 
@@ -1444,6 +1307,13 @@ If the global frame moves, a transformation is provided to R-RANSAC in order
 
 \begin_layout Section
 Modular Paradigm
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Modular-Paradigm"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -1591,7 +1461,14 @@ The new measurements are checked to see if they should be associated to
  a track and used to update the track's state estimate and likelihood.
  The data association and track update could be implemented using various
  methods: PDAF, JPDAF, MPDAF, NN, GNN, etc.
- In this paper, we use a PDAF.
+ Our technique is described in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Data-Association"
+
+\end_inset
+
+.
  Unassociated new measurements are then checked to see if they belong to
  an existing cluster using the metric 
 \begin_inset Formula $d_{C}$
@@ -1993,7 +1870,14 @@ R-RANSAC
 \end_layout
 
 \begin_layout Section
-Lie Group Probability
+Lie Group Probability 
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Lie-Group-Probability"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -3137,7 +3021,8 @@ name "sec:Track-Likelihood"
 The track likelihood is a measure of how well a model represents an actual
  target.
  In the previous versions of R-RANSAC, the inlier ratio and the track's
- lifetime were used to indicate the model's likelihood.
+ lifetime were used to indicate the model's likelihood which doesn't have
+ much theoretical basis other than intuition.
  In this section, we present a different approach using a binary Bayes filter
  with static states.
  
@@ -4001,9 +3886,9 @@ Recall that the purpose of the LMLE is to generate a current state estimate
 \begin_inset Formula $x_{k}$
 \end_inset
 
- of a model hypothesis.
- Using state estimates we build the consensus set which is later used to
- refine the estimate using a filtering technique.
+ of a track hypothesis.
+ Using the current state estimates we build the consensus set which is later
+ used to refine the estimate using a filtering technique.
  So the estimate of LMLE doesn't have to be super refined, and we can simplify
  the optimization process in different ways.
  
@@ -4037,8 +3922,7 @@ y_{k}=g_{k}\exp\left(v_{k}\right).
 \begin_layout Standard
 When generating a model hypothesis, we always use a measurement from the
  current time.
- This allows us to use a measurement from the current time as our estimated
- pose 
+ We can use this measurement as the estimated pose 
 \begin_inset Formula $g_{k}$
 \end_inset
 
@@ -4101,7 +3985,7 @@ The expected value of
 and the covariance is 
 \begin_inset Formula 
 \begin{align*}
-\text{cov}\left[e_{k:m}\right] & \approx\delta_{k:m}^{2}Q^{g}+\frac{\delta_{k:m}^{2}}{2}Q^{u}+R\\
+\text{cov}\left[e_{k:m}\right] & \approx\delta_{k:m}^{2}Q^{g}+\frac{\delta_{k:m}^{4}}{4}Q^{u}+R\\
  & =R_{k:m}
 \end{align*}
 
@@ -4126,20 +4010,20 @@ We can simply estimate
 \end_inset
 
 .
- We can improve the estimate using multiple measurements.
+ We can enhance the estimate using multiple measurements.
  Let 
-\begin_inset Formula $\Lambda$
+\begin_inset Formula $\chi$
 \end_inset
 
- be and index such that 
-\begin_inset Formula $\cup_{m\in\Lambda}\left\{ y_{m}\right\} $
+ be an index set such that 
+\begin_inset Formula $\cup_{m\in\chi}\left\{ y_{m}\right\} $
 \end_inset
 
  is the set of measurements we will use to estimate 
 \begin_inset Formula $u_{k}$
 \end_inset
 
- and the subscript denotes the time the measurement was taken, then 
+, then 
 \begin_inset Formula 
 \[
 u_{k}=\left(\sum_{j\in\Lambda}\delta_{k:j}R_{k:j}^{-1}\right)^{-1}\left(\sum_{j\in\Lambda}R_{k:j}^{-1}e_{k:j}\right).
@@ -4147,10 +4031,11 @@ u_{k}=\left(\sum_{j\in\Lambda}\delta_{k:j}R_{k:j}^{-1}\right)^{-1}\left(\sum_{j\
 
 \end_inset
 
-We can simplify the estimation further by letting 
+We can simplify the estimation further by setting the covariance terms to
+ identity which yields 
 \begin_inset Formula 
 \[
-u_{k}=\frac{1}{\left|\Lambda\right|}\sum_{j\in\Lambda}e_{k:j}.
+u_{k}=\frac{1}{\left|\chi\right|}\sum_{j\in\Lambda}e_{k:j}.
 \]
 
 \end_inset
@@ -4170,7 +4055,7 @@ reference "eq:meas_cov_time"
 
 \end_inset
 
-, to identity element to get the simplified optimization problem
+, to the identity element to get the simplified optimization problem
 \begin_inset Formula 
 \[
 \arg\min_{x_{k}}\left(\sum_{m=0}^{k}\sum_{j=1}^{\ell\left(m\right)}\left(\hat{e}_{k:m}^{j}\right)^{\top}\hat{e}_{k:m}^{j}\right).
@@ -4182,8 +4067,8 @@ reference "eq:meas_cov_time"
 \begin_inset Formula $R_{k:m}^{j}$
 \end_inset
 
- can be CPU costly when it has to be done thousands of times whenever RANSAC
- is performed.
+ can be computationally costly when it has to be done thousands of times
+ whenever RANSAC is performed.
  
 \end_layout
 
@@ -4197,13 +4082,20 @@ reference "eq:likelihood_inverse"
 \end_inset
 
 , we suggest you use the simplified approaches to seed the original optimization
- problem, unless the system is linear since the optimization problem is
- already simple.
+ problem unless the system is linear since the optimization problem is already
+ simple.
  
 \end_layout
 
 \begin_layout Section
-Examples
+Examples 
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Examples"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -5924,6 +5816,391 @@ and
 \end_inset
 
 Putting the pieces together, we get solution stated in the lemma.
+\end_layout
+
+\begin_layout Section
+Terminology and Parameters
+\end_layout
+
+\begin_layout Standard
+The terminology, parameters, and notation used is previous version of R-RANSAC
+ have varied which has created confusion and inconsistencies.
+ In this section, we hope to solidify certain terminology, parameters and
+ notation that are suitable for expanding R-RANSAC to work with Lie Groups,
+ and incorporating other improvements we have made to the general algorithm.
+\end_layout
+
+\begin_layout Subsection
+Terminology
+\end_layout
+
+\begin_layout Standard
+R-RANSAC has very specific terminology that we that will facilitate the
+ discussion.
+ 
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Phenomenon
+\series default
+: Something that produces an observable signal.
+ In the case of target tracking, the phenomenon is referred to as a 
+\series bold
+target
+\series default
+, which is an object that exists in physical space.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Measurement Source
+\series default
+: A sensor equipped with an algorithm that captures information from the
+ environment and produces meaningful measurements used to observe the target.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Surveillance Region
+\series default
+: The portion of the environment that is observable by the measurement sources.
+ There is a local surveillance region (LSR) for each measurement source
+ and a global surveillance region (GSR) that is a union of all the local
+ surveillance regions.
+ 
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Frame of reference
+\series default
+: Consists of an abstract coordinate system and the set of physical reference
+ points that uniquely fix (locate and orient) the coordinate system and
+ standardize measurements within that frame.
+ We will often refer to a frame of reference as just 
+\series bold
+frame
+\series default
+.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Local Frame
+\series default
+: The frame that coincides with a local surveillance region.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Global Frame
+\series default
+: The frame that coincides with the global surveillance region.
+ It is possible that the global frame is the same as a local frame.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Sensor Scan
+\series default
+: When a sensor observes its surveillance region and extracts meaningful
+ data.
+ For example, the sensor scan of a camera occurs when the camera produces
+ a new image of its surveillance region.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+False Measurement
+\series default
+: A measurement extracted from a sensor scan that does not correspond to
+ a phenomenon of interest.
+ For example, motion in a camera can generate false measurements due to
+ parallax depending on the algorithm.
+ Another example is just noisy sensors.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+True Measurement
+\series default
+: A measurement extracted from a sensor scan that corresponds to a phenomenon
+ of interest.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Model
+\series default
+: This is simply a model of the phenomenon.
+ In regards to target tracking, a model is referred to as a 
+\series bold
+track
+\series default
+.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Model Hypothesis
+\series default
+: This is a hypothetical model of the phenomenon (i.e.
+ a possible model) created by the RANSAC algorithm.
+ A model hypothesis that meets certain criteria becomes a model.
+ In regards to target tracking, a model hypothesis is referred to as a 
+\series bold
+track
+\series default
+ 
+\series bold
+hypothesis
+\series default
+.
+ We will often abbreviate the term and mention only 
+\series bold
+hypothesis
+\series default
+.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Model Likelihood
+\series default
+: The probability that a model represents an actual target.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Good
+\series default
+ 
+\series bold
+Model
+\series default
+: A model that is deemed very likely to correctly describe a phenomenon,
+ based on predefined criteria, becomes a good model.
+ In regards to target tracking, a good model is referred to as a 
+\series bold
+good
+\series default
+ 
+\series bold
+track
+\series default
+.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Poor
+\series default
+ 
+\series bold
+Model
+\series default
+: A model that is not a good model.
+ In regards to target tracking, a poor model is referred to as a 
+\series bold
+poor
+\series default
+ 
+\series bold
+track
+\series default
+.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Time Window
+\series default
+: An interval of time extending into the past from the current time.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Expired
+\series default
+ 
+\series bold
+Measurement
+\series default
+: A measurement that was observed in the past outside the time window.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Measurement
+\series default
+ 
+\series bold
+Source
+\series default
+: An algorithm that takes sensor data and produces a measurement.
+ We will often refer to a measurement source as just a source.
+\end_layout
+
+\begin_layout Subsection
+Parameters
+\end_layout
+
+\begin_layout Standard
+There are various parameters used throughout R-RANSAC.
+ A parameter can either be a scalar or a tuple.
+ In case the context doesn't make it clear, we will specify which one is
+ a scalar and a tuple.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+noindent
+\end_layout
+
+\end_inset
+
+ RANSAC parameters
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\ell$
+\end_inset
+
+ - max iterations
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\tau_{E}$
+\end_inset
+
+ - RANSAC early termination threshold
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\tau_{I}$
+\end_inset
+
+ - RANSAC inlier threshold
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\tau_{RM}$
+\end_inset
+
+ - The minimum size of a track hypothesis's consensus set in order for the
+ hypothesis to become a track
+\end_layout
+
+\begin_layout Standard
+Cluster parameters
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\tau_{CD}$
+\end_inset
+
+ - neighborhood distance threshold
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\tau_{CM}$
+\end_inset
+
+ - cluster min cardinality threshold
+\end_layout
+
+\begin_layout Standard
+Model Management Parameters
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\tau_{S}$
+\end_inset
+
+ - Similarity merge threshold
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\tau_{\rho}$
+\end_inset
+
+ - Good track threshold
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\tau_{\alpha}$
+\end_inset
+
+- Missed detection threshold
+\end_layout
+
+\begin_layout Standard
+PDAF
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $P_{D}$
+\end_inset
+
+ - Probability of detection
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $P_{G}$
+\end_inset
+
+ - Probability of being in the validation region
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\lambda$
+\end_inset
+
+ - The spacial density of false measurements in a local surveillance region
+ per sensor scan
+\end_layout
+
+\begin_layout Standard
+Other
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $T_{W}$
+\end_inset
+
+ - Time window
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $M$
+\end_inset
+
+ - The number of models
 \end_layout
 
 \begin_layout --Separator--
