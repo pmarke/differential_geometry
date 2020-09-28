@@ -91,27 +91,26 @@ Introduction
 \end_layout
 
 \begin_layout Standard
-Optimal estimators for the multiple target tracking (MTT) problem are not
+Optimal algorithms for the multiple target tracking (MTT) problem are not
  feasible in real time due to their computational complexities; therefore,
  many suboptimal approaches have been developed which can be implemented
  in real time.
- Some of the common MTT algorithms are the global nearest neighbor (GNN),
- the joint probabilistic data association filter (JPDAF), variants of the
- multiple hypothesis tracking (MHT), and the probabilistic multi-hypothesis
- tracker (PHMT).
+ Some of these common algorithms are the global nearest neighbor (GNN),
+ the joint probabilistic data association filter (JPDAF), the multiple hypothesi
+s tracking (MHT), and the probabilistic multi-hypothesis tracker (PHMT).
  Each of these algorithms have variants that trade optimality for computational
  feasibility.
  There are also many other MTT algorithms which we will not discussed here
- 
+ but we refer the reader to 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Pulford2005"
 
 \end_inset
 
- since our purpose is not focused on any of these algorithms.
- We only briefly discuss some of the common algorithms for comparison.
- 
+ for a survey of the more common algorithms.
+ We briefly present some of these common algorithms in order to compare
+ and contrast them.
 \end_layout
 
 \begin_layout Standard
@@ -135,13 +134,14 @@ greedy
 \end_inset
 
  data association causes track divergence and loss in clutter.
- This method requires an additional scheme to kill and initialize tracks.
+ This method requires an additional scheme to prune, initialize and merge
+ tracks.
  
 \end_layout
 
 \begin_layout Standard
 The JPDAF is an extension of the probabilistic data association filter (PDAF)
- to multiple targets.
+ to multiple target tracking.
  It is a single-scan tracker that uses a soft data association technique
  to weighs new measurements inside a track's validation region based upon
  the new measurement's joint data association probability 
@@ -153,20 +153,18 @@ key "Bar-Shalom2009"
 
 .
  The weights are used to update the tracks.
- Even though it is a single-scan tracker, calculating the probability of
- all possible data associations makes it more computationally complex and
- demanding.
- In addition, this method requires an additional scheme to kill and initialize
- tracks.
+ Even though it is a single-scan tracker, calculating the joint probability
+ of all possible data associations per scan makes it more computationally
+ complex and demanding.
+ In addition, this method requires an additional scheme to prune, initialize
+ and merge tracks.
  
 \end_layout
 
 \begin_layout Standard
 The MHT algorithm is a batch tracker that uses a hard data association technique.
  It is an optimal algorithm since it considers all possible measurement
- associations, i.e.
- a measurement either belong to an existing track, a new track, or no track
- in order to create hypotheses.
+ associations in order to create the hypotheses tree.
  There are two different versions of MHT: measurement-oriented (MO-MHT)
  
 \begin_inset CommandInset citation
@@ -187,8 +185,8 @@ key "Kurien1990"
  techniques are used to limit the number of generated hypotheses: pruning,
  merging, sliding window, etc.
  When these techniques are used, the algorithm is suboptimal.
- Lastly, the algorithm is capable of initializing and killing tracks.
- Hard data association that assumes one measurement per time step.
+ Lastly, the algorithm is capable of initializing and pruning tracks.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -203,9 +201,9 @@ key "Dempster1977"
 \end_inset
 
  to maximize the posterior probability of the tracks given a batch of measuremen
-ts or a windowed set of measurements.
+ts or a windowed batch of measurements.
  In the original form, it didn't have a method of track initialization or
- killing, but later variants used the Hugh transform or the MHT as a front
+ pruning, but later variants used the Hugh transform or the MHT as a front
  end to initialize tracks 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -237,7 +235,7 @@ Recursive random sample consensus (R-RANSAC) is a recently new MTT algorithm
  initialize tracks.
  Once tracks are initialized, it uses any single-scan tracker (GNN, JPDAF,
  PDAF, PHMT, ect) to update the tracks.
- In addition, it manages the tracks by pruning, killing, and merging them.
+ In addition, it manages the tracks by pruning and merging them.
  Another novelty of the algorithm is that the surveillance region doesn't
  need to be fixed, but can be moved provided that a transformation is available
  to transform measurements and tracks.
@@ -252,7 +250,7 @@ key "Niedfeldt2013"
 
 \end_inset
 
- , but it was quickly extended to track multiple dynamic targets 
+, but it was quickly extended to track multiple dynamic targets 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Niedfeldt"
@@ -260,8 +258,8 @@ key "Niedfeldt"
 \end_inset
 
 .
- Since then, R-RANSAC has been improved, modified and changed by various
- people 
+ Since then, R-RANSAC has been improved, modified and changed in various
+ literature 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Niedfeldt2014b,Niedfeldt2014,Niedfeldt2016,Ingersoll2015,Ingersoll2015a,Defranco2015,Lusk2018,Niedfeldt2017,Wikle2017,Millard2017,Yang2017,Yang2018"
@@ -277,13 +275,13 @@ key "Niedfeldt"
 \end_inset
 
 , which resulted in many different versions of R-RANSAC.
- This paper aims at aggregating the best contributions, while adding some
+ This paper aims at aggregating the best contributions while adding some
  of our own improvements.
  Our specific contributions include removing the constraint that measurements
- come at a fixed time interval, improving the criteria for a good model
+ come at a fixed time interval, improving the criteria for a good track
  using a probabilistic frame work, allowing the measurement and process
  noise covariance to change at every time step, extending the theory of
- R-RANSAC to any Lie group, modifying the model merging method, and give
+ R-RANSAC to any Lie group, modifying the model merging method and give
  several example implementation.
 \end_layout
 
@@ -505,7 +503,7 @@ begin{subequations}
 \begin_inset Formula 
 \begin{align*}
 \cdot^{\wedge}:E\to\mathfrak{g} & \quad\left(v\right)\mapsto v^{\wedge}\\
-\cdot^{\vee}:\mathfrak{g}\to V & \quad\left(v^{\wedge}\right)^{\vee}\mapsto v.
+\cdot^{\vee}:\mathfrak{g}\to E & \quad\left(v^{\wedge}\right)^{\vee}\mapsto v.
 \end{align*}
 
 \end_inset
@@ -523,8 +521,7 @@ end{subequations}
 
 \end_inset
 
-.
- The definitions of these maps are dependent on the Lie algebra.
+The definitions of these maps are dependent on the Lie algebra.
  We will rely on context to distinguish between elements of 
 \begin_inset Formula $E$
 \end_inset
@@ -625,7 +622,7 @@ end{subequations}
 \begin_inset Formula $\bullet$
 \end_inset
 
- represents the group operator which we will omit in the future, and 
+ denotes the group operator which we will omit in the future, and 
 \begin_inset Formula $g_{2}^{-1}$
 \end_inset
 
@@ -667,7 +664,7 @@ where
 
 .
  Since the adjoint is a linear function, we can find a matrix version that
- operates on the associated Euclidean space generically such that 
+ operates on the associated Euclidean space generically defined as 
 \begin_inset Formula 
 \[
 \mathbf{Ad}_{g}:E\to E;\quad\left(v\right)\mapsto\mathbf{Ad}_{g}v
@@ -705,7 +702,7 @@ The adjoint of
 \begin_inset Formula $\left[\cdot,\cdot\right]$
 \end_inset
 
- which we will denoted and generically define as 
+ which we will generically define as 
 \begin_inset Formula 
 \[
 ad_{u}:\mathfrak{g}\to\mathfrak{g};\quad\left(v\right)\mapsto\left[u,v\right]
@@ -727,10 +724,6 @@ where
 
 \end_inset
 
-
-\end_layout
-
-\begin_layout Standard
 where 
 \begin_inset Formula $u\in\mathfrak{g}$
 \end_inset
@@ -759,11 +752,11 @@ key "Iserles2000a"
  trivialized' tangent of the exponential map or as the 'right trivialized'
  tangent of the exponential map.
  These differentials are also commonly called the right and left Jacobians.
- The right and left Jacobians , 
+ The right and left Jacobians 
 \begin_inset Formula $J_{r},J_{l}:E\to GL\left(E\right)$
 \end_inset
 
-, are defined as
+ are defined as
 \begin_inset Formula 
 \begin{align*}
 J_{r}\left(v\right) & =\frac{^{r}\partial\text{Exp}\left(v\right)}{\partial v} &  & J_{l}\left(v\right)=\frac{^{l}\partial\text{Exp}\left(v\right)}{\partial v}.
@@ -791,7 +784,7 @@ The right Jacobian has the property that for small
 \begin_inset Formula $v\in E$
 \end_inset
 
- we get that 
+ 
 \begin_inset Formula 
 \begin{align*}
 \text{Exp}\left(\delta v+u\right) & \approx\text{Exp}\left(v\right)\text{Exp}\left(J_{r}\left(v\right)\delta v\right)\\
@@ -809,7 +802,7 @@ The left Jacobian has the similar property that for small
 \begin_inset Formula $v\in E$
 \end_inset
 
- we get that
+ 
 \begin_inset Formula 
 \begin{align*}
 \text{Exp}\left(v+\delta v\right) & \approx\text{Exp}\left(J_{l}\left(v\right)\delta v\right)\text{Exp}\left(v\right)\\
@@ -882,10 +875,14 @@ name "sec:Problem-Description"
 \end_layout
 
 \begin_layout Standard
-The objective is to track multiply dynamic targets by estimating their states
+The objective is to track multiple dynamic targets by estimating their states
  given a set of measurements from multiple sensors without a prior information
  about the number of targets.
- The following notation is used throughout.
+ 
+\end_layout
+
+\begin_layout Standard
+The following notation is used throughout.
  We denote the current time using a subscript 
 \begin_inset Formula $k$
 \end_inset
@@ -936,7 +933,11 @@ The objective is to track multiply dynamic targets by estimating their states
 \end_inset
 
 .
- Let the state of the system at time 
+ 
+\end_layout
+
+\begin_layout Standard
+Let the state of the system at time 
 \begin_inset Formula $k$
 \end_inset
 
@@ -954,7 +955,7 @@ The objective is to track multiply dynamic targets by estimating their states
 
 .
  We assume the state transition model to be continuous, near constant velocity,
- and time invariant defined as
+ and time invariant which we define as
 \begin_inset Formula 
 \begin{align*}
 \dot{g}_{k} & =\xi_{u_{k}}\left(g_{k}\right)\\
@@ -1036,11 +1037,11 @@ end{subequations}
  This form is similar to the one found in 
 \begin_inset CommandInset citation
 LatexCommand cite
-key "SjÃžberg2019"
+key "Sjoberg2019"
 
 \end_inset
 
-, and is an exact solution provided that the Lie group is commutative.
+ and is an exact solution provided that the Lie group is commutative.
  If the Lie group is not commutative, the exact numeric solution is cumbersome
  if not impossible to derive, in which case we use the system model as an
  approximate numerical solution.
@@ -1093,7 +1094,7 @@ end{subequations}
 \begin_inset Formula $f$
 \end_inset
 
- is the system model defined in 
+ is the state transition model defined in 
 \begin_inset CommandInset ref
 LatexCommand eqref
 reference "eq:system-model"
@@ -1129,7 +1130,7 @@ The state
 \begin_inset Formula $x$
 \end_inset
 
- is a new Lie group generated from the Cartesian product of 
+ is a Lie group generated from the Cartesian product of 
 \begin_inset Formula $G$
 \end_inset
 
@@ -1218,10 +1219,9 @@ Targets are observed via sensors.
 \end_layout
 
 \begin_layout Standard
-A sensor scan occurs when a source captures new data and has new measurements
- to provide R-RANSAC.
- Measurements from a source can either false or true measurements.
- We assume that false measurements are uniformly distributed in the LSR
+A sensor scan occurs when a source produces new measurements.
+ Measurements from a source can be either false or true measurements.
+ We assume that false measurements are uniformly distributed in the LSR,
  and that the number of false measurements from a source per sensor scan
  can be modeled using a Poisson distribution with parameter 
 \begin_inset Formula $\Lambda$
@@ -1253,7 +1253,7 @@ R-RANSAC works in a single frame requiring all of the measurements to be
 \end_inset
 
  must be provided to R-RANSAC that contains the information necessary to
- transform all the past measurements and models, stored in R-RANSAC, into
+ transform all the past measurements and models stored in R-RANSAC into
  the new global frame.
  
 \end_layout
@@ -1319,8 +1319,8 @@ name "sec:Modular-Paradigm"
 \begin_layout Standard
 The paradigm for R-RANSAC is designed to be very modular.
  In this section we will present the data structures used and modular framework.
- R-RANSAC can be broken down into three main parts: data management, Track
- initialization, and Track management.
+ R-RANSAC can be broken down into three main parts: data management, track
+ initialization, and track management.
 \end_layout
 
 \begin_layout Subsection
@@ -1438,8 +1438,7 @@ Data Management
 \end_layout
 
 \begin_layout Standard
-Data management occurs after a sensor scan provides such that there are
- new measurements 
+Data management occurs after a sensor scan provides new measurements 
 \begin_inset Formula $\Psi_{k}$
 \end_inset
 
@@ -1461,9 +1460,9 @@ Data management occurs after a sensor scan provides such that there are
 \begin_layout Standard
 The new measurements are checked to see if they should be associated to
  a track and used to update the track's state estimate and likelihood.
- The data association and track update could be implemented using various
- methods: PDAF, JPDAF, MPDAF, NN, GNN, etc.
- Our technique is described in section 
+ The data association and track update could be implemented using any single
+ scan tracker.
+ Our data association method is described in section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:Data-Association"
@@ -1495,9 +1494,9 @@ If the possible cluster has at least
 \end_inset
 
  measurements, then the cluster is kept, and the associated measurements
- are removed from the data tree and the unassociated list.
- The remaining unassociated measurements are then placed on the data tree
- creating a new element in the list.
+ are removed from the data tree.
+ The remaining unassociated measurements are placed on the data tree creating
+ a new element in the list.
 \end_layout
 
 \begin_layout Subsection
@@ -1507,7 +1506,7 @@ Track Initialization and Track Management
 \begin_layout Standard
 Track initialization and track management occurs at specified times by the
  user.
- The Track Initialization phase performs RANSAC, see section 
+ The track initialization phase performs RANSAC, see section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:RANSAC"
@@ -1531,7 +1530,7 @@ reference "sec:RANSAC"
 
  measurements.
  If it does, the cluster is kept.
- If it doesn't then we check the time stamp of the measurements.
+ If it doesn't, then we check the time stamp of the measurements.
  If the measurements are old (i.e.
  near being expired), then we remove them; otherwise, we place them back
  on the data tree.
@@ -1543,8 +1542,8 @@ The last phase of R-RANSAC is track management which consists of merging
  and pruning tracks, promoting and demoting tracks, and assigning new good
  tracks a unique label.
  Some tracks will begin to coalesce as they are propagated and updated.
- Tracks that are deemed similar are merged together using the track-to-track
- fusion method discussed in section 
+ If these tracks are deemed similar, they are merged together using the
+ track-to-track fusion method discussed in section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:Track-to-Track-fusion"
@@ -1560,7 +1559,7 @@ reference "sec:Track-to-Track-fusion"
 \begin_inset Formula $M$
 \end_inset
 
- tracks we delete the tracks with the lowest likelihood.
+ tracks we remove the tracks with the lowest likelihood.
  If a track's likelihood is above the threshold 
 \begin_inset Formula $\tau_{\rho}$
 \end_inset
@@ -1575,11 +1574,14 @@ key "Ingersoll2015a"
 
 .
  At the end of these phases, a list of good tracks is published to the user.
- 
-\end_layout
+ For a summary, see algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:rransac"
 
-\begin_layout Subsection
-Modular Algorithm
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -1860,6 +1862,13 @@ R-RANSAC
 \end_inset
 
 
+\begin_inset CommandInset label
+LatexCommand label
+name "alg:rransac"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Plain Layout
@@ -1885,14 +1894,16 @@ name "sec:Lie-Group-Probability"
 \begin_layout Standard
 Our implementation of R-RANSAC uses a probabilistic framework which requires
  us to represent certain probabilistic distributions on Lie groups.
- Therefore, in this section we define the prior distribution of the state
- 
-\begin_inset Formula $x$
+ In this section we define several probabilities in a Lie group framework
+ that are necessary for our implementation.
+ Similar definitions have already been done in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Bourmaud2013a,Bourmaud2014"
+
 \end_inset
 
-, the state transition distribution, the likelihood distribution of the
- measurement and other distributions in a Lie group framework that are necessary
- for our implementation.
+; however, we need to define them for our specific purposes.
  We follow the convention, notation and terminology from 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -1901,14 +1912,6 @@ key "Reid2001,Reid2001a,Thrun2006"
 \end_inset
 
  adapted for the Lie group setting.
- Others have defined these distributions similarly as in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Bourmaud2013a,Bourmaud2014"
-
-\end_inset
-
-; however, our derivation is suited for our purposes.
  
 \end_layout
 
@@ -1921,7 +1924,7 @@ We denote the state estimate at time
 \begin_inset Formula $\hat{x}_{m}\in G\times E$
 \end_inset
 
- and the actual state as 
+ and the true state as 
 \begin_inset Formula $x_{m}\in G\times E$
 \end_inset
 
@@ -1968,7 +1971,7 @@ where
 \end_inset
 
  is a normalizing coefficient corresponding to the Gaussian distribution.
- We will use
+ We will use 
 \begin_inset Formula $\eta$
 \end_inset
 
@@ -2011,10 +2014,10 @@ We can approximate
 \end_inset
 
  as perturbations; this is known as linearizing.
- Doing so, yields
+ Doing so yields
 \begin_inset Formula 
 \[
-p\left(x_{m}\mid x_{m^{-}}\right)\approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus\tilde{f}\right)^{\top}\bar{Q}^{-1}\left(x_{m}\ominus\tilde{f}\right)\right),
+p\left(x_{m}\mid x_{m^{-}}\right)\approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus\tilde{f}\right)^{\top}Q^{-1}\left(x_{m}\ominus\tilde{f}\right)\right),
 \]
 
 \end_inset
@@ -2067,7 +2070,7 @@ Let
 \end_inset
 
  after state propagation.
- It is calculated as 
+ It is defined as 
 \begin_inset Formula 
 \[
 \bar{p}\left(x_{m}\right)=\int p\left(x_{m}\mid x_{m^{-}}\right)p\left(x_{m^{-}}\right)dx_{m^{-}}.
@@ -2148,7 +2151,7 @@ The probability of a measurement conditioned on the state is called the
 \begin_inset Formula $p\left(y_{m}\mid x_{m}\right)$
 \end_inset
 
-, and defined as 
+ and defined as 
 \begin_inset Formula 
 \[
 p\left(y_{m}\mid x_{m}\right)=\eta\exp\left(-\frac{1}{2}e^{\top}R^{-1}e\right),
@@ -2184,7 +2187,7 @@ where
 \begin_inset Formula 
 \begin{align*}
 H_{m} & =\left.\frac{\partial y_{m}\ominus h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{\hat{x}_{m},\hat{v}_{m}},\\
- & =\left.\frac{\partial\log\left(\hat{e}\right)}{\partial z}\frac{\partial e}{\partial h^{-1}\left(x_{m},v_{m}\right)}\frac{\partial h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{\hat{x}_{m},\hat{v}_{m}}\\
+ & =\left.\frac{\partial\log\left(e\right)}{\partial e}\frac{\partial e}{\partial h^{-1}\left(x_{m},v_{m}\right)}\frac{\partial h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{\hat{x}_{m},\hat{v}_{m}}\\
  & =J_{r}^{-1}\left(\hat{e}\right)\mathbf{Ad}_{y_{m}^{-1}}\left.\frac{\partial h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{\hat{x}_{m},\hat{v}_{m}}
 \end{align*}
 

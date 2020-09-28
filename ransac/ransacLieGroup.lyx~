@@ -33,7 +33,7 @@
 \output_sync 0
 \bibtex_command default
 \index_command default
-\paperfontsize default
+\paperfontsize 10
 \spacing single
 \use_hyperref false
 \papersize default
@@ -91,67 +91,28 @@ Introduction
 \end_layout
 
 \begin_layout Standard
-<<<<<<< HEAD
-Optimal estimators for the multiple target tracking (MTT) problem are not
+Optimal algorithms for the multiple target tracking (MTT) problem are not
  feasible in real time due to their computational complexities; therefore,
  many suboptimal approaches have been developed which can be implemented
  in real time.
- Some of the common MTT algorithms are the global nearest neighbor (GNN),
- the joint probabilistic data association filter (JPDAF), variants of the
- multiple hypothesis tracking (MHT), and the probabilistic multi-hypothesis
- tracker (PHMT).
+ Some of these common algorithms are the global nearest neighbor (GNN),
+ the joint probabilistic data association filter (JPDAF), the multiple hypothesi
+s tracking (MHT), and the probabilistic multi-hypothesis tracker (PHMT).
  Each of these algorithms have variants that trade optimality for computational
  feasibility.
  There are also many other MTT algorithms which we will not discussed here
- 
+ but we refer the reader to 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Pulford2005"
 
 \end_inset
 
- since our purpose is not focused on any of these algorithms.
- We only briefly discuss some of the common algorithms for comparison.
-=======
-This note assumes the reader has a basic understanding of the theory relating
- to Matrix Lie Groups and their corresponding Lie algebras.
- This includes the matrix exponential and logarithm map, the vector space
- isomorphic to specific Lie algebras, the adjoint of the group and the algebra,
- and the left and right Jacobians.
- It also assumes that the reader has a basic understanding of R-RANSAC.
+ for a survey of the more common algorithms.
+ We briefly present some of these common algorithms in order to compare
+ and contrast them.
 \end_layout
 
-\begin_layout --Separator--
-
-\end_layout
-
-\begin_layout Section
-Lie Theory Review
-\end_layout
-
-\begin_layout Standard
-The objective of this section is to provide a review of the pertinent concepts
- of Lie theory to establish notation.
- We assume that the reader is familiar with Lie group and Lie algebra theory.
- For those unfamiliar with this material, we refer the interested reader
- primarily to 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Sola2018"
-
-\end_inset
-
-.
- Solá offers a very gentle introduction to Lie theory that covers the majority
- of information needed to understand this paper.
- We also follow much of the notation prescribed by Solá and Hertzberg in
->>>>>>> d23c23def41f37ca1e2e9861a6d2acb1daf71c59
- 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Sola2018"
-
-<<<<<<< HEAD
 \begin_layout Standard
 The GNN is the simplest MTT method.
  It is a single-scan tracker that uses hard data association to assign measureme
@@ -160,19 +121,10 @@ nts to tracks based on distance without taking into account statistical
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Bar-Shalom2011"
-=======
-\end_inset
-
- and 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Hertzberg2013"
->>>>>>> d23c23def41f37ca1e2e9861a6d2acb1daf71c59
 
 \end_inset
 
 .
-<<<<<<< HEAD
  The GNN filter is a computationally efficient algorithm, but its 
 \begin_inset Quotes eld
 \end_inset
@@ -182,13 +134,14 @@ greedy
 \end_inset
 
  data association causes track divergence and loss in clutter.
- This method requires an additional scheme to kill and initialize tracks.
+ This method requires an additional scheme to prune, initialize and merge
+ tracks.
  
 \end_layout
 
 \begin_layout Standard
 The JPDAF is an extension of the probabilistic data association filter (PDAF)
- to multiple targets.
+ to multiple target tracking.
  It is a single-scan tracker that uses a soft data association technique
  to weighs new measurements inside a track's validation region based upon
  the new measurement's joint data association probability 
@@ -200,20 +153,18 @@ key "Bar-Shalom2009"
 
 .
  The weights are used to update the tracks.
- Even though it is a single-scan tracker, calculating the probability of
- all possible data associations makes it more computationally complex and
- demanding.
- In addition, this method requires an additional scheme to kill and initialize
- tracks.
+ Even though it is a single-scan tracker, calculating the joint probability
+ of all possible data associations per scan makes it more computationally
+ complex and demanding.
+ In addition, this method requires an additional scheme to prune, initialize
+ and merge tracks.
  
 \end_layout
 
 \begin_layout Standard
 The MHT algorithm is a batch tracker that uses a hard data association technique.
  It is an optimal algorithm since it considers all possible measurement
- associations, i.e.
- a measurement either belong to an existing track, a new track, or no track
- in order to create hypotheses.
+ associations in order to create the hypotheses tree.
  There are two different versions of MHT: measurement-oriented (MO-MHT)
  
 \begin_inset CommandInset citation
@@ -234,8 +185,8 @@ key "Kurien1990"
  techniques are used to limit the number of generated hypotheses: pruning,
  merging, sliding window, etc.
  When these techniques are used, the algorithm is suboptimal.
- Lastly, the algorithm is capable of initializing and killing tracks.
- Hard data association that assumes one measurement per time step.
+ Lastly, the algorithm is capable of initializing and pruning tracks.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -250,9 +201,9 @@ key "Dempster1977"
 \end_inset
 
  to maximize the posterior probability of the tracks given a batch of measuremen
-ts or a windowed set of measurements.
+ts or a windowed batch of measurements.
  In the original form, it didn't have a method of track initialization or
- killing, but later variants used the Hugh transform or the MHT as a front
+ pruning, but later variants used the Hugh transform or the MHT as a front
  end to initialize tracks 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -272,7 +223,164 @@ key "Bar-Shalom2011"
 .
  A variant of the PHMT operates on a windowed batch of data, and can be
  used as a single-scan tracker.
-=======
+ 
+\end_layout
+
+\begin_layout Standard
+Recursive random sample consensus (R-RANSAC) is a recently new MTT algorithm
+ with a modular paradigm.
+ Unlike the MTT algorithms previously discussed that rely on additional
+ initialization scheme or a computationally extensive hypotheses tree to
+ initialize tracks, R-RANSAC uses RANSAC over a windowed batch of data to
+ initialize tracks.
+ Once tracks are initialized, it uses any single-scan tracker (GNN, JPDAF,
+ PDAF, PHMT, ect) to update the tracks.
+ In addition, it manages the tracks by pruning and merging them.
+ Another novelty of the algorithm is that the surveillance region doesn't
+ need to be fixed, but can be moved provided that a transformation is available
+ to transform measurements and tracks.
+\end_layout
+
+\begin_layout Standard
+R-RANSAC was first designed to estimate the parameters of multiple static
+ signals 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Niedfeldt2013"
+
+\end_inset
+
+, but it was quickly extended to track multiple dynamic targets 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Niedfeldt"
+
+\end_inset
+
+.
+ Since then, R-RANSAC has been improved, modified and changed in various
+ literature 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Niedfeldt2014b,Niedfeldt2014,Niedfeldt2016,Ingersoll2015,Ingersoll2015a,Defranco2015,Lusk2018,Niedfeldt2017,Wikle2017,Millard2017,Yang2017,Yang2018"
+
+\end_inset
+
+.
+ All of these improvements seemed to have stemmed from 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Niedfeldt"
+
+\end_inset
+
+, which resulted in many different versions of R-RANSAC.
+ This paper aims at aggregating the best contributions while adding some
+ of our own improvements.
+ Our specific contributions include removing the constraint that measurements
+ come at a fixed time interval, improving the criteria for a good track
+ using a probabilistic frame work, allowing the measurement and process
+ noise covariance to change at every time step, extending the theory of
+ R-RANSAC to any Lie group, modifying the model merging method and give
+ several example implementation.
+\end_layout
+
+\begin_layout Standard
+The rest of the paper is outlined as follows.
+ In section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Lie-Theory-Review"
+
+\end_inset
+
+ we give a brief review of Lie theory to establish important notation, in
+ section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Problem-Description"
+
+\end_inset
+
+ we present a more detailed description of the problem with assumptions,
+ in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Modular-Paradigm"
+
+\end_inset
+
+ we present the modular paradigm.
+ Sections 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Lie-Group-Probability"
+
+\end_inset
+
+- 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:LMLE-Simplification"
+
+\end_inset
+
+ go into more detail on specific parts of R-RANSAC, and in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Examples"
+
+\end_inset
+
+ we present examples.
+\end_layout
+
+\begin_layout --Separator--
+
+\end_layout
+
+\begin_layout Section
+Lie Theory Review
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Lie-Theory-Review"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The objective of this section is to provide a review of the pertinent concepts
+ of Lie theory to establish notation.
+ We assume that the reader is familiar with Lie group and Lie algebra theory.
+ For those unfamiliar with this material, we refer the interested reader
+ primarily to 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Sola2018"
+
+\end_inset
+
+.
+ Solá offers a very gentle introduction to Lie theory that covers the majority
+ of information needed to understand this paper.
+ We also follow much of the notation prescribed by Solá and Hertzberg in
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Sola2018"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Hertzberg2013"
+
+\end_inset
+
+.
  For those who are interested in a more rigorous treatment of Lie theory,
  we refer the reader to 
 \begin_inset CommandInset citation
@@ -359,134 +467,10 @@ end{subequations}
  The definition of these maps is dependent on the Lie group.
  For matrix Lie groups, the exponential and logarithm maps are defined as
  the matrix exponential and matrix logarithm.
->>>>>>> d23c23def41f37ca1e2e9861a6d2acb1daf71c59
  
 \end_layout
 
 \begin_layout Standard
-<<<<<<< HEAD
-Recursive random sample consensus (R-RANSAC) is a recently new MTT algorithm
- with a modular paradigm.
- Unlike the MTT algorithms previously discussed that rely on additional
- initialization scheme or a computationally extensive hypotheses tree to
- initialize tracks, R-RANSAC uses RANSAC over a windowed batch of data to
- initialize tracks.
- Once tracks are initialized, it uses any single-scan tracker (GNN, JPDAF,
- PDAF, PHMT, ect) to update the tracks.
- In addition, it manages the tracks by pruning, killing, and merging them.
- Another novelty of the algorithm is that the surveillance region doesn't
- need to be fixed, but can be moved provided that a transformation is available
- to transform measurements and tracks.
-\end_layout
-
-\begin_layout Standard
-R-RANSAC was first designed to estimate the parameters of multiple static
- signals 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Niedfeldt2013"
-
-\end_inset
-
- , but it was quickly extended to track multiple dynamic targets 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Niedfeldt"
-
-\end_inset
-
-.
- Since then, R-RANSAC has been improved, modified and changed by various
- people 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Niedfeldt2014b,Niedfeldt2014,Niedfeldt2016,Ingersoll2015,Ingersoll2015a,Defranco2015,Lusk2018,Niedfeldt2017,Wikle2017,Millard2017,Yang2017,Yang2018"
-
-\end_inset
-
-.
- All of these improvements seemed to have stemmed from 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Niedfeldt"
-
-\end_inset
-
-, which resulted in many different versions of R-RANSAC.
- This paper aims at aggregating the best contributions, while adding some
- of our own improvements.
- Our specific contributions include removing the constraint that measurements
- come at a fixed time interval, improving the criteria for a good model
- using a probabilistic frame work, allowing the measurement and process
- noise covariance to change at every time step, extending the theory of
- R-RANSAC to any Lie group, modifying the model merging method, and give
- several example implementation.
-\end_layout
-
-\begin_layout Standard
-The rest of the paper is outlined as follows.
- In section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:Lie-Theory-Review"
-
-\end_inset
-
- we give a brief review of Lie theory to establish important notation, in
- section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:Problem-Description"
-
-\end_inset
-
- we present a more detailed description of the problem with assumptions,
- in section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:Modular-Paradigm"
-
-\end_inset
-
- we present the modular paradigm.
- Sections 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:Lie-Group-Probability"
-
-\end_inset
-
-- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:LMLE-Simplification"
-
-\end_inset
-
- go into more detail on specific parts of R-RANSAC, and section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:Examples"
-
-\end_inset
-
- presents examples.
-\end_layout
-
-\begin_layout --Separator--
-
-\end_layout
-
-\begin_layout Section
-Lie Theory Review
-\begin_inset CommandInset label
-LatexCommand label
-name "sec:Lie-Theory-Review"
-
-\end_inset
-
-
-=======
 The Lie algebra is isomorphic to the Euclidean space 
 \begin_inset Formula $\mathbb{R}^{n}$
 \end_inset
@@ -519,7 +503,7 @@ begin{subequations}
 \begin_inset Formula 
 \begin{align*}
 \cdot^{\wedge}:E\to\mathfrak{g} & \quad\left(v\right)\mapsto v^{\wedge}\\
-\cdot^{\vee}:\mathfrak{g}\to V & \quad\left(v^{\wedge}\right)^{\vee}\mapsto v.
+\cdot^{\vee}:\mathfrak{g}\to E & \quad\left(v^{\wedge}\right)^{\vee}\mapsto v.
 \end{align*}
 
 \end_inset
@@ -537,8 +521,7 @@ end{subequations}
 
 \end_inset
 
-.
- The definitions of these maps are dependent on the Lie algebra.
+The definitions of these maps are dependent on the Lie algebra.
  We will rely on context to distinguish between elements of 
 \begin_inset Formula $E$
 \end_inset
@@ -639,7 +622,7 @@ end{subequations}
 \begin_inset Formula $\bullet$
 \end_inset
 
- represents the group operator which we will omit in the future, and 
+ denotes the group operator which we will omit in the future, and 
 \begin_inset Formula $g_{2}^{-1}$
 \end_inset
 
@@ -652,7 +635,6 @@ end{subequations}
  (using vector fields that are left invariant) since we will present the
  material using the left trivialization.
  Note that we could easily use the right trivialization as well.
->>>>>>> d23c23def41f37ca1e2e9861a6d2acb1daf71c59
 \end_layout
 
 \begin_layout Standard
@@ -682,7 +664,7 @@ where
 
 .
  Since the adjoint is a linear function, we can find a matrix version that
- operates on the associated Euclidean space generically such that 
+ operates on the associated Euclidean space generically defined as 
 \begin_inset Formula 
 \[
 \mathbf{Ad}_{g}:E\to E;\quad\left(v\right)\mapsto\mathbf{Ad}_{g}v
@@ -720,7 +702,7 @@ The adjoint of
 \begin_inset Formula $\left[\cdot,\cdot\right]$
 \end_inset
 
- which we will denoted and generically define as 
+ which we will generically define as 
 \begin_inset Formula 
 \[
 ad_{u}:\mathfrak{g}\to\mathfrak{g};\quad\left(v\right)\mapsto\left[u,v\right]
@@ -742,10 +724,6 @@ where
 
 \end_inset
 
-
-\end_layout
-
-\begin_layout Standard
 where 
 \begin_inset Formula $u\in\mathfrak{g}$
 \end_inset
@@ -774,11 +752,11 @@ key "Iserles2000a"
  trivialized' tangent of the exponential map or as the 'right trivialized'
  tangent of the exponential map.
  These differentials are also commonly called the right and left Jacobians.
- The right and left Jacobians , 
+ The right and left Jacobians 
 \begin_inset Formula $J_{r},J_{l}:E\to GL\left(E\right)$
 \end_inset
 
-, are defined as
+ are defined as
 \begin_inset Formula 
 \begin{align*}
 J_{r}\left(v\right) & =\frac{^{r}\partial\text{Exp}\left(v\right)}{\partial v} &  & J_{l}\left(v\right)=\frac{^{l}\partial\text{Exp}\left(v\right)}{\partial v}.
@@ -806,7 +784,7 @@ The right Jacobian has the property that for small
 \begin_inset Formula $v\in E$
 \end_inset
 
- we get that 
+ 
 \begin_inset Formula 
 \begin{align*}
 \text{Exp}\left(\delta v+u\right) & \approx\text{Exp}\left(v\right)\text{Exp}\left(J_{r}\left(v\right)\delta v\right)\\
@@ -824,7 +802,7 @@ The left Jacobian has the similar property that for small
 \begin_inset Formula $v\in E$
 \end_inset
 
- we get that
+ 
 \begin_inset Formula 
 \begin{align*}
 \text{Exp}\left(v+\delta v\right) & \approx\text{Exp}\left(J_{l}\left(v\right)\delta v\right)\text{Exp}\left(v\right)\\
@@ -886,218 +864,6 @@ This is a very simplified definition that serves our purpose in deriving
 \end_layout
 
 \begin_layout Section
-Problem Description
-\end_layout
-
-\begin_layout Standard
-The objective is to track multiply dynamic targets by estimating their states
- given a set of measurements from multiple sensors without a prior information
- about the number of targets.
- We denote the current time using a subscript 
-\begin_inset Formula $k$
-\end_inset
-
-, the next previous time using a subscript 
-\begin_inset Formula $k^{-}$
-\end_inset
-
-, and an arbitrary previous time using the subscript 
-\begin_inset Formula $m$
-\end_inset
-
- such that 
-\begin_inset Formula $m\leq k$
-\end_inset
-
-.
- We use 
-\begin_inset Formula $\delta_{k}$
-\end_inset
-
- to denote the time elapsed from 
-\begin_inset Formula $k^{-}$
-\end_inset
-
- to 
-\begin_inset Formula $k$
-\end_inset
-
-, and 
-\begin_inset Formula $\delta_{m:k}$
-\end_inset
-
- to denote the time elapsed from 
-\begin_inset Formula $m$
-\end_inset
-
- to 
-\begin_inset Formula $k$
-\end_inset
-
- such that 
-\begin_inset Formula $\delta_{m:k},\delta_{k^{-}}\geq0$
-\end_inset
-
- and 
-\begin_inset Formula $\delta_{k:m}=-\delta_{m:k}$
-\end_inset
-
-.
- Let the state of the system at time 
-\begin_inset Formula $k$
-\end_inset
-
- be given by 
-\begin_inset Formula $x_{k}=\left(g_{k},u_{k}\right)\in G\times E$
-\end_inset
-
- where 
-\begin_inset Formula $g_{k}\in G$
-\end_inset
-
- and 
-\begin_inset Formula $u_{k}\in E$
-\end_inset
-
-.
- We assume the system model to be continuous, near constant velocity, and
- time invariant defined as
-\begin_inset Formula 
-\begin{align*}
-\dot{g}_{k} & =\xi_{u_{k}}\left(g_{k}\right)\\
-\dot{u}_{k} & =w_{k}^{u},
-\end{align*}
-
-\end_inset
-
-where 
-\begin_inset Formula $\xi_{u_{k}}\left(g_{k}\right)$
-\end_inset
-
- is an infinitesimal generator constructed from 
-\begin_inset Formula $u_{k}$
-\end_inset
-
-, 
-\begin_inset Formula $w_{k}=\begin{bmatrix}w_{k}^{g}\\
-w_{k}^{u}
-\end{bmatrix}$
-\end_inset
-
- is process noise sampled from a zero-mean, white-noise, Gaussian distribution
- with covariance 
-\begin_inset Formula $Q$
-\end_inset
-
-.
- Under the assumption that 
-\begin_inset Formula $w_{k}$
-\end_inset
-
- stays constant over a time period 
-\begin_inset Formula $\delta_{k}$
-\end_inset
-
- we can discretize the model to get the discrete system model described
- as 
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{subequations}
-\end_layout
-
-\end_inset
-
-
-\begin_inset CommandInset label
-LatexCommand label
-name "eq:system-model"
-
-\end_inset
-
-
-\begin_inset Formula 
-\begin{align}
-g_{k} & =g_{k^{-}}\oplus\left(\delta_{k}u_{k^{-}}+\delta_{k}w_{k}^{g}+\frac{\delta_{k}^{2}}{2}w_{k}^{u}\right)\\
-u_{k} & =u_{k^{-}}+\delta_{k}w_{k}^{u}.
-\end{align}
-
-\end_inset
-
-
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{subequations}
-\end_layout
-
-\end_inset
-
- This form is similar to the one found in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "SjÃžberg2019"
-
-\end_inset
-
-, and is an exact solution provided that the Lie group is commutative.
- If the Lie group is not commutative, the exact numeric solution is cumbersome
- if not impossible to derive, in which case we use the system model as an
- approximate numerical solution.
-\end_layout
-
-\begin_layout Standard
-The complete discrete system is defined as
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{subequations}
-\end_layout
-
-\end_inset
-
-
-\begin_inset CommandInset label
-LatexCommand label
-name "eq:system"
-
-\end_inset
-
- 
-\begin_inset Formula 
-\begin{align}
-x_{k} & =f\left(x_{k^{-}},w_{k},\delta_{k}\right)\\
-y_{k} & =h\left(x_{k},v_{k}\right),
-\end{align}
-
-\end_inset
-
-
-\begin_inset ERT
-status open
-
-<<<<<<< HEAD
-\begin_layout Standard
-This is a very simplified definition that serves our purpose in deriving
- the discrete system model.
- For a more formal and encompassing definition of an infinitesimal generator,
- we refer the reader to the authors already mentioned.
- 
-\end_layout
-
-\begin_layout Section
 Problem Description 
 \begin_inset CommandInset label
 LatexCommand label
@@ -1109,10 +875,14 @@ name "sec:Problem-Description"
 \end_layout
 
 \begin_layout Standard
-The objective is to track multiply dynamic targets by estimating their states
+The objective is to track multiple dynamic targets by estimating their states
  given a set of measurements from multiple sensors without a prior information
  about the number of targets.
- The following notation is used throughout.
+ 
+\end_layout
+
+\begin_layout Standard
+The following notation is used throughout.
  We denote the current time using a subscript 
 \begin_inset Formula $k$
 \end_inset
@@ -1163,7 +933,11 @@ The objective is to track multiply dynamic targets by estimating their states
 \end_inset
 
 .
- Let the state of the system at time 
+ 
+\end_layout
+
+\begin_layout Standard
+Let the state of the system at time 
 \begin_inset Formula $k$
 \end_inset
 
@@ -1181,7 +955,7 @@ The objective is to track multiply dynamic targets by estimating their states
 
 .
  We assume the state transition model to be continuous, near constant velocity,
- and time invariant defined as
+ and time invariant which we define as
 \begin_inset Formula 
 \begin{align*}
 \dot{g}_{k} & =\xi_{u_{k}}\left(g_{k}\right)\\
@@ -1263,11 +1037,11 @@ end{subequations}
  This form is similar to the one found in 
 \begin_inset CommandInset citation
 LatexCommand cite
-key "SjÃžberg2019"
+key "Sjoberg2019"
 
 \end_inset
 
-, and is an exact solution provided that the Lie group is commutative.
+ and is an exact solution provided that the Lie group is commutative.
  If the Lie group is not commutative, the exact numeric solution is cumbersome
  if not impossible to derive, in which case we use the system model as an
  approximate numerical solution.
@@ -1307,8 +1081,6 @@ y_{k} & =h\left(x_{k},v_{k}\right),
 \begin_inset ERT
 status open
 
-=======
->>>>>>> d23c23def41f37ca1e2e9861a6d2acb1daf71c59
 \begin_layout Plain Layout
 
 
@@ -1322,7 +1094,7 @@ end{subequations}
 \begin_inset Formula $f$
 \end_inset
 
- is the system model defined in 
+ is the state transition model defined in 
 \begin_inset CommandInset ref
 LatexCommand eqref
 reference "eq:system-model"
@@ -1358,7 +1130,7 @@ The state
 \begin_inset Formula $x$
 \end_inset
 
- is a new Lie group generated from the Cartesian product of 
+ is a Lie group generated from the Cartesian product of 
 \begin_inset Formula $G$
 \end_inset
 
@@ -1447,10 +1219,9 @@ Targets are observed via sensors.
 \end_layout
 
 \begin_layout Standard
-A sensor scan occurs when a source captures new data and has new measurements
- to provide R-RANSAC.
- Measurements from a source can either false or true measurements.
- We assume that false measurements are uniformly distributed in the LSR
+A sensor scan occurs when a source produces new measurements.
+ Measurements from a source can be either false or true measurements.
+ We assume that false measurements are uniformly distributed in the LSR,
  and that the number of false measurements from a source per sensor scan
  can be modeled using a Poisson distribution with parameter 
 \begin_inset Formula $\Lambda$
@@ -1482,7 +1253,7 @@ R-RANSAC works in a single frame requiring all of the measurements to be
 \end_inset
 
  must be provided to R-RANSAC that contains the information necessary to
- transform all the past measurements and models, stored in R-RANSAC, into
+ transform all the past measurements and models stored in R-RANSAC into
  the new global frame.
  
 \end_layout
@@ -1548,8 +1319,8 @@ name "sec:Modular-Paradigm"
 \begin_layout Standard
 The paradigm for R-RANSAC is designed to be very modular.
  In this section we will present the data structures used and modular framework.
- R-RANSAC can be broken down into three main parts: data management, Track
- initialization, and Track management.
+ R-RANSAC can be broken down into three main parts: data management, track
+ initialization, and track management.
 \end_layout
 
 \begin_layout Subsection
@@ -1667,8 +1438,7 @@ Data Management
 \end_layout
 
 \begin_layout Standard
-Data management occurs after a sensor scan provides such that there are
- new measurements 
+Data management occurs after a sensor scan provides new measurements 
 \begin_inset Formula $\Psi_{k}$
 \end_inset
 
@@ -1690,9 +1460,9 @@ Data management occurs after a sensor scan provides such that there are
 \begin_layout Standard
 The new measurements are checked to see if they should be associated to
  a track and used to update the track's state estimate and likelihood.
- The data association and track update could be implemented using various
- methods: PDAF, JPDAF, MPDAF, NN, GNN, etc.
- Our technique is described in section 
+ The data association and track update could be implemented using any single
+ scan tracker.
+ Our data association method is described in section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:Data-Association"
@@ -1724,9 +1494,9 @@ If the possible cluster has at least
 \end_inset
 
  measurements, then the cluster is kept, and the associated measurements
- are removed from the data tree and the unassociated list.
- The remaining unassociated measurements are then placed on the data tree
- creating a new element in the list.
+ are removed from the data tree.
+ The remaining unassociated measurements are placed on the data tree creating
+ a new element in the list.
 \end_layout
 
 \begin_layout Subsection
@@ -1736,7 +1506,7 @@ Track Initialization and Track Management
 \begin_layout Standard
 Track initialization and track management occurs at specified times by the
  user.
- The Track Initialization phase performs RANSAC, see section 
+ The track initialization phase performs RANSAC, see section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:RANSAC"
@@ -1760,7 +1530,7 @@ reference "sec:RANSAC"
 
  measurements.
  If it does, the cluster is kept.
- If it doesn't then we check the time stamp of the measurements.
+ If it doesn't, then we check the time stamp of the measurements.
  If the measurements are old (i.e.
  near being expired), then we remove them; otherwise, we place them back
  on the data tree.
@@ -1772,8 +1542,8 @@ The last phase of R-RANSAC is track management which consists of merging
  and pruning tracks, promoting and demoting tracks, and assigning new good
  tracks a unique label.
  Some tracks will begin to coalesce as they are propagated and updated.
- Tracks that are deemed similar are merged together using the track-to-track
- fusion method discussed in section 
+ If these tracks are deemed similar, they are merged together using the
+ track-to-track fusion method discussed in section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:Track-to-Track-fusion"
@@ -1789,7 +1559,7 @@ reference "sec:Track-to-Track-fusion"
 \begin_inset Formula $M$
 \end_inset
 
- tracks we delete the tracks with the lowest likelihood.
+ tracks we remove the tracks with the lowest likelihood.
  If a track's likelihood is above the threshold 
 \begin_inset Formula $\tau_{\rho}$
 \end_inset
@@ -1804,11 +1574,14 @@ key "Ingersoll2015a"
 
 .
  At the end of these phases, a list of good tracks is published to the user.
- 
-\end_layout
+ For a summary, see algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:rransac"
 
-\begin_layout Subsection
-Modular Algorithm
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -2089,6 +1862,13 @@ R-RANSAC
 \end_inset
 
 
+\begin_inset CommandInset label
+LatexCommand label
+name "alg:rransac"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Plain Layout
@@ -2114,14 +1894,16 @@ name "sec:Lie-Group-Probability"
 \begin_layout Standard
 Our implementation of R-RANSAC uses a probabilistic framework which requires
  us to represent certain probabilistic distributions on Lie groups.
- Therefore, in this section we define the prior distribution of the state
- 
-\begin_inset Formula $x$
+ In this section we define several probabilities in a Lie group framework
+ that are necessary for our implementation.
+ Similar definitions have already been done in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Bourmaud2013a,Bourmaud2014"
+
 \end_inset
 
-, the state transition distribution, the likelihood distribution of the
- measurement and other distributions in a Lie group framework that are necessary
- for our implementation.
+; however, we need to define them for our specific purposes.
  We follow the convention, notation and terminology from 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -2130,14 +1912,6 @@ key "Reid2001,Reid2001a,Thrun2006"
 \end_inset
 
  adapted for the Lie group setting.
- Others have defined these distributions similarly as in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Bourmaud2013a,Bourmaud2014"
-
-\end_inset
-
-; however, our derivation is suited for our purposes.
  
 \end_layout
 
@@ -2150,7 +1924,7 @@ We denote the state estimate at time
 \begin_inset Formula $\hat{x}_{m}\in G\times E$
 \end_inset
 
- and the actual state as 
+ and the true state as 
 \begin_inset Formula $x_{m}\in G\times E$
 \end_inset
 
@@ -2197,7 +1971,7 @@ where
 \end_inset
 
  is a normalizing coefficient corresponding to the Gaussian distribution.
- We will use
+ We will use 
 \begin_inset Formula $\eta$
 \end_inset
 
@@ -2240,10 +2014,10 @@ We can approximate
 \end_inset
 
  as perturbations; this is known as linearizing.
- Doing so, yields
+ Doing so yields
 \begin_inset Formula 
 \[
-p\left(x_{m}\mid x_{m^{-}}\right)\approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus\tilde{f}\right)^{\top}\bar{Q}^{-1}\left(x_{m}\ominus\tilde{f}\right)\right),
+p\left(x_{m}\mid x_{m^{-}}\right)\approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus\tilde{f}\right)^{\top}Q^{-1}\left(x_{m}\ominus\tilde{f}\right)\right),
 \]
 
 \end_inset
@@ -2296,7 +2070,7 @@ Let
 \end_inset
 
  after state propagation.
- It is calculated as 
+ It is defined as 
 \begin_inset Formula 
 \[
 \bar{p}\left(x_{m}\right)=\int p\left(x_{m}\mid x_{m^{-}}\right)p\left(x_{m^{-}}\right)dx_{m^{-}}.
@@ -4619,7 +4393,7 @@ where
 \end_inset
 
  is the left Jacobian of 
-\begin_inset Formula $SO\left(3\right)$
+\begin_inset Formula $SO\left(2\right)$
 \end_inset
 
  defined in equation 
@@ -6340,457 +6114,6 @@ Measurement
 : A measurement that was observed in the past outside the time window.
 \end_layout
 
-<<<<<<< HEAD
-\begin_layout Subsection
-Jacobians
-\end_layout
-
-\begin_layout Subsubsection
-Adjoint
-\end_layout
-
-\begin_layout Standard
-The group adjoint representation is
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\[
-\mathbf{Ad}_{g}=\begin{bmatrix}R & \left[t\right]_{\times}R\\
-0_{3\times3} & R
-\end{bmatrix}
-\]
-
-\end_inset
-
-with inverse 
-\begin_inset Formula 
-\[
-\mathbf{Ad}_{g}^{-1}=\begin{bmatrix}R^{\top} & -R^{\top}\left[t\right]_{\times}\\
-0_{3\times3} & R^{\top}
-\end{bmatrix}.
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-The Lie algebra representation is 
-\begin_inset Formula 
-\[
-\mathbf{ad}_{u}=\begin{bmatrix}\left[\omega\right]_{\times} & \left[\rho\right]_{\times}\\
-0_{3\times3} & \left[\omega\right]_{\times}
-\end{bmatrix}.
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsubsection
-Left and Right Jacobians
-\end_layout
-
-\begin_layout Standard
-Let 
-\begin_inset Formula $u=\begin{bmatrix}\omega & \rho\\
-0 & 0
-\end{bmatrix}\in\mathfrak{se}\left(3\right)$
-\end_inset
-
- and 
-\begin_inset Formula 
-\begin{align}
-\phi & =\sqrt{\omega^{\top}\omega}\nonumber \\
-a_{\phi} & =\frac{\cos\left(\phi\right)-1}{\phi^{2}}\nonumber \\
-b_{\phi} & =\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\nonumber \\
-c_{\phi} & =-\frac{1}{\phi^{3}}\sin\left(\phi\right)+2\left(\frac{1-\cos\left(\phi\right)}{\phi^{4}}\right)\nonumber \\
-d_{\theta} & =-\frac{2}{\phi^{4}}+\frac{3}{\phi^{5}}\sin\left(\phi\right)-\frac{1}{\phi^{4}}\cos\left(\phi\right)\nonumber \\
-q_{r}\left(\omega\right) & =\left(\left(\omega^{\vee}\right)^{\top}\rho\right)\left(d_{\phi}\omega^{2}+c_{\phi}\omega\right)\nonumber \\
-q_{l}\left(\omega\right) & =\left(\left(\omega^{\vee}\right)^{\top}\rho\right)\left(d_{\phi}\omega^{2}-c_{\phi}\omega\right)\nonumber \\
-B_{r}\left(u\right) & =q_{r}\left(\omega\right)+a_{\phi}\left[\rho\right]_{\times}+b_{\phi}\left(\omega\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\omega\right)\nonumber \\
-B_{l}\left(u\right) & =q_{l}\left(\omega\right)-a_{\phi}\left[\rho\right]_{\times}+b_{\phi}\left(\omega\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\omega\right)\nonumber \\
-J_{r}\left(\omega\right) & =I+\frac{\cos\left(\phi\right)-1}{\phi^{2}}\omega+\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\omega^{2}\nonumber \\
-J_{l}\left(\omega\right) & =I+\frac{1-\cos\left(\phi\right)}{\phi^{2}}\omega+\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\omega^{2}\label{eq:Jl_so3}\\
-J_{r}^{-1}\left(\omega\right) & =I+\frac{1}{2}\omega-\frac{\phi\cot\left(\frac{\phi}{2}\right)-2}{2\phi^{2}}\omega^{2}\nonumber \\
-J_{l}^{-1}\left(\omega\right) & =I-\frac{1}{2}\omega-\frac{\phi\cot\left(\frac{\phi}{2}\right)-2}{2\phi^{2}}\omega^{2}.\nonumber 
-\end{align}
-
-\end_inset
-
-then 
-\begin_inset Formula 
-\begin{align*}
-J_{r}\left(u\right) & =\begin{bmatrix}J_{r}\left(\omega\right) & B_{r}\left(u\right)\\
-0 & J_{r}\left(\omega\right)
-\end{bmatrix}\\
-J_{l}\left(u\right) & =\begin{bmatrix}J_{l}\left(\omega\right) & B_{l}\left(u\right)\\
-0 & J_{l}\left(\omega\right)
-\end{bmatrix}\\
-J_{r}^{-1}\left(u\right) & =\begin{bmatrix}J_{r}^{-1}\left(\omega\right) & J_{r}^{-1}\left(\omega\right)B_{r}\left(u\right)J_{r}^{-1}\left(\omega\right)\\
-0 & J_{r}^{-1}\left(\omega\right)
-\end{bmatrix}\\
-J_{l}^{-1}\left(u\right) & =\begin{bmatrix}J_{l}^{-1}\left(\omega\right) & J_{l}^{-1}\left(\omega\right)B_{l}\left(u\right)J_{l}^{-1}\left(\omega\right)\\
-0 & J_{l}^{-1}\left(\omega\right)
-\end{bmatrix}.
-\end{align*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Section
-Lemma
-\end_layout
-
-\begin_layout Lemma
-\begin_inset CommandInset label
-LatexCommand label
-name "lem:dJl"
-
-\end_inset
-
-Let 
-\begin_inset Formula $J_{l}\left(\omega\right)$
-\end_inset
-
- denote the left Jacobian of 
-\begin_inset Formula $SO\left(3\right)$
-\end_inset
-
- and 
-\begin_inset Formula $\rho\in\mathbb{R}^{3}$
-\end_inset
-
-.
- The derivative of 
-\begin_inset Formula $J_{l}\left(\omega\right)p$
-\end_inset
-
- with respect to 
-\begin_inset Formula $\omega$
-\end_inset
-
-, denote 
-\begin_inset Formula $\partial V_{\omega}\left(\rho\right)$
-\end_inset
-
-, is 
-\begin_inset Formula 
-\begin{align*}
-\partial V_{\omega}\left(\rho\right) & =\left(\frac{1-\cos\left(\theta\right)}{\theta^{2}}\right)\left[-\rho\right]_{\times}\\
- & +\left(\frac{\theta-\sin\left(\theta\right)}{\theta^{3}}\right)\left(-2\omega\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\omega_{\times}\right)\\
- & +\left(\frac{\sin\left(\theta\right)\theta+2\left(\cos\left(\theta\right)-1\right)}{\theta^{4}}\right)\omega\rho\left(\omega^{\vee}\right)^{\top}\\
- & +\left(\frac{3\sin\left(\theta\right)-\cos\left(\theta\right)\theta-2\theta}{\theta^{5}}\right)\omega^{2}\rho\left(\omega^{\vee}\right)^{\top}.
-\end{align*}
-
-\end_inset
-
-where 
-\begin_inset Formula $\omega\in\mathfrak{s0}\left(3\right)$
-\end_inset
-
-, and 
-\begin_inset Formula $\theta=\sqrt{\left(\omega^{\vee}\right)^{\top}\omega^{\vee}}$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Proof
-We first note that 
-\begin_inset Formula $V\left(\omega\right)=J_{l}\left(\omega\right)$
-\end_inset
-
- where 
-\begin_inset Formula $J_{l}\left(\omega\right)$
-\end_inset
-
- is defined in equation 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:Jl_so3"
-
-\end_inset
-
-.
- It follows directly that 
-\begin_inset Formula 
-\[
-\frac{\partial J_{l}\left(\omega\right)}{\partial\omega}=\frac{\partial}{\partial\omega}\left(I+\frac{1-\cos\left(\theta\right)}{\theta^{2}}\omega+\frac{\theta-\sin\left(\theta\right)}{\theta^{3}}\omega^{2}\right)\rho.
-\]
-
-\end_inset
-
-Using the product rule, we can break up the derivation into parts: 
-\begin_inset Formula 
-\[
-\frac{\partial}{\partial\omega}\frac{1-\cos\left(\theta\right)}{\theta^{2}}=\frac{\sin\left(\theta\right)\theta+2\left(\cos\left(\theta\right)+1\right)}{\theta^{3}}\left(\omega^{\vee}\right)^{\top}
-\]
-
-\end_inset
-
-
-\begin_inset Formula 
-\[
-\frac{\partial}{\partial\omega}\frac{\theta-\sin\left(\theta\right)}{\theta^{3}}=\frac{3\sin\left(\theta\right)-\cos\left(\theta\right)\theta-2\theta}{\theta^{5}}
-\]
-
-\end_inset
-
-
-\begin_inset Formula 
-\[
-\frac{\partial}{\partial\omega}\omega\rho=\left[-\rho\right]_{\times}
-\]
-
-\end_inset
-
-and 
-\begin_inset Formula 
-\[
-\frac{\partial}{\partial\omega}\omega^{2}\rho=-2\omega\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\omega_{\times}.
-\]
-
-\end_inset
-
-Putting the pieces together, we get solution stated in the lemma.
-\end_layout
-
-\begin_layout Section
-Terminology and Parameters
-\end_layout
-
-\begin_layout Standard
-The terminology, parameters, and notation used is previous version of R-RANSAC
- have varied which has created confusion and inconsistencies.
- In this section, we hope to solidify certain terminology, parameters and
- notation that are suitable for expanding R-RANSAC to work with Lie Groups,
- and incorporating other improvements we have made to the general algorithm.
-\end_layout
-
-\begin_layout Subsection
-Terminology
-\end_layout
-
-\begin_layout Standard
-R-RANSAC has very specific terminology that we that will facilitate the
- discussion.
- 
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Phenomenon
-\series default
-: Something that produces an observable signal.
- In the case of target tracking, the phenomenon is referred to as a 
-\series bold
-target
-\series default
-, which is an object that exists in physical space.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Measurement Source
-\series default
-: A sensor equipped with an algorithm that captures information from the
- environment and produces meaningful measurements used to observe the target.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Surveillance Region
-\series default
-: The portion of the environment that is observable by the measurement sources.
- There is a local surveillance region (LSR) for each measurement source
- and a global surveillance region (GSR) that is a union of all the local
- surveillance regions.
- 
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Frame of reference
-\series default
-: Consists of an abstract coordinate system and the set of physical reference
- points that uniquely fix (locate and orient) the coordinate system and
- standardize measurements within that frame.
- We will often refer to a frame of reference as just 
-\series bold
-frame
-\series default
-.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Local Frame
-\series default
-: The frame that coincides with a local surveillance region.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Global Frame
-\series default
-: The frame that coincides with the global surveillance region.
- It is possible that the global frame is the same as a local frame.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Sensor Scan
-\series default
-: When a sensor observes its surveillance region and extracts meaningful
- data.
- For example, the sensor scan of a camera occurs when the camera produces
- a new image of its surveillance region.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-False Measurement
-\series default
-: A measurement extracted from a sensor scan that does not correspond to
- a phenomenon of interest.
- For example, motion in a camera can generate false measurements due to
- parallax depending on the algorithm.
- Another example is just noisy sensors.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-True Measurement
-\series default
-: A measurement extracted from a sensor scan that corresponds to a phenomenon
- of interest.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Model
-\series default
-: This is simply a model of the phenomenon.
- In regards to target tracking, a model is referred to as a 
-\series bold
-track
-\series default
-.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Model Hypothesis
-\series default
-: This is a hypothetical model of the phenomenon (i.e.
- a possible model) created by the RANSAC algorithm.
- A model hypothesis that meets certain criteria becomes a model.
- In regards to target tracking, a model hypothesis is referred to as a 
-\series bold
-track
-\series default
- 
-\series bold
-hypothesis
-\series default
-.
- We will often abbreviate the term and mention only 
-\series bold
-hypothesis
-\series default
-.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Model Likelihood
-\series default
-: The probability that a model represents an actual target.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Good
-\series default
- 
-\series bold
-Model
-\series default
-: A model that is deemed very likely to correctly describe a phenomenon,
- based on predefined criteria, becomes a good model.
- In regards to target tracking, a good model is referred to as a 
-\series bold
-good
-\series default
- 
-\series bold
-track
-\series default
-.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Poor
-\series default
- 
-\series bold
-Model
-\series default
-: A model that is not a good model.
- In regards to target tracking, a poor model is referred to as a 
-\series bold
-poor
-\series default
- 
-\series bold
-track
-\series default
-.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Time Window
-\series default
-: An interval of time extending into the past from the current time.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Expired
-\series default
- 
-\series bold
-Measurement
-\series default
-: A measurement that was observed in the past outside the time window.
-\end_layout
-
-=======
->>>>>>> d23c23def41f37ca1e2e9861a6d2acb1daf71c59
 \begin_layout Itemize
 
 \series bold
