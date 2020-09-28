@@ -91,7 +91,6 @@ Introduction
 \end_layout
 
 \begin_layout Standard
-<<<<<<< HEAD
 Optimal estimators for the multiple target tracking (MTT) problem are not
  feasible in real time due to their computational complexities; therefore,
  many suboptimal approaches have been developed which can be implemented
@@ -112,46 +111,9 @@ key "Pulford2005"
 
  since our purpose is not focused on any of these algorithms.
  We only briefly discuss some of the common algorithms for comparison.
-=======
-This note assumes the reader has a basic understanding of the theory relating
- to Matrix Lie Groups and their corresponding Lie algebras.
- This includes the matrix exponential and logarithm map, the vector space
- isomorphic to specific Lie algebras, the adjoint of the group and the algebra,
- and the left and right Jacobians.
- It also assumes that the reader has a basic understanding of R-RANSAC.
-\end_layout
-
-\begin_layout --Separator--
-
-\end_layout
-
-\begin_layout Section
-Lie Theory Review
-\end_layout
-
-\begin_layout Standard
-The objective of this section is to provide a review of the pertinent concepts
- of Lie theory to establish notation.
- We assume that the reader is familiar with Lie group and Lie algebra theory.
- For those unfamiliar with this material, we refer the interested reader
- primarily to 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Sola2018"
-
-\end_inset
-
-.
- Solá offers a very gentle introduction to Lie theory that covers the majority
- of information needed to understand this paper.
- We also follow much of the notation prescribed by Solá and Hertzberg in
->>>>>>> d23c23def41f37ca1e2e9861a6d2acb1daf71c59
  
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Sola2018"
+\end_layout
 
-<<<<<<< HEAD
 \begin_layout Standard
 The GNN is the simplest MTT method.
  It is a single-scan tracker that uses hard data association to assign measureme
@@ -160,19 +122,10 @@ nts to tracks based on distance without taking into account statistical
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Bar-Shalom2011"
-=======
-\end_inset
-
- and 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Hertzberg2013"
->>>>>>> d23c23def41f37ca1e2e9861a6d2acb1daf71c59
 
 \end_inset
 
 .
-<<<<<<< HEAD
  The GNN filter is a computationally efficient algorithm, but its 
 \begin_inset Quotes eld
 \end_inset
@@ -272,99 +225,10 @@ key "Bar-Shalom2011"
 .
  A variant of the PHMT operates on a windowed batch of data, and can be
  used as a single-scan tracker.
-=======
- For those who are interested in a more rigorous treatment of Lie theory,
- we refer the reader to 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Barfoot2019,Stillwell2008,Hall2003,Bullo2005a,Lee2013,Abraham1998"
-
-\end_inset
-
-.
- In this document we will focus on targets with a discrete system model
- and constant velocity, this is merely to simplify the presentation of the
- material.
- With no loss in generality, everything we present can be extended to targets
- with a continuous system model and constant acceleration by using a semidirect
- product group formed from a Lie group and its Lie algebra.
- A good discussion of the semidirect product group can be found in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Engo2003"
-
-\end_inset
-
-.
- If using a continuous system that requires numerical integration on the
- manifold, we refer the reader to 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Munthe-Kaas1995,Munthe-Kaas1998,Munthe-Kaas1999"
-
-\end_inset
-
- which describe the Runge-Kutta-Muthe-Kass numerical integration technique.
  
 \end_layout
 
 \begin_layout Standard
-Let 
-\begin_inset Formula $G$
-\end_inset
-
- denote a Lie group and 
-\begin_inset Formula $\mathfrak{g}$
-\end_inset
-
- denote it's corresponding Lie algebra.
- The exponential function is a surjection that maps an element of the Lie
- algebra to an element of the Lie group, and the logarithmic map is the
- inverse of the exponential map.
- We denote these maps as
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{subequations}
-\end_layout
-
-\end_inset
-
- 
-\begin_inset Formula 
-\begin{align*}
-\exp:\mathfrak{g} & \to G\\
-\log:G & \to\mathfrak{g}.
-\end{align*}
-
-\end_inset
-
-
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{subequations}
-\end_layout
-
-\end_inset
-
- The definition of these maps is dependent on the Lie group.
- For matrix Lie groups, the exponential and logarithm maps are defined as
- the matrix exponential and matrix logarithm.
->>>>>>> d23c23def41f37ca1e2e9861a6d2acb1daf71c59
- 
-\end_layout
-
-\begin_layout Standard
-<<<<<<< HEAD
 Recursive random sample consensus (R-RANSAC) is a recently new MTT algorithm
  with a modular paradigm.
  Unlike the MTT algorithms previously discussed that rely on additional
@@ -486,7 +350,129 @@ name "sec:Lie-Theory-Review"
 \end_inset
 
 
-=======
+\end_layout
+
+\begin_layout Standard
+The objective of this section is to provide a review of the pertinent concepts
+ of Lie theory to establish notation.
+ We assume that the reader is familiar with Lie group and Lie algebra theory.
+ For those unfamiliar with this material, we refer the interested reader
+ primarily to 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Sola2018"
+
+\end_inset
+
+.
+ Solá offers a very gentle introduction to Lie theory that covers the majority
+ of information needed to understand this paper.
+ We also follow much of the notation prescribed by Solá and Hertzberg in
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Sola2018"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Hertzberg2013"
+
+\end_inset
+
+.
+ For those who are interested in a more rigorous treatment of Lie theory,
+ we refer the reader to 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Barfoot2019,Stillwell2008,Hall2003,Bullo2005a,Lee2013,Abraham1998"
+
+\end_inset
+
+.
+ In this document we will focus on targets with a discrete system model
+ and constant velocity, this is merely to simplify the presentation of the
+ material.
+ With no loss in generality, everything we present can be extended to targets
+ with a continuous system model and constant acceleration by using a semidirect
+ product group formed from a Lie group and its Lie algebra.
+ A good discussion of the semidirect product group can be found in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Engo2003"
+
+\end_inset
+
+.
+ If using a continuous system that requires numerical integration on the
+ manifold, we refer the reader to 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Munthe-Kaas1995,Munthe-Kaas1998,Munthe-Kaas1999"
+
+\end_inset
+
+ which describe the Runge-Kutta-Muthe-Kass numerical integration technique.
+ 
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $G$
+\end_inset
+
+ denote a Lie group and 
+\begin_inset Formula $\mathfrak{g}$
+\end_inset
+
+ denote it's corresponding Lie algebra.
+ The exponential function is a surjection that maps an element of the Lie
+ algebra to an element of the Lie group, and the logarithmic map is the
+ inverse of the exponential map.
+ We denote these maps as
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{subequations}
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Formula 
+\begin{align*}
+\exp:\mathfrak{g} & \to G\\
+\log:G & \to\mathfrak{g}.
+\end{align*}
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{subequations}
+\end_layout
+
+\end_inset
+
+ The definition of these maps is dependent on the Lie group.
+ For matrix Lie groups, the exponential and logarithm maps are defined as
+ the matrix exponential and matrix logarithm.
+ 
+\end_layout
+
+\begin_layout Standard
 The Lie algebra is isomorphic to the Euclidean space 
 \begin_inset Formula $\mathbb{R}^{n}$
 \end_inset
@@ -652,7 +638,6 @@ end{subequations}
  (using vector fields that are left invariant) since we will present the
  material using the left trivialization.
  Note that we could easily use the right trivialization as well.
->>>>>>> d23c23def41f37ca1e2e9861a6d2acb1daf71c59
 \end_layout
 
 \begin_layout Standard
@@ -886,218 +871,6 @@ This is a very simplified definition that serves our purpose in deriving
 \end_layout
 
 \begin_layout Section
-Problem Description
-\end_layout
-
-\begin_layout Standard
-The objective is to track multiply dynamic targets by estimating their states
- given a set of measurements from multiple sensors without a prior information
- about the number of targets.
- We denote the current time using a subscript 
-\begin_inset Formula $k$
-\end_inset
-
-, the next previous time using a subscript 
-\begin_inset Formula $k^{-}$
-\end_inset
-
-, and an arbitrary previous time using the subscript 
-\begin_inset Formula $m$
-\end_inset
-
- such that 
-\begin_inset Formula $m\leq k$
-\end_inset
-
-.
- We use 
-\begin_inset Formula $\delta_{k}$
-\end_inset
-
- to denote the time elapsed from 
-\begin_inset Formula $k^{-}$
-\end_inset
-
- to 
-\begin_inset Formula $k$
-\end_inset
-
-, and 
-\begin_inset Formula $\delta_{m:k}$
-\end_inset
-
- to denote the time elapsed from 
-\begin_inset Formula $m$
-\end_inset
-
- to 
-\begin_inset Formula $k$
-\end_inset
-
- such that 
-\begin_inset Formula $\delta_{m:k},\delta_{k^{-}}\geq0$
-\end_inset
-
- and 
-\begin_inset Formula $\delta_{k:m}=-\delta_{m:k}$
-\end_inset
-
-.
- Let the state of the system at time 
-\begin_inset Formula $k$
-\end_inset
-
- be given by 
-\begin_inset Formula $x_{k}=\left(g_{k},u_{k}\right)\in G\times E$
-\end_inset
-
- where 
-\begin_inset Formula $g_{k}\in G$
-\end_inset
-
- and 
-\begin_inset Formula $u_{k}\in E$
-\end_inset
-
-.
- We assume the system model to be continuous, near constant velocity, and
- time invariant defined as
-\begin_inset Formula 
-\begin{align*}
-\dot{g}_{k} & =\xi_{u_{k}}\left(g_{k}\right)\\
-\dot{u}_{k} & =w_{k}^{u},
-\end{align*}
-
-\end_inset
-
-where 
-\begin_inset Formula $\xi_{u_{k}}\left(g_{k}\right)$
-\end_inset
-
- is an infinitesimal generator constructed from 
-\begin_inset Formula $u_{k}$
-\end_inset
-
-, 
-\begin_inset Formula $w_{k}=\begin{bmatrix}w_{k}^{g}\\
-w_{k}^{u}
-\end{bmatrix}$
-\end_inset
-
- is process noise sampled from a zero-mean, white-noise, Gaussian distribution
- with covariance 
-\begin_inset Formula $Q$
-\end_inset
-
-.
- Under the assumption that 
-\begin_inset Formula $w_{k}$
-\end_inset
-
- stays constant over a time period 
-\begin_inset Formula $\delta_{k}$
-\end_inset
-
- we can discretize the model to get the discrete system model described
- as 
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{subequations}
-\end_layout
-
-\end_inset
-
-
-\begin_inset CommandInset label
-LatexCommand label
-name "eq:system-model"
-
-\end_inset
-
-
-\begin_inset Formula 
-\begin{align}
-g_{k} & =g_{k^{-}}\oplus\left(\delta_{k}u_{k^{-}}+\delta_{k}w_{k}^{g}+\frac{\delta_{k}^{2}}{2}w_{k}^{u}\right)\\
-u_{k} & =u_{k^{-}}+\delta_{k}w_{k}^{u}.
-\end{align}
-
-\end_inset
-
-
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{subequations}
-\end_layout
-
-\end_inset
-
- This form is similar to the one found in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "SjÃžberg2019"
-
-\end_inset
-
-, and is an exact solution provided that the Lie group is commutative.
- If the Lie group is not commutative, the exact numeric solution is cumbersome
- if not impossible to derive, in which case we use the system model as an
- approximate numerical solution.
-\end_layout
-
-\begin_layout Standard
-The complete discrete system is defined as
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{subequations}
-\end_layout
-
-\end_inset
-
-
-\begin_inset CommandInset label
-LatexCommand label
-name "eq:system"
-
-\end_inset
-
- 
-\begin_inset Formula 
-\begin{align}
-x_{k} & =f\left(x_{k^{-}},w_{k},\delta_{k}\right)\\
-y_{k} & =h\left(x_{k},v_{k}\right),
-\end{align}
-
-\end_inset
-
-
-\begin_inset ERT
-status open
-
-<<<<<<< HEAD
-\begin_layout Standard
-This is a very simplified definition that serves our purpose in deriving
- the discrete system model.
- For a more formal and encompassing definition of an infinitesimal generator,
- we refer the reader to the authors already mentioned.
- 
-\end_layout
-
-\begin_layout Section
 Problem Description 
 \begin_inset CommandInset label
 LatexCommand label
@@ -1307,8 +1080,6 @@ y_{k} & =h\left(x_{k},v_{k}\right),
 \begin_inset ERT
 status open
 
-=======
->>>>>>> d23c23def41f37ca1e2e9861a6d2acb1daf71c59
 \begin_layout Plain Layout
 
 
@@ -1681,9 +1452,7 @@ Data management occurs after a sensor scan provides such that there are
  are propagated forward in time.
  If a transformation was provided, all of the measurements (not including
  the new measurements since they should already be expressed in the current
- global frame) and tracks are transformed to the current global frame, i.e.
- their state estimate and error covariance are transformed to the current
- global frame.
+ global frame) and models are transformed to the current global frame.
  
 \end_layout
 
@@ -3435,8 +3204,7 @@ Taking the log (base 10) ratio of the probabilities
 \begin_inset Formula 
 \begin{align*}
 \log\left(\frac{p\left(z\mid\theta_{m:k}\right)}{p\left(\neg z\mid\theta_{m:k}\right)}\right) & =\log\left(\frac{p\left(\theta_{k}\mid z\right)p\left(z\mid\theta_{m:k^{-}}\right)}{p\left(\theta_{k}\mid\neg z\right)p\left(\neg z\mid\theta_{m:k^{-}}\right)}\right)\\
- & =\log\left(\frac{p\left(\theta_{k}\mid z\right)}{p\left(\theta_{k}\mid\neg z\right)}\right)\\
- & +\sum_{n=m}^{k^{-}}\log\left(\frac{p\left(\theta_{n}\mid z\right)}{p\left(\theta_{n}\mid\neg z\right)}\right).
+ & =\log\left(\frac{p\left(\theta_{k}\mid z\right)}{p\left(\theta_{k}\mid\neg z\right)}\right)+\sum_{n=m}^{k^{-}}\log\left(\frac{p\left(\theta_{n}\mid z\right)}{p\left(\theta_{n}\mid\neg z\right)}\right).
 \end{align*}
 
 \end_inset
@@ -4332,8 +4100,8 @@ name "sec:Examples"
 
 \begin_layout Standard
 In this section we provide three examples of increasing complexity.
- The first example is to show how Lie group framework of R-RANSAC applies
- to Euclidean space of 
+ The first example is to show how LG-R-RANSAC applies to Euclidean space
+ of 
 \begin_inset Formula $\mathbb{R}^{n}$
 \end_inset
 
@@ -4342,12 +4110,12 @@ In this section we provide three examples of increasing complexity.
 \end_inset
 
 .
- The second example applies R-RANSAC to tracking targets on an image plane
- using 
+ The second example applies LG-R-RANSAC to tracking targets on an image
+ plane using 
 \begin_inset Formula $SE\left(2\right)$
 \end_inset
 
-, and the third example applies R-RANSAC to tracking UAVs moving on the
+, and the third example applies LG-R-RANSAC to tracking UAVs moving on the
  configuration manifold 
 \begin_inset Formula $SE\left(3\right)$
 \end_inset
@@ -4507,39 +4275,22 @@ name "sub:tracking_image_plane"
 \end_layout
 
 \begin_layout Standard
-Suppose we have a camera mounted on a UAV tracking a moving target that
- is restricted to a planar surface.
- The global frame is the current image frame, and the measurements are point
- measurements, i.e.
- pixels.
- In this case, the LSR and the GSR are the same.
- The volume of the LSR is the total number of pixels.
- Since the UAV is moving, the global frame is also moving.
- This means that we must provide a transformation 
-\begin_inset Formula $T$
-\end_inset
-
- so that we can transform all measurements, state estimates and error covariance
-s to the current global frame.
- We do this using the Homography 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Ma"
-
-\end_inset
-
- and the method described in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "White2019"
-
-\end_inset
-
-.
+Camera's are widely used as a sensor for target tracking.
+ A popular application is to mount a camera on a UAV and track a moving
+ target in the normalized image plane.
+ For this example, we assume that the normalized image plane is the GSR,
+ the global frame is coincident with the camera frame, and that measurements
+ are point measurements, i.e.
+ position only measurements.
+ Since the global frame is coincident with the camera frame, a transformation
+ must be provided to LG-R-RANSAC to transform all the measurements and models
+ to the current global frame.
+ We will use the Homography for this transformation.
 \end_layout
 
 \begin_layout Standard
-The Lie group configuration of a target moving in the image plane is 
+The Lie group configuration of a target moving in the normalized image plane
+ is 
 \begin_inset Formula $SE\left(2\right)$
 \end_inset
 
@@ -4604,8 +4355,7 @@ where
 \begin_inset Formula 
 \begin{align*}
 y_{m} & =h\left(f^{-1}\left(x_{k},\delta_{k:m},w_{k}\right),v_{k}\right)\\
- & =R_{k}J_{l}\left(\delta_{k:m}\left(\omega_{k}+w_{k}^{R}\right)+\frac{\delta_{k:m}^{2}w_{k}^{\omega}}{2}\right)\left(\delta_{k:m}\left(\rho_{k}+w_{k}^{\rho}\right)\right)\\
- & +t_{k}+w_{k}^{t}+v_{m},
+ & =R_{k}V\left(\delta_{k:m}\left(\omega_{k}+w_{k}^{R}\right)+\frac{\delta_{k:m}^{2}w_{k}^{\omega}}{2}\right)\left(\delta_{k:m}\rho_{k}+\delta_{k:m}w_{k}^{\rho}\right)+t_{k}+w_{k}^{t}+v_{m},
 \end{align*}
 
 \end_inset
@@ -4615,14 +4365,10 @@ where
 \end_inset
 
  and 
-\begin_inset Formula $J_{l}$
+\begin_inset Formula $V$
 \end_inset
 
- is the left Jacobian of 
-\begin_inset Formula $SO\left(3\right)$
-\end_inset
-
- defined in equation 
+ is defined in equation 
 \begin_inset CommandInset ref
 LatexCommand eqref
 reference "eq:se2_v"
@@ -4655,9 +4401,9 @@ where
 \begin_inset Formula 
 \begin{align*}
 H_{k:m}^{t}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial t_{k}} & =I\\
-H_{k:m}^{R}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial R} & =\delta_{k:m}R_{k}\left[1\right]_{\times}J_{l}\left(\delta_{k:m}\omega\right)\rho\\
-H_{k:m}^{\rho}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\rho} & =\delta_{k:m}^{2}R_{k}J_{l}\left(\delta_{k:m}\omega\right)\\
-H_{k:m}^{\omega}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\omega} & =\delta_{k:m}^{2}R_{k}J_{l}^{'}\left(\delta_{k:m}\omega\right)\rho
+H_{k:m}^{R}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial R} & =\delta_{k:m}R_{k}\left[1\right]_{\times}V\left(\delta_{k:m}\omega\right)\rho\\
+H_{k:m}^{\rho}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\rho} & =\delta_{k:m}^{2}R_{k}V\left(\delta_{k:m}\omega\right)\\
+H_{k:m}^{\omega}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\omega} & =\delta_{k:m}^{2}R_{k}V^{'}\left(\delta_{k:m}\omega\right)\rho
 \end{align*}
 
 \end_inset
@@ -4665,7 +4411,7 @@ H_{k:m}^{\omega}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\omega} & =\
 and 
 \begin_inset Formula 
 \[
-J_{l}^{'}\left(\omega\right)=\frac{\cos\left(\theta\right)\theta-\sin\left(\theta\right)}{\theta^{2}}I+\frac{\sin\left(\theta\right)\theta-\left(1-\cos\left(\theta\right)\right)}{\theta^{2}}\left[1\right]_{\times}.
+V^{'}\left(\omega\right)=\frac{\cos\left(\theta\right)\theta-\sin\left(\theta\right)}{\theta^{2}}I+\frac{\sin\left(\theta\right)\theta-\left(1-\cos\left(\theta\right)\right)}{\theta^{2}}\left[1\right]_{\times}.
 \]
 
 \end_inset
@@ -4721,157 +4467,117 @@ H_{k:m_{3}}
 \end_inset
 
 The observability matrix is not full rank.
- However, since we are interested in tracking the target we only need to
- be able to estimate the position of the target.
- To do this, we consider two configurations for a constant velocity system.
- In the first configuration the target has a circular trajectory.
- In this case we add the constraints that the target's heading is oriented
- along the body frame velocity, that 
+ However, if the target has a circular trajectory and the target's heading
+ is oriented along the body frame velocity, we can make the assumptions
+ that 
+\begin_inset Formula $\rho=\left[\rho_{x},0\right]^{\top}$
+\end_inset
+
+ and 
+\begin_inset Formula $\rho_{x},\omega\neq0$
+\end_inset
+
+.
+ Using these assumptions, the system is observable.
+ In addition, if the target is moving in a straight line, then we can make
+ the assumptions that 
 \begin_inset Formula $\rho=\left[\rho_{x},0\right]^{\top}$
 \end_inset
 
 , 
-\begin_inset Formula $\rho_{x}>0$
+\begin_inset Formula $\rho_{x}\neq0$
 \end_inset
 
  and 
-\begin_inset Formula $\omega\neq0$
-\end_inset
-
-.
- Using these constraints, the system is observable.
- In the second configuration the target is moving in a straight line.
- In this configuration we impose the same constraints as in the first configurat
-ion except that 
 \begin_inset Formula $\omega=0$
 \end_inset
 
 .
- Under these constraints the system is observable.
- We can identify which configuration the target is in by looking at three
- different measurements from different times.
+ Under these assumptions and constraints, the system is observable.
+ We can identify which constrained measurement we are trying to track by
+ looking at three different measurements from different times.
  If the three measurement do not form a line, then the system has first
  constrains; otherwise, the latter.
 \end_layout
 
 \begin_layout Standard
-To improve the LMLE used to estimate the current state, we can seed it as
- follows.
+Regardless of the constrained system we use, the rotation matrix can be
+ off by a rotation of 
+\begin_inset Formula $\pi$
+\end_inset
+
+ since the matrix exponential is surjective.
+ In order to avoid calculating the wrong rotation matrix, we can seed the
+ LMLE with approximate values.
  Let 
-\begin_inset Formula $y_{k}$
-\end_inset
-
-, 
-\begin_inset Formula $y_{m}$
-\end_inset
-
-, and 
-\begin_inset Formula $y_{n}$
-\end_inset
-
- be three measurements.
- Since we observe the position of the target, we can estimate the position
- of the target at time 
-\begin_inset Formula $k$
-\end_inset
-
-, 
-\begin_inset Formula $m$
-\end_inset
-
-, and 
-\begin_inset Formula $n$
-\end_inset
-
- as 
-\begin_inset Formula $t_{k}=y_{k}$
-\end_inset
-
-, 
-\begin_inset Formula $t_{m}=y_{m}$
+\begin_inset Formula $\theta=\text{Log}\left(R\right)$
 \end_inset
 
  and 
-\begin_inset Formula $t_{n}=t_{n}$
+\begin_inset Formula $\dot{t}$
 \end_inset
 
-.
- Using these estimated positions, we can numerically approximate the derivative
- as 
-\begin_inset Formula 
-\begin{align*}
-\dot{t}_{k} & =\frac{t_{m}-t_{k}}{\delta_{k:m}},\\
-\dot{t}_{m} & =\frac{t_{n}-t_{m}}{\delta_{n:m}}
-\end{align*}
-
-\end_inset
-
-Now let 
-\begin_inset Formula $\theta_{k}=\text{Log}\left(R_{k}\right)$
+ be the derivative of 
+\begin_inset Formula $t$
 \end_inset
 
 , then 
 \begin_inset Formula 
 \begin{align*}
-\dot{t}_{k}=\begin{bmatrix}\dot{t}_{k_{x}}\\
-\dot{t}_{k_{y}}
-\end{bmatrix} & =\text{Exp}\left(\theta_{k}\right)\rho_{k}\\
- & =\begin{bmatrix}\cos\left(\theta_{k}\right) & -\sin\left(\theta_{k}\right)\\
-\sin\left(\theta_{k}\right) & \cos\left(\theta_{k}\right)
-\end{bmatrix}\begin{bmatrix}\rho_{k_{x}}\\
+\dot{t}=\begin{bmatrix}\dot{t}_{x}\\
+\dot{t}_{y}
+\end{bmatrix} & =\text{Exp}\left(\theta\right)\rho\\
+ & =\begin{bmatrix}\cos\left(\theta\right) & -\sin\left(\theta\right)\\
+\sin\left(\theta\right) & \cos\left(\theta\right)
+\end{bmatrix}\begin{bmatrix}\rho_{x}\\
 0
 \end{bmatrix}\\
- & =\underbrace{\begin{bmatrix}\cos\left(\theta_{k}\right)\\
-\sin\left(\theta_{k}\right)
-\end{bmatrix}}_{R_{k_{x}}}\rho_{k_{x}}.
+ & =\begin{bmatrix}\rho_{x}\cos\left(\theta\right)\\
+\rho_{x}\sin\left(\theta\right)
+\end{bmatrix},
 \end{align*}
 
 \end_inset
 
-We can now solve for 
-\begin_inset Formula $\theta_{k}$
+dividing the two gives us 
+\begin_inset Formula 
+\[
+\theta=\arctan\left(\dot{t}_{y}/\dot{t}_{x}\right).
+\]
+
+\end_inset
+
+The value of 
+\begin_inset Formula $\dot{t}$
+\end_inset
+
+ can be numerically approximated, and the estimation for 
+\begin_inset Formula $\theta$
+\end_inset
+
+ can be enhanced by using multiple measurements.
+ Once 
+\begin_inset Formula $\theta$
+\end_inset
+
+ is estimated, you can use a method described in section 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "sec:LMLE-Simplification"
+
+\end_inset
+
+ to estimate 
+\begin_inset Formula $\omega$
 \end_inset
 
  and 
-\begin_inset Formula $\rho_{k_{x}}$
+\begin_inset Formula $\rho$
 \end_inset
 
- 
-\begin_inset Formula 
-\begin{align*}
-\theta_{k} & =\text{atan2}\left(\dot{t}_{k_{y}},\dot{t}_{k_{y}}\right)\\
-\rho_{k_{x}} & =\frac{R_{k_{x}}^{\top}\dot{t}_{k}}{R_{k_{x}}^{\top}R_{k_{x}}}.
-\end{align*}
-
-\end_inset
-
-Note that 
-\begin_inset Formula 
-\[
-\dot{t}_{m}=R_{k}\exp\left(\delta_{k:m}\dot{\theta}_{k}\right)\rho_{k}
-\]
-
-\end_inset
-
-and let 
-\begin_inset Formula 
-\begin{align*}
-z & =R_{k}^{\top}\dot{t}_{m}/\rho_{k}\\
- & =\left[z_{x},z_{y}\right]^{\top},
-\end{align*}
-
-\end_inset
-
-then 
-\begin_inset Formula 
-\[
-\dot{\theta}_{k}=\text{atan2}\left(z_{y},z_{x}\right)/\delta_{k:m}
-\]
-
-\end_inset
-
-These estimates can then be used to seed the LMLE during the RANSAC step
- of the algorithm.
+.
+ These estimates are used to see the LMLE during the RANSAC step of the
+ algorithm.
 \end_layout
 
 \begin_layout Standard
@@ -4891,7 +4597,7 @@ Constrained Problem for SE
 \begin_layout Standard
 In this example, there are multiple fixed radar sensors with overlapping
  LSR.
- The measurements are point measurements and are converted to the fixed
+ Their measurements are point measurements and are converted to the fixed
  global frame before being given to R-RANSAC.
  We also assume that the measurement covariance can vary.
  The objective is to track multiple fixed wing aircrafts (FWAs) that are
@@ -4919,6 +4625,12 @@ reference "sec:SE3"
 \end_inset
 
  for the system function and important Jacobians.
+ 
+\end_layout
+
+\begin_layout Standard
+With only point measurements, the system is not observable unless constraints
+ are made.
  
 \end_layout
 
@@ -4976,8 +4688,7 @@ where
 \begin_inset Formula 
 \begin{align*}
 y_{m} & =h\left(f^{-1}\left(x_{k},\delta_{k:m},w_{k}\right),v_{k}\right)\\
- & =R_{k}V\left(\delta_{k:m}\left(\omega_{k}+w_{k}^{R}\right)+\frac{\delta_{k:m}^{2}w_{k}^{\omega}}{2}\right)\left(\delta_{k:m}\rho_{k}+\delta_{k:m}w_{k}^{\rho}\right)\\
- & +t_{k}+w_{k}^{t}+v_{m},
+ & =R_{k}V\left(\delta_{k:m}\left(\omega_{k}+w_{k}^{R}\right)+\frac{\delta_{k:m}^{2}w_{k}^{\omega}}{2}\right)\left(\delta_{k:m}\rho_{k}+\delta_{k:m}w_{k}^{\rho}\right)+t_{k}+w_{k}^{t}+v_{m},
 \end{align*}
 
 \end_inset
@@ -5027,15 +4738,15 @@ where
 \begin_inset Formula 
 \begin{align*}
 H_{k:m}^{t}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial t_{k}} & =I\\
-H_{k:m}^{R}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial R} & =\delta_{k:m}R_{k}\left[-J_{l}\left(\delta_{k:m}\omega\right)\rho\right]_{\times}\\
-H_{k:m}^{\rho}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\rho} & =\delta_{k:m}^{2}R_{k}J_{l}\left(\delta_{k:m}\omega\right)\\
-H_{k:m}^{\omega}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\omega} & =\delta_{k:m}^{2}R_{k}\partial J_{l}\left(\delta_{k:m}\omega,\delta_{k:m}\rho\right),
+H_{k:m}^{R}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial R} & =\delta_{k:m}R_{k}\left[-V\left(\delta_{k:m}\omega\right)\rho\right]_{\times}\\
+H_{k:m}^{\rho}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\rho} & =\delta_{k:m}^{2}R_{k}V\left(\delta_{k:m}\omega\right)\\
+H_{k:m}^{\omega}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\omega} & =\delta_{k:m}^{2}R_{k}\partial V_{\delta_{k:m}\omega}\left(\delta_{k:m}\rho\right),
 \end{align*}
 
 \end_inset
 
 and
-\begin_inset Formula $\partial J_{l}\left(\delta_{k:m}\omega,\delta_{k:m}\rho\right)$
+\begin_inset Formula $\partial V_{\delta_{k:m}\omega}\left(\rho\right)$
 \end_inset
 
  is defined in Lemma 
@@ -5069,9 +4780,9 @@ where
 \begin_inset Formula 
 \begin{align*}
 G_{k:m}^{t} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{t}}=I\\
-G_{k:m}^{R} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{R}}=\delta_{k:m}^{2}R_{k}\partial J_{l}\left(\delta_{k:m}\omega,\delta_{k:m}\rho\right)\\
-G_{k:m}^{\rho} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{\rho}}=\delta_{k:m}^{2}R_{k}J_{l}\left(\delta_{k:m}\omega\right)\\
-G_{k:m}^{\omega} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{\omega}}=\frac{\delta_{k:m}^{3}}{2}R_{k}\partial J_{l}\left(\delta_{k:m}\omega,\delta_{k:m}\rho\right).
+G_{k:m}^{R} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{R}}=\delta_{k:m}^{2}R_{k}\partial V_{\delta_{k:m}\omega}\left(\delta_{k:m}\rho\right)\\
+G_{k:m}^{\rho} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{\rho}}=\delta_{k:m}^{2}R_{k}V\left(\delta_{k:m}\omega\right)\\
+G_{k:m}^{\omega} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{\omega}}=\frac{\delta_{k:m}^{3}}{2}R_{k}\partial V_{\delta_{k:m}\omega}\left(\delta_{k:m}\rho\right).
 \end{align*}
 
 \end_inset
@@ -5102,17 +4813,10 @@ H_{k:m_{4}}
 
 The observability matrix is not full rank.
  However, certain constraints, the system is observable.
- However, since we are interested in tracking the target we only need to
- be able to estimate the position of the target.
- To do this, we consider two configurations for a constant velocity system.
- In the first configuration the target has a circular or spiral trajectory.
- In this case we add the constraints that the target's heading is oriented
- along the body frame velocity, that 
-\begin_inset Formula $\rho=\left[\rho_{x},0\right]^{\top}$
-\end_inset
-
-, 
-\begin_inset Formula $\rho_{x}>0$
+ We described these constraints using two configuration.
+ In the first configuration the FWA is making a coordinated turn or a spiral
+ trajectory and we assume that that 
+\begin_inset Formula $\rho=\left[\rho_{x},0,0\right]$
 \end_inset
 
  and 
@@ -5120,19 +4824,20 @@ The observability matrix is not full rank.
 \end_inset
 
 .
- Using these constraints, the system is observable.
- In the second configuration the target is moving in a straight line.
- In this configuration we impose the same constraints as in the first configurat
-ion except that 
+ In the second configuration, the FWA is moving in a straight line and we
+ assume that 
+\begin_inset Formula $\rho=\left[\rho_{x},0,0\right]$
+\end_inset
+
+, 
 \begin_inset Formula $\omega=0$
 \end_inset
 
- and the roll in attitude (using roll, pitch, yaw) is zero.
- Under these constraints the system is observable.
- We can identify which configuration the target is in by looking at three
- different measurements from different times.
- If the three measurement do not form a line, then the system has first
- constrains; otherwise, the latter.
+, and the roll in attitude (using roll, pitch, yaw) is zero.
+ To determine which configuration to use, we can look at four measurements,
+ and see if they form a line.
+ If they don't, then we use the first configuration; otherwise, the second.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -5151,8 +4856,11 @@ Since the system is nonlinear, the LMLE can take a while to converge, and
 \begin_inset Formula $\psi$
 \end_inset
 
-) as local coordinates and align the pitch and yaw angles with the translational
- velocities.
+) as local coordinates, assume 
+\begin_inset Formula $\rho_{x}>0$
+\end_inset
+
+, and align the pitch and yaw angles with the translational velocities.
  The map from Euler angles configured in an NED frame to 
 \begin_inset Formula $SO\left(3\right)$
 \end_inset
@@ -5265,7 +4973,7 @@ Since we receive position measurements, we can numerically estimate the
 \psi_{k} & =\text{atan2}\left(\dot{t}_{k_{y}},\left|\dot{t}_{k_{x}}\right|\right)\\
 \theta_{k} & =\arctan\left(\frac{-\cos\left(\psi_{k}\right)\dot{t}_{k_{z}}}{\dot{t}_{k_{x}}}\right)\\
 \phi_{k} & =0\\
-\rho_{k_{x}} & =\frac{R_{k_{x}}^{\top}\dot{t}_{k}}{R_{k_{x}}^{\top}R_{k_{x}}}
+\rho_{k_{x}} & =\frac{R_{k_{x}}^{\top}\dot{t}}{R_{k_{x}}^{\top}R_{k_{x}}}
 \end{align*}
 
 \end_inset
@@ -5560,10 +5268,10 @@ it becomes a bijection.
  
 \begin_inset Formula 
 \begin{align*}
-\text{\exp}\left(u\right) & =\begin{bmatrix}\exp\left(\omega\right) & J_{l}\left(\omega\right)\rho\\
+\text{\exp}\left(u\right) & =\begin{bmatrix}\exp\left(\omega\right) & V\left(\omega\right)\rho\\
 0_{1\times2} & 1
 \end{bmatrix}\\
-\text{\log}\left(g\right) & =\begin{bmatrix}\log\left(R\right) & J_{l}^{-1}\left(\omega\right)t\\
+\text{\log}\left(g\right) & =\begin{bmatrix}\log\left(R\right) & V^{-1}\left(\omega\right)t\\
 0_{1\times2} & 0
 \end{bmatrix}
 \end{align*}
@@ -5578,24 +5286,16 @@ with
 \end{bmatrix}\\
 \log\left(R\right) & =\arctan\left(R_{21},R_{11}\right)\\
 \omega & =\log\left(R\right)\\
-J_{l}\left(\omega\right) & =\begin{cases}
+V\left(\omega\right) & =\begin{cases}
 I & \text{if }\theta=0\\
 \frac{\sin\left(\theta\right)}{\theta}I+\frac{1-\cos\left(\theta\right)}{\theta}\left[1\right]_{\times} & \text{else}
 \end{cases}\label{eq:se2_v}\\
-J_{l}^{-1}\left(\omega\right) & =\begin{cases}
+V^{-1}\left(\omega\right) & =\begin{cases}
 I & \text{if }\theta=0\\
 \frac{\theta\sin\left(\theta\right)}{2\left(1-\cos\left(\theta\right)\right)}I-\frac{\theta}{2}\left[1\right]_{\times} & \text{else}
-\end{cases}
+\end{cases}.
 \end{align}
 
-\end_inset
-
-and 
-\begin_inset Formula $J_{l}$
-\end_inset
-
- being the left Jacobian of 
-\begin_inset Formula $SO\left(3\right)$
 \end_inset
 
 
@@ -5685,7 +5385,15 @@ If
 \begin_inset Formula $\theta=0$
 \end_inset
 
-, then the Jacobians and their inverses are the identity function.
+, then the Jacobians and their inverses are 
+\begin_inset Formula 
+\[
+J_{r}\left(u\right)=J_{l}\left(u\right)=J_{r}^{-1}\left(u\right)=J_{l}^{-1}\left(u\right)=I.
+\]
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
@@ -5851,10 +5559,10 @@ it becomes a bijection.
  
 \begin_inset Formula 
 \begin{align*}
-\exp\left(u\right) & =\begin{bmatrix}\exp\left(\left[\omega\right]_{\times}\right) & J_{l}\left(\omega\right)\rho\\
+\exp\left(u\right) & =\begin{bmatrix}\exp\left(\left[\omega\right]_{\times}\right) & V\left(\omega\right)\rho\\
 0 & 1
 \end{bmatrix}\\
-\text{\log}\left(g\right) & =\begin{bmatrix}J_{l}^{-1}\left(\omega\right)t\\
+\text{\log}\left(g\right) & =\begin{bmatrix}V^{-1}\left(\omega\right)t\\
 \log\left(R\right)
 \end{bmatrix}
 \end{align*}
@@ -5875,472 +5583,21 @@ with
 0_{2\times2} & \text{if }\phi=0\\
 \frac{\phi}{2\sin\left(\phi\right)}\left(R-R^{\top}\right) & \text{else}
 \end{cases}\\
-J_{l}\left(\omega\right) & =\begin{cases}
+V\left(\omega\right) & =\begin{cases}
 I & \text{if }\phi=0\\
 I+\frac{1-\cos\left(\phi\right)}{\phi^{2}}\omega+\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\omega^{2} & \text{else}
 \end{cases}\label{eq:V_se3}\\
-J_{l}^{-1}\left(\omega\right) & =\begin{cases}
+V^{-1}\left(\omega\right) & =\begin{cases}
 I & \text{if }\theta=0\\
 I-\frac{\omega}{2}+\left(\frac{1}{\phi^{2}}-\frac{\phi\sin\left(\phi\right)}{2\phi^{2}\left(1-\cos\left(\phi\right)\right)}\right)\omega^{2} & \text{else}
-\end{cases}
+\end{cases}.
 \end{align}
 
 \end_inset
 
-where 
-\begin_inset Formula $J_{l}$
-\end_inset
-
- being the left Jacobian of 
-\begin_inset Formula $SO\left(3\right)$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Subsection
-Jacobians
-\end_layout
-
-\begin_layout Subsubsection
-Adjoint
-\end_layout
-
-\begin_layout Standard
-The group adjoint representation is
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\[
-\mathbf{Ad}_{g}=\begin{bmatrix}R & \left[t\right]_{\times}R\\
-0_{3\times3} & R
-\end{bmatrix}
-\]
-
-\end_inset
-
-with inverse 
-\begin_inset Formula 
-\[
-\mathbf{Ad}_{g}^{-1}=\begin{bmatrix}R^{\top} & -R^{\top}\left[t\right]_{\times}\\
-0_{3\times3} & R^{\top}
-\end{bmatrix}.
-\]
-
-\end_inset
-
 
 \end_layout
 
-\begin_layout Standard
-The Lie algebra representation is 
-\begin_inset Formula 
-\[
-\mathbf{ad}_{u}=\begin{bmatrix}\left[\omega\right]_{\times} & \left[\rho\right]_{\times}\\
-0_{3\times3} & \left[\omega\right]_{\times}
-\end{bmatrix}.
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsubsection
-Left and Right Jacobians
-\end_layout
-
-\begin_layout Standard
-Let 
-\begin_inset Formula $u=\begin{bmatrix}\omega & \rho\\
-0 & 0
-\end{bmatrix}\in\mathfrak{se}\left(3\right)$
-\end_inset
-
- and 
-\begin_inset Formula 
-\begin{align*}
-\phi & =\sqrt{\omega^{\top}\omega}\\
-a_{\phi} & =\frac{\cos\left(\phi\right)-1}{\phi^{2}}\\
-b_{\phi} & =\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\\
-c_{\phi} & =-\frac{1}{\phi^{3}}\sin\left(\phi\right)+2\left(\frac{1-\cos\left(\phi\right)}{\phi^{4}}\right)\\
-d_{\theta} & =-\frac{2}{\phi^{4}}+\frac{3}{\phi^{5}}\sin\left(\phi\right)-\frac{1}{\phi^{4}}\cos\left(\phi\right)\\
-q_{r}\left(\omega\right) & =\left(\left(\omega^{\vee}\right)^{\top}\rho\right)\left(d_{\phi}\omega^{2}+c_{\phi}\omega\right)\\
-q_{l}\left(\omega\right) & =\left(\left(\omega^{\vee}\right)^{\top}\rho\right)\left(d_{\phi}\omega^{2}-c_{\phi}\omega\right)\\
-B_{r}\left(u\right) & =q_{r}\left(\omega\right)+a_{\phi}\left[\rho\right]_{\times}+b_{\phi}\left(\omega\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\omega\right)\\
-B_{l}\left(u\right) & =q_{l}\left(\omega\right)-a_{\phi}\left[\rho\right]_{\times}+b_{\phi}\left(\omega\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\omega\right)\\
-J_{r}\left(\omega\right) & =I+\frac{\cos\left(\phi\right)-1}{\phi^{2}}\omega+\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\omega^{2}\\
-J_{r}^{-1}\left(\omega\right) & =I+\frac{1}{2}\omega-\frac{\phi\cot\left(\frac{\phi}{2}\right)-2}{2\phi^{2}}\omega^{2}
-\end{align*}
-
-\end_inset
-
-then 
-\begin_inset Formula 
-\begin{align*}
-J_{r}\left(u\right) & =\begin{bmatrix}J_{r}\left(\omega\right) & B_{r}\left(u\right)\\
-0 & J_{r}\left(\omega\right)
-\end{bmatrix}\\
-J_{l}\left(u\right) & =\begin{bmatrix}J_{l}\left(\omega\right) & B_{l}\left(u\right)\\
-0 & J_{l}\left(\omega\right)
-\end{bmatrix}\\
-J_{r}^{-1}\left(u\right) & =\begin{bmatrix}J_{r}^{-1}\left(\omega\right) & J_{r}^{-1}\left(\omega\right)B_{r}\left(u\right)J_{r}^{-1}\left(\omega\right)\\
-0 & J_{r}^{-1}\left(\omega\right)
-\end{bmatrix}\\
-J_{l}^{-1}\left(u\right) & =\begin{bmatrix}J_{l}^{-1}\left(\omega\right) & J_{l}^{-1}\left(\omega\right)B_{l}\left(u\right)J_{l}^{-1}\left(\omega\right)\\
-0 & J_{l}^{-1}\left(\omega\right)
-\end{bmatrix}.
-\end{align*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Section
-Lemma
-\end_layout
-
-\begin_layout Lemma
-\begin_inset CommandInset label
-LatexCommand label
-name "lem:dJl"
-
-\end_inset
-
-Let 
-\begin_inset Formula $J_{l}\left(\omega\right)$
-\end_inset
-
- denote the left Jacobian of 
-\begin_inset Formula $SO\left(3\right)$
-\end_inset
-
- and 
-\begin_inset Formula $\rho\in\mathbb{R}^{3}$
-\end_inset
-
-.
- The derivative of 
-\begin_inset Formula $J_{l}\left(\omega\right)p$
-\end_inset
-
- with respect to 
-\begin_inset Formula $\omega$
-\end_inset
-
-, denote 
-\begin_inset Formula $\partial J_{l}\left(\omega,\rho\right)$
-\end_inset
-
-, is 
-\begin_inset Formula 
-\begin{align*}
-\partial J_{l}\left(\omega,\rho\right) & =\left(\frac{1-\cos\left(\theta\right)}{\theta^{2}}\right)\left[-\rho\right]_{\times}\\
- & +\left(\frac{\theta-\sin\left(\theta\right)}{\theta^{3}}\right)\left(-2\omega\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\omega_{\times}\right)\\
- & +\left(\frac{\sin\left(\theta\right)\theta+2\left(\cos\left(\theta\right)-1\right)}{\theta^{4}}\right)\omega\rho\left(\omega^{\vee}\right)^{\top}\\
- & +\left(\frac{3\sin\left(\theta\right)-\cos\left(\theta\right)\theta-2\theta}{\theta^{5}}\right)\omega^{2}\rho\left(\omega^{\vee}\right)^{\top}.
-\end{align*}
-
-\end_inset
-
-where 
-\begin_inset Formula $\omega\in\mathfrak{s0}\left(3\right)$
-\end_inset
-
-, and 
-\begin_inset Formula $\theta=\sqrt{\left(\omega^{\vee}\right)^{\top}\omega^{\vee}}$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Proof
- 
-\begin_inset Formula $J_{l}\left(\omega\right)$
-\end_inset
-
- is defined in equation 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:V_se3"
-
-\end_inset
-
-.
- It follows directly that 
-\begin_inset Formula 
-\[
-\frac{\partial J_{l}\left(\omega\right)\rho}{\partial\omega}=\frac{\partial}{\partial\omega}\left(I+\frac{1-\cos\left(\theta\right)}{\theta^{2}}\omega+\frac{\theta-\sin\left(\theta\right)}{\theta^{3}}\omega^{2}\right)\rho.
-\]
-
-\end_inset
-
-Using the product rule, we can break up the derivation into parts: 
-\begin_inset Formula 
-\[
-\frac{\partial}{\partial\omega}\frac{1-\cos\left(\theta\right)}{\theta^{2}}=\frac{\sin\left(\theta\right)\theta+2\left(\cos\left(\theta\right)+1\right)}{\theta^{3}}\left(\omega^{\vee}\right)^{\top}
-\]
-
-\end_inset
-
-
-\begin_inset Formula 
-\[
-\frac{\partial}{\partial\omega}\frac{\theta-\sin\left(\theta\right)}{\theta^{3}}=\frac{3\sin\left(\theta\right)-\cos\left(\theta\right)\theta-2\theta}{\theta^{5}}
-\]
-
-\end_inset
-
-
-\begin_inset Formula 
-\[
-\frac{\partial}{\partial\omega}\omega\rho=\left[-\rho\right]_{\times}
-\]
-
-\end_inset
-
-and 
-\begin_inset Formula 
-\[
-\frac{\partial}{\partial\omega}\omega^{2}\rho=-2\omega\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\omega_{\times}.
-\]
-
-\end_inset
-
-Putting the pieces together, we get solution stated in the lemma.
-\end_layout
-
-\begin_layout Section
-Terminology and Parameters
-\end_layout
-
-\begin_layout Standard
-The terminology, parameters, and notation used is previous version of R-RANSAC
- have varied which has created confusion and inconsistencies.
- In this section, we hope to solidify certain terminology, parameters and
- notation that are suitable for expanding R-RANSAC to work with Lie Groups,
- and incorporating other improvements we have made to the general algorithm.
-\end_layout
-
-\begin_layout Subsection
-Terminology
-\end_layout
-
-\begin_layout Standard
-R-RANSAC has very specific terminology that we that will facilitate the
- discussion.
- 
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Phenomenon
-\series default
-: Something that produces an observable signal.
- In the case of target tracking, the phenomenon is referred to as a 
-\series bold
-target
-\series default
-, which is an object that exists in physical space.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Measurement Source
-\series default
-: A sensor equipped with an algorithm that captures information from the
- environment and produces meaningful measurements used to observe the target.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Surveillance Region
-\series default
-: The portion of the environment that is observable by the measurement sources.
- There is a local surveillance region (LSR) for each measurement source
- and a global surveillance region (GSR) that is a union of all the local
- surveillance regions.
- 
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Frame of reference
-\series default
-: Consists of an abstract coordinate system and the set of physical reference
- points that uniquely fix (locate and orient) the coordinate system and
- standardize measurements within that frame.
- We will often refer to a frame of reference as just 
-\series bold
-frame
-\series default
-.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Local Frame
-\series default
-: The frame that coincides with a local surveillance region.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Global Frame
-\series default
-: The frame that coincides with the global surveillance region.
- It is possible that the global frame is the same as a local frame.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Sensor Scan
-\series default
-: When a sensor observes its surveillance region and extracts meaningful
- data.
- For example, the sensor scan of a camera occurs when the camera produces
- a new image of its surveillance region.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-False Measurement
-\series default
-: A measurement extracted from a sensor scan that does not correspond to
- a phenomenon of interest.
- For example, motion in a camera can generate false measurements due to
- parallax depending on the algorithm.
- Another example is just noisy sensors.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-True Measurement
-\series default
-: A measurement extracted from a sensor scan that corresponds to a phenomenon
- of interest.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Model
-\series default
-: This is simply a model of the phenomenon.
- In regards to target tracking, a model is referred to as a 
-\series bold
-track
-\series default
-.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Model Hypothesis
-\series default
-: This is a hypothetical model of the phenomenon (i.e.
- a possible model) created by the RANSAC algorithm.
- A model hypothesis that meets certain criteria becomes a model.
- In regards to target tracking, a model hypothesis is referred to as a 
-\series bold
-track
-\series default
- 
-\series bold
-hypothesis
-\series default
-.
- We will often abbreviate the term and mention only 
-\series bold
-hypothesis
-\series default
-.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Model Likelihood
-\series default
-: The probability that a model represents an actual target.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Good
-\series default
- 
-\series bold
-Model
-\series default
-: A model that is deemed very likely to correctly describe a phenomenon,
- based on predefined criteria, becomes a good model.
- In regards to target tracking, a good model is referred to as a 
-\series bold
-good
-\series default
- 
-\series bold
-track
-\series default
-.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Poor
-\series default
- 
-\series bold
-Model
-\series default
-: A model that is not a good model.
- In regards to target tracking, a poor model is referred to as a 
-\series bold
-poor
-\series default
- 
-\series bold
-track
-\series default
-.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Time Window
-\series default
-: An interval of time extending into the past from the current time.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Expired
-\series default
- 
-\series bold
-Measurement
-\series default
-: A measurement that was observed in the past outside the time window.
-\end_layout
-
-<<<<<<< HEAD
 \begin_layout Subsection
 Jacobians
 \end_layout
@@ -6789,8 +6046,6 @@ Measurement
 : A measurement that was observed in the past outside the time window.
 \end_layout
 
-=======
->>>>>>> d23c23def41f37ca1e2e9861a6d2acb1daf71c59
 \begin_layout Itemize
 
 \series bold

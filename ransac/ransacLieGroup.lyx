@@ -33,7 +33,7 @@
 \output_sync 0
 \bibtex_command default
 \index_command default
-\paperfontsize default
+\paperfontsize 10
 \spacing single
 \use_hyperref false
 \papersize default
@@ -1452,7 +1452,9 @@ Data management occurs after a sensor scan provides such that there are
  are propagated forward in time.
  If a transformation was provided, all of the measurements (not including
  the new measurements since they should already be expressed in the current
- global frame) and models are transformed to the current global frame.
+ global frame) and tracks are transformed to the current global frame, i.e.
+ their state estimate and error covariance are transformed to the current
+ global frame.
  
 \end_layout
 
@@ -3204,7 +3206,8 @@ Taking the log (base 10) ratio of the probabilities
 \begin_inset Formula 
 \begin{align*}
 \log\left(\frac{p\left(z\mid\theta_{m:k}\right)}{p\left(\neg z\mid\theta_{m:k}\right)}\right) & =\log\left(\frac{p\left(\theta_{k}\mid z\right)p\left(z\mid\theta_{m:k^{-}}\right)}{p\left(\theta_{k}\mid\neg z\right)p\left(\neg z\mid\theta_{m:k^{-}}\right)}\right)\\
- & =\log\left(\frac{p\left(\theta_{k}\mid z\right)}{p\left(\theta_{k}\mid\neg z\right)}\right)+\sum_{n=m}^{k^{-}}\log\left(\frac{p\left(\theta_{n}\mid z\right)}{p\left(\theta_{n}\mid\neg z\right)}\right).
+ & =\log\left(\frac{p\left(\theta_{k}\mid z\right)}{p\left(\theta_{k}\mid\neg z\right)}\right)\\
+ & +\sum_{n=m}^{k^{-}}\log\left(\frac{p\left(\theta_{n}\mid z\right)}{p\left(\theta_{n}\mid\neg z\right)}\right).
 \end{align*}
 
 \end_inset
@@ -4100,8 +4103,8 @@ name "sec:Examples"
 
 \begin_layout Standard
 In this section we provide three examples of increasing complexity.
- The first example is to show how LG-R-RANSAC applies to Euclidean space
- of 
+ The first example is to show how Lie group framework of R-RANSAC applies
+ to Euclidean space of 
 \begin_inset Formula $\mathbb{R}^{n}$
 \end_inset
 
@@ -4110,12 +4113,12 @@ In this section we provide three examples of increasing complexity.
 \end_inset
 
 .
- The second example applies LG-R-RANSAC to tracking targets on an image
- plane using 
+ The second example applies R-RANSAC to tracking targets on an image plane
+ using 
 \begin_inset Formula $SE\left(2\right)$
 \end_inset
 
-, and the third example applies LG-R-RANSAC to tracking UAVs moving on the
+, and the third example applies R-RANSAC to tracking UAVs moving on the
  configuration manifold 
 \begin_inset Formula $SE\left(3\right)$
 \end_inset
@@ -4275,22 +4278,39 @@ name "sub:tracking_image_plane"
 \end_layout
 
 \begin_layout Standard
-Camera's are widely used as a sensor for target tracking.
- A popular application is to mount a camera on a UAV and track a moving
- target in the normalized image plane.
- For this example, we assume that the normalized image plane is the GSR,
- the global frame is coincident with the camera frame, and that measurements
- are point measurements, i.e.
- position only measurements.
- Since the global frame is coincident with the camera frame, a transformation
- must be provided to LG-R-RANSAC to transform all the measurements and models
- to the current global frame.
- We will use the Homography for this transformation.
+Suppose we have a camera mounted on a UAV tracking a moving target that
+ is restricted to a planar surface.
+ The global frame is the current image frame, and the measurements are point
+ measurements, i.e.
+ pixels.
+ In this case, the LSR and the GSR are the same.
+ The volume of the LSR is the total number of pixels.
+ Since the UAV is moving, the global frame is also moving.
+ This means that we must provide a transformation 
+\begin_inset Formula $T$
+\end_inset
+
+ so that we can transform all measurements, state estimates and error covariance
+s to the current global frame.
+ We do this using the Homography 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Ma"
+
+\end_inset
+
+ and the method described in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "White2019"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
-The Lie group configuration of a target moving in the normalized image plane
- is 
+The Lie group configuration of a target moving in the image plane is 
 \begin_inset Formula $SE\left(2\right)$
 \end_inset
 
@@ -4355,7 +4375,8 @@ where
 \begin_inset Formula 
 \begin{align*}
 y_{m} & =h\left(f^{-1}\left(x_{k},\delta_{k:m},w_{k}\right),v_{k}\right)\\
- & =R_{k}V\left(\delta_{k:m}\left(\omega_{k}+w_{k}^{R}\right)+\frac{\delta_{k:m}^{2}w_{k}^{\omega}}{2}\right)\left(\delta_{k:m}\rho_{k}+\delta_{k:m}w_{k}^{\rho}\right)+t_{k}+w_{k}^{t}+v_{m},
+ & =R_{k}J_{l}\left(\delta_{k:m}\left(\omega_{k}+w_{k}^{R}\right)+\frac{\delta_{k:m}^{2}w_{k}^{\omega}}{2}\right)\left(\delta_{k:m}\left(\rho_{k}+w_{k}^{\rho}\right)\right)\\
+ & +t_{k}+w_{k}^{t}+v_{m},
 \end{align*}
 
 \end_inset
@@ -4365,10 +4386,14 @@ where
 \end_inset
 
  and 
-\begin_inset Formula $V$
+\begin_inset Formula $J_{l}$
 \end_inset
 
- is defined in equation 
+ is the left Jacobian of 
+\begin_inset Formula $SO\left(2\right)$
+\end_inset
+
+ defined in equation 
 \begin_inset CommandInset ref
 LatexCommand eqref
 reference "eq:se2_v"
@@ -4401,9 +4426,9 @@ where
 \begin_inset Formula 
 \begin{align*}
 H_{k:m}^{t}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial t_{k}} & =I\\
-H_{k:m}^{R}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial R} & =\delta_{k:m}R_{k}\left[1\right]_{\times}V\left(\delta_{k:m}\omega\right)\rho\\
-H_{k:m}^{\rho}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\rho} & =\delta_{k:m}^{2}R_{k}V\left(\delta_{k:m}\omega\right)\\
-H_{k:m}^{\omega}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\omega} & =\delta_{k:m}^{2}R_{k}V^{'}\left(\delta_{k:m}\omega\right)\rho
+H_{k:m}^{R}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial R} & =\delta_{k:m}R_{k}\left[1\right]_{\times}J_{l}\left(\delta_{k:m}\omega\right)\rho\\
+H_{k:m}^{\rho}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\rho} & =\delta_{k:m}^{2}R_{k}J_{l}\left(\delta_{k:m}\omega\right)\\
+H_{k:m}^{\omega}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\omega} & =\delta_{k:m}^{2}R_{k}J_{l}^{'}\left(\delta_{k:m}\omega\right)\rho
 \end{align*}
 
 \end_inset
@@ -4411,7 +4436,7 @@ H_{k:m}^{\omega}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\omega} & =\
 and 
 \begin_inset Formula 
 \[
-V^{'}\left(\omega\right)=\frac{\cos\left(\theta\right)\theta-\sin\left(\theta\right)}{\theta^{2}}I+\frac{\sin\left(\theta\right)\theta-\left(1-\cos\left(\theta\right)\right)}{\theta^{2}}\left[1\right]_{\times}.
+J_{l}^{'}\left(\omega\right)=\frac{\cos\left(\theta\right)\theta-\sin\left(\theta\right)}{\theta^{2}}I+\frac{\sin\left(\theta\right)\theta-\left(1-\cos\left(\theta\right)\right)}{\theta^{2}}\left[1\right]_{\times}.
 \]
 
 \end_inset
@@ -4467,117 +4492,157 @@ H_{k:m_{3}}
 \end_inset
 
 The observability matrix is not full rank.
- However, if the target has a circular trajectory and the target's heading
- is oriented along the body frame velocity, we can make the assumptions
- that 
-\begin_inset Formula $\rho=\left[\rho_{x},0\right]^{\top}$
-\end_inset
-
- and 
-\begin_inset Formula $\rho_{x},\omega\neq0$
-\end_inset
-
-.
- Using these assumptions, the system is observable.
- In addition, if the target is moving in a straight line, then we can make
- the assumptions that 
+ However, since we are interested in tracking the target we only need to
+ be able to estimate the position of the target.
+ To do this, we consider two configurations for a constant velocity system.
+ In the first configuration the target has a circular trajectory.
+ In this case we add the constraints that the target's heading is oriented
+ along the body frame velocity, that 
 \begin_inset Formula $\rho=\left[\rho_{x},0\right]^{\top}$
 \end_inset
 
 , 
-\begin_inset Formula $\rho_{x}\neq0$
+\begin_inset Formula $\rho_{x}>0$
 \end_inset
 
  and 
+\begin_inset Formula $\omega\neq0$
+\end_inset
+
+.
+ Using these constraints, the system is observable.
+ In the second configuration the target is moving in a straight line.
+ In this configuration we impose the same constraints as in the first configurat
+ion except that 
 \begin_inset Formula $\omega=0$
 \end_inset
 
 .
- Under these assumptions and constraints, the system is observable.
- We can identify which constrained measurement we are trying to track by
- looking at three different measurements from different times.
+ Under these constraints the system is observable.
+ We can identify which configuration the target is in by looking at three
+ different measurements from different times.
  If the three measurement do not form a line, then the system has first
  constrains; otherwise, the latter.
 \end_layout
 
 \begin_layout Standard
-Regardless of the constrained system we use, the rotation matrix can be
- off by a rotation of 
-\begin_inset Formula $\pi$
+To improve the LMLE used to estimate the current state, we can seed it as
+ follows.
+ Let 
+\begin_inset Formula $y_{k}$
 \end_inset
 
- since the matrix exponential is surjective.
- In order to avoid calculating the wrong rotation matrix, we can seed the
- LMLE with approximate values.
- Let 
-\begin_inset Formula $\theta=\text{Log}\left(R\right)$
+, 
+\begin_inset Formula $y_{m}$
+\end_inset
+
+, and 
+\begin_inset Formula $y_{n}$
+\end_inset
+
+ be three measurements.
+ Since we observe the position of the target, we can estimate the position
+ of the target at time 
+\begin_inset Formula $k$
+\end_inset
+
+, 
+\begin_inset Formula $m$
+\end_inset
+
+, and 
+\begin_inset Formula $n$
+\end_inset
+
+ as 
+\begin_inset Formula $t_{k}=y_{k}$
+\end_inset
+
+, 
+\begin_inset Formula $t_{m}=y_{m}$
 \end_inset
 
  and 
-\begin_inset Formula $\dot{t}$
+\begin_inset Formula $t_{n}=t_{n}$
 \end_inset
 
- be the derivative of 
-\begin_inset Formula $t$
+.
+ Using these estimated positions, we can numerically approximate the derivative
+ as 
+\begin_inset Formula 
+\begin{align*}
+\dot{t}_{k} & =\frac{t_{m}-t_{k}}{\delta_{k:m}},\\
+\dot{t}_{m} & =\frac{t_{n}-t_{m}}{\delta_{n:m}}
+\end{align*}
+
+\end_inset
+
+Now let 
+\begin_inset Formula $\theta_{k}=\text{Log}\left(R_{k}\right)$
 \end_inset
 
 , then 
 \begin_inset Formula 
 \begin{align*}
-\dot{t}=\begin{bmatrix}\dot{t}_{x}\\
-\dot{t}_{y}
-\end{bmatrix} & =\text{Exp}\left(\theta\right)\rho\\
- & =\begin{bmatrix}\cos\left(\theta\right) & -\sin\left(\theta\right)\\
-\sin\left(\theta\right) & \cos\left(\theta\right)
-\end{bmatrix}\begin{bmatrix}\rho_{x}\\
+\dot{t}_{k}=\begin{bmatrix}\dot{t}_{k_{x}}\\
+\dot{t}_{k_{y}}
+\end{bmatrix} & =\text{Exp}\left(\theta_{k}\right)\rho_{k}\\
+ & =\begin{bmatrix}\cos\left(\theta_{k}\right) & -\sin\left(\theta_{k}\right)\\
+\sin\left(\theta_{k}\right) & \cos\left(\theta_{k}\right)
+\end{bmatrix}\begin{bmatrix}\rho_{k_{x}}\\
 0
 \end{bmatrix}\\
- & =\begin{bmatrix}\rho_{x}\cos\left(\theta\right)\\
-\rho_{x}\sin\left(\theta\right)
-\end{bmatrix},
+ & =\underbrace{\begin{bmatrix}\cos\left(\theta_{k}\right)\\
+\sin\left(\theta_{k}\right)
+\end{bmatrix}}_{R_{k_{x}}}\rho_{k_{x}}.
 \end{align*}
 
 \end_inset
 
-dividing the two gives us 
+We can now solve for 
+\begin_inset Formula $\theta_{k}$
+\end_inset
+
+ and 
+\begin_inset Formula $\rho_{k_{x}}$
+\end_inset
+
+ 
+\begin_inset Formula 
+\begin{align*}
+\theta_{k} & =\text{atan2}\left(\dot{t}_{k_{y}},\dot{t}_{k_{y}}\right)\\
+\rho_{k_{x}} & =\frac{R_{k_{x}}^{\top}\dot{t}_{k}}{R_{k_{x}}^{\top}R_{k_{x}}}.
+\end{align*}
+
+\end_inset
+
+Note that 
 \begin_inset Formula 
 \[
-\theta=\arctan\left(\dot{t}_{y}/\dot{t}_{x}\right).
+\dot{t}_{m}=R_{k}\exp\left(\delta_{k:m}\dot{\theta}_{k}\right)\rho_{k}
 \]
 
 \end_inset
 
-The value of 
-\begin_inset Formula $\dot{t}$
-\end_inset
-
- can be numerically approximated, and the estimation for 
-\begin_inset Formula $\theta$
-\end_inset
-
- can be enhanced by using multiple measurements.
- Once 
-\begin_inset Formula $\theta$
-\end_inset
-
- is estimated, you can use a method described in section 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "sec:LMLE-Simplification"
+and let 
+\begin_inset Formula 
+\begin{align*}
+z & =R_{k}^{\top}\dot{t}_{m}/\rho_{k}\\
+ & =\left[z_{x},z_{y}\right]^{\top},
+\end{align*}
 
 \end_inset
 
- to estimate 
-\begin_inset Formula $\omega$
+then 
+\begin_inset Formula 
+\[
+\dot{\theta}_{k}=\text{atan2}\left(z_{y},z_{x}\right)/\delta_{k:m}
+\]
+
 \end_inset
 
- and 
-\begin_inset Formula $\rho$
-\end_inset
-
-.
- These estimates are used to see the LMLE during the RANSAC step of the
- algorithm.
+These estimates can then be used to seed the LMLE during the RANSAC step
+ of the algorithm.
 \end_layout
 
 \begin_layout Standard
@@ -4597,7 +4662,7 @@ Constrained Problem for SE
 \begin_layout Standard
 In this example, there are multiple fixed radar sensors with overlapping
  LSR.
- Their measurements are point measurements and are converted to the fixed
+ The measurements are point measurements and are converted to the fixed
  global frame before being given to R-RANSAC.
  We also assume that the measurement covariance can vary.
  The objective is to track multiple fixed wing aircrafts (FWAs) that are
@@ -4625,12 +4690,6 @@ reference "sec:SE3"
 \end_inset
 
  for the system function and important Jacobians.
- 
-\end_layout
-
-\begin_layout Standard
-With only point measurements, the system is not observable unless constraints
- are made.
  
 \end_layout
 
@@ -4688,7 +4747,8 @@ where
 \begin_inset Formula 
 \begin{align*}
 y_{m} & =h\left(f^{-1}\left(x_{k},\delta_{k:m},w_{k}\right),v_{k}\right)\\
- & =R_{k}V\left(\delta_{k:m}\left(\omega_{k}+w_{k}^{R}\right)+\frac{\delta_{k:m}^{2}w_{k}^{\omega}}{2}\right)\left(\delta_{k:m}\rho_{k}+\delta_{k:m}w_{k}^{\rho}\right)+t_{k}+w_{k}^{t}+v_{m},
+ & =R_{k}V\left(\delta_{k:m}\left(\omega_{k}+w_{k}^{R}\right)+\frac{\delta_{k:m}^{2}w_{k}^{\omega}}{2}\right)\left(\delta_{k:m}\rho_{k}+\delta_{k:m}w_{k}^{\rho}\right)\\
+ & +t_{k}+w_{k}^{t}+v_{m},
 \end{align*}
 
 \end_inset
@@ -4738,15 +4798,15 @@ where
 \begin_inset Formula 
 \begin{align*}
 H_{k:m}^{t}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial t_{k}} & =I\\
-H_{k:m}^{R}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial R} & =\delta_{k:m}R_{k}\left[-V\left(\delta_{k:m}\omega\right)\rho\right]_{\times}\\
-H_{k:m}^{\rho}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\rho} & =\delta_{k:m}^{2}R_{k}V\left(\delta_{k:m}\omega\right)\\
-H_{k:m}^{\omega}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\omega} & =\delta_{k:m}^{2}R_{k}\partial V_{\delta_{k:m}\omega}\left(\delta_{k:m}\rho\right),
+H_{k:m}^{R}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial R} & =\delta_{k:m}R_{k}\left[-J_{l}\left(\delta_{k:m}\omega\right)\rho\right]_{\times}\\
+H_{k:m}^{\rho}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\rho} & =\delta_{k:m}^{2}R_{k}J_{l}\left(\delta_{k:m}\omega\right)\\
+H_{k:m}^{\omega}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\omega} & =\delta_{k:m}^{2}R_{k}\partial J_{l}\left(\delta_{k:m}\omega,\delta_{k:m}\rho\right),
 \end{align*}
 
 \end_inset
 
 and
-\begin_inset Formula $\partial V_{\delta_{k:m}\omega}\left(\rho\right)$
+\begin_inset Formula $\partial J_{l}\left(\delta_{k:m}\omega,\delta_{k:m}\rho\right)$
 \end_inset
 
  is defined in Lemma 
@@ -4780,9 +4840,9 @@ where
 \begin_inset Formula 
 \begin{align*}
 G_{k:m}^{t} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{t}}=I\\
-G_{k:m}^{R} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{R}}=\delta_{k:m}^{2}R_{k}\partial V_{\delta_{k:m}\omega}\left(\delta_{k:m}\rho\right)\\
-G_{k:m}^{\rho} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{\rho}}=\delta_{k:m}^{2}R_{k}V\left(\delta_{k:m}\omega\right)\\
-G_{k:m}^{\omega} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{\omega}}=\frac{\delta_{k:m}^{3}}{2}R_{k}\partial V_{\delta_{k:m}\omega}\left(\delta_{k:m}\rho\right).
+G_{k:m}^{R} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{R}}=\delta_{k:m}^{2}R_{k}\partial J_{l}\left(\delta_{k:m}\omega,\delta_{k:m}\rho\right)\\
+G_{k:m}^{\rho} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{\rho}}=\delta_{k:m}^{2}R_{k}J_{l}\left(\delta_{k:m}\omega\right)\\
+G_{k:m}^{\omega} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{\omega}}=\frac{\delta_{k:m}^{3}}{2}R_{k}\partial J_{l}\left(\delta_{k:m}\omega,\delta_{k:m}\rho\right).
 \end{align*}
 
 \end_inset
@@ -4813,10 +4873,17 @@ H_{k:m_{4}}
 
 The observability matrix is not full rank.
  However, certain constraints, the system is observable.
- We described these constraints using two configuration.
- In the first configuration the FWA is making a coordinated turn or a spiral
- trajectory and we assume that that 
-\begin_inset Formula $\rho=\left[\rho_{x},0,0\right]$
+ However, since we are interested in tracking the target we only need to
+ be able to estimate the position of the target.
+ To do this, we consider two configurations for a constant velocity system.
+ In the first configuration the target has a circular or spiral trajectory.
+ In this case we add the constraints that the target's heading is oriented
+ along the body frame velocity, that 
+\begin_inset Formula $\rho=\left[\rho_{x},0\right]^{\top}$
+\end_inset
+
+, 
+\begin_inset Formula $\rho_{x}>0$
 \end_inset
 
  and 
@@ -4824,20 +4891,19 @@ The observability matrix is not full rank.
 \end_inset
 
 .
- In the second configuration, the FWA is moving in a straight line and we
- assume that 
-\begin_inset Formula $\rho=\left[\rho_{x},0,0\right]$
-\end_inset
-
-, 
+ Using these constraints, the system is observable.
+ In the second configuration the target is moving in a straight line.
+ In this configuration we impose the same constraints as in the first configurat
+ion except that 
 \begin_inset Formula $\omega=0$
 \end_inset
 
-, and the roll in attitude (using roll, pitch, yaw) is zero.
- To determine which configuration to use, we can look at four measurements,
- and see if they form a line.
- If they don't, then we use the first configuration; otherwise, the second.
- 
+ and the roll in attitude (using roll, pitch, yaw) is zero.
+ Under these constraints the system is observable.
+ We can identify which configuration the target is in by looking at three
+ different measurements from different times.
+ If the three measurement do not form a line, then the system has first
+ constrains; otherwise, the latter.
 \end_layout
 
 \begin_layout Standard
@@ -4856,11 +4922,8 @@ Since the system is nonlinear, the LMLE can take a while to converge, and
 \begin_inset Formula $\psi$
 \end_inset
 
-) as local coordinates, assume 
-\begin_inset Formula $\rho_{x}>0$
-\end_inset
-
-, and align the pitch and yaw angles with the translational velocities.
+) as local coordinates and align the pitch and yaw angles with the translational
+ velocities.
  The map from Euler angles configured in an NED frame to 
 \begin_inset Formula $SO\left(3\right)$
 \end_inset
@@ -4973,7 +5036,7 @@ Since we receive position measurements, we can numerically estimate the
 \psi_{k} & =\text{atan2}\left(\dot{t}_{k_{y}},\left|\dot{t}_{k_{x}}\right|\right)\\
 \theta_{k} & =\arctan\left(\frac{-\cos\left(\psi_{k}\right)\dot{t}_{k_{z}}}{\dot{t}_{k_{x}}}\right)\\
 \phi_{k} & =0\\
-\rho_{k_{x}} & =\frac{R_{k_{x}}^{\top}\dot{t}}{R_{k_{x}}^{\top}R_{k_{x}}}
+\rho_{k_{x}} & =\frac{R_{k_{x}}^{\top}\dot{t}_{k}}{R_{k_{x}}^{\top}R_{k_{x}}}
 \end{align*}
 
 \end_inset
@@ -5268,10 +5331,10 @@ it becomes a bijection.
  
 \begin_inset Formula 
 \begin{align*}
-\text{\exp}\left(u\right) & =\begin{bmatrix}\exp\left(\omega\right) & V\left(\omega\right)\rho\\
+\text{\exp}\left(u\right) & =\begin{bmatrix}\exp\left(\omega\right) & J_{l}\left(\omega\right)\rho\\
 0_{1\times2} & 1
 \end{bmatrix}\\
-\text{\log}\left(g\right) & =\begin{bmatrix}\log\left(R\right) & V^{-1}\left(\omega\right)t\\
+\text{\log}\left(g\right) & =\begin{bmatrix}\log\left(R\right) & J_{l}^{-1}\left(\omega\right)t\\
 0_{1\times2} & 0
 \end{bmatrix}
 \end{align*}
@@ -5286,16 +5349,24 @@ with
 \end{bmatrix}\\
 \log\left(R\right) & =\arctan\left(R_{21},R_{11}\right)\\
 \omega & =\log\left(R\right)\\
-V\left(\omega\right) & =\begin{cases}
+J_{l}\left(\omega\right) & =\begin{cases}
 I & \text{if }\theta=0\\
 \frac{\sin\left(\theta\right)}{\theta}I+\frac{1-\cos\left(\theta\right)}{\theta}\left[1\right]_{\times} & \text{else}
 \end{cases}\label{eq:se2_v}\\
-V^{-1}\left(\omega\right) & =\begin{cases}
+J_{l}^{-1}\left(\omega\right) & =\begin{cases}
 I & \text{if }\theta=0\\
 \frac{\theta\sin\left(\theta\right)}{2\left(1-\cos\left(\theta\right)\right)}I-\frac{\theta}{2}\left[1\right]_{\times} & \text{else}
-\end{cases}.
+\end{cases}
 \end{align}
 
+\end_inset
+
+and 
+\begin_inset Formula $J_{l}$
+\end_inset
+
+ being the left Jacobian of 
+\begin_inset Formula $SO\left(3\right)$
 \end_inset
 
 
@@ -5385,15 +5456,7 @@ If
 \begin_inset Formula $\theta=0$
 \end_inset
 
-, then the Jacobians and their inverses are 
-\begin_inset Formula 
-\[
-J_{r}\left(u\right)=J_{l}\left(u\right)=J_{r}^{-1}\left(u\right)=J_{l}^{-1}\left(u\right)=I.
-\]
-
-\end_inset
-
-
+, then the Jacobians and their inverses are the identity function.
 \end_layout
 
 \begin_layout Section
@@ -5559,10 +5622,10 @@ it becomes a bijection.
  
 \begin_inset Formula 
 \begin{align*}
-\exp\left(u\right) & =\begin{bmatrix}\exp\left(\left[\omega\right]_{\times}\right) & V\left(\omega\right)\rho\\
+\exp\left(u\right) & =\begin{bmatrix}\exp\left(\left[\omega\right]_{\times}\right) & J_{l}\left(\omega\right)\rho\\
 0 & 1
 \end{bmatrix}\\
-\text{\log}\left(g\right) & =\begin{bmatrix}V^{-1}\left(\omega\right)t\\
+\text{\log}\left(g\right) & =\begin{bmatrix}J_{l}^{-1}\left(\omega\right)t\\
 \log\left(R\right)
 \end{bmatrix}
 \end{align*}
@@ -5583,19 +5646,27 @@ with
 0_{2\times2} & \text{if }\phi=0\\
 \frac{\phi}{2\sin\left(\phi\right)}\left(R-R^{\top}\right) & \text{else}
 \end{cases}\\
-V\left(\omega\right) & =\begin{cases}
+J_{l}\left(\omega\right) & =\begin{cases}
 I & \text{if }\phi=0\\
 I+\frac{1-\cos\left(\phi\right)}{\phi^{2}}\omega+\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\omega^{2} & \text{else}
 \end{cases}\label{eq:V_se3}\\
-V^{-1}\left(\omega\right) & =\begin{cases}
+J_{l}^{-1}\left(\omega\right) & =\begin{cases}
 I & \text{if }\theta=0\\
 I-\frac{\omega}{2}+\left(\frac{1}{\phi^{2}}-\frac{\phi\sin\left(\phi\right)}{2\phi^{2}\left(1-\cos\left(\phi\right)\right)}\right)\omega^{2} & \text{else}
-\end{cases}.
+\end{cases}
 \end{align}
 
 \end_inset
 
+where 
+\begin_inset Formula $J_{l}$
+\end_inset
 
+ being the left Jacobian of 
+\begin_inset Formula $SO\left(3\right)$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsection
@@ -5660,21 +5731,19 @@ Let
 
  and 
 \begin_inset Formula 
-\begin{align}
-\phi & =\sqrt{\omega^{\top}\omega}\nonumber \\
-a_{\phi} & =\frac{\cos\left(\phi\right)-1}{\phi^{2}}\nonumber \\
-b_{\phi} & =\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\nonumber \\
-c_{\phi} & =-\frac{1}{\phi^{3}}\sin\left(\phi\right)+2\left(\frac{1-\cos\left(\phi\right)}{\phi^{4}}\right)\nonumber \\
-d_{\theta} & =-\frac{2}{\phi^{4}}+\frac{3}{\phi^{5}}\sin\left(\phi\right)-\frac{1}{\phi^{4}}\cos\left(\phi\right)\nonumber \\
-q_{r}\left(\omega\right) & =\left(\left(\omega^{\vee}\right)^{\top}\rho\right)\left(d_{\phi}\omega^{2}+c_{\phi}\omega\right)\nonumber \\
-q_{l}\left(\omega\right) & =\left(\left(\omega^{\vee}\right)^{\top}\rho\right)\left(d_{\phi}\omega^{2}-c_{\phi}\omega\right)\nonumber \\
-B_{r}\left(u\right) & =q_{r}\left(\omega\right)+a_{\phi}\left[\rho\right]_{\times}+b_{\phi}\left(\omega\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\omega\right)\nonumber \\
-B_{l}\left(u\right) & =q_{l}\left(\omega\right)-a_{\phi}\left[\rho\right]_{\times}+b_{\phi}\left(\omega\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\omega\right)\nonumber \\
-J_{r}\left(\omega\right) & =I+\frac{\cos\left(\phi\right)-1}{\phi^{2}}\omega+\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\omega^{2}\nonumber \\
-J_{l}\left(\omega\right) & =I+\frac{1-\cos\left(\phi\right)}{\phi^{2}}\omega+\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\omega^{2}\label{eq:Jl_so3}\\
-J_{r}^{-1}\left(\omega\right) & =I+\frac{1}{2}\omega-\frac{\phi\cot\left(\frac{\phi}{2}\right)-2}{2\phi^{2}}\omega^{2}\nonumber \\
-J_{l}^{-1}\left(\omega\right) & =I-\frac{1}{2}\omega-\frac{\phi\cot\left(\frac{\phi}{2}\right)-2}{2\phi^{2}}\omega^{2}.\nonumber 
-\end{align}
+\begin{align*}
+\phi & =\sqrt{\omega^{\top}\omega}\\
+a_{\phi} & =\frac{\cos\left(\phi\right)-1}{\phi^{2}}\\
+b_{\phi} & =\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\\
+c_{\phi} & =-\frac{1}{\phi^{3}}\sin\left(\phi\right)+2\left(\frac{1-\cos\left(\phi\right)}{\phi^{4}}\right)\\
+d_{\theta} & =-\frac{2}{\phi^{4}}+\frac{3}{\phi^{5}}\sin\left(\phi\right)-\frac{1}{\phi^{4}}\cos\left(\phi\right)\\
+q_{r}\left(\omega\right) & =\left(\left(\omega^{\vee}\right)^{\top}\rho\right)\left(d_{\phi}\omega^{2}+c_{\phi}\omega\right)\\
+q_{l}\left(\omega\right) & =\left(\left(\omega^{\vee}\right)^{\top}\rho\right)\left(d_{\phi}\omega^{2}-c_{\phi}\omega\right)\\
+B_{r}\left(u\right) & =q_{r}\left(\omega\right)+a_{\phi}\left[\rho\right]_{\times}+b_{\phi}\left(\omega\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\omega\right)\\
+B_{l}\left(u\right) & =q_{l}\left(\omega\right)-a_{\phi}\left[\rho\right]_{\times}+b_{\phi}\left(\omega\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\omega\right)\\
+J_{r}\left(\omega\right) & =I+\frac{\cos\left(\phi\right)-1}{\phi^{2}}\omega+\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\omega^{2}\\
+J_{r}^{-1}\left(\omega\right) & =I+\frac{1}{2}\omega-\frac{\phi\cot\left(\frac{\phi}{2}\right)-2}{2\phi^{2}}\omega^{2}
+\end{align*}
 
 \end_inset
 
@@ -5733,13 +5802,13 @@ Let
 \end_inset
 
 , denote 
-\begin_inset Formula $\partial V_{\omega}\left(\rho\right)$
+\begin_inset Formula $\partial J_{l}\left(\omega,\rho\right)$
 \end_inset
 
 , is 
 \begin_inset Formula 
 \begin{align*}
-\partial V_{\omega}\left(\rho\right) & =\left(\frac{1-\cos\left(\theta\right)}{\theta^{2}}\right)\left[-\rho\right]_{\times}\\
+\partial J_{l}\left(\omega,\rho\right) & =\left(\frac{1-\cos\left(\theta\right)}{\theta^{2}}\right)\left[-\rho\right]_{\times}\\
  & +\left(\frac{\theta-\sin\left(\theta\right)}{\theta^{3}}\right)\left(-2\omega\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\omega_{\times}\right)\\
  & +\left(\frac{\sin\left(\theta\right)\theta+2\left(\cos\left(\theta\right)-1\right)}{\theta^{4}}\right)\omega\rho\left(\omega^{\vee}\right)^{\top}\\
  & +\left(\frac{3\sin\left(\theta\right)-\cos\left(\theta\right)\theta-2\theta}{\theta^{5}}\right)\omega^{2}\rho\left(\omega^{\vee}\right)^{\top}.
@@ -5759,18 +5828,14 @@ where
 \end_layout
 
 \begin_layout Proof
-We first note that 
-\begin_inset Formula $V\left(\omega\right)=J_{l}\left(\omega\right)$
-\end_inset
-
- where 
+ 
 \begin_inset Formula $J_{l}\left(\omega\right)$
 \end_inset
 
  is defined in equation 
 \begin_inset CommandInset ref
 LatexCommand eqref
-reference "eq:Jl_so3"
+reference "eq:V_se3"
 
 \end_inset
 
@@ -5778,7 +5843,7 @@ reference "eq:Jl_so3"
  It follows directly that 
 \begin_inset Formula 
 \[
-\frac{\partial J_{l}\left(\omega\right)}{\partial\omega}=\frac{\partial}{\partial\omega}\left(I+\frac{1-\cos\left(\theta\right)}{\theta^{2}}\omega+\frac{\theta-\sin\left(\theta\right)}{\theta^{3}}\omega^{2}\right)\rho.
+\frac{\partial J_{l}\left(\omega\right)\rho}{\partial\omega}=\frac{\partial}{\partial\omega}\left(I+\frac{1-\cos\left(\theta\right)}{\theta^{2}}\omega+\frac{\theta-\sin\left(\theta\right)}{\theta^{3}}\omega^{2}\right)\rho.
 \]
 
 \end_inset
