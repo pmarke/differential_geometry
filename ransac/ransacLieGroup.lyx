@@ -2338,38 +2338,36 @@ Log maximum likelihood estimation (LMLE) is used in RANSAC to generate track
  which contains one measurement from the current time and enough measurements
  that are randomly sampled such that a hypothetical current state estimate
  can be estimated.
- A hypothetical current state is possible current state estimate of an actual
- target.
+ A hypothetical current state is a possible current state estimate of an
+ actual target.
  
 \end_layout
 
 \begin_layout Standard
-The typical LMLE maximizes the posterior probability 
-\begin_inset Formula $p\left(x_{0:k}\mid y_{0:k}\right).$
+The LMLE maximizes the joint likelihood or measurement probability 
+\begin_inset Formula $p\left(y_{0:k}\mid x_{0:k}\right).$
 \end_inset
 
 
 \end_layout
 
 \begin_layout Standard
-Following 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Thrun2006"
-
-\end_inset
-
-, using Bayes rule and under the assumption that the system is a first order
- Markov process, we can calculate the negative log posterior which is 
+Following using Bayes rule and under the assumption that the system is a
+ first order Markov process, we can calculate the negative log joint likelihood
+ which is 
 \begin_inset Formula 
 \begin{multline*}
-\log\left(-p\left(x_{0:k}\mid y_{1:k}\right)\right)=\log\left(-\eta\right)+\log\left(-p\left(x_{0}\right)\right)\\
+\log\left(-p\left(y_{0:k}\mid x_{0:k}\right)\right)=\log\left(-\eta\right)+\\
 +\sum_{m=1}^{k}\log\left(-p\left(x_{m}\mid x_{m^{-}}\right)\right)+\sum_{m=0}^{k}\sum_{j=1}^{\ell\left(m\right)}\log\left(-p\left(y_{m}^{j}\mid x_{m}\right)\right),
 \end{multline*}
 
 \end_inset
 
 where 
+\begin_inset Formula $\eta$
+\end_inset
+
+ is a normalizing constant and 
 \begin_inset Formula $\ell\left(m\right)$
 \end_inset
 
@@ -2386,12 +2384,7 @@ where
 \begin_inset Formula $\log\left(-\eta\right)$
 \end_inset
 
- since it will have no impact on the optimization problem and we can drop
- the term 
-\begin_inset Formula $\log\left(-p\left(x_{0}\right)\right)$
-\end_inset
-
- to signify that the initial covariance is large.
+ since it will have no impact on the optimization problem.
  Since we are only interested in estimating the current state 
 \begin_inset Formula $x_{k}$
 \end_inset
@@ -3782,7 +3775,7 @@ Recall that the purpose of the LMLE is to generate a current state estimate
 
  of a track hypothesis.
  Using the current state estimates we build the consensus set which is later
- used to refine the estimate using a filtering technique.
+ used to refine the estimate via a filtering technique.
  So the estimate of LMLE doesn't have to be super refined, and we can simplify
  the optimization process in different ways.
  
@@ -3814,7 +3807,7 @@ y_{k}=g_{k}\exp\left(v_{k}\right).
 \end_layout
 
 \begin_layout Standard
-When generating a model hypothesis, we always use a measurement from the
+When generating a track hypothesis, we always use a measurement from the
  current time.
  We can use this measurement as the estimated pose 
 \begin_inset Formula $g_{k}$
@@ -3967,17 +3960,10 @@ reference "eq:meas_cov_time"
 \end_layout
 
 \begin_layout Standard
-If you want the estimation to be as accurate as possible using the original
- optimization problem to solve the LMLE defined in 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:likelihood_inverse"
-
-\end_inset
-
-, we suggest you use the simplified approaches to seed the original optimization
- problem unless the system is linear since the optimization problem is already
- simple.
+If you want the estimation to be as accurate as possible, we suggest you
+ use the simplified approaches to seed the original optimization problem
+ unless the system is linear since the original optimization problem is
+ already simple.
  
 \end_layout
 
@@ -3995,7 +3981,7 @@ name "sec:Examples"
 \begin_layout Standard
 In this section we provide three examples of increasing complexity.
  The first example is to show how Lie group framework of R-RANSAC applies
- to Euclidean space of 
+ to Euclidean spaces of 
 \begin_inset Formula $\mathbb{R}^{n}$
 \end_inset
 
@@ -4004,17 +3990,8 @@ In this section we provide three examples of increasing complexity.
 \end_inset
 
 .
- The second example applies R-RANSAC to tracking targets on an image plane
- using 
-\begin_inset Formula $SE\left(2\right)$
-\end_inset
-
-, and the third example applies R-RANSAC to tracking UAVs moving on the
- configuration manifold 
-\begin_inset Formula $SE\left(3\right)$
-\end_inset
-
- using radar sensors.
+ The second example applies R-RANSAC to tracking targets on an image plane,
+ and the third example applies R-RANSAC to tracking UAVs using radar sensors.
  
 \end_layout
 
@@ -4037,20 +4014,12 @@ This is a brief section to show how the Lie group theory applies to Euclidean
 \end_inset
 
 , equipped with the standard topology and the group operation of addition.
- 
-\begin_inset Formula $\mathbb{R}^{n}$
-\end_inset
-
- equipped with addition is an abelian group; thus the adjoint map is the
- identity map.
  Its corresponding Lie algebra is 
 \begin_inset Formula $\mathbb{R}^{n}$
 \end_inset
 
-.
- Therefore, the exponential map and its inverse is simply the identity map.
- This implies that the left and right Jacobians of the exponential map is
- also the identity map.
+, and the adjoint, exponential, and left and right Jacobians are the identity
+ map.
  The box plus/minus and o plus/minus mapping are trivially derived; for
  example
 \begin_inset Formula 
@@ -4099,8 +4068,8 @@ where
 ,
 \begin_inset Formula 
 \begin{align*}
-A_{k}=\begin{bmatrix}I_{2\times2} & \delta_{k}I\\
-0 & I_{2\times2}
+A_{k}=\begin{bmatrix}I & \delta_{k}I\\
+0 & I
 \end{bmatrix}, & \thinspace & B_{k}=\begin{bmatrix}\delta_{k}I & \frac{\delta_{k}^{2}}{2}I\\
 0 & \delta_{k}I
 \end{bmatrix},
@@ -4142,7 +4111,7 @@ The Jacobians are easily computed and are
 \end_inset
 
 .
- The LMLE simplifies to a least squares problem.
+ For linear systems, the LMLE simplifies to a least squares problem.
  This type of system used with R-RANSAC is thoroughly discussed in 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -4165,7 +4134,13 @@ name "sub:tracking_image_plane"
 
 \end_inset
 
+ 
+\end_layout
 
+\begin_layout Standard
+NOTE: THIS WOULD BE BETTER IF TRACKING WAS DONE IN THE VIRTUAL IMAGE PLANE
+ SINCE THE VIP IS PARALLEL TO THE GROUND, THUS THE MOTION WOULD REALLY BE
+ SE2
 \end_layout
 
 \begin_layout Standard
@@ -4431,8 +4406,8 @@ To improve the LMLE used to estimate the current state, we can seed it as
 \begin_inset Formula $y_{n}$
 \end_inset
 
- be three measurements.
- Since we observe the position of the target, we can estimate the position
+ be three measurements taken at different times.
+ Since we observe the position of the target, we can approximate the position
  of the target at time 
 \begin_inset Formula $k$
 \end_inset
@@ -4454,7 +4429,7 @@ To improve the LMLE used to estimate the current state, we can seed it as
 \end_inset
 
  and 
-\begin_inset Formula $t_{n}=t_{n}$
+\begin_inset Formula $t_{n}=y_{n}$
 \end_inset
 
 .
@@ -4510,12 +4485,12 @@ We can now solve for
 Note that 
 \begin_inset Formula 
 \[
-\dot{t}_{m}=R_{k}\exp\left(\delta_{k:m}\dot{\theta}_{k}\right)\rho_{k}
+\dot{t}_{m}=R_{k}\exp\left(\delta_{k:m}\dot{\theta}_{k}\right)\rho_{k}.
 \]
 
 \end_inset
 
-and let 
+Let 
 \begin_inset Formula 
 \begin{align*}
 z & =R_{k}^{\top}\dot{t}_{m}/\rho_{k}\\
@@ -4551,36 +4526,26 @@ Constrained Problem for SE
 \end_layout
 
 \begin_layout Standard
-In this example, there are multiple fixed radar sensors with overlapping
- LSR.
- The measurements are point measurements and are converted to the fixed
- global frame before being given to R-RANSAC.
- We also assume that the measurement covariance can vary.
- The objective is to track multiple fixed wing aircrafts (FWAs) that are
- in the GSR.
- This is a similar example as the one in subsection 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "sub:tracking_image_plane"
-
+In this example the objective is to track multiple fixed wing aircrafts
+ (FWAs) that are in the GSR and whose configuration manifold is 
+\begin_inset Formula $SE$
 \end_inset
 
-, except that the FWAs' configuration manifold is 
-\begin_inset Formula $SE\left(3\right)$
+
+\begin_inset Formula $\left(3\right)$
 \end_inset
 
- instead of 
-\begin_inset Formula $SE\left(2\right)$
-\end_inset
-
-, making the problem a little more difficult; see appendix 
+.
+ The FWA are observed via multiple fixed radar sensors with overlapping
+ LSR which produce point measurements.
+ See appendix 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:SE3"
 
 \end_inset
 
- for the system function and important Jacobians.
+ for the FWAs' system function and important Jacobians.
  
 \end_layout
 
@@ -4638,7 +4603,7 @@ where
 \begin_inset Formula 
 \begin{align*}
 y_{m} & =h\left(f^{-1}\left(x_{k},\delta_{k:m},w_{k}\right),v_{k}\right)\\
- & =R_{k}V\left(\delta_{k:m}\left(\omega_{k}+w_{k}^{R}\right)+\frac{\delta_{k:m}^{2}w_{k}^{\omega}}{2}\right)\left(\delta_{k:m}\rho_{k}+\delta_{k:m}w_{k}^{\rho}\right)\\
+ & =R_{k}J_{l}\left(\delta_{k:m}\left(\omega_{k}+w_{k}^{R}\right)+\frac{\delta_{k:m}^{2}w_{k}^{\omega}}{2}\right)\left(\delta_{k:m}\rho_{k}+\delta_{k:m}w_{k}^{\rho}\right)\\
  & +t_{k}+w_{k}^{t}+v_{m},
 \end{align*}
 
@@ -4653,7 +4618,7 @@ where
 \end_inset
 
  and 
-\begin_inset Formula $V$
+\begin_inset Formula $J_{l}$
 \end_inset
 
  is defined in equation 
@@ -4708,15 +4673,7 @@ reference "lem:dJl"
 \end_inset
 
 .
- We quickly note that 
-\begin_inset Formula 
-\[
-H_{k}=H_{k:k}=\begin{bmatrix}I & 0_{2\times9}\end{bmatrix}.
-\]
-
-\end_inset
-
-
+ 
 \end_layout
 
 \begin_layout Standard
@@ -4763,9 +4720,9 @@ H_{k:m_{4}}
 \end_inset
 
 The observability matrix is not full rank.
- However, certain constraints, the system is observable.
- However, since we are interested in tracking the target we only need to
- be able to estimate the position of the target.
+ However, under certain constraints, the system is observable.
+ Since we are interested in tracking the target we only need to be able
+ to estimate the position of the target.
  To do this, we consider two configurations for a constant velocity system.
  In the first configuration the target has a circular or spiral trajectory.
  In this case we add the constraints that the target's heading is oriented
@@ -4793,14 +4750,13 @@ ion except that
  Under these constraints the system is observable.
  We can identify which configuration the target is in by looking at three
  different measurements from different times.
- If the three measurement do not form a line, then the system has first
- constrains; otherwise, the latter.
+ If the three measurement do not form a line, then the system is in the
+ first configuration; otherwise, the latter.
 \end_layout
 
 \begin_layout Standard
-Since the system is nonlinear, the LMLE can take a while to converge, and
- can converge to an undesirable state.
- To minimize these issues we can seed the optimization method.
+Since the system is nonlinear, the LMLE can take a while to converge.
+ We can speed up the LMLE by seeding it.
  To do this, we will use the Euler angles (roll 
 \begin_inset Formula $\phi$
 \end_inset
@@ -4860,7 +4816,7 @@ Let
 \end_inset
 
 .
- This allows us to write the constraints
+ This allows us to write the constraint
 \begin_inset Formula 
 \begin{align*}
 \dot{t} & =R\rho\\
@@ -4905,7 +4861,7 @@ Since we receive position measurements, we can numerically estimate the
 \begin_inset Formula $R_{k}$
 \end_inset
 
- by solving for solve for 
+ by solving for 
 \begin_inset Formula $\phi_{k}$
 \end_inset
 
@@ -5047,7 +5003,7 @@ From which we can estimate the angular rates
 \end_inset
 
 .
- We use these estimations to seed the LMLE optimization problem.
+ These approximations are then used to seed the LMLE optimization problem.
 \end_layout
 
 \begin_layout Standard
@@ -5158,14 +5114,14 @@ Let
 
 \end_inset
 
-The discretized system function 
+The discretized state transition function 
 \begin_inset Formula $f:SE\left(2\right)\times\mathbb{R}^{2}\to SE\left(2\right)\times\mathbb{R}^{2}$
 \end_inset
 
  is 
 \begin_inset Formula 
 \begin{align*}
-g_{k} & =\text{\exp}\left(\delta_{k}\left(u_{k^{-}}+w_{k}^{g}\right)+\frac{\delta_{k}^{2}}{2}w_{k}^{u}\right)\\
+g_{k} & =\text{\text{Exp}}\left(\delta_{k}\left(u_{k^{-}}+w_{k}^{g}\right)+\frac{\delta_{k}^{2}}{2}w_{k}^{u}\right)\\
 u_{k} & =u_{k^{-}}+\delta_{k}w_{k}^{u}
 \end{align*}
 
@@ -5235,6 +5191,7 @@ it becomes a bijection.
 with
 \begin_inset Formula 
 \begin{align}
+\theta & =\omega^{\vee}\\
 \exp\left(\omega\right) & =\begin{bmatrix}\cos\left(\theta\right) & -\sin\left(\theta\right)\\
 \sin\left(\theta\right) & \cos\left(\theta\right)
 \end{bmatrix}\\
@@ -5257,7 +5214,7 @@ and
 \end_inset
 
  being the left Jacobian of 
-\begin_inset Formula $SO\left(3\right)$
+\begin_inset Formula $SO\left(2\right)$
 \end_inset
 
 
@@ -5389,11 +5346,11 @@ equipped with matrix multiplication.
 \end_inset
 
 where 
-\begin_inset Formula $\theta=\left[\theta_{1},\theta_{2},\theta_{2}\right]^{\top}\in\mathbb{R}^{3}$
+\begin_inset Formula $\omega=\left[\theta\right]_{\times}$
 \end_inset
 
 , 
-\begin_inset Formula $\omega=\left[\theta\right]_{\times}$
+\begin_inset Formula $\theta=\left[\theta_{1},\theta_{2},\theta_{2}\right]^{\top}\in\mathbb{R}^{3}$
 \end_inset
 
  and 
@@ -5449,7 +5406,7 @@ Let
 
 \end_inset
 
-The discretized system function 
+The discretized state transition function 
 \begin_inset Formula $f:SE\left(3\right)\times\mathbb{R}^{3}\to SE\left(3\right)\times\mathbb{R}^{3}$
 \end_inset
 
@@ -5513,7 +5470,7 @@ it becomes a bijection.
  
 \begin_inset Formula 
 \begin{align*}
-\exp\left(u\right) & =\begin{bmatrix}\exp\left(\left[\omega\right]_{\times}\right) & J_{l}\left(\omega\right)\rho\\
+\exp\left(u\right) & =\begin{bmatrix}\exp\left(\omega\right) & J_{l}\left(\omega\right)\rho\\
 0 & 1
 \end{bmatrix}\\
 \text{\log}\left(g\right) & =\begin{bmatrix}J_{l}^{-1}\left(\omega\right)t\\
@@ -5531,7 +5488,7 @@ with
 \begin_inset Formula 
 \begin{align}
 \phi & =\sqrt{\omega^{\top}\omega}\\
-\exp\left(\omega\right) & =I+\frac{\sin\left(\theta\right)}{\theta}\omega+\frac{1-\cos\left(\theta\right)}{\theta^{2}}\omega^{2}\\
+\exp\left(\omega\right) & =I+\frac{\sin\left(\phi\right)}{\phi}\omega+\frac{1-\cos\left(\phi\right)}{\phi^{2}}\omega^{2}\\
 \phi & =\arccos\left(\frac{\text{trace}\left(R\right)-1}{2}\right)\\
 \log\left(R\right) & =\begin{cases}
 0_{2\times2} & \text{if }\phi=0\\
@@ -5553,7 +5510,7 @@ where
 \begin_inset Formula $J_{l}$
 \end_inset
 
- being the left Jacobian of 
+ is the left Jacobian of 
 \begin_inset Formula $SO\left(3\right)$
 \end_inset
 
@@ -5599,8 +5556,8 @@ with inverse
 The Lie algebra representation is 
 \begin_inset Formula 
 \[
-\mathbf{ad}_{u}=\begin{bmatrix}\left[\omega\right]_{\times} & \left[\rho\right]_{\times}\\
-0_{3\times3} & \left[\omega\right]_{\times}
+\mathbf{ad}_{u}=\begin{bmatrix}\omega & \left[\rho\right]_{\times}\\
+0_{3\times3} & \omega
 \end{bmatrix}.
 \]
 
@@ -6054,7 +6011,11 @@ noindent
 \begin_inset Formula $\tau_{E}$
 \end_inset
 
- - RANSAC early termination threshold
+ - If the size of a consensus set is greater than 
+\begin_inset Formula $\tau_{E}$
+\end_inset
+
+, than RANSAC will terminate early.
 \end_layout
 
 \begin_layout Itemize
@@ -6087,7 +6048,7 @@ Cluster parameters
 \begin_inset Formula $\tau_{CM}$
 \end_inset
 
- - cluster min cardinality threshold
+ - cluster minimum cardinality threshold
 \end_layout
 
 \begin_layout Standard

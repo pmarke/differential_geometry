@@ -2338,38 +2338,36 @@ Log maximum likelihood estimation (LMLE) is used in RANSAC to generate track
  which contains one measurement from the current time and enough measurements
  that are randomly sampled such that a hypothetical current state estimate
  can be estimated.
- A hypothetical current state is possible current state estimate of an actual
- target.
+ A hypothetical current state is a possible current state estimate of an
+ actual target.
  
 \end_layout
 
 \begin_layout Standard
-The typical LMLE maximizes the posterior probability 
-\begin_inset Formula $p\left(x_{0:k}\mid y_{0:k}\right).$
+The LMLE maximizes the joint likelihood or measurement probability 
+\begin_inset Formula $p\left(y_{0:k}\mid x_{0:k}\right).$
 \end_inset
 
 
 \end_layout
 
 \begin_layout Standard
-Following 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Thrun2006"
-
-\end_inset
-
-, using Bayes rule and under the assumption that the system is a first order
- Markov process, we can calculate the negative log posterior which is 
+Following using Bayes rule and under the assumption that the system is a
+ first order Markov process, we can calculate the negative log joint likelihood
+ which is 
 \begin_inset Formula 
 \begin{multline*}
-\log\left(-p\left(x_{0:k}\mid y_{1:k}\right)\right)=\log\left(-\eta\right)+\log\left(-p\left(x_{0}\right)\right)\\
+\log\left(-p\left(y_{0:k}\mid x_{0:k}\right)\right)=\log\left(-\eta\right)+\\
 +\sum_{m=1}^{k}\log\left(-p\left(x_{m}\mid x_{m^{-}}\right)\right)+\sum_{m=0}^{k}\sum_{j=1}^{\ell\left(m\right)}\log\left(-p\left(y_{m}^{j}\mid x_{m}\right)\right),
 \end{multline*}
 
 \end_inset
 
 where 
+\begin_inset Formula $\eta$
+\end_inset
+
+ is a normalizing constant and 
 \begin_inset Formula $\ell\left(m\right)$
 \end_inset
 
@@ -2386,12 +2384,7 @@ where
 \begin_inset Formula $\log\left(-\eta\right)$
 \end_inset
 
- since it will have no impact on the optimization problem and we can drop
- the term 
-\begin_inset Formula $\log\left(-p\left(x_{0}\right)\right)$
-\end_inset
-
- to signify that the initial covariance is large.
+ since it will have no impact on the optimization problem.
  Since we are only interested in estimating the current state 
 \begin_inset Formula $x_{k}$
 \end_inset
@@ -2945,17 +2938,12 @@ P_{m}^{-1}=\bar{P}_{m}^{-1}+\sum_{i=1}^{N_{s}}\left(\left(P_{m}^{i}\right)^{-1}-
 and the state update is 
 \begin_inset Formula 
 \[
-\hat{x}_{m}=\hat{\bar{x}}_{m}\oplus\left(P_{m}\sum_{i=1}^{N_{s}}Z^{i}\right),
+\hat{x}_{m}=\hat{\bar{x}}_{m}\oplus\left(P_{m}\sum_{i=1}^{N_{s}}Z^{i}\right).
 \]
 
 \end_inset
 
-where 
-\begin_inset Formula $\bar{P}_{m}$
-\end_inset
 
- is the error covariance before any updates are applied.
- 
 \end_layout
 
 \begin_layout Standard
@@ -2980,16 +2968,7 @@ Recall that
 \begin_inset Formula $\beta_{m}^{j}$
 \end_inset
 
- are calculated from the data association filter used, which in our case
- is the PDAF described in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Bar-Shalom2011"
-
-\end_inset
-
-.
- 
+ are calculated from the data association filter used.
 \end_layout
 
 \begin_layout Section
@@ -3004,11 +2983,11 @@ name "sec:Track-Likelihood"
 \end_layout
 
 \begin_layout Standard
-The track likelihood is a measure of how well a model represents an actual
+The track likelihood is a measure of how well a track represents an actual
  target.
- In the previous versions of R-RANSAC, the inlier ratio and the track's
- lifetime were used to indicate the model's likelihood which doesn't have
- much theoretical basis other than intuition.
+ In the previous versions of R-RANSAC, the track's inlier ratio and lifetime
+ were used to indicate the track's likelihood which doesn't have much theoretica
+l basis other than intuition.
  In this section, we present a different approach using a binary Bayes filter
  with static states.
  
@@ -3023,14 +3002,14 @@ Let
 \begin_inset Formula $i^{th}$
 \end_inset
 
- measurement source produced a true measurement of the target during the
+ measurement source produces a true measurement of the target during the
  sensor scan, let 
 \begin_inset Formula $P_{G}^{i}$
 \end_inset
 
- denote the probability that the true measurement was validated, i.e.
- associated with the target during the data association process, then the
- probability that a true measurement was received and validated is 
+ denote the probability that the true measurement is validated (associated),
+ then the probability that a true measurement was received and validated
+ is 
 \begin_inset Formula $P_{D}^{i}P_{G}^{i}$
 \end_inset
 
@@ -3060,7 +3039,7 @@ reference "eq:volume_validation_region"
 
 \end_inset
 
- and is dependent on the measurement source and state estimate.
+.
 \end_layout
 
 \begin_layout Standard
@@ -3144,33 +3123,21 @@ Let
 \end_layout
 
 \begin_layout Standard
-We are interested in calculating the probability that the track represents
- an actual target conditioned on the number of validated measurements.
- We denote this probability as 
+We are interested in calculating the probability 
 \begin_inset Formula $p\left(z\mid\theta_{m:k}\right)$
 \end_inset
 
-.
+ which is the probability that the track represents an actual target conditioned
+ on the number of validated measurements.
  Using Bayes rule we get 
 \begin_inset Formula 
 \begin{align*}
-p\left(z\mid\theta_{m:k}\right) & =\frac{p\left(\theta_{k}\mid z,\theta_{m:k^{-}}\right)p\left(z\mid\theta_{m:k^{-}}\right)}{p\left(\theta_{k}\mid\theta_{m:k^{-}}\right)}\\
- & =\frac{p\left(\theta_{k}\mid z\right)p\left(z\mid\theta_{m:k^{-}}\right)}{p\left(\theta_{k}\mid\theta_{m:k^{-}}\right)}.
+p\left(z\mid\theta_{m:k}\right) & =\frac{p\left(\theta_{k}\mid z\right)p\left(z\mid\theta_{m:k^{-}}\right)}{p\left(\theta_{k}\mid\theta_{m:k^{-}}\right)},
 \end{align*}
 
 \end_inset
 
-The probability 
-\begin_inset Formula $p\left(\theta_{k}\mid\theta_{m:k^{-}}\right)$
-\end_inset
-
- can be difficult to calculate; however, we can work around needing to know
- this probability by using a log odds ratio.
- For this method, we need 
-\begin_inset Formula $p\left(\neg z\mid\theta_{m:k}\right)$
-\end_inset
-
- which is 
+and 
 \begin_inset Formula 
 \[
 p\left(\neg z\mid\theta_{m:k}\right)=\frac{p\left(\theta_{k}\mid\neg z\right)p\left(\neg z\mid\theta_{m:k^{-}}\right)}{p\left(\theta_{k}\mid\theta_{m:k^{-}}\right)}.
@@ -3190,8 +3157,8 @@ Taking the log (base 10) ratio of the probabilities
 \begin_inset Formula 
 \begin{align*}
 \log\left(\frac{p\left(z\mid\theta_{m:k}\right)}{p\left(\neg z\mid\theta_{m:k}\right)}\right) & =\log\left(\frac{p\left(\theta_{k}\mid z\right)p\left(z\mid\theta_{m:k^{-}}\right)}{p\left(\theta_{k}\mid\neg z\right)p\left(\neg z\mid\theta_{m:k^{-}}\right)}\right)\\
- & =\log\left(\frac{p\left(\theta_{k}\mid z\right)}{p\left(\theta_{k}\mid\neg z\right)}\right)\\
- & +\sum_{n=m}^{k^{-}}\log\left(\frac{p\left(\theta_{n}\mid z\right)}{p\left(\theta_{n}\mid\neg z\right)}\right).
+ & =\underbrace{\log\left(\frac{p\left(\theta_{k}\mid z\right)}{p\left(\theta_{k}\mid\neg z\right)}\right)}_{l_{k}}\\
+ & +\underbrace{\sum_{n=m}^{k^{-}}\log\left(\frac{p\left(\theta_{n}\mid z\right)}{p\left(\theta_{n}\mid\neg z\right)}\right)}_{l_{k^{-}}}.
 \end{align*}
 
 \end_inset
@@ -3200,24 +3167,18 @@ Taking the log (base 10) ratio of the probabilities
 \end_layout
 
 \begin_layout Standard
-Whenever new validated measurements are received, we calculate the term
- 
-\begin_inset Formula 
-\[
-l_{k}=\log\left(\frac{p\left(\theta_{k}\mid z\right)}{p\left(\theta_{k}\mid\neg z\right)}\right)
-\]
-
+Whenever new validated measurements are received, we calculate 
+\begin_inset Formula $l_{k}$
 \end_inset
 
-and add it to the previous log odds ratio 
-\begin_inset Formula 
-\begin{align*}
-l_{k^{-}=} & \log\left(\frac{p\left(z\mid\theta_{m:k^{-}}\right)}{p\left(\neg z\mid\theta_{m:k^{-}}\right)}\right)\\
- & =\sum_{n=m}^{k^{-}}\log\left(\frac{p\left(\theta_{n}\mid z\right)}{p\left(\theta_{n}\mid\neg z\right)}\right).
-\end{align*}
-
+ and add it to the previous log odds ratio 
+\begin_inset Formula $l_{k^{-}}$
 \end_inset
 
+.
+\end_layout
+
+\begin_layout Standard
 The term 
 \begin_inset Formula $l_{k}$
 \end_inset
@@ -3250,7 +3211,7 @@ nt during a sensor scan.
 \begin_inset Formula $p\left(\theta_{k}^{i}\mid z\right)$
 \end_inset
 
-, that all 
+: that all 
 \begin_inset Formula $\theta_{k}^{i}$
 \end_inset
 
@@ -3304,8 +3265,7 @@ p\left(z\mid\theta_{m:k}\right)=1-\frac{1}{1+10^{l_{k}}}.
 \end_layout
 
 \begin_layout Standard
-Note that if a track is outside the surveillance region of the measurement
- source, then 
+If a track is outside the LSR of the source, then 
 \begin_inset Formula $P_{D}$
 \end_inset
 
@@ -3314,20 +3274,19 @@ Note that if a track is outside the surveillance region of the measurement
 \end_inset
 
  will not be affected.
- In the case that the track leaves the global surveillance region, we need
- a way to kill the track in order to make room for other tracks to be initialize
-d.
+ In the case that the track leaves the GSR, we need a way to kill the track
+ in order to make room for other tracks to be initialized.
  Thus, we assume that a track that has not received a measurement within
  
 \begin_inset Formula $\tau_{\alpha}$
 \end_inset
 
- seconds is no longer in the GSR and will be removed.
- A model is considered a good model if the 
+ seconds is no longer in the GSR and will be pruned.
+ A track is considered a good track if the 
 \begin_inset Formula $p\left(z\mid\theta_{m:k}\right)>\tau_{\rho}$
 \end_inset
 
-; otherwise, it is considered a poor model.
+; otherwise, it is considered a poor track.
  The parameters 
 \begin_inset Formula $\lambda^{i}$
 \end_inset
@@ -3355,15 +3314,15 @@ name "sec:RANSAC"
 \end_layout
 
 \begin_layout Standard
-The random sample consensus (RANSAC) algorithm 
+RANSAC is a regression algorithm that estimates parameters while mitigating
+ the effect of gross outliers 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Fischler1981"
 
 \end_inset
 
- is a regression algorithm that estimates parameters while mitigating the
- effect of gross outliers.
+.
  There has been many developments and adaptations to the RANSAC algorithm
  
 \begin_inset CommandInset citation
@@ -3404,47 +3363,24 @@ Let
 \end_inset
 
  and other measurements randomly sampled from different times such that
- the system can be observed by the measurements 
-\begin_inset Formula $y_{0:k}$
-\end_inset
-
-.
+ the system can be observed.
  Using the measurements 
 \begin_inset Formula $y_{0:k}$
 \end_inset
 
-, we create a model hypothesis by estimating a current hypothetical state
- 
+ and LMLE, we create a track hypothesis by estimating a current hypothetical
+ state 
 \begin_inset Formula $x_{k}$
 \end_inset
 
- that fit the measurements according to they system model described in 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:system-model"
-
-\end_inset
-
-.
- The hypothetical state 
-\begin_inset Formula $x_{k}$
-\end_inset
-
- is estimated using the LMLE method described in section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:LMLE"
-
-\end_inset
-
-.
+ that fit the measurements according to the system model.
  Once 
 \begin_inset Formula $x_{k}$
 \end_inset
 
- is estimated, we construct a consensus set for the track hypothesis.
+ is estimated, we construct a consensus set.
  The consensus set contains all of the measurements that are inliers to
- the thack hypothesis.
+ the track hypothesis.
  An inlier is a measurement that is within some distance of the estimated
  measurement obtained from 
 \begin_inset Formula $x_{k}$
@@ -3495,8 +3431,7 @@ where
 \begin_inset Formula $y_{m}^{j}$
 \end_inset
 
- is considered an inlier to the track hypothesis and is added to the consensus
- set.
+ is an inlier to the track hypothesis and is added to the consensus set.
  The estimated measurement 
 \begin_inset Formula $\hat{y}_{m}$
 \end_inset
@@ -3529,18 +3464,6 @@ reference "eq:meas_cov_time"
 \end_inset
 
 .
- For help choosing 
-\begin_inset Formula $\tau_{I}$
-\end_inset
-
-, see section 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "sub:Validation-Region"
-
-\end_inset
-
-.
  
 \end_layout
 
@@ -3549,11 +3472,7 @@ This process is repeated at most
 \begin_inset Formula $\ell$
 \end_inset
 
- times so that we have at most 
-\begin_inset Formula $\ell$
-\end_inset
-
- track hypotheses from each cluster.
+ times.
  The model hypothesis with the largest consensus set from each cluster is
  kept and used to create a track provided that the size of the consensus
  set is at least 
@@ -3562,17 +3481,9 @@ This process is repeated at most
 
 .
  The size of the consensus set is not necessarily the cardinality of the
- consensus set.
- We define the size of the consensus set as the number different source
- that produced validated measurements at each time step.
- For example, if a source provided ten measurements at time 
-\begin_inset Formula $k$
-\end_inset
-
- and four of them were added to the consensus set, all four of them would
- count as one.
- The purpose of this definition is to ensure that one source is not weighted
- more heavily than another.
+ consensus set since we count all the measurements from a source per sensor
+ scan as a single measurement.
+ This is to ensure that one source is not weighted more heavily than another.
  RANSAC will terminate early if the size of a consensus set is greater than
  or equal to the threshold 
 \begin_inset Formula $\tau_{E}$
@@ -3606,7 +3517,7 @@ reference "sec:Centralized-Measurement-Fusion"
  We also initialize the track's likelihood using the consensus set and the
  method described in section 
 \begin_inset CommandInset ref
-LatexCommand eqref
+LatexCommand ref
 reference "sec:Track-Likelihood"
 
 \end_inset
@@ -3626,14 +3537,13 @@ name "sec:Track-to-Track-fusion"
 \end_layout
 
 \begin_layout Standard
-As tracks are propagated and updated, they can begin to coalesce, in which
- case we need to merge/fuse them.
+As tracks are propagated and updated they can coalesce in which case we
+ need to merge/fuse them.
  In order to optimally fuse them, we would need to calculate the cross covarianc
-e between two tracks which can be computationally complex and time expensive,
+e between two tracks which is computationally complex and time expensive,
  or in our case unknown.
  Fortunately, the covariance intersection (CI) method can be used to fuse
- two tracks together without calculating the cross covariance.
- A good introduction to the CI method is presented in 
+ two tracks together without calculating the cross covariance 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Deng2012"
@@ -3641,16 +3551,7 @@ key "Deng2012"
 \end_inset
 
 .
- Bar-Shalom, in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Bar-Shalom2011"
-
-\end_inset
-
-, pointed out that the original CI method is so conservative in its estimation
- that it can indicate degradation of the state estimate due to fusion.
- An improved version of the CI method was presented in 
+ We use the variation of the CI method presented in 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Tian2010"
@@ -3658,7 +3559,6 @@ key "Tian2010"
 \end_inset
 
  called the sampled covariance intersection (SCI) method.
- This is the method we will follow.
  In order to see if two tracks need to be fused together, we use a track
  association method prescribed in 
 \begin_inset CommandInset citation
@@ -3669,7 +3569,7 @@ key "Bar-Shalom2011"
 
 .
  In this section we will briefly present the track association and fusion
- methods adapted for the Lie group setting.
+ methods adapted to the Lie group setting.
  
 \end_layout
 
@@ -3875,7 +3775,7 @@ Recall that the purpose of the LMLE is to generate a current state estimate
 
  of a track hypothesis.
  Using the current state estimates we build the consensus set which is later
- used to refine the estimate using a filtering technique.
+ used to refine the estimate via a filtering technique.
  So the estimate of LMLE doesn't have to be super refined, and we can simplify
  the optimization process in different ways.
  
@@ -3907,7 +3807,7 @@ y_{k}=g_{k}\exp\left(v_{k}\right).
 \end_layout
 
 \begin_layout Standard
-When generating a model hypothesis, we always use a measurement from the
+When generating a track hypothesis, we always use a measurement from the
  current time.
  We can use this measurement as the estimated pose 
 \begin_inset Formula $g_{k}$
@@ -4060,17 +3960,10 @@ reference "eq:meas_cov_time"
 \end_layout
 
 \begin_layout Standard
-If you want the estimation to be as accurate as possible using the original
- optimization problem to solve the LMLE defined in 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:likelihood_inverse"
-
-\end_inset
-
-, we suggest you use the simplified approaches to seed the original optimization
- problem unless the system is linear since the optimization problem is already
- simple.
+If you want the estimation to be as accurate as possible, we suggest you
+ use the simplified approaches to seed the original optimization problem
+ unless the system is linear since the original optimization problem is
+ already simple.
  
 \end_layout
 
@@ -4088,7 +3981,7 @@ name "sec:Examples"
 \begin_layout Standard
 In this section we provide three examples of increasing complexity.
  The first example is to show how Lie group framework of R-RANSAC applies
- to Euclidean space of 
+ to Euclidean spaces of 
 \begin_inset Formula $\mathbb{R}^{n}$
 \end_inset
 
@@ -4097,17 +3990,8 @@ In this section we provide three examples of increasing complexity.
 \end_inset
 
 .
- The second example applies R-RANSAC to tracking targets on an image plane
- using 
-\begin_inset Formula $SE\left(2\right)$
-\end_inset
-
-, and the third example applies R-RANSAC to tracking UAVs moving on the
- configuration manifold 
-\begin_inset Formula $SE\left(3\right)$
-\end_inset
-
- using radar sensors.
+ The second example applies R-RANSAC to tracking targets on an image plane,
+ and the third example applies R-RANSAC to tracking UAVs using radar sensors.
  
 \end_layout
 
@@ -4130,20 +4014,12 @@ This is a brief section to show how the Lie group theory applies to Euclidean
 \end_inset
 
 , equipped with the standard topology and the group operation of addition.
- 
-\begin_inset Formula $\mathbb{R}^{n}$
-\end_inset
-
- equipped with addition is an abelian group; thus the adjoint map is the
- identity map.
  Its corresponding Lie algebra is 
 \begin_inset Formula $\mathbb{R}^{n}$
 \end_inset
 
-.
- Therefore, the exponential map and its inverse is simply the identity map.
- This implies that the left and right Jacobians of the exponential map is
- also the identity map.
+, and the adjoint, exponential, and left and right Jacobians are the identity
+ map.
  The box plus/minus and o plus/minus mapping are trivially derived; for
  example
 \begin_inset Formula 
@@ -4192,8 +4068,8 @@ where
 ,
 \begin_inset Formula 
 \begin{align*}
-A_{k}=\begin{bmatrix}I_{2\times2} & \delta_{k}I\\
-0 & I_{2\times2}
+A_{k}=\begin{bmatrix}I & \delta_{k}I\\
+0 & I
 \end{bmatrix}, & \thinspace & B_{k}=\begin{bmatrix}\delta_{k}I & \frac{\delta_{k}^{2}}{2}I\\
 0 & \delta_{k}I
 \end{bmatrix},
@@ -4235,7 +4111,7 @@ The Jacobians are easily computed and are
 \end_inset
 
 .
- The LMLE simplifies to a least squares problem.
+ For linear systems, the LMLE simplifies to a least squares problem.
  This type of system used with R-RANSAC is thoroughly discussed in 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -4258,7 +4134,13 @@ name "sub:tracking_image_plane"
 
 \end_inset
 
+ 
+\end_layout
 
+\begin_layout Standard
+NOTE: THIS WOULD BE BETTER IF TRACKING WAS DONE IN THE VIRTUAL IMAGE PLANE
+ SINCE THE VIP IS PARALLEL TO THE GROUND, THUS THE MOTION WOULD REALLY BE
+ SE2
 \end_layout
 
 \begin_layout Standard
@@ -4524,8 +4406,8 @@ To improve the LMLE used to estimate the current state, we can seed it as
 \begin_inset Formula $y_{n}$
 \end_inset
 
- be three measurements.
- Since we observe the position of the target, we can estimate the position
+ be three measurements taken at different times.
+ Since we observe the position of the target, we can approximate the position
  of the target at time 
 \begin_inset Formula $k$
 \end_inset
@@ -4547,7 +4429,7 @@ To improve the LMLE used to estimate the current state, we can seed it as
 \end_inset
 
  and 
-\begin_inset Formula $t_{n}=t_{n}$
+\begin_inset Formula $t_{n}=y_{n}$
 \end_inset
 
 .
@@ -4603,12 +4485,12 @@ We can now solve for
 Note that 
 \begin_inset Formula 
 \[
-\dot{t}_{m}=R_{k}\exp\left(\delta_{k:m}\dot{\theta}_{k}\right)\rho_{k}
+\dot{t}_{m}=R_{k}\exp\left(\delta_{k:m}\dot{\theta}_{k}\right)\rho_{k}.
 \]
 
 \end_inset
 
-and let 
+Let 
 \begin_inset Formula 
 \begin{align*}
 z & =R_{k}^{\top}\dot{t}_{m}/\rho_{k}\\
@@ -4644,36 +4526,26 @@ Constrained Problem for SE
 \end_layout
 
 \begin_layout Standard
-In this example, there are multiple fixed radar sensors with overlapping
- LSR.
- The measurements are point measurements and are converted to the fixed
- global frame before being given to R-RANSAC.
- We also assume that the measurement covariance can vary.
- The objective is to track multiple fixed wing aircrafts (FWAs) that are
- in the GSR.
- This is a similar example as the one in subsection 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "sub:tracking_image_plane"
-
+In this example the objective is to track multiple fixed wing aircrafts
+ (FWAs) that are in the GSR and whose configuration manifold is 
+\begin_inset Formula $SE$
 \end_inset
 
-, except that the FWAs' configuration manifold is 
-\begin_inset Formula $SE\left(3\right)$
+
+\begin_inset Formula $\left(3\right)$
 \end_inset
 
- instead of 
-\begin_inset Formula $SE\left(2\right)$
-\end_inset
-
-, making the problem a little more difficult; see appendix 
+.
+ The FWA are observed via multiple fixed radar sensors with overlapping
+ LSR which produce point measurements.
+ See appendix 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:SE3"
 
 \end_inset
 
- for the system function and important Jacobians.
+ for the FWAs' system function and important Jacobians.
  
 \end_layout
 
@@ -4731,7 +4603,7 @@ where
 \begin_inset Formula 
 \begin{align*}
 y_{m} & =h\left(f^{-1}\left(x_{k},\delta_{k:m},w_{k}\right),v_{k}\right)\\
- & =R_{k}V\left(\delta_{k:m}\left(\omega_{k}+w_{k}^{R}\right)+\frac{\delta_{k:m}^{2}w_{k}^{\omega}}{2}\right)\left(\delta_{k:m}\rho_{k}+\delta_{k:m}w_{k}^{\rho}\right)\\
+ & =R_{k}J_{l}\left(\delta_{k:m}\left(\omega_{k}+w_{k}^{R}\right)+\frac{\delta_{k:m}^{2}w_{k}^{\omega}}{2}\right)\left(\delta_{k:m}\rho_{k}+\delta_{k:m}w_{k}^{\rho}\right)\\
  & +t_{k}+w_{k}^{t}+v_{m},
 \end{align*}
 
@@ -4746,7 +4618,7 @@ where
 \end_inset
 
  and 
-\begin_inset Formula $V$
+\begin_inset Formula $J_{l}$
 \end_inset
 
  is defined in equation 
@@ -4801,15 +4673,7 @@ reference "lem:dJl"
 \end_inset
 
 .
- We quickly note that 
-\begin_inset Formula 
-\[
-H_{k}=H_{k:k}=\begin{bmatrix}I & 0_{2\times9}\end{bmatrix}.
-\]
-
-\end_inset
-
-
+ 
 \end_layout
 
 \begin_layout Standard
@@ -4856,9 +4720,9 @@ H_{k:m_{4}}
 \end_inset
 
 The observability matrix is not full rank.
- However, certain constraints, the system is observable.
- However, since we are interested in tracking the target we only need to
- be able to estimate the position of the target.
+ However, under certain constraints, the system is observable.
+ Since we are interested in tracking the target we only need to be able
+ to estimate the position of the target.
  To do this, we consider two configurations for a constant velocity system.
  In the first configuration the target has a circular or spiral trajectory.
  In this case we add the constraints that the target's heading is oriented
@@ -4886,14 +4750,13 @@ ion except that
  Under these constraints the system is observable.
  We can identify which configuration the target is in by looking at three
  different measurements from different times.
- If the three measurement do not form a line, then the system has first
- constrains; otherwise, the latter.
+ If the three measurement do not form a line, then the system is in the
+ first configuration; otherwise, the latter.
 \end_layout
 
 \begin_layout Standard
-Since the system is nonlinear, the LMLE can take a while to converge, and
- can converge to an undesirable state.
- To minimize these issues we can seed the optimization method.
+Since the system is nonlinear, the LMLE can take a while to converge.
+ We can speed up the LMLE by seeding it.
  To do this, we will use the Euler angles (roll 
 \begin_inset Formula $\phi$
 \end_inset
@@ -4953,7 +4816,7 @@ Let
 \end_inset
 
 .
- This allows us to write the constraints
+ This allows us to write the constraint
 \begin_inset Formula 
 \begin{align*}
 \dot{t} & =R\rho\\
@@ -4998,7 +4861,7 @@ Since we receive position measurements, we can numerically estimate the
 \begin_inset Formula $R_{k}$
 \end_inset
 
- by solving for solve for 
+ by solving for 
 \begin_inset Formula $\phi_{k}$
 \end_inset
 
@@ -5140,7 +5003,7 @@ From which we can estimate the angular rates
 \end_inset
 
 .
- We use these estimations to seed the LMLE optimization problem.
+ These approximations are then used to seed the LMLE optimization problem.
 \end_layout
 
 \begin_layout Standard
@@ -5251,14 +5114,14 @@ Let
 
 \end_inset
 
-The discretized system function 
+The discretized state transition function 
 \begin_inset Formula $f:SE\left(2\right)\times\mathbb{R}^{2}\to SE\left(2\right)\times\mathbb{R}^{2}$
 \end_inset
 
  is 
 \begin_inset Formula 
 \begin{align*}
-g_{k} & =\text{\exp}\left(\delta_{k}\left(u_{k^{-}}+w_{k}^{g}\right)+\frac{\delta_{k}^{2}}{2}w_{k}^{u}\right)\\
+g_{k} & =\text{\text{Exp}}\left(\delta_{k}\left(u_{k^{-}}+w_{k}^{g}\right)+\frac{\delta_{k}^{2}}{2}w_{k}^{u}\right)\\
 u_{k} & =u_{k^{-}}+\delta_{k}w_{k}^{u}
 \end{align*}
 
@@ -5328,6 +5191,7 @@ it becomes a bijection.
 with
 \begin_inset Formula 
 \begin{align}
+\theta & =\omega^{\vee}\\
 \exp\left(\omega\right) & =\begin{bmatrix}\cos\left(\theta\right) & -\sin\left(\theta\right)\\
 \sin\left(\theta\right) & \cos\left(\theta\right)
 \end{bmatrix}\\
@@ -5350,7 +5214,7 @@ and
 \end_inset
 
  being the left Jacobian of 
-\begin_inset Formula $SO\left(3\right)$
+\begin_inset Formula $SO\left(2\right)$
 \end_inset
 
 
@@ -5482,11 +5346,11 @@ equipped with matrix multiplication.
 \end_inset
 
 where 
-\begin_inset Formula $\theta=\left[\theta_{1},\theta_{2},\theta_{2}\right]^{\top}\in\mathbb{R}^{3}$
+\begin_inset Formula $\omega=\left[\theta\right]_{\times}$
 \end_inset
 
 , 
-\begin_inset Formula $\omega=\left[\theta\right]_{\times}$
+\begin_inset Formula $\theta=\left[\theta_{1},\theta_{2},\theta_{2}\right]^{\top}\in\mathbb{R}^{3}$
 \end_inset
 
  and 
@@ -5542,7 +5406,7 @@ Let
 
 \end_inset
 
-The discretized system function 
+The discretized state transition function 
 \begin_inset Formula $f:SE\left(3\right)\times\mathbb{R}^{3}\to SE\left(3\right)\times\mathbb{R}^{3}$
 \end_inset
 
@@ -5606,7 +5470,7 @@ it becomes a bijection.
  
 \begin_inset Formula 
 \begin{align*}
-\exp\left(u\right) & =\begin{bmatrix}\exp\left(\left[\omega\right]_{\times}\right) & J_{l}\left(\omega\right)\rho\\
+\exp\left(u\right) & =\begin{bmatrix}\exp\left(\omega\right) & J_{l}\left(\omega\right)\rho\\
 0 & 1
 \end{bmatrix}\\
 \text{\log}\left(g\right) & =\begin{bmatrix}J_{l}^{-1}\left(\omega\right)t\\
@@ -5624,7 +5488,7 @@ with
 \begin_inset Formula 
 \begin{align}
 \phi & =\sqrt{\omega^{\top}\omega}\\
-\exp\left(\omega\right) & =I+\frac{\sin\left(\theta\right)}{\theta}\omega+\frac{1-\cos\left(\theta\right)}{\theta^{2}}\omega^{2}\\
+\exp\left(\omega\right) & =I+\frac{\sin\left(\phi\right)}{\phi}\omega+\frac{1-\cos\left(\phi\right)}{\phi^{2}}\omega^{2}\\
 \phi & =\arccos\left(\frac{\text{trace}\left(R\right)-1}{2}\right)\\
 \log\left(R\right) & =\begin{cases}
 0_{2\times2} & \text{if }\phi=0\\

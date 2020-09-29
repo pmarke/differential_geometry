@@ -1,21 +1,38 @@
 %% LyX 2.1.4 created this file.  For more info, see http://www.lyx.org/.
 %% Do not edit unless you really know what you are doing.
-\documentclass[english]{IEEEtran}
+\documentclass[10pt,english]{IEEEtran}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{luainputenc}
 \usepackage{geometry}
 \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+\usepackage{float}
 \usepackage{amsmath}
 \usepackage{amsthm}
 \usepackage{amssymb}
 \usepackage{esint}
 
 \makeatletter
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
+\floatstyle{ruled}
+\newfloat{algorithm}{tbp}{loa}
+\providecommand{\algorithmname}{Algorithm}
+\floatname{algorithm}{\protect\algorithmname}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
 \theoremstyle{plain}
 \newtheorem{thm}{\protect\theoremname}
 \theoremstyle{plain}
 \newtheorem{lem}[thm]{\protect\lemmaname}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+\usepackage{algorithm,algpseudocode,tabularx}
+\usepackage{cite}
+\newcommand{\multiline}[1]{%
+  \begin{tabularx}{\dimexpr\linewidth-\ALG@thistlm}[t]{@{}X@{}}
+    #1
+  \end{tabularx}
+}
 
 \makeatother
 
@@ -31,15 +48,1886 @@
 
 \section{Introduction}
 
-This note assumes the reader has a basic understanding of the theory
-relating to Matrix Lie Groups and their corresponding Lie algebras.
-This includes the matrix exponential and logarithm map, the vector
-space isomorphic to specific Lie algebras, the adjoint of the group
-and the algebra, and the left and right Jacobians. It also assumes
-that the reader has a basic understanding of R-RANSAC.
+Optimal algorithms for the multiple target tracking (MTT) problem
+are not feasible in real time due to their computational complexities;
+therefore, many suboptimal approaches have been developed which can
+be implemented in real time. Some of these common algorithms are the
+global nearest neighbor (GNN), the joint probabilistic data association
+filter (JPDAF), the multiple hypothesis tracking (MHT), and the probabilistic
+multi-hypothesis tracker (PHMT). Each of these algorithms have variants
+that trade optimality for computational feasibility. There are also
+many other MTT algorithms which we will not discussed here but we
+refer the reader to \cite{Pulford2005} for a survey of the more common
+algorithms. We briefly present some of these common algorithms in
+order to compare and contrast them.
+
+The GNN is the simplest MTT method. It is a single-scan tracker that
+uses hard data association to assign measurements to tracks based
+on distance without taking into account statistical information such
+as the innovation term \cite{Bar-Shalom2011}. The GNN filter is a
+computationally efficient algorithm, but its ``greedy'' data association
+causes track divergence and loss in clutter. This method requires
+an additional scheme to prune, initialize and merge tracks. 
+
+The JPDAF is an extension of the probabilistic data association filter
+(PDAF) to multiple target tracking. It is a single-scan tracker that
+uses a soft data association technique to weighs new measurements
+inside a track's validation region based upon the new measurement's
+joint data association probability \cite{Bar-Shalom2009}. The weights
+are used to update the tracks. Even though it is a single-scan tracker,
+calculating the joint probability of all possible data associations
+per scan makes it more computationally complex and demanding. In addition,
+this method requires an additional scheme to prune, initialize and
+merge tracks. 
+
+The MHT algorithm is a batch tracker that uses a hard data association
+technique. It is an optimal algorithm since it considers all possible
+measurement associations in order to create the hypotheses tree. There
+are two different versions of MHT: measurement-oriented (MO-MHT) \cite{Reid1979}
+and track-oriented (TO-MHT) \cite{Kurien1990}. While MHT is an optimal
+algorithm, it is not feasible unless appropriate techniques are used
+to limit the number of generated hypotheses: pruning, merging, sliding
+window, etc. When these techniques are used, the algorithm is suboptimal.
+Lastly, the algorithm is capable of initializing and pruning tracks. 
+
+The PHMT is a soft data association algorithm that relaxes the criteria
+that a track can only produce at most one measurement per time step.
+It does this by using a combination of the maximum likelihood and
+expectation maximization algorithm \cite{Dempster1977} to maximize
+the posterior probability of the tracks given a batch of measurements
+or a windowed batch of measurements. In the original form, it didn't
+have a method of track initialization or pruning, but later variants
+used the Hugh transform or the MHT as a front end to initialize tracks
+\cite{Crousey2009}. The PHMT performance is similar to that of the
+PDAF which is a single-scan tracker \cite{Bar-Shalom2011}. A variant
+of the PHMT operates on a windowed batch of data, and can be used
+as a single-scan tracker. 
+
+Recursive random sample consensus (R-RANSAC) is a recently new MTT
+algorithm with a modular paradigm. Unlike the MTT algorithms previously
+discussed that rely on additional initialization scheme or a computationally
+extensive hypotheses tree to initialize tracks, R-RANSAC uses RANSAC
+over a windowed batch of data to initialize tracks. Once tracks are
+initialized, it uses any single-scan tracker (GNN, JPDAF, PDAF, PHMT,
+ect) to update the tracks. In addition, it manages the tracks by pruning
+and merging them. Another novelty of the algorithm is that the surveillance
+region doesn't need to be fixed, but can be moved provided that a
+transformation is available to transform measurements and tracks.
+
+R-RANSAC was first designed to estimate the parameters of multiple
+static signals \cite{Niedfeldt2013}, but it was quickly extended
+to track multiple dynamic targets \cite{Niedfeldt}. Since then, R-RANSAC
+has been improved, modified and changed in various literature \cite{Niedfeldt2014b,Niedfeldt2014,Niedfeldt2016,Ingersoll2015,Ingersoll2015a,Defranco2015,Lusk2018,Niedfeldt2017,Wikle2017,Millard2017,Yang2017,Yang2018}.
+All of these improvements seemed to have stemmed from \cite{Niedfeldt},
+which resulted in many different versions of R-RANSAC. This paper
+aims at aggregating the best contributions while adding some of our
+own improvements. Our specific contributions include removing the
+constraint that measurements come at a fixed time interval, improving
+the criteria for a good track using a probabilistic frame work, allowing
+the measurement and process noise covariance to change at every time
+step, extending the theory of R-RANSAC to any Lie group, modifying
+the model merging method and give several example implementation.
+
+The rest of the paper is outlined as follows. In section \ref{sec:Lie-Theory-Review}
+we give a brief review of Lie theory to establish important notation,
+in section \ref{sec:Problem-Description} we present a more detailed
+description of the problem with assumptions, in section \ref{sec:Modular-Paradigm}
+we present the modular paradigm. Sections \ref{sec:Lie-Group-Probability}-
+\ref{sec:LMLE-Simplification} go into more detail on specific parts
+of R-RANSAC, and in section \ref{sec:Examples} we present examples.
 
 
-\section{Terminology, Parameters, and Time Notation}
+
+
+\section{Lie Theory Review\label{sec:Lie-Theory-Review}}
+
+The objective of this section is to provide a review of the pertinent
+concepts of Lie theory to establish notation. We assume that the reader
+is familiar with Lie group and Lie algebra theory. For those unfamiliar
+with this material, we refer the interested reader primarily to \cite{Sola2018}.
+Solá offers a very gentle introduction to Lie theory that covers the
+majority of information needed to understand this paper. We also follow
+much of the notation prescribed by Solá and Hertzberg in \cite{Sola2018}
+and \cite{Hertzberg2013}. For those who are interested in a more
+rigorous treatment of Lie theory, we refer the reader to \cite{Barfoot2019,Stillwell2008,Hall2003,Bullo2005a,Lee2013,Abraham1998}.
+In this document we will focus on targets with a discrete system model
+and constant velocity, this is merely to simplify the presentation
+of the material. With no loss in generality, everything we present
+can be extended to targets with a continuous system model and constant
+acceleration by using a semidirect product group formed from a Lie
+group and its Lie algebra. A good discussion of the semidirect product
+group can be found in \cite{Engo2003}. If using a continuous system
+that requires numerical integration on the manifold, we refer the
+reader to \cite{Munthe-Kaas1995,Munthe-Kaas1998,Munthe-Kaas1999}
+which describe the Runge-Kutta-Muthe-Kass numerical integration technique. 
+
+Let $G$ denote a Lie group and $\mathfrak{g}$ denote it's corresponding
+Lie algebra. The exponential function is a surjection that maps an
+element of the Lie algebra to an element of the Lie group, and the
+logarithmic map is the inverse of the exponential map. We denote these
+maps as\begin{subequations} 
+\begin{align*}
+\exp:\mathfrak{g} & \to G\\
+\log:G & \to\mathfrak{g}.
+\end{align*}
+\end{subequations} The definition of these maps is dependent on the
+Lie group. For matrix Lie groups, the exponential and logarithm maps
+are defined as the matrix exponential and matrix logarithm. 
+
+The Lie algebra is isomorphic to the Euclidean space $\mathbb{R}^{n}$
+where $n$ is the dimension of the Lie algebra. We will denote this
+Euclidean space as $E$. The Wedge function maps an element from the
+Euclidean space to the Lie algebra, and the Vee function is the inverse
+function which we denote as\begin{subequations} 
+\begin{align*}
+\cdot^{\wedge}:E\to\mathfrak{g} & \quad\left(v\right)\mapsto v^{\wedge}\\
+\cdot^{\vee}:\mathfrak{g}\to E & \quad\left(v^{\wedge}\right)^{\vee}\mapsto v.
+\end{align*}
+\end{subequations}The definitions of these maps are dependent on
+the Lie algebra. We will rely on context to distinguish between elements
+of $E$ and $\mathfrak{g}$.
+
+Let $\text{Exp}:E\to G$ and its inverse be defined as the composite
+function \begin{subequations}
+\begin{align*}
+\text{Exp}\left(v\right) & =\exp\left(v^{\wedge}\right)\\
+\text{Log}\left(g\right) & =\log\left(g\right)^{\vee}.
+\end{align*}
+
+
+\end{subequations}
+
+Other functions of importance are the box-plus/minus and the o-plus/minus
+defined as \begin{subequations} 
+\begin{align*}
+\boxplus:G\times\mathfrak{g}\to G & \quad\left(g,u\right)\mapsto g\bullet\exp\left(u\right)\\
+\boxminus:G\times G\to\mathfrak{g} & \quad\left(g_{1},g_{2}\right)\mapsto\log\left(g_{2}^{-1}\bullet g_{1}\right)\\
+\oplus:G\times E\to G & \quad\left(g,v\right)\mapsto g\bullet\text{Exp}\left(v\right)\\
+\ominus:G\times G\to E & \quad\left(g_{1},g_{2}\right)\mapsto\text{Log}\left(g_{2}^{-1}\bullet g\right).
+\end{align*}
+\end{subequations} where $\bullet$ denotes the group operator which
+we will omit in the future, and $g_{2}^{-1}$ is the inverse element
+of $g_{2}$. We have based the definition of these function on left
+trivializations (using vector fields that are left invariant) since
+we will present the material using the left trivialization. Note that
+we could easily use the right trivialization as well.
+
+The adjoint of $G$ is a representation of $G$ that acts on $\mathfrak{g}$,
+and is denoted and generically defined as 
+\begin{align*}
+Ad_{g}:\mathfrak{g} & \to\mathfrak{g};\quad\left(u\right)\mapsto gug^{-1}
+\end{align*}
+where $g\in G$. Since the adjoint is a linear function, we can find
+a matrix version that operates on the associated Euclidean space generically
+defined as 
+\[
+\mathbf{Ad}_{g}:E\to E;\quad\left(v\right)\mapsto\mathbf{Ad}_{g}v
+\]
+where $\mathbf{Ad}_{g}$ is the matrix adjoint representation of $G$. 
+
+The adjoint of $\mathfrak{g}$ is a representation of $\mathfrak{g}$
+that acts on $\mathfrak{g}$. It is also the Lie bracket $\left[\cdot,\cdot\right]$
+which we will generically define as 
+\[
+ad_{u}:\mathfrak{g}\to\mathfrak{g};\quad\left(v\right)\mapsto\left[u,v\right]
+\]
+where $u\in\mathfrak{g}$. Since the adjoint is a linear function,
+we can find a matrix version that operates on the associated Euclidean
+space generically defined as 
+\[
+\mathbf{ad}_{u}:E\to E\quad\left(v\right)\mapsto\mathbf{ad}_{u}v
+\]
+where $u\in\mathfrak{g}$ and $\mathbf{ad}_{u}$ is the matrix adjoint
+representation of $\mathfrak{g}$. 
+
+As stated in \cite{Iserles2000a}, we can define the differential
+of the exponential mapping as the 'left trivialized' tangent of the
+exponential map or as the 'right trivialized' tangent of the exponential
+map. These differentials are also commonly called the right and left
+Jacobians. The right and left Jacobians $J_{r},J_{l}:E\to GL\left(E\right)$
+are defined as
+\begin{align*}
+J_{r}\left(v\right) & =\frac{^{r}\partial\text{Exp}\left(v\right)}{\partial v} &  & J_{l}\left(v\right)=\frac{^{l}\partial\text{Exp}\left(v\right)}{\partial v}.
+\end{align*}
+
+
+Their inverses are defined as 
+\begin{align*}
+J_{r}^{-1}\left(v\right) & =\frac{^{r}\partial\text{Log}\left(v\right)}{\partial v} &  & J_{l}^{-1}\left(v\right)=\frac{^{l}\partial\text{Log}\left(v\right)}{\partial v}.
+\end{align*}
+The right Jacobian has the property that for small $\delta v\in E$
+and $v\in E$ 
+\begin{align*}
+\text{Exp}\left(\delta v+u\right) & \approx\text{Exp}\left(v\right)\text{Exp}\left(J_{r}\left(v\right)\delta v\right)\\
+\text{Exp}\left(v\right)\text{Exp}\left(\delta v\right) & \approx\text{Exp}\left(v+J_{r}^{-1}\left(v\right)\delta v\right)\\
+\text{Log}\left(\text{Exp}\left(v\right)\text{Exp}\left(\delta v\right)\right) & \approx v+J_{r}^{-1}\left(v\right)\delta v.
+\end{align*}
+The left Jacobian has the similar property that for small $\delta v\in E$
+and $v\in E$ 
+\begin{align*}
+\text{Exp}\left(v+\delta v\right) & \approx\text{Exp}\left(J_{l}\left(v\right)\delta v\right)\text{Exp}\left(v\right)\\
+\text{Exp}\left(\delta v\right)\text{Exp}\left(v\right) & \approx\text{Exp}\left(v+J_{l}^{-1}\left(v\right)\delta v\right)\\
+\text{Log}\left(\text{Exp}\left(\delta v\right)\text{Exp}\left(v\right)\right) & \approx v+J_{l}^{-1}\left(v\right)\delta v.
+\end{align*}
+
+
+The derivation of the left and right Jacobians stems from the Baker-Campbell-Hausdorff
+formula and can be studied in \cite{Hall2003} and \cite{Barfoot2019}. 
+
+An infinitesimal generator corresponding to $u\in\mathfrak{g}$ is
+a smooth vector field on $G$ defined as 
+\[
+\xi_{u}\left(g\right)=\left.\frac{d}{dt}\right|_{t=0}g\boxplus\left(tu\right)
+\]
+
+
+This is a very simplified definition that serves our purpose in deriving
+the discrete system model. For a more formal and encompassing definition
+of an infinitesimal generator, we refer the reader to the authors
+already mentioned. 
+
+
+\section{Problem Description \label{sec:Problem-Description}}
+
+The objective is to track multiple dynamic targets by estimating their
+states given a set of measurements from multiple sensors without a
+prior information about the number of targets. 
+
+The following notation is used throughout. We denote the current time
+using a subscript $k$, the next previous time using a subscript $k^{-}$,
+and an arbitrary previous time using the subscript $m$ such that
+$m\leq k$. We use $\delta_{k}$ to denote the time elapsed from $k^{-}$
+to $k$, and $\delta_{m:k}$ to denote the time elapsed from $m$
+to $k$ such that $\delta_{m:k},\delta_{k^{-}}\geq0$ and $\delta_{k:m}=-\delta_{m:k}$.
+Lastly, a subscript of $0$ is used to denote the the time at the
+beginning of the time window, e.g, $\delta_{0:k}=\delta_{k-T_{W}:k}$. 
+
+Let the state of the system at time $k$ be given by $x_{k}=\left(g_{k},u_{k}\right)\in G\times E$
+where $g_{k}\in G$ and $u_{k}\in E$. We assume the state transition
+model to be continuous, near constant velocity, and time invariant
+which we define as
+\begin{align*}
+\dot{g}_{k} & =\xi_{u_{k}}\left(g_{k}\right)\\
+\dot{u}_{k} & =w_{k}^{u},
+\end{align*}
+where $\xi_{u_{k}}\left(g_{k}\right)$ is an infinitesimal generator
+constructed from $u_{k}$, $w_{k}=\begin{bmatrix}w_{k}^{g}\\
+w_{k}^{u}
+\end{bmatrix}$ is process noise sampled from a zero-mean, white-noise, Gaussian
+distribution with covariance $Q$. Under the assumption that $w_{k}$
+stays constant over a time period $\delta_{k}$ we can discretize
+the model to get \begin{subequations}\label{eq:system-model}
+\begin{align}
+g_{k} & =g_{k^{-}}\oplus\left(\delta_{k}u_{k^{-}}+\delta_{k}w_{k}^{g}+\frac{\delta_{k}^{2}}{2}w_{k}^{u}\right)\\
+u_{k} & =u_{k^{-}}+\delta_{k}w_{k}^{u}.
+\end{align}
+\end{subequations} This form is similar to the one found in \cite{Sjoberg2019}
+and is an exact solution provided that the Lie group is commutative.
+If the Lie group is not commutative, the exact numeric solution is
+cumbersome if not impossible to derive, in which case we use the system
+model as an approximate numerical solution.
+
+The complete discrete system is defined as\begin{subequations}\label{eq:system}
+\begin{align}
+x_{k} & =f\left(x_{k^{-}},w_{k},\delta_{k}\right)\\
+y_{k} & =h\left(x_{k},v_{k}\right),
+\end{align}
+\end{subequations} where $f$ is the state transition model defined
+in (\ref{eq:system-model}), $y_{k}\in N$ is a measurement and $N$
+is a Lie group, $h:G\to N$ is the observation model, and $v_{k}$
+is measurement noise sampled from a zero-mean, white-noise, Gaussian
+distribution with covariance $R$.
+
+The state $x$ is a Lie group generated from the Cartesian product
+of $G$ and $E$. The Lie algebra of $G\times E$ is simply $\mathfrak{g}\times E$
+which is isomorphic to $\mathbb{R}^{2n}$ with $n$ being the dimension
+of $G$. We will denote this space as $E^{*}$. All of the operations
+previously defined are simply inherited. For example, let $x\in G\times\mathfrak{g}$
+and $v=\left(a,b\right)^{\vee}\in E^{*}$, then 
+\begin{align*}
+x\oplus v & =\left(g,u\right)\oplus v\\
+ & =\left(g,u\right)\boxplus\left(a,b\right)\\
+ & =\left(g\exp\left(a\right),u+b\right),
+\end{align*}
+where $g\in G$, $a\in\mathfrak{g}$, and $u,b\in E$.
+
+Targets are observed via sensors. Each sensor perceives a subset of
+the measurement space called a local surveillance region (LSR) which
+has a local frame that the data is expressed in and a volume denoted
+$S_{vol}$. The union of all LSRs is called the global surveillance
+region (GSR). Measurements are extracted from the data using algorithms.
+We call the unique sensor and algorithm pair a measurement source
+or source for short. In the case that multiple sources have the same
+sensor, it is possible for duplication of information which, when
+incorporated into a state estimate of a target, would lead to overconfidence
+of the state estimate. We do not have a way to account for this except
+to assume it is minimal.
+
+A sensor scan occurs when a source produces new measurements. Measurements
+from a source can be either false or true measurements. We assume
+that false measurements are uniformly distributed in the LSR, and
+that the number of false measurements from a source per sensor scan
+can be modeled using a Poisson distribution with parameter $\Lambda$
+being the expected value. The expected number of false measurements
+per unit volume is called the spacial density and is $\lambda=\frac{\Lambda}{S_{vol}}$.
+We also assume that a measurement source provides at most one true
+measurement per target every sensor scan with probability $P_{D}$,
+i.e. the probability of detection. 
+
+R-RANSAC works in a single frame requiring all of the measurements
+to be transformed and expressed in a single global frame before being
+given to R-RANSAC. In the case that the global frame changes, a transformation
+$T$ must be provided to R-RANSAC that contains the information necessary
+to transform all the past measurements and models stored in R-RANSAC
+into the new global frame. 
+
+R-RANSAC uses the new measurements along with all the previous measurements
+from the time window $T_{W}$ to track targets. As time progresses,
+old measurements fall outside the time window and are removed. These
+measurements are called expired measurements. Below is a summary of
+our assumptions.
+\begin{enumerate}
+\item We assume that the system is observable.
+\item We assume that the process and measurement noises are represented
+by a white-noise, zero-mean, Gaussian distribution and that their
+covariances are known.
+\item We assume that all measurements are independent.
+\item We assume that the expected number of false measurements from each
+measurement source per sensor scan is modeled using a Poisson distribution
+with spatial parameter $\lambda$, and that the false measurements
+are uniformly distributed in the LSR.
+\item We assume that every measurement given to R-RANSAC is expressed in
+the current global frame. 
+\item If the global frame moves, a transformation is provided to R-RANSAC
+in order to transform the measurements and models to the current global
+frame.
+\end{enumerate}
+
+\section{Modular Paradigm\label{sec:Modular-Paradigm}}
+
+The paradigm for R-RANSAC is designed to be very modular. In this
+section we will present the data structures used and modular framework.
+R-RANSAC can be broken down into three main parts: data management,
+track initialization, and track management.
+
+
+\subsection{Data Structures}
+
+In R-RANSAC, we use three different data structures: the data tree,
+clusters, and consensus sets. The structure of the data tree and clusters
+is a list of R{*}-Trees \cite{Daszykowski2009}. Each R{*}-Tree contains
+measurements obtained at a unique time. This allows us to easily remove
+and add measurements that have the same time stamp while being able
+to search the data structures quickly. The data tree, $\mathcal{T}$,
+contains all of the measurements within the time window that are not
+in a cluster or a consensus set. A cluster, $\mathcal{C}$, contains
+neighboring measurements as described in \cite{Yang2017}. Let $d_{C}:N\times N\to\mathbb{R}$
+be a metric \cite{Moon2000} on the measurement space. A measurement
+$y_{j}$ is a neighboring measurement of $y_{k}$ if $d_{C}\left(y_{j},y_{k}\right)<\tau_{CD}$.
+A consensus set, $\mathcal{CS}^{i}$, is a list that contains all
+of the measurements within the time window that were associated with
+the $i^{th}$ track. A track is a model of a target consisting of
+the state estimate $\hat{x}$, error covariance $P$, consensus set
+$\mathcal{CS}$, track likelihood, and label. The track likelihood
+is a measurement of how ``good'' a track is. Previously, this was
+based on the inlier ratio and track lifetime, see\cite{Niedfeldt2017};
+however, we will present a more probabilistic approach in section
+\ref{sec:Track-Likelihood}.
+
+
+\subsection{Data Management}
+
+Data management occurs after a sensor scan provides new measurements
+$\Psi_{k}$ and possibly a new transformation $T$. First, expired
+measurements are removed from the data structures and models are propagated
+forward in time. If a transformation was provided, all of the measurements
+(not including the new measurements since they should already be expressed
+in the current global frame) and tracks are transformed to the current
+global frame, i.e. their state estimate and error covariance are transformed
+to the current global frame. 
+
+The new measurements are checked to see if they should be associated
+to a track and used to update the track's state estimate and likelihood.
+The data association and track update could be implemented using any
+single scan tracker. Our data association method is described in section
+\ref{sec:Data-Association}. Unassociated new measurements are then
+checked to see if they belong to an existing cluster using the metric
+$d_{C}$. Those that don't belong to a cluster are then used to seed
+possible new clusters.
+
+New clusters are created by taking an unassociated new measurement
+and finding neighboring measurements from either the list of unassociated
+new measurements or the data tree. For every measurement added to
+the cluster, the process is repeated by finding neighboring measurements
+to the measurement just added to the cluster.
+
+If the possible cluster has at least $\tau_{CM}$ measurements, then
+the cluster is kept, and the associated measurements are removed from
+the data tree. The remaining unassociated measurements are placed
+on the data tree creating a new element in the list.
+
+
+\subsection{Track Initialization and Track Management}
+
+Track initialization and track management occurs at specified times
+by the user. The track initialization phase performs RANSAC, see section
+\ref{sec:RANSAC}, on each cluster to try to generate new tracks.
+If RANSAC generates a new track, the new track's state estimate $\hat{x}$
+is filtered and the track's likelihood is initialized using the measurements
+in the consensus set. The measurements in the consensus set are removed
+from the respective cluster. Since measurements are taken from a cluster
+in order to create a new track, we must verify that the remaining
+measurements in the cluster still form a valid cluster, i.e. the cluster
+has at least $\tau_{CM}$ measurements. If it does, the cluster is
+kept. If it doesn't, then we check the time stamp of the measurements.
+If the measurements are old (i.e. near being expired), then we remove
+them; otherwise, we place them back on the data tree. 
+
+The last phase of R-RANSAC is track management which consists of merging
+and pruning tracks, promoting and demoting tracks, and assigning new
+good tracks a unique label. Some tracks will begin to coalesce as
+they are propagated and updated. If these tracks are deemed similar,
+they are merged together using the track-to-track fusion method discussed
+in section \ref{sec:Track-to-Track-fusion}. Since R-RANSAC stores
+up to $M$ Tracks, if there are more than $M$ tracks we remove the
+tracks with the lowest likelihood. If a track's likelihood is above
+the threshold $\tau_{\rho}$ then it is promoted to a good track;
+otherwise, it is a poor track. Good tracks receive a unique numerical
+label to identify it , see \cite{Ingersoll2015a}. At the end of these
+phases, a list of good tracks is published to the user. For a summary,
+see algorithm \ref{alg:rransac}.
+
+\begin{algorithm}
+\begin{algorithmic}[1]
+\Require{Parameters $M$, $T_W$, $\ell$, $\tau_E$, $\tau_I$, $\tau_{CD}$, $\tau_{CM}$, $\tau_S$, $\tau_{\rho}$, $\tau_{\alpha}$, $P_D$ and $\lambda$.}
+\For{each sensor scan}
+\State{Remove expired measurements}
+\State{Propagate tracks}
+	\If{Transform $T$ provided}
+	\State{Transform measurements and tracks}
+	\EndIf
+\State{Associate new measurements to tracks}
+\State\multiline{Update track's state estimate and likelihood using associated measurements}
+\State\multiline{Associate unassociated measurements to clusters using metric $d_C$}
+	\For{ $y\in \{\text{ unassociated measurements}\}$ }
+	\State\multiline{Try generating possible new clusters $C^p$ from $y$ using unassociated measurements and data tree}
+		\If{$\mid C^p \mid \geq \tau_{CM}$}
+		\State{Let $C^p$ be a new cluster}
+		\State\multiline{Remove measurements in $C^p$ from data tree}
+		\EndIf
+	\EndFor
+\State{Add remaining measurements to data tree}
+	\If{specified by user}
+		\State\multiline{Perform RANSAC on each cluster}
+		\State{Manage clusters}
+		\State{Merge and prune tracks}
+		\State{Promote and demote tracks}
+		\State{Assign new good tracks a unique ID}
+		\State{Publish good tracks}
+	\EndIf
+\EndFor
+\end{algorithmic}
+
+\caption{R-RANSAC}
+\label{alg:rransac}
+
+\end{algorithm}
+
+
+
+\section{Lie Group Probability \label{sec:Lie-Group-Probability}}
+
+Our implementation of R-RANSAC uses a probabilistic framework which
+requires us to represent certain probabilistic distributions on Lie
+groups. In this section we define several probabilities in a Lie group
+framework that are necessary for our implementation. Similar definitions
+have already been done in \cite{Bourmaud2013a,Bourmaud2014}; however,
+we need to define them for our specific purposes. We follow the convention,
+notation and terminology from \cite{Reid2001,Reid2001a,Thrun2006}
+adapted for the Lie group setting. 
+
+We denote the state estimate at time $m$ as $\hat{x}_{m}\in G\times E$
+and the true state as $x_{m}\in G\times E$. Let $\delta x_{m}\in E^{*}$
+denote a local perturbation around $\hat{x}_{m}$ that is a zero-mean,
+Gaussian, random variable with error covariance $P_{m}$ such that
+\[
+x_{m}=\hat{x}_{m}\oplus\delta x_{m}.
+\]
+
+
+We denote the prior distribution, or the belief distribution as $p\left(x_{m}\right)$
+and define it as 
+\begin{align*}
+p\left(x_{m}\right) & =\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus\hat{x}_{m}\right)^{\top}P_{m}^{-1}\left(x_{m}\ominus\hat{x}_{m}\right)\right)\\
+ & =\eta\exp\left(-\frac{1}{2}\delta x_{m}^{\top}P_{m}^{-1}\delta x\right),
+\end{align*}
+where $\eta$ is a normalizing coefficient corresponding to the Gaussian
+distribution. We will use $\eta$ to denote any normalizing coefficient.
+We denote the state transition probability as $p\left(x_{m}\mid x_{m^{-}}\right)$
+and define it as 
+\[
+p\left(x_{m}\mid x_{m^{-}}\right)=\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus f\right)^{\top}Q^{-1}\left(x_{m}\ominus f\right)\right),
+\]
+where $x_{m}\ominus f=x_{m}\ominus f\left(x_{m^{-}},w_{k},\delta_{m}\right)$.
+
+We can approximate $p\left(x_{m}\mid x_{m^{-}}\right)$ with a Gaussian
+distribution by using the first order Taylor series expansion of $x_{m}\ominus f$
+and treating $\delta x_{m^{-}}$ and $w_{m}$ as perturbations; this
+is known as linearizing. Doing so yields
+\[
+p\left(x_{m}\mid x_{m^{-}}\right)\approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus\tilde{f}\right)^{\top}Q^{-1}\left(x_{m}\ominus\tilde{f}\right)\right),
+\]
+where
+\[
+x_{m}\ominus\tilde{f}=x_{m}\ominus f\left(\hat{x}_{m},0,\delta_{m}\right)+F_{m}\delta x_{m^{-}}+G_{m}w_{m},
+\]
+ 
+\begin{align*}
+F_{m} & =\left.\frac{\partial x_{m}\ominus f\left(x_{m^{-}},w_{k},\delta_{m}\right)}{\partial x_{m^{-}}}\right|_{\hat{x}_{m^{-}},\hat{w}_{m},\delta_{m}}\\
+ & =\begin{bmatrix}\mathbf{Ad}_{\text{Exp}\left(\delta_{m}\hat{u}_{m^{-}}\right)^{-1}}\\
+J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)
+\end{bmatrix},
+\end{align*}
+\begin{align*}
+G_{m} & =\left.\frac{\partial x_{m}\ominus f\left(x_{m^{-}},w_{k},\delta_{m}\right)}{\partial w_{m}}\right|_{\hat{x}_{m^{-}},\hat{w}_{m},\delta_{m}}\\
+ & =\begin{bmatrix}J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)\delta_{m} & J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)\frac{\delta_{m}^{2}}{2}\\
+I\delta_{m} & 0
+\end{bmatrix},
+\end{align*}
+and $\hat{w}_{m}$ is the expected value of the process noise which
+is zero. 
+
+Let $\bar{p}\left(x_{m}\right)$ denote the probability of $x_{m}$
+after state propagation. It is defined as 
+\[
+\bar{p}\left(x_{m}\right)=\int p\left(x_{m}\mid x_{m^{-}}\right)p\left(x_{m^{-}}\right)dx_{m^{-}}.
+\]
+We approximate $\bar{p}\left(x_{m}\right)$ by linearizing $p\left(x_{m}\mid x_{m}\right)$
+so that $\bar{p}\left(x_{m}\right)$ is a Gaussian distribution which
+is parametrized by the new state estimate $\hat{\bar{x}}_{m}$ and
+error covariance $\bar{P}_{m}$. The new state estimate and error
+covariance is calculated as \begin{subequations}\label{eq:Kalman_propagation}
+\begin{align}
+\hat{\bar{x}}_{m} & =f\left(\hat{x}_{m^{-}},\hat{w}_{m},\delta_{m}\right)\\
+\bar{P}_{m} & =F_{m}P_{m^{-}}F_{m}^{\top}+G_{m}QG_{m}^{\top};
+\end{align}
+\end{subequations}this calculation is called the propagation or the
+prediction step.
+
+The probability of a measurement conditioned on the state is called
+the measurement probability denoted as $p\left(y_{m}\mid x_{m}\right)$
+and defined as 
+\[
+p\left(y_{m}\mid x_{m}\right)=\eta\exp\left(-\frac{1}{2}e^{\top}R^{-1}e\right),
+\]
+where 
+\[
+e=y_{m}\ominus h\left(x_{m},v_{m}\right).
+\]
+We can linearize the measurement probability to get 
+\[
+p\left(y_{m}\mid x_{m}\right)\approx\eta\exp\left(-\frac{1}{2}\tilde{e}^{\top}R^{-1}\tilde{e}\right)
+\]
+where
+\[
+\tilde{e}=y_{m}\ominus h\left(\hat{x}_{m},\hat{v}_{m}\right)+H_{m}\delta x_{m}+V_{m}v_{m},
+\]
+ 
+\begin{align*}
+H_{m} & =\left.\frac{\partial y_{m}\ominus h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{\hat{x}_{m},\hat{v}_{m}},\\
+ & =\left.\frac{\partial\log\left(e\right)}{\partial e}\frac{\partial e}{\partial h^{-1}\left(x_{m},v_{m}\right)}\frac{\partial h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{\hat{x}_{m},\hat{v}_{m}}\\
+ & =J_{r}^{-1}\left(\hat{e}\right)\mathbf{Ad}_{y_{m}^{-1}}\left.\frac{\partial h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{\hat{x}_{m},\hat{v}_{m}}
+\end{align*}
+\begin{align*}
+V_{m} & =\left.\frac{\partial y_{m}\ominus h\left(x_{m},v_{m}\right)}{\partial v_{m}}\right|_{\hat{x}_{m},\hat{v}_{m}},\\
+ & =J_{r}^{-1}\left(\hat{e}\right)\mathbf{Ad}_{y_{m}^{-1}}\left.\frac{\partial h\left(x_{m},v_{m}\right)}{\partial v_{m}}\right|_{\hat{x}_{m},\hat{v}_{m}}
+\end{align*}
+ $\hat{e}=y_{m}\ominus h\left(\hat{x}_{m},\hat{v}_{m}\right)$ and
+$\hat{v}_{m}$ is the expected value of the measurement noise which
+is zero.
+
+The probability of the state given a measurement is called the posterior
+denoted $p\left(x\mid y\right)$ and defined as 
+\[
+p\left(x\mid y\right)=\frac{p\left(y\mid x\right)\bar{p}\left(x\right)}{p\left(y\right)}.
+\]
+We improve the state estimate $\hat{x}_{m}$ by maximizing the posterior
+distribution. This process is outlined in \cite{Thrun2006} which
+gives us the standard Kalman filter update step:\begin{subequations}\label{eq:Kalman_update}
+\begin{alignat}{2}
+\text{Innovation :} & \quad & \hat{e} & =y_{m}\ominus h\left(\hat{x}_{m},\hat{v}_{m}\right)\\
+\text{Innovation cov. :} & \quad & S & =H_{m}\bar{P}_{m}H_{m}^{\top}+V_{m}RV_{m}^{\top}\\
+\text{Kalman gain :} & \quad & K & =\bar{P}_{m}H_{m}^{\top}S^{-1}\\
+\text{Observed error :} & \quad & \delta x_{m} & =K\hat{e}\\
+\text{State update :} & \quad & \hat{x}_{m} & =\hat{\bar{x}}_{m}\oplus\delta x_{m}\\
+\text{Cov. update :} & \quad & P_{m} & =P_{m}-KSK^{\top}.
+\end{alignat}
+\end{subequations}Depending on the data associating filter used,
+the update step will be different; however, the underlying basic idea
+is the same which will require computing the Jacobians $F_{m}$, $G_{m}$,
+$H_{m}$ and $V_{m}$.
+
+
+\section{Log Maximum Likelihood Estimate\label{sec:LMLE}}
+
+Log maximum likelihood estimation (LMLE) is used in RANSAC to generate
+track hypotheses. A track hypothesis is created by taking a subset
+of measurements from a cluster $y_{0:k}\subseteq Y$ which contains
+one measurement from the current time and enough measurements that
+are randomly sampled such that a hypothetical current state estimate
+can be estimated. A hypothetical current state is a possible current
+state estimate of an actual target. 
+
+The LMLE maximizes the joint likelihood or measurement probability
+$p\left(y_{0:k}\mid x_{0:k}\right).$
+
+Following using Bayes rule and under the assumption that the system
+is a first order Markov process, we can calculate the negative log
+joint likelihood which is 
+\begin{multline*}
+\log\left(-p\left(y_{0:k}\mid x_{0:k}\right)\right)=\log\left(-\eta\right)+\\
++\sum_{m=1}^{k}\log\left(-p\left(x_{m}\mid x_{m^{-}}\right)\right)+\sum_{m=0}^{k}\sum_{j=1}^{\ell\left(m\right)}\log\left(-p\left(y_{m}^{j}\mid x_{m}\right)\right),
+\end{multline*}
+where $\eta$ is a normalizing constant and $\ell\left(m\right)$
+is the number of measurements in $y_{0:k}$ that were received at
+time $m$. We can drop the term $\log\left(-\eta\right)$ since it
+will have no impact on the optimization problem. Since we are only
+interested in estimating the current state $x_{k}$ we can simplify
+the negative log posterior to
+\[
+\sum_{m=0}^{k}\sum_{j=1}^{\ell\left(m\right)}\log\left(-p\left(y_{m}^{j}\mid x_{k}\right)\right).
+\]
+
+
+Using these simplifications, the LMLE problem is 
+\[
+\arg\min_{x_{k}}\left(\sum_{m=0}^{k}\sum_{j=1}^{\ell\left(m\right)}\log\left(-p\left(y_{m}^{j}\mid x_{k}\right)\right)\right).
+\]
+This requires constructing a map from the current state $x_{k}$ to
+a previous state $x_{m}$ which is done by model inversion.
+
+
+\subsection{Model Inversion\label{sub:Model-Inversion}}
+
+Given the current state $x_{k}$ we calculate the state and output
+at time $m\leq n$ by inverting the system model in (\ref{eq:system-model}).
+Ignoring the noise terms, we can propagate the pose of the system
+$g_{m}$ to $g_{k}$ by 
+\[
+g_{k}=g_{m}\exp\left(\delta_{m:k}u\right).
+\]
+Solving for $g_{m}$ yields 
+\begin{align*}
+g_{m} & =\exp^{-1}\left(\delta_{m:k}u\right)g_{k}\\
+ & =\exp\left(-\delta_{m:k}u\right)g_{k}\\
+ & =\exp\left(\delta_{k:m}u\right)g_{k}.
+\end{align*}
+Thus, the inverse of the system model $f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right)$
+is defined as \begin{subequations}\label{sub:model_inverse} 
+\begin{align}
+g_{m} & =g_{k}\oplus\left(\delta_{k:m}u_{k}+\delta_{k:m}w_{k}^{g}+\frac{\delta_{k:m}^{2}}{2}w_{k}^{u}\right)\\
+u_{m} & =u_{k}+\delta_{k:m}w_{k}^{u}.
+\end{align}
+\end{subequations} and the output at time $m$ is 
+\[
+y_{m}=h\left(f^{-1},v_{m}\right).
+\]
+
+
+Using the inverted system model we construct the linearized probability
+$p\left(y_{m}^{j}\mid x_{k}\right)$ by calculating the mean an covariance.
+We do this by linearizing the term 
+\[
+y_{m}^{j}\ominus h\left(f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),v_{m}\right),
+\]
+which is 
+\[
+y_{m}^{j}\ominus h\left(f^{-1},\hat{v}_{m}\right)+G_{k:m}^{j}w_{k}+Vv_{m},
+\]
+where 
+\begin{align*}
+G_{k:m}^{j} & =\left.\frac{\partial y_{m}\ominus h\left(f^{-1},v_{m}\right)}{\partial w_{k}}\right|_{x_{k},\hat{w}_{k},\hat{v}_{m}}=\\
+ & =\left.J_{r}^{-1}\left(\hat{e}_{k:m}\right)\mathbf{Ad}_{y_{m}^{j-1}}\frac{\partial h\left(f^{-1},v_{m}\right)}{\partial w_{k}}\right|_{x_{k},\hat{w}_{k},\hat{v}_{m}},
+\end{align*}
+and 
+\[
+\hat{e}_{k:m}^{j}=y_{m}^{j}\ominus h\left(f^{-1}\left(\hat{x}_{k},\hat{w}_{k},\delta_{k:m}\right),\hat{v}_{m}\right).
+\]
+The covariance of $p\left(y_{m}^{j}\mid x_{k}\right)$ is 
+\begin{equation}
+R_{k:m}^{j}=G_{k:m}^{j}Q\left(G_{k:m}^{j}\right)^{\top}+V_{m}RV_{m}^{\top};\label{eq:meas_cov_time}
+\end{equation}
+therefore, the linearized probability of $p\left(y_{m}\mid x_{k}\right)$
+is 
+\begin{equation}
+\eta\exp\left(-\frac{1}{2}\left(\hat{e}_{k:m}^{j}\right)^{\top}\left(R_{k:m}^{j}\right)^{-1}\hat{e}_{k:m}^{j}\right).\label{eq:likelihood_inverse}
+\end{equation}
+
+
+Using the linearized probability, we can write the LMLE problem as
+\begin{equation}
+\arg\min_{x_{k}}\left(\sum_{m=0}^{k}\sum_{j=1}^{\ell\left(m\right)}\left(\hat{e}_{k:m}^{j}\right)^{\top}\left(R_{k:m}^{j}\right)^{-1}\hat{e}_{k:m}^{j}\right).\label{eq:MLE_inverse}
+\end{equation}
+There are many methods that can be used to solve the optimization
+problem. If the system is linear, the optimization problem reduces
+to the one described in \cite{Niedfeldt2014a}. If the system is non-linear,
+the optimization problem can be solved using the Gauss-newton method
+or some other optimization method. Depending on the method used, you
+may need compute the derivative of $y_{m}^{j}\ominus h\left(f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),v_{m}\right)$
+with respect to the state. We denote this derivative as $H_{k:m}$
+which is defined as 
+\begin{align*}
+H_{k:m} & =\left.\frac{\partial y_{m}\ominus h\left(f^{-1},v_{m}\right)}{\partial x_{k}}\right|_{\hat{x}_{k},\hat{w}_{k},\hat{v}_{m}}\\
+ & =\left.J_{r}^{-1}\left(\hat{e}_{k:m}\right)\mathbf{Ad}_{y_{m}^{-1}}\frac{\partial h\left(f^{-1},v_{m}\right)}{\partial x_{k}}\right|_{\hat{x}_{k},\hat{w}_{k},\hat{v}_{m}}.
+\end{align*}
+
+
+
+\section{Data Association \label{sec:Data-Association}}
+
+As previously discussed, there are many ways to associate new measurements
+to existing tracks. We use a validation region to indicate if a measurement
+should be associated with a track. Once measurements are associated,
+we use a centralized measurement fusion with the PDAF to update the
+tracks, add the associated measurements to the consensus set and use
+the associated measurements to update the track's likelihood.
+
+
+\subsection{Validation Region \label{sub:Validation-Region}}
+
+The validation region is a volume around a track's current state estimate.
+Measurements that are within the validation region are associated
+to the model and are used to update the model. We will use the validation
+region described in \cite{Bar-Shalom2011,Bar-Shalom1988}. We assume
+that the probability of the $j^{th}$ measurement of dimension $n$
+conditioned on the previous state, $p\left(y_{k}^{j}\mid x_{k^{-}}\right)$,
+is Normally distributed with mean $\hat{y}_{k}=h\left(f\left(\hat{x}_{k^{-}},\delta_{k}\right)\right)$
+and covariance $S$ where $S$ is the innovation covariance described
+in equation (\ref{eq:Kalman_update}). Let $z_{k}^{j}$ be the random
+variable defined as 
+\[
+z_{k}^{j}=S^{-\frac{1}{2}}y_{k}^{j}\ominus\hat{y}_{k},
+\]
+then $z_{k}^{j}$ is a standard multivariate Gaussian distribution.
+For clarity, we will drop the subscripts and superscripts. Let $d_{V}:N\times N\to\mathbb{R}$
+be a metric defined as 
+\begin{align*}
+d_{V}\left(y,\hat{y}\right) & =\left(y\ominus\hat{y}\right)^{\top}S^{-1}\left(y\ominus\hat{y}\right)\\
+ & =z^{\top}z.
+\end{align*}
+Note that the metric $d_{V}$ is simply the sum of the square of $n$
+standard Gaussian distributions. Thus, the values of the metric $d_{V}$
+form a chi-square distribution.
+
+The validation region is the set 
+\[
+\nu\left(\hat{y},\gamma\right)=\left\{ y\in N\,:\,d\left(y,\hat{y}\right)\leq\gamma\right\} ,
+\]
+where parameter $\gamma$ is called the gate threshold. The gate probability
+$P_{G}$ is the probability that a measurement produced by a target
+is within the validation region. This probability is defined as $p\left(d\left(y,\hat{y}\right)\leq\gamma\right)$,
+thus $P_{G}$ is the value of the chi-square cumulative distribution
+function (CDF) with parameter $\gamma$. 
+
+Some data association techniques require knowing the volume of the
+validation region $V_{vol}$. The volume is defined as 
+\begin{equation}
+V_{vol}=c_{n}\gamma^{n/2}\left|S\right|^{1/2},\label{eq:volume_validation_region}
+\end{equation}
+where $c_{n}$ is the volume of the unit hypersphere of dimension
+$n$ (dimension of the measurement space) calculated as 
+\[
+c_{n}=\frac{\pi^{n/2}}{\Gamma\left(n/2+1\right)}
+\]
+and $\Gamma$ is the gamma function.
+
+
+\subsection{Centralized Measurement Fusion \label{sec:Centralized-Measurement-Fusion}}
+
+Validated measurements can come from multiple different measurement
+sources at different times. In order to update the state estimate,
+we use the centralized measurement fusion method as described in \cite{Bar-Shalom2011}
+and \cite{Millard2017}, which assumes that measurements are statistically
+independent. We briefly review this method here only to adapt it to
+the Lie group setting. Let $N_{s}$ denote the number of measurement
+sources, $Y_{m}^{i}=\left\{ y_{m}^{1},y_{m}^{2},\cdots,y_{m}^{n}\right\} $
+denote the set of measurements associated with the track that was
+received at time $m$ from the $i^{th}$ measurement source, $\beta_{m}^{j}$
+be the weight associated with measurement $y_{m}^{j}\in Y_{m}^{i}$,
+$Z^{i}$ be defined as 
+\[
+Z^{i}=\begin{cases}
+\sum_{j=1}^{n}\beta^{j}H_{m}^{\top}\left(R^{i}\right)^{-1}y_{m}^{j}\ominus h\left(x_{m}\right) & \text{if }\left|Y_{m}^{i}\right|>0\\
+0 & \text{else}
+\end{cases},
+\]
+and $P_{m}^{i}$ be the updated measurement covariance after incorporating
+only the measurements from the $i^{th}$ source, then the covariance
+update is 
+\[
+P_{m}^{-1}=\bar{P}_{m}^{-1}+\sum_{i=1}^{N_{s}}\left(\left(P_{m}^{i}\right)^{-1}-\bar{P}_{m}^{-1}\right),
+\]
+and the state update is 
+\[
+\hat{x}_{m}=\hat{\bar{x}}_{m}\oplus\left(P_{m}\sum_{i=1}^{N_{s}}Z^{i}\right).
+\]
+
+
+Recall that $H_{m}$ is the Jacobian of the measurement function,
+$R^{i}$ the measurement covariance of the $i^{th}$ measurement source,
+and $\bar{P}_{m}$ the error covariance after propagation but before
+any measurement updates. The weights $\beta_{m}^{j}$ are calculated
+from the data association filter used.
+
+
+\section{Track Likelihood\label{sec:Track-Likelihood}}
+
+The track likelihood is a measure of how well a track represents an
+actual target. In the previous versions of R-RANSAC, the track's inlier
+ratio and lifetime were used to indicate the track's likelihood which
+doesn't have much theoretical basis other than intuition. In this
+section, we present a different approach using a binary Bayes filter
+with static states. 
+
+Let $P_{D}^{i}$ denote the probability that the $i^{th}$ measurement
+source produces a true measurement of the target during the sensor
+scan, let $P_{G}^{i}$ denote the probability that the true measurement
+is validated (associated), then the probability that a true measurement
+was received and validated is $P_{D}^{i}P_{G}^{i}$. Let $\lambda^{i}$
+denote the spatial density of the $i^{th}$ source. The expected number
+of false measurements within a validation region is $\lambda^{i}V_{vol}$
+where $V_{vol}$ is the volume of the validation region defined in
+(\ref{eq:volume_validation_region}).
+
+Let $\theta_{m}^{i}$ denote the number of validated measurements
+from the $i^{th}$ measurement source at time $m$, $\theta_{m:k}^{i}$
+denote the number of validated measurements from the $i^{th}$ measurement
+source from time $m$ to time $k$ where $m<k$, and $\theta_{m:k}$
+the number of all validated measurements from all the measurement
+sources from time $m$ to time $k$. Let $z$ be a Bernoulli random
+variable with $z=1$ meaning that the track represents an actual target
+and $z=0$ meaning that the track doesn't represent a target. For
+notation purposes, we will denote $p\left(z=1\right)$ as $p\left(z\right)$
+and $p\left(z=0\right)$ as $p\left(\neg z\right)$. 
+
+We are interested in calculating the probability $p\left(z\mid\theta_{m:k}\right)$
+which is the probability that the track represents an actual target
+conditioned on the number of validated measurements. Using Bayes rule
+we get 
+\begin{align*}
+p\left(z\mid\theta_{m:k}\right) & =\frac{p\left(\theta_{k}\mid z\right)p\left(z\mid\theta_{m:k^{-}}\right)}{p\left(\theta_{k}\mid\theta_{m:k^{-}}\right)},
+\end{align*}
+and 
+\[
+p\left(\neg z\mid\theta_{m:k}\right)=\frac{p\left(\theta_{k}\mid\neg z\right)p\left(\neg z\mid\theta_{m:k^{-}}\right)}{p\left(\theta_{k}\mid\theta_{m:k^{-}}\right)}.
+\]
+Taking the log (base 10) ratio of the probabilities $p\left(z\mid\theta_{m:k}\right)$
+and $p\left(\neg z\mid\theta_{m:k}\right)$, we get 
+\begin{align*}
+\log\left(\frac{p\left(z\mid\theta_{m:k}\right)}{p\left(\neg z\mid\theta_{m:k}\right)}\right) & =\log\left(\frac{p\left(\theta_{k}\mid z\right)p\left(z\mid\theta_{m:k^{-}}\right)}{p\left(\theta_{k}\mid\neg z\right)p\left(\neg z\mid\theta_{m:k^{-}}\right)}\right)\\
+ & =\underbrace{\log\left(\frac{p\left(\theta_{k}\mid z\right)}{p\left(\theta_{k}\mid\neg z\right)}\right)}_{l_{k}}\\
+ & +\underbrace{\sum_{n=m}^{k^{-}}\log\left(\frac{p\left(\theta_{n}\mid z\right)}{p\left(\theta_{n}\mid\neg z\right)}\right)}_{l_{k^{-}}}.
+\end{align*}
+
+
+Whenever new validated measurements are received, we calculate $l_{k}$
+and add it to the previous log odds ratio $l_{k^{-}}$.
+
+The term $l_{k}$ can be written as
+\[
+\log\left(\frac{p\left(\theta_{k}\mid z\right)}{p\left(\theta_{k}\mid\neg z\right)}\right)=\sum_{i\in1}^{N_{s}}\log\left(\frac{p\left(\theta_{k}^{i}\mid z\right)}{p\left(\theta_{k}^{i}\mid\neg z\right)}\right),
+\]
+where $N_{s}$ is the number of measurement sources. Thus we are left
+with calculating $p\left(\theta_{k}^{i}\mid z\right)$ and $p\left(\theta_{k}^{i}\mid\neg z\right)$
+for each measurement source. We assume that a measurement source can
+only produce at most one true measurement during a sensor scan. Therefore,
+we have the two possibilities for $p\left(\theta_{k}^{i}\mid z\right)$:
+that all $\theta_{k}^{i}$ measurements are false or all but one are
+false. Thus 
+\begin{multline*}
+p\left(\theta_{k}^{i}\mid z\right)=P_{G}^{i}P_{D}^{i}\exp\left(\lambda^{i}V_{vol}\right)\frac{\left(\lambda^{i}V_{vol}\right)^{\theta_{k}^{i}-1}}{\left(\theta_{k}^{i}-1\right)!}\\
++\left(1-P_{G}^{i}P_{D}^{i}\right)\exp\left(\lambda^{i}V_{vol}\right)\frac{\left(\lambda^{i}V_{vol}\right)^{\theta_{k}^{i}}}{\left(\theta_{k}^{i}\right)!}.
+\end{multline*}
+There is only one possibility for $p\left(\theta_{k}^{i}\mid\neg z\right)$,
+that is the probability of all of the measurements being false 
+\[
+p\left(\theta_{k}^{i}\mid\neg z\right)=\exp\left(\lambda^{i}V_{vol}\right)\frac{\left(\lambda^{i}V_{vol}\right)^{\theta_{k}^{i}}}{\left(\theta_{k}^{i}\right)!}.
+\]
+Taking the ratio of the two, we get 
+\[
+\frac{p\left(\theta_{k}^{i}\mid z\right)}{p\left(\theta_{k}^{i}\mid\neg z\right)}=1+P_{G}^{i}P_{D}^{i}\left(\frac{\theta_{k}^{i}}{\lambda^{i}V_{vol}}-1\right).
+\]
+
+
+The model likelihood, $p\left(z\mid\theta_{m:k}\right)$, can be recovered
+from the log odds ratio by 
+\[
+p\left(z\mid\theta_{m:k}\right)=1-\frac{1}{1+10^{l_{k}}}.
+\]
+
+
+If a track is outside the LSR of the source, then $P_{D}$ should
+be zero and $p\left(z\mid\theta_{m:k}\right)$ will not be affected.
+In the case that the track leaves the GSR, we need a way to kill the
+track in order to make room for other tracks to be initialized. Thus,
+we assume that a track that has not received a measurement within
+$\tau_{\alpha}$ seconds is no longer in the GSR and will be pruned.
+A track is considered a good track if the $p\left(z\mid\theta_{m:k}\right)>\tau_{\rho}$;
+otherwise, it is considered a poor track. The parameters $\lambda^{i}$
+and $P_{D}^{i}$ can be easily estimated and $P_{G}^{i}$ is defined
+by the user.
+
+
+\section{RANSAC\label{sec:RANSAC}}
+
+RANSAC is a regression algorithm that estimates parameters while mitigating
+the effect of gross outliers \cite{Fischler1981}. There has been
+many developments and adaptations to the RANSAC algorithm \cite{Choi2009}.
+R-RANSAC uses RANSAC to initialize tracks by generating many track
+hypotheses. We follow a scheme similar to the one presented in \cite{Yang2017};
+that is, we perform RANSAC on every cluster seeding it with a measurement
+obtained from the current or latest time. We describe this process
+for a single cluster.
+
+Let $Y$ denote the set of measurements pertaining to a cluster, and
+let $y_{0:k}$ be a minimum subset of $Y$ that contains a measurement
+from the current time $k$ and other measurements randomly sampled
+from different times such that the system can be observed. Using the
+measurements $y_{0:k}$ and LMLE, we create a track hypothesis by
+estimating a current hypothetical state $x_{k}$ that fit the measurements
+according to the system model. Once $x_{k}$ is estimated, we construct
+a consensus set. The consensus set contains all of the measurements
+that are inliers to the track hypothesis. An inlier is a measurement
+that is within some distance of the estimated measurement obtained
+from $x_{k}$. Let $d_{I}:N\times N\to\mathbb{R}$ be a metric on
+the measurement space $N$ and let $\tau_{I}\in\mathbb{R}$ be a threshold,
+then if 
+\[
+d_{I}\left(y_{m}^{j},\hat{y}_{m}\right)<\tau_{I},
+\]
+where $\hat{y}_{m}$ is the estimated measurement at time $m$, and
+$y_{m}^{j}$ is the $j^{th}$ measurement obtained at time $m$, then
+the measurement $y_{m}^{j}$ is an inlier to the track hypothesis
+and is added to the consensus set. The estimated measurement $\hat{y}_{m}$
+is calculated using model inversion described in subsection \ref{sub:Model-Inversion}.
+The metric that we use is defined as 
+\[
+d_{I}\left(y_{m}^{j},\hat{y}_{m}\right)=\left(y_{m}^{i}\ominus\hat{y}_{m}\right)^{\top}\left(R_{k:m}^{j}\right)^{-1}\left(y_{m}^{i}\ominus\hat{y}_{m}\right),
+\]
+where $R_{k:m}^{j}$ is defined in (\ref{eq:meas_cov_time}). 
+
+This process is repeated at most $\ell$ times. The model hypothesis
+with the largest consensus set from each cluster is kept and used
+to create a track provided that the size of the consensus set is at
+least $\tau_{RM}$. The size of the consensus set is not necessarily
+the cardinality of the consensus set since we count all the measurements
+from a source per sensor scan as a single measurement. This is to
+ensure that one source is not weighted more heavily than another.
+RANSAC will terminate early if the size of a consensus set is greater
+than or equal to the threshold $\tau_{E}$. If a track is initialized,
+the measurements in its consensus set are removed from the cluster. 
+
+We create a track from a track hypothesis using a filtering method.
+In our filtering method we use the Kalman propagation step described
+in equation (\ref{eq:Kalman_propagation}) and an update step using
+centralized measurement fusion described in section \ref{sec:Centralized-Measurement-Fusion}.
+We also initialize the track's likelihood using the consensus set
+and the method described in section \ref{sec:Track-Likelihood}.
+
+
+\section{Track to Track Fusion\label{sec:Track-to-Track-fusion}}
+
+As tracks are propagated and updated they can coalesce in which case
+we need to merge/fuse them. In order to optimally fuse them, we would
+need to calculate the cross covariance between two tracks which is
+computationally complex and time expensive, or in our case unknown.
+Fortunately, the covariance intersection (CI) method can be used to
+fuse two tracks together without calculating the cross covariance
+\cite{Deng2012}. We use the variation of the CI method presented
+in \cite{Tian2010} called the sampled covariance intersection (SCI)
+method. In order to see if two tracks need to be fused together, we
+use a track association method prescribed in \cite{Bar-Shalom2011}.
+In this section we will briefly present the track association and
+fusion methods adapted to the Lie group setting. 
+
+
+\subsection{Track Association}
+
+Let $\hat{x}^{i}$ denote the state estimate of the $i^{th}$ track
+and $P^{i}$ be the corresponding error covariance. The estimation
+error between two tracks is denoted $\Delta^{ij}$ and defined as
+\[
+\Delta^{ij}=\hat{x}^{i}\ominus\hat{x}^{j}.
+\]
+Assuming that the two tracks are independent, the covariance of the
+estimation error is 
+\[
+T^{ij}=P^{i}+P^{j}.
+\]
+We next define a metric $d_{T}:\left(G\times\mathfrak{g}\right)\times\left(G\times\mathfrak{g}\right)\to\mathbb{R}$
+to be
+\[
+d_{T}\left(\hat{x}^{i},\hat{x}^{j}\right)=\left(\Delta^{ij}\right)^{\top}\left(T^{ij}\right)^{-1}\Delta^{ij}.
+\]
+If $d_{T}\left(\cdot,\cdot\right)<\tau_{S}$ where $\tau_{S}\in\mathbb{R}$,
+then the two tracks are deemed to be the same and should be merged.
+
+
+\subsection{Track Fusion}
+
+Let $\hat{x}^{1},\hat{x}^{2},\cdots,\hat{x}^{n}$ denote the state
+estimates of the tracks that need to be fused together and $P^{i}$
+be their corresponding error covariance. The fused estimate in SCI
+is calculated as if the tracks to be fused are independent; therefore,
+\begin{align*}
+P^{-1} & =\sum_{i=1}^{n}\left(P^{i}\right)^{-1}\\
+\hat{x}_{SCI} & =P\left(\sum_{i=1}^{n}\left(P^{i}\right)^{-1}\hat{x}^{i}\right).
+\end{align*}
+The error covariance $P^{-1}$ is overly optimistic, so we must adjust
+the size as follows:
+\begin{itemize}
+\item Generate $N$ (about 100 for a good distribution) random samples $x^{j}$,
+$j=1,2,\ldots,N$ from $x\sim\mathcal{N}\left(0,P\right)$
+\item Find
+\[
+r_{\text{max}}=\max_{j=1,\ldots,N}\frac{\left(x^{j}\right)^{\top}P^{-1}x^{j}}{\underset{j=1,\ldots,N}{\max}\left\{ \left(x^{j}\right)^{\top}P^{-1}x^{j}\right\} }
+\]
+and
+\[
+r_{\text{min}}=\min_{j=1,\ldots,N}\frac{\left(x^{j}\right)^{\top}P^{-1}x^{j}}{\underset{j=1,\ldots,N}{\max}\left\{ \left(x^{j}\right)^{\top}P^{-1}x^{j}\right\} }
+\]
+
+\item Then set
+\[
+P_{SCI}=\frac{P}{ur_{\text{min}}+\left(1-u\right)r_{\text{max}}}
+\]
+where $u\in\left[0,1\right]$ is used to adjust the performance of
+the SCI algorithm. When $u=1$, the fused covariance is conservative
+and when $u=0$, the fused covariance is optimistic. The authors of
+\cite{Tian2010} received good results by setting $u=0.5$.
+\end{itemize}
+The fused track will have the state estimate $\hat{x}_{SCI}$ with
+error covariance $P_{SCI}$.
+
+
+\section{LMLE Simplification \label{sec:LMLE-Simplification}}
+
+Recall that the purpose of the LMLE is to generate a current state
+estimate $x_{k}$ of a track hypothesis. Using the current state estimates
+we build the consensus set which is later used to refine the estimate
+via a filtering technique. So the estimate of LMLE doesn't have to
+be super refined, and we can simplify the optimization process in
+different ways. 
+
+Let's assume that the pose of the system is measurable. In other words,
+your observation model $h_{k}$ is defined as 
+\[
+h_{k}\left(x_{k},v_{k}\right)=g_{k}\exp\left(v_{k}\right),
+\]
+thus
+\[
+y_{k}=g_{k}\exp\left(v_{k}\right).
+\]
+
+
+When generating a track hypothesis, we always use a measurement from
+the current time. We can use this measurement as the estimated pose
+$g_{k}$. All that remains is estimating the velocity term $u_{k}$
+using one other measurement $y_{m}$. Under the assumption that $g_{k}$
+is the true current state, the measurement $y_{m}$ is 
+\[
+y_{m}=g_{k}\exp\left(\delta_{k:m}u_{k}+\delta_{k:m}w_{k}^{g}+\frac{\delta_{k:m}^{2}}{2}w_{k}^{u}\right)\exp\left(v_{m}\right),
+\]
+which can be approximated as 
+\[
+y_{m}\approx g_{k}\exp\left(\delta_{k:m}u_{k}+\delta_{k:m}w_{k}^{g}+\frac{\delta_{k:m}^{2}}{2}w_{k}^{u}+v_{m}\right)
+\]
+By calculating the error between the measurement and the current state
+we get 
+\begin{align*}
+y_{m}\ominus g_{k} & =\log\left(g_{k}^{-1}y_{m}\right)\\
+e_{k:m} & \approx\delta_{k:m}u_{k}+\delta_{k:m}w_{k}^{g}+\frac{\delta_{k:m}^{2}}{2}w_{k}^{u}+v_{m}.
+\end{align*}
+The expected value of $e_{k:m}$ is 
+\[
+\text{E}\left[e_{k:m}\right]=\delta_{k:m}u_{k},
+\]
+and the covariance is 
+\begin{align*}
+\text{cov}\left[e_{k:m}\right] & \approx\delta_{k:m}^{2}Q^{g}+\frac{\delta_{k:m}^{4}}{4}Q^{u}+R\\
+ & =R_{k:m}
+\end{align*}
+where 
+\[
+Q=\begin{bmatrix}Q^{g} & 0\\
+0 & Q^{u}
+\end{bmatrix}.
+\]
+We can simply estimate $u_{k}$ by letting $u_{k}=e_{k:m}/\delta_{k:m}$.
+We can enhance the estimate using multiple measurements. Let $\chi$
+be an index set such that $\cup_{m\in\chi}\left\{ y_{m}\right\} $
+is the set of measurements we will use to estimate $u_{k}$, then
+\[
+u_{k}=\left(\sum_{j\in\Lambda}\delta_{k:j}R_{k:j}^{-1}\right)^{-1}\left(\sum_{j\in\Lambda}R_{k:j}^{-1}e_{k:j}\right).
+\]
+We can simplify the estimation further by setting the covariance terms
+to identity which yields 
+\[
+u_{k}=\frac{1}{\left|\chi\right|}\sum_{j\in\Lambda}e_{k:j}.
+\]
+
+
+Another possible simplification for any approach is by setting $R_{k:m}^{i}$,defined
+in (\ref{eq:meas_cov_time}), to the identity element to get the simplified
+optimization problem
+\[
+\arg\min_{x_{k}}\left(\sum_{m=0}^{k}\sum_{j=1}^{\ell\left(m\right)}\left(\hat{e}_{k:m}^{j}\right)^{\top}\hat{e}_{k:m}^{j}\right).
+\]
+ We propose this simplification because computing the covariance $R_{k:m}^{j}$
+can be computationally costly when it has to be done thousands of
+times whenever RANSAC is performed. 
+
+If you want the estimation to be as accurate as possible, we suggest
+you use the simplified approaches to seed the original optimization
+problem unless the system is linear since the original optimization
+problem is already simple. 
+
+
+\section{Examples \label{sec:Examples}}
+
+In this section we provide three examples of increasing complexity.
+The first example is to show how Lie group framework of R-RANSAC applies
+to Euclidean spaces of $\mathbb{R}^{n}$ with $n\in\mathbb{N}$. The
+second example applies R-RANSAC to tracking targets on an image plane,
+and the third example applies R-RANSAC to tracking UAVs using radar
+sensors. 
+
+
+\subsection{Euclidean Space $\mathbb{R}^{n}$}
+
+This is a brief section to show how the Lie group theory applies to
+Euclidean spaces of $\mathbb{R}^{n}$, where $n\in\mathbb{N}$, equipped
+with the standard topology and the group operation of addition. Its
+corresponding Lie algebra is $\mathbb{R}^{n}$, and the adjoint, exponential,
+and left and right Jacobians are the identity map. The box plus/minus
+and o plus/minus mapping are trivially derived; for example
+\begin{align*}
+g\oplus u & =g+u\\
+g_{1}\ominus g_{2} & =g_{1}-g_{2}
+\end{align*}
+where $g,g_{1},g_{2}\in G=\mathbb{R}^{2}$ and $u\in\mathfrak{g}=\mathbb{R}^{2}$.
+
+We can write the system model as 
+\begin{align*}
+g_{k} & =g_{k^{-}}+\delta_{k}\left(u_{k^{-}}+w_{k}^{g}\right)+\frac{\delta_{k}^{2}}{2}w_{k}^{u}\\
+u_{k} & =u_{k^{-}}+\delta_{k}w_{k}^{u}\\
+y_{k} & =g_{k}+v_{k},
+\end{align*}
+We can write this in the familiar matrix notation as 
+\begin{align*}
+x_{k} & =A_{k}x_{k^{-}}+B_{k}w_{k}\\
+y_{k} & =Cx_{k}+v_{k}
+\end{align*}
+where $x_{k}=\left[g_{k}^{\top},u_{k}^{\top}\right]^{\top}$,
+\begin{align*}
+A_{k}=\begin{bmatrix}I & \delta_{k}I\\
+0 & I
+\end{bmatrix}, & \thinspace & B_{k}=\begin{bmatrix}\delta_{k}I & \frac{\delta_{k}^{2}}{2}I\\
+0 & \delta_{k}I
+\end{bmatrix},
+\end{align*}
+and 
+\[
+C=\begin{bmatrix}I_{2\times2} & 0_{2\times2}\end{bmatrix}.
+\]
+In this form, we can easily recognize it as an linear time-invariant
+system with near constant velocity.
+
+The Jacobians are easily computed and are $F_{k}=A_{k}$, $G_{k}=B_{k}$
+, $H_{k}=C$, $F_{k:m}=CA_{k:m}$, and $G_{k:m}=CB_{k:m}$. For linear
+systems, the LMLE simplifies to a least squares problem. This type
+of system used with R-RANSAC is thoroughly discussed in \cite{Niedfeldt2014a}.
+
+
+\subsection{Constrained Problem for $SE\left(2\right)$: Tracking in the Image
+Plane \label{sub:tracking_image_plane} }
+
+NOTE: THIS WOULD BE BETTER IF TRACKING WAS DONE IN THE VIRTUAL IMAGE
+PLANE SINCE THE VIP IS PARALLEL TO THE GROUND, THUS THE MOTION WOULD
+REALLY BE SE2
+
+Suppose we have a camera mounted on a UAV tracking a moving target
+that is restricted to a planar surface. The global frame is the current
+image frame, and the measurements are point measurements, i.e. pixels.
+In this case, the LSR and the GSR are the same. The volume of the
+LSR is the total number of pixels. Since the UAV is moving, the global
+frame is also moving. This means that we must provide a transformation
+$T$ so that we can transform all measurements, state estimates and
+error covariances to the current global frame. We do this using the
+Homography \cite{Ma} and the method described in \cite{White2019}.
+
+The Lie group configuration of a target moving in the image plane
+is $SE\left(2\right)$, see appendix \ref{sec:SE2} for the system
+function and important Jacobians. Let $g_{k}\in SE\left(2\right)$
+and $u_{k}\in\mathfrak{se}\left(2\right)$. They can be written as
+\begin{align*}
+g_{k} & =\begin{bmatrix}R_{k} & t_{k}\\
+0_{1\times2} & 1
+\end{bmatrix}\\
+u_{k} & =\begin{bmatrix}\omega_{k} & \rho_{k}\\
+0_{1\times2} & 1
+\end{bmatrix},
+\end{align*}
+where $R_{k}\in SO\left(2\right)$, $\omega_{k}\in\mathfrak{se}\left(2\right)$,
+and $t_{k},\rho_{k}\in\mathbb{R}^{2}$. The observation model is 
+\begin{align*}
+y_{k} & =h\left(x_{k},v_{k}\right)\\
+ & =t_{k}+v_{k},
+\end{align*}
+where $y_{k}\in\mathbb{R}^{2}$. The inverse observation model is
+\begin{align*}
+y_{m} & =h\left(f^{-1}\left(x_{k},\delta_{k:m},w_{k}\right),v_{k}\right)\\
+ & =R_{k}J_{l}\left(\delta_{k:m}\left(\omega_{k}+w_{k}^{R}\right)+\frac{\delta_{k:m}^{2}w_{k}^{\omega}}{2}\right)\left(\delta_{k:m}\left(\rho_{k}+w_{k}^{\rho}\right)\right)\\
+ & +t_{k}+w_{k}^{t}+v_{m},
+\end{align*}
+where $w_{k}=\left[\left(w_{k}^{t}\right)^{\top},\left(w_{k}^{R}\right)^{\top},\left(w_{k}^{\rho}\right)^{\top},\left(w_{k}^{u}\right)^{\top}\right]^{\top}$
+and $J_{l}$ is the left Jacobian of $SO\left(2\right)$ defined in
+equation (\ref{eq:se2_v}). Based on the observation model, we have
+three Jacobians to compute: $G_{k:m}$, $H_{k:m}$ and $V_{m}$. 
+\begin{align*}
+H_{k:m}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial x} & =\begin{bmatrix}H_{k:m}^{t} & H_{k:m}^{R} & H_{k:m}^{\rho} & H_{k:m}^{\omega}\end{bmatrix},
+\end{align*}
+where
+\begin{align*}
+H_{k:m}^{t}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial t_{k}} & =I\\
+H_{k:m}^{R}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial R} & =\delta_{k:m}R_{k}\left[1\right]_{\times}J_{l}\left(\delta_{k:m}\omega\right)\rho\\
+H_{k:m}^{\rho}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\rho} & =\delta_{k:m}^{2}R_{k}J_{l}\left(\delta_{k:m}\omega\right)\\
+H_{k:m}^{\omega}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\omega} & =\delta_{k:m}^{2}R_{k}J_{l}^{'}\left(\delta_{k:m}\omega\right)\rho
+\end{align*}
+and 
+\[
+J_{l}^{'}\left(\omega\right)=\frac{\cos\left(\theta\right)\theta-\sin\left(\theta\right)}{\theta^{2}}I+\frac{\sin\left(\theta\right)\theta-\left(1-\cos\left(\theta\right)\right)}{\theta^{2}}\left[1\right]_{\times}.
+\]
+We quickly note that 
+\[
+H_{k}=H_{k:k}=\begin{bmatrix}I & 0_{2\times4}\end{bmatrix}.
+\]
+\[
+G_{k:m}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}}=\begin{bmatrix}G_{k:m}^{t} & G_{k:m}^{R} & G_{k:m}^{\rho} & G_{k:m}^{\omega}\end{bmatrix},
+\]
+where 
+\begin{align*}
+G_{k:m}^{t} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{t}}=I\\
+G_{k:m}^{R} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{R}}=\delta_{k:m}^{2}R_{k}V^{'}\left(\delta_{k:m}\omega\right)\rho\\
+G_{k:m}^{\rho} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{\rho}}=\delta_{k:m}^{2}R_{k}V\left(\delta_{k:m}\omega\right)\\
+G_{k:m}^{\omega} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{\omega}}=\frac{\delta_{k:m}^{3}}{2}R_{k}V^{'}\left(\delta_{k:m}\omega\right)\rho.
+\end{align*}
+Lastly $V_{m}=I$.
+
+Now that we have the Jacobians computed, we need to ensure that the
+system is observable. Since the system is nonlinear, the best we can
+do is ensure local observability. Given measurements from three different
+time steps, the observability matrix is 
+\[
+\mathcal{O}=\begin{bmatrix}H_{k:m_{1}}\\
+H_{k:m_{2}}\\
+H_{k:m_{3}}
+\end{bmatrix}.
+\]
+The observability matrix is not full rank. However, since we are interested
+in tracking the target we only need to be able to estimate the position
+of the target. To do this, we consider two configurations for a constant
+velocity system. In the first configuration the target has a circular
+trajectory. In this case we add the constraints that the target's
+heading is oriented along the body frame velocity, that $\rho=\left[\rho_{x},0\right]^{\top}$,
+$\rho_{x}>0$ and $\omega\neq0$. Using these constraints, the system
+is observable. In the second configuration the target is moving in
+a straight line. In this configuration we impose the same constraints
+as in the first configuration except that $\omega=0$. Under these
+constraints the system is observable. We can identify which configuration
+the target is in by looking at three different measurements from different
+times. If the three measurement do not form a line, then the system
+has first constrains; otherwise, the latter.
+
+To improve the LMLE used to estimate the current state, we can seed
+it as follows. Let $y_{k}$, $y_{m}$, and $y_{n}$ be three measurements
+taken at different times. Since we observe the position of the target,
+we can approximate the position of the target at time $k$, $m$,
+and $n$ as $t_{k}=y_{k}$, $t_{m}=y_{m}$ and $t_{n}=y_{n}$. Using
+these estimated positions, we can numerically approximate the derivative
+as 
+\begin{align*}
+\dot{t}_{k} & =\frac{t_{m}-t_{k}}{\delta_{k:m}},\\
+\dot{t}_{m} & =\frac{t_{n}-t_{m}}{\delta_{n:m}}
+\end{align*}
+Now let $\theta_{k}=\text{Log}\left(R_{k}\right)$, then 
+\begin{align*}
+\dot{t}_{k}=\begin{bmatrix}\dot{t}_{k_{x}}\\
+\dot{t}_{k_{y}}
+\end{bmatrix} & =\text{Exp}\left(\theta_{k}\right)\rho_{k}\\
+ & =\begin{bmatrix}\cos\left(\theta_{k}\right) & -\sin\left(\theta_{k}\right)\\
+\sin\left(\theta_{k}\right) & \cos\left(\theta_{k}\right)
+\end{bmatrix}\begin{bmatrix}\rho_{k_{x}}\\
+0
+\end{bmatrix}\\
+ & =\underbrace{\begin{bmatrix}\cos\left(\theta_{k}\right)\\
+\sin\left(\theta_{k}\right)
+\end{bmatrix}}_{R_{k_{x}}}\rho_{k_{x}}.
+\end{align*}
+We can now solve for $\theta_{k}$ and $\rho_{k_{x}}$ 
+\begin{align*}
+\theta_{k} & =\text{atan2}\left(\dot{t}_{k_{y}},\dot{t}_{k_{y}}\right)\\
+\rho_{k_{x}} & =\frac{R_{k_{x}}^{\top}\dot{t}_{k}}{R_{k_{x}}^{\top}R_{k_{x}}}.
+\end{align*}
+Note that 
+\[
+\dot{t}_{m}=R_{k}\exp\left(\delta_{k:m}\dot{\theta}_{k}\right)\rho_{k}.
+\]
+Let 
+\begin{align*}
+z & =R_{k}^{\top}\dot{t}_{m}/\rho_{k}\\
+ & =\left[z_{x},z_{y}\right]^{\top},
+\end{align*}
+then 
+\[
+\dot{\theta}_{k}=\text{atan2}\left(z_{y},z_{x}\right)/\delta_{k:m}
+\]
+These estimates can then be used to seed the LMLE during the RANSAC
+step of the algorithm.
+
+\textbf{Hardware Results}
+
+
+\subsection{Constrained Problem for SE$\left(3\right)$: Tracking UAVs with Radar}
+
+In this example the objective is to track multiple fixed wing aircrafts
+(FWAs) that are in the GSR and whose configuration manifold is $SE$$\left(3\right)$.
+The FWA are observed via multiple fixed radar sensors with overlapping
+LSR which produce point measurements. See appendix \ref{sec:SE3}
+for the FWAs' system function and important Jacobians. 
+
+Let $g_{k}\in SE\left(3\right)$ and $u_{k}\in\mathfrak{se}\left(3\right)$.
+These elements can be written as 
+\begin{align*}
+g_{k} & =\begin{bmatrix}R_{k} & t_{k}\\
+0_{1\times2} & 1
+\end{bmatrix}\\
+u_{k} & =\begin{bmatrix}\omega_{k} & \rho_{k}\\
+0_{1\times2} & 1
+\end{bmatrix},
+\end{align*}
+where $R_{k}\in SO\left(3\right)$, $\omega_{k}\in\mathfrak{so}\left(3\right)$,
+and $t_{k},\rho_{k}\in\mathbb{R}^{3}$. The observation model is 
+\begin{align*}
+y_{k} & =h\left(x_{k},v_{k}\right)\\
+ & =t_{k}+v_{k},
+\end{align*}
+where $y_{k}\in\mathbb{R}^{3}$. The inverse observation model is
+\begin{align*}
+y_{m} & =h\left(f^{-1}\left(x_{k},\delta_{k:m},w_{k}\right),v_{k}\right)\\
+ & =R_{k}J_{l}\left(\delta_{k:m}\left(\omega_{k}+w_{k}^{R}\right)+\frac{\delta_{k:m}^{2}w_{k}^{\omega}}{2}\right)\left(\delta_{k:m}\rho_{k}+\delta_{k:m}w_{k}^{\rho}\right)\\
+ & +t_{k}+w_{k}^{t}+v_{m},
+\end{align*}
+
+
+where $w_{k}=\left[\left(w_{k}^{t}\right)^{\top},\left(w_{k}^{R}\right)^{\top},\left(w_{k}^{\rho}\right)^{\top},\left(w_{k}^{u}\right)^{\top}\right]^{\top}$
+and $J_{l}$ is defined in equation (\ref{eq:V_se3}). Based on the
+observation model, we have three Jacobians to compute: $G_{k:m}$,
+$H_{k:m}$ and $V_{m}$. 
+\begin{align*}
+H_{k:m}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial x} & =\begin{bmatrix}H_{k:m}^{t} & H_{k:m}^{R} & H_{k:m}^{\rho} & H_{k:m}^{\omega}\end{bmatrix},
+\end{align*}
+where
+\begin{align*}
+H_{k:m}^{t}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial t_{k}} & =I\\
+H_{k:m}^{R}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial R} & =\delta_{k:m}R_{k}\left[-J_{l}\left(\delta_{k:m}\omega\right)\rho\right]_{\times}\\
+H_{k:m}^{\rho}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\rho} & =\delta_{k:m}^{2}R_{k}J_{l}\left(\delta_{k:m}\omega\right)\\
+H_{k:m}^{\omega}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\omega} & =\delta_{k:m}^{2}R_{k}\partial J_{l}\left(\delta_{k:m}\omega,\delta_{k:m}\rho\right),
+\end{align*}
+and$\partial J_{l}\left(\delta_{k:m}\omega,\delta_{k:m}\rho\right)$
+is defined in Lemma \ref{lem:dJl}. 
+
+\[
+G_{k:m}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}}=\begin{bmatrix}G_{k:m}^{t} & G_{k:m}^{R} & G_{k:m}^{\rho} & G_{k:m}^{\omega}\end{bmatrix},
+\]
+where 
+\begin{align*}
+G_{k:m}^{t} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{t}}=I\\
+G_{k:m}^{R} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{R}}=\delta_{k:m}^{2}R_{k}\partial J_{l}\left(\delta_{k:m}\omega,\delta_{k:m}\rho\right)\\
+G_{k:m}^{\rho} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{\rho}}=\delta_{k:m}^{2}R_{k}J_{l}\left(\delta_{k:m}\omega\right)\\
+G_{k:m}^{\omega} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{\omega}}=\frac{\delta_{k:m}^{3}}{2}R_{k}\partial J_{l}\left(\delta_{k:m}\omega,\delta_{k:m}\rho\right).
+\end{align*}
+Lastly $V_{m}=I$.
+
+Now that we have the Jacobians computed, we need to ensure that the
+system is observable. Since the system is nonlinear, the best we can
+do is ensure local observability. Given measurements from four different
+time steps, the observability matrix is 
+\[
+\mathcal{O}=\begin{bmatrix}H_{k:m_{1}}\\
+H_{k:m_{2}}\\
+H_{k:m_{3}}\\
+H_{k:m_{4}}
+\end{bmatrix}.
+\]
+The observability matrix is not full rank. However, under certain
+constraints, the system is observable. Since we are interested in
+tracking the target we only need to be able to estimate the position
+of the target. To do this, we consider two configurations for a constant
+velocity system. In the first configuration the target has a circular
+or spiral trajectory. In this case we add the constraints that the
+target's heading is oriented along the body frame velocity, that $\rho=\left[\rho_{x},0\right]^{\top}$,
+$\rho_{x}>0$ and $\omega\neq0$. Using these constraints, the system
+is observable. In the second configuration the target is moving in
+a straight line. In this configuration we impose the same constraints
+as in the first configuration except that $\omega=0$ and the roll
+in attitude (using roll, pitch, yaw) is zero. Under these constraints
+the system is observable. We can identify which configuration the
+target is in by looking at three different measurements from different
+times. If the three measurement do not form a line, then the system
+is in the first configuration; otherwise, the latter.
+
+Since the system is nonlinear, the LMLE can take a while to converge.
+We can speed up the LMLE by seeding it. To do this, we will use the
+Euler angles (roll $\phi$, pitch $\theta$, yaw $\psi$) as local
+coordinates and align the pitch and yaw angles with the translational
+velocities. The map from Euler angles configured in an NED frame to
+$SO\left(3\right)$ is defined as 
+\begin{equation}
+\mathcal{R}\left(\phi,\theta,\psi\right)=\begin{bmatrix}c_{\theta}c_{\psi} & s_{\phi}s_{\theta}c_{\psi}-c_{\phi}s_{\psi} & c_{\phi}s_{\theta}c_{\psi}+s_{\phi}s_{\psi}\\
+c_{\theta}s_{\psi} & s_{\phi}s_{\theta}s_{\psi}+c_{\phi}c_{\psi} & c_{\phi}s_{\theta}s_{\psi}-s_{\phi}c_{\psi}\\
+-s_{\theta} & s_{\phi}c_{\theta} & c_{\phi}c_{\theta}
+\end{bmatrix}.\label{eq:euler_to_so3}
+\end{equation}
+Let $t_{k},t_{m},t_{n}$ denote measured positions at times $n,m,k$
+with $k$ being the current time and $n<m<k$. The derivative of the
+position vector $t$ is related to $\rho$ through the rotation matrix
+$R$. This allows us to write the constraint
+\begin{align*}
+\dot{t} & =R\rho\\
+ & =\mathcal{R}\left(\phi,\theta,\psi\right)\rho.
+\end{align*}
+Letting $\dot{t}_{k}=\left[\dot{t}_{k_{x}},\dot{t}_{k_{y}},\dot{t}_{k_{z}}\right]^{\top}$,
+we get 
+\[
+\begin{bmatrix}\dot{t}_{x}\\
+\dot{t}_{y}\\
+\dot{t}_{z}
+\end{bmatrix}=\underbrace{\begin{bmatrix}c_{\theta}c_{\psi}\\
+c_{\theta}s_{\psi}\\
+-s_{\theta}
+\end{bmatrix}}_{R_{k_{x}}}\rho_{x}.
+\]
+Since we receive position measurements, we can numerically estimate
+the positional derivatives $\dot{t}_{k}=\frac{t_{m}-t_{k}}{\delta_{k:m}}$
+and $\dot{t}_{m}=\frac{t_{n}-t_{m}}{\delta_{m:n}}$. Using $\dot{t}_{k}$
+we can estimate $R_{k}$ by solving for $\phi_{k}$,$\theta_{k}$,
+$\psi_{k}$, and $\rho_{k_{x}}$ using the equations 
+\begin{align*}
+\psi_{k} & =\text{atan2}\left(\dot{t}_{k_{y}},\left|\dot{t}_{k_{x}}\right|\right)\\
+\theta_{k} & =\arctan\left(\frac{-\cos\left(\psi_{k}\right)\dot{t}_{k_{z}}}{\dot{t}_{k_{x}}}\right)\\
+\phi_{k} & =0\\
+\rho_{k_{x}} & =\frac{R_{k_{x}}^{\top}\dot{t}_{k}}{R_{k_{x}}^{\top}R_{k_{x}}}
+\end{align*}
+We have set $\phi_{k}=0$ since we cannot easily estimate it unless
+we assume the FWA is making a coordinated turn as described in \cite{Beard2008}.
+In the absence of sideslip, a coordinated turn has the constraint
+\[
+\dot{\psi}=\frac{g}{\left\Vert \dot{t}\right\Vert }\tan\left(\phi\right),
+\]
+where $g$ is the gravitational constant. Since we can estimate $\psi$
+at two different time periods, we can numerically estimate its derivative
+$\dot{\psi}$. Solving for $\phi$ we get 
+\[
+\phi_{k}=\arctan\left(\frac{\frac{\psi_{k}-\psi_{m}}{\delta_{k:m}}\left\Vert \dot{t}_{k}\right\Vert }{g}\right).
+\]
+From the estimated Euler angles $\phi_{k}$, $\theta_{k}$ and $\psi_{k}$
+we can construct the estimated rotation $R_{k}$ using equation (\ref{eq:euler_to_so3}).
+
+Lastly we estimate $\omega_{k}$ using the constraint 
+\[
+\dot{t}_{m}=R_{k}\exp\left(\delta_{k:m}\omega_{k}\right)\rho.
+\]
+Using a first order Taylor series approximation for the matrix exponential,
+we get 
+\[
+\frac{R_{k}^{\top}\dot{t}_{m}}{\rho_{k_{x}}}=\begin{bmatrix}1\\
+0\\
+0
+\end{bmatrix}+\begin{bmatrix}0\\
+\omega_{k_{z}}\\
+-\omega_{k_{y}}
+\end{bmatrix}\delta_{k:m},
+\]
+From which we can estimate the angular rates $\omega_{k_{z}}$ and
+$\omega_{k_{y}}$, and we simply set $\omega_{k_{x}}=0$. These approximations
+are then used to seed the LMLE optimization problem.
+
+\textbf{Hardware Results}
+
+
+\appendices{}
+
+
+\section{SE$\left(2\right)$\label{sec:SE2}}
+
+The special Euclidean group of two dimensions is a matrix Lie group
+and is the set 
+\[
+SE\left(2\right)=\left\{ \left.\begin{bmatrix}R & t\\
+0_{1\times2} & 1_{1\times1}
+\end{bmatrix}\,\right|\,R\in SO\left(2\right)\text{ and }t\in\mathbb{R}^{2}\right\} 
+\]
+equipped with matrix multiplication. The Lie algebra is 
+\[
+\mathfrak{se}\left(2\right)=\left\{ \left.\begin{bmatrix}\omega & \rho\\
+0 & 0
+\end{bmatrix}\,\right|\,\omega\in\mathfrak{s0}\left(2\right)\text{ and }\rho\in\mathbb{R}^{2}\right\} ,
+\]
+where $\theta\in\mathbb{R},$$\omega=\left[\theta\right]_{\times}$,
+and $\left[\cdot\right]_{\times}$ is the skew symmetric operator
+defined as 
+\[
+\left[\theta\right]_{\times}=\begin{bmatrix}0 & -\theta\\
+\theta & 0
+\end{bmatrix},
+\]
+and 
+\[
+\begin{bmatrix}\rho\\
+\theta
+\end{bmatrix}\in\mathbb{R}^{3}
+\]
+which is the Cartesian vector space. 
+
+Let $g\in SE\left(2\right)$ and $u\in\mathfrak{se}\left(2\right)$.
+Using an element of the Lie algebra, we can define the infinitesimal
+generator $\xi_{u}:G\to TG$ as 
+\begin{align*}
+\xi_{u}\left(g\right) & =gu\\
+ & =\dot{g}.
+\end{align*}
+The discretized state transition function $f:SE\left(2\right)\times\mathbb{R}^{2}\to SE\left(2\right)\times\mathbb{R}^{2}$
+is 
+\begin{align*}
+g_{k} & =\text{\text{Exp}}\left(\delta_{k}\left(u_{k^{-}}+w_{k}^{g}\right)+\frac{\delta_{k}^{2}}{2}w_{k}^{u}\right)\\
+u_{k} & =u_{k^{-}}+\delta_{k}w_{k}^{u}
+\end{align*}
+
+
+
+\subsection{Group Operations}
+
+Let $g_{1},g_{2}\in SE\left(2\right)$. The inversion and group multiplication
+is matrix inversion and matrix multiplication as follows
+\begin{align*}
+g_{1}^{-1} & =\begin{bmatrix}R_{1}^{\top} & -R_{1}^{\top}t_{1}\\
+0 & 1
+\end{bmatrix}\\
+g_{1}g_{2} & =\begin{bmatrix}R_{1}R_{2} & R_{1}t_{2}+t_{1}\\
+0 & 1
+\end{bmatrix}.
+\end{align*}
+ 
+
+
+\subsection{Exponential Map}
+
+The exponential map is the matrix exponential and it's inverse is
+the matrix logarithm. The matrix exponential is a surjective function;
+however, by restricting the domain to 
+\[
+U=\left\{ u\in\mathfrak{se}\left(2\right)\,\mid\,\left\Vert u\right\Vert <\pi\right\} ,
+\]
+it becomes a bijection. In this case, the exponential map and its
+inverse have a simplified form 
+\begin{align*}
+\text{\ensuremath{\exp}}\left(u\right) & =\begin{bmatrix}\exp\left(\omega\right) & J_{l}\left(\omega\right)\rho\\
+0_{1\times2} & 1
+\end{bmatrix}\\
+\text{\ensuremath{\log}}\left(g\right) & =\begin{bmatrix}\log\left(R\right) & J_{l}^{-1}\left(\omega\right)t\\
+0_{1\times2} & 0
+\end{bmatrix}
+\end{align*}
+with
+\begin{align}
+\theta & =\omega^{\vee}\\
+\exp\left(\omega\right) & =\begin{bmatrix}\cos\left(\theta\right) & -\sin\left(\theta\right)\\
+\sin\left(\theta\right) & \cos\left(\theta\right)
+\end{bmatrix}\\
+\log\left(R\right) & =\arctan\left(R_{21},R_{11}\right)\\
+\omega & =\log\left(R\right)\\
+J_{l}\left(\omega\right) & =\begin{cases}
+I & \text{if }\theta=0\\
+\frac{\sin\left(\theta\right)}{\theta}I+\frac{1-\cos\left(\theta\right)}{\theta}\left[1\right]_{\times} & \text{else}
+\end{cases}\label{eq:se2_v}\\
+J_{l}^{-1}\left(\omega\right) & =\begin{cases}
+I & \text{if }\theta=0\\
+\frac{\theta\sin\left(\theta\right)}{2\left(1-\cos\left(\theta\right)\right)}I-\frac{\theta}{2}\left[1\right]_{\times} & \text{else}
+\end{cases}
+\end{align}
+and $J_{l}$ being the left Jacobian of $SO\left(2\right)$
+
+
+\subsection{Jacobians}
+
+
+\subsubsection{Adjoint}
+
+The group adjoint representation is
+
+\[
+\mathbf{Ad}_{g}=\begin{bmatrix}R & -\left[1\right]_{\times}t\\
+0_{1\times2} & 1
+\end{bmatrix}
+\]
+with inverse 
+\[
+\mathbf{Ad}_{g}^{-1}=\begin{bmatrix}R^{\top} & R^{\top}\left[1\right]_{\times}t\\
+0_{1\times2} & 1
+\end{bmatrix}.
+\]
+The Lie algebra adjoint representation is 
+\[
+\mathbf{ad}_{u}=\begin{bmatrix}\left[\omega\right]_{\times} & -\left[1\right]_{\times}\rho\\
+0_{1\times2} & 0
+\end{bmatrix}.
+\]
+
+
+
+\subsubsection{Left and Right Jacobians}
+
+Let 
+\begin{align*}
+W_{r}\left(\theta\right) & =\frac{\cos\left(\theta\right)-1}{\theta}\left[1\right]_{\times}+\frac{\sin\left(\theta\right)}{\theta}I\\
+D_{r}\left(\theta\right) & =\frac{1-\cos\left(\theta\right)}{\theta^{2}}\left[1\right]_{\times}+\frac{\theta-\sin\left(\theta\right)}{\theta^{2}}I\\
+W_{l}\left(\theta\right) & =\frac{1-\cos\left(\theta\right)}{\theta}\left[1\right]_{\times}+\frac{\sin\left(\theta\right)}{\theta}I\\
+D_{l}\left(\theta\right) & =\frac{\cos\left(\theta\right)-1}{\theta^{2}}\left[1\right]_{\times}+\frac{\theta-\sin\left(\theta\right)}{\theta^{2}}I,
+\end{align*}
+then 
+\begin{align*}
+J_{r}\left(u\right) & =\begin{bmatrix}W_{r}\left(\theta\right) & D_{r}\left(\theta\right)\rho\\
+0 & 1
+\end{bmatrix},\\
+J_{l}\left(u\right) & =\begin{bmatrix}W_{l}\left(\theta\right) & D_{l}\left(\theta\right)\rho\\
+0 & 1
+\end{bmatrix}\\
+J_{r}^{-1}\left(u\right) & =\begin{bmatrix}W_{r}^{-1}\left(\theta\right) & -W_{r}^{-1}\left(\theta\right)D_{r}\left(\theta\right)\rho\\
+0 & 1
+\end{bmatrix}\\
+J_{l}^{-1}\left(u\right) & =\begin{bmatrix}W_{l}^{-1}\left(\theta\right) & -W_{l}^{-1}\left(\theta\right)D_{l}\left(\theta\right)\rho\\
+0 & 1
+\end{bmatrix}.
+\end{align*}
+If $\theta=0$, then the Jacobians and their inverses are the identity
+function.
+
+
+\section{SE$\left(3\right)$\label{sec:SE3}}
+
+The special Euclidean group of three dimensions is a matrix Lie group
+and is the set 
+\[
+SE\left(3\right)=\left\{ \left.\begin{bmatrix}R & t\\
+0_{1\times2} & 1_{1\times1}
+\end{bmatrix}\,\right|\,R\in SO\left(3\right)\text{ and }t\in\mathbb{R}^{3}\right\} 
+\]
+equipped with matrix multiplication. The Lie algebra is 
+\[
+\mathfrak{se}\left(3\right)=\left\{ \left.\begin{bmatrix}\omega & \rho\\
+0 & 0
+\end{bmatrix}\,\right|\,\omega\in\mathfrak{s0}\left(3\right)\text{ and }\rho\in\mathbb{R}^{3}\right\} ,
+\]
+where $\omega=\left[\theta\right]_{\times}$, $\theta=\left[\theta_{1},\theta_{2},\theta_{2}\right]^{\top}\in\mathbb{R}^{3}$
+and $\left[\cdot\right]_{\times}$ is the skew symmetric operator
+defined as 
+\[
+\left[\theta\right]_{\times}=\begin{bmatrix}0 & -\theta_{3} & \theta_{2}\\
+\theta_{3} & 0 & -\theta_{1}\\
+-\theta_{2} & \theta_{1} & 0
+\end{bmatrix},
+\]
+and 
+\[
+\begin{bmatrix}\rho\\
+\theta
+\end{bmatrix}\in\mathbb{R}^{6}
+\]
+which is the Cartesian vector space. 
+
+Let $g\in SE\left(3\right)$ and $u\in\mathfrak{se}\left(3\right)$.
+Using an element of the Lie algebra, we can define the infinitesimal
+generator $\xi_{u}:G\to TG$ as 
+\begin{align*}
+\xi_{u}\left(g\right) & =gu\\
+ & =\dot{g}.
+\end{align*}
+The discretized state transition function $f:SE\left(3\right)\times\mathbb{R}^{3}\to SE\left(3\right)\times\mathbb{R}^{3}$
+is 
+\begin{align*}
+g_{k} & =\exp\left(\delta_{k}\left(u_{k^{-}}+w_{k}^{g}\right)+\frac{\delta_{k}^{2}}{2}w_{k}^{u}\right)\\
+u_{k} & =u_{k^{-}}+\delta_{k}w_{k}^{u}
+\end{align*}
+
+
+
+\subsection{Group Operations}
+
+Let $g_{1},g_{2}\in SE\left(3\right)$. The inversion and group multiplication
+is matrix inversion and matrix multiplication as follows
+\begin{align*}
+g_{1}^{-1} & =\begin{bmatrix}R_{1}^{\top} & -R_{1}^{\top}t_{1}\\
+0 & 1
+\end{bmatrix}\\
+g_{1}g_{2} & =\begin{bmatrix}R_{1}R_{2} & R_{1}t_{2}+t_{1}\\
+0 & 1
+\end{bmatrix}.
+\end{align*}
+ 
+
+
+\subsection{Exponential Map}
+
+The exponential map is the matrix exponential and it's inverse is
+the matrix logarithm. The matrix exponential is a surjective function;
+however, by restricting the domain to 
+\[
+U=\left\{ u\in\mathfrak{se}\left(3\right)\,\mid\,\left\Vert u\right\Vert <\pi\right\} ,
+\]
+it becomes a bijection. In this case, the exponential map and its
+inverse have a simplified form 
+\begin{align*}
+\exp\left(u\right) & =\begin{bmatrix}\exp\left(\omega\right) & J_{l}\left(\omega\right)\rho\\
+0 & 1
+\end{bmatrix}\\
+\text{\ensuremath{\log}}\left(g\right) & =\begin{bmatrix}J_{l}^{-1}\left(\omega\right)t\\
+\log\left(R\right)
+\end{bmatrix}
+\end{align*}
+with $g=\exp\left(u\right)$,
+\begin{align}
+\phi & =\sqrt{\omega^{\top}\omega}\\
+\exp\left(\omega\right) & =I+\frac{\sin\left(\phi\right)}{\phi}\omega+\frac{1-\cos\left(\phi\right)}{\phi^{2}}\omega^{2}\\
+\phi & =\arccos\left(\frac{\text{trace}\left(R\right)-1}{2}\right)\\
+\log\left(R\right) & =\begin{cases}
+0_{2\times2} & \text{if }\phi=0\\
+\frac{\phi}{2\sin\left(\phi\right)}\left(R-R^{\top}\right) & \text{else}
+\end{cases}\\
+J_{l}\left(\omega\right) & =\begin{cases}
+I & \text{if }\phi=0\\
+I+\frac{1-\cos\left(\phi\right)}{\phi^{2}}\omega+\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\omega^{2} & \text{else}
+\end{cases}\label{eq:V_se3}\\
+J_{l}^{-1}\left(\omega\right) & =\begin{cases}
+I & \text{if }\theta=0\\
+I-\frac{\omega}{2}+\left(\frac{1}{\phi^{2}}-\frac{\phi\sin\left(\phi\right)}{2\phi^{2}\left(1-\cos\left(\phi\right)\right)}\right)\omega^{2} & \text{else}
+\end{cases}
+\end{align}
+where $J_{l}$ is the left Jacobian of $SO\left(3\right)$.
+
+
+\subsection{Jacobians}
+
+
+\subsubsection{Adjoint}
+
+The group adjoint representation is
+
+\[
+\mathbf{Ad}_{g}=\begin{bmatrix}R & \left[t\right]_{\times}R\\
+0_{3\times3} & R
+\end{bmatrix}
+\]
+with inverse 
+\[
+\mathbf{Ad}_{g}^{-1}=\begin{bmatrix}R^{\top} & -R^{\top}\left[t\right]_{\times}\\
+0_{3\times3} & R^{\top}
+\end{bmatrix}.
+\]
+
+
+The Lie algebra representation is 
+\[
+\mathbf{ad}_{u}=\begin{bmatrix}\omega & \left[\rho\right]_{\times}\\
+0_{3\times3} & \omega
+\end{bmatrix}.
+\]
+
+
+
+\subsubsection{Left and Right Jacobians}
+
+Let $u=\begin{bmatrix}\omega & \rho\\
+0 & 0
+\end{bmatrix}\in\mathfrak{se}\left(3\right)$ and 
+\begin{align*}
+\phi & =\sqrt{\omega^{\top}\omega}\\
+a_{\phi} & =\frac{\cos\left(\phi\right)-1}{\phi^{2}}\\
+b_{\phi} & =\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\\
+c_{\phi} & =-\frac{1}{\phi^{3}}\sin\left(\phi\right)+2\left(\frac{1-\cos\left(\phi\right)}{\phi^{4}}\right)\\
+d_{\theta} & =-\frac{2}{\phi^{4}}+\frac{3}{\phi^{5}}\sin\left(\phi\right)-\frac{1}{\phi^{4}}\cos\left(\phi\right)\\
+q_{r}\left(\omega\right) & =\left(\left(\omega^{\vee}\right)^{\top}\rho\right)\left(d_{\phi}\omega^{2}+c_{\phi}\omega\right)\\
+q_{l}\left(\omega\right) & =\left(\left(\omega^{\vee}\right)^{\top}\rho\right)\left(d_{\phi}\omega^{2}-c_{\phi}\omega\right)\\
+B_{r}\left(u\right) & =q_{r}\left(\omega\right)+a_{\phi}\left[\rho\right]_{\times}+b_{\phi}\left(\omega\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\omega\right)\\
+B_{l}\left(u\right) & =q_{l}\left(\omega\right)-a_{\phi}\left[\rho\right]_{\times}+b_{\phi}\left(\omega\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\omega\right)\\
+J_{r}\left(\omega\right) & =I+\frac{\cos\left(\phi\right)-1}{\phi^{2}}\omega+\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\omega^{2}\\
+J_{r}^{-1}\left(\omega\right) & =I+\frac{1}{2}\omega-\frac{\phi\cot\left(\frac{\phi}{2}\right)-2}{2\phi^{2}}\omega^{2}
+\end{align*}
+then 
+\begin{align*}
+J_{r}\left(u\right) & =\begin{bmatrix}J_{r}\left(\omega\right) & B_{r}\left(u\right)\\
+0 & J_{r}\left(\omega\right)
+\end{bmatrix}\\
+J_{l}\left(u\right) & =\begin{bmatrix}J_{l}\left(\omega\right) & B_{l}\left(u\right)\\
+0 & J_{l}\left(\omega\right)
+\end{bmatrix}\\
+J_{r}^{-1}\left(u\right) & =\begin{bmatrix}J_{r}^{-1}\left(\omega\right) & J_{r}^{-1}\left(\omega\right)B_{r}\left(u\right)J_{r}^{-1}\left(\omega\right)\\
+0 & J_{r}^{-1}\left(\omega\right)
+\end{bmatrix}\\
+J_{l}^{-1}\left(u\right) & =\begin{bmatrix}J_{l}^{-1}\left(\omega\right) & J_{l}^{-1}\left(\omega\right)B_{l}\left(u\right)J_{l}^{-1}\left(\omega\right)\\
+0 & J_{l}^{-1}\left(\omega\right)
+\end{bmatrix}.
+\end{align*}
+
+
+
+\section{Lemma}
+\begin{lem}
+\label{lem:dJl}Let $J_{l}\left(\omega\right)$ denote the left Jacobian
+of $SO\left(3\right)$ and $\rho\in\mathbb{R}^{3}$. The derivative
+of $J_{l}\left(\omega\right)p$ with respect to $\omega$, denote
+$\partial J_{l}\left(\omega,\rho\right)$, is 
+\begin{align*}
+\partial J_{l}\left(\omega,\rho\right) & =\left(\frac{1-\cos\left(\theta\right)}{\theta^{2}}\right)\left[-\rho\right]_{\times}\\
+ & +\left(\frac{\theta-\sin\left(\theta\right)}{\theta^{3}}\right)\left(-2\omega\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\omega_{\times}\right)\\
+ & +\left(\frac{\sin\left(\theta\right)\theta+2\left(\cos\left(\theta\right)-1\right)}{\theta^{4}}\right)\omega\rho\left(\omega^{\vee}\right)^{\top}\\
+ & +\left(\frac{3\sin\left(\theta\right)-\cos\left(\theta\right)\theta-2\theta}{\theta^{5}}\right)\omega^{2}\rho\left(\omega^{\vee}\right)^{\top}.
+\end{align*}
+where $\omega\in\mathfrak{s0}\left(3\right)$, and $\theta=\sqrt{\left(\omega^{\vee}\right)^{\top}\omega^{\vee}}$.\end{lem}
+\begin{IEEEproof}
+ $J_{l}\left(\omega\right)$ is defined in equation (\ref{eq:V_se3}).
+It follows directly that 
+\[
+\frac{\partial J_{l}\left(\omega\right)\rho}{\partial\omega}=\frac{\partial}{\partial\omega}\left(I+\frac{1-\cos\left(\theta\right)}{\theta^{2}}\omega+\frac{\theta-\sin\left(\theta\right)}{\theta^{3}}\omega^{2}\right)\rho.
+\]
+Using the product rule, we can break up the derivation into parts:
+\[
+\frac{\partial}{\partial\omega}\frac{1-\cos\left(\theta\right)}{\theta^{2}}=\frac{\sin\left(\theta\right)\theta+2\left(\cos\left(\theta\right)+1\right)}{\theta^{3}}\left(\omega^{\vee}\right)^{\top}
+\]
+\[
+\frac{\partial}{\partial\omega}\frac{\theta-\sin\left(\theta\right)}{\theta^{3}}=\frac{3\sin\left(\theta\right)-\cos\left(\theta\right)\theta-2\theta}{\theta^{5}}
+\]
+\[
+\frac{\partial}{\partial\omega}\omega\rho=\left[-\rho\right]_{\times}
+\]
+and 
+\[
+\frac{\partial}{\partial\omega}\omega^{2}\rho=-2\omega\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\omega_{\times}.
+\]
+Putting the pieces together, we get solution stated in the lemma.
+\end{IEEEproof}
+
+\section{Terminology and Parameters}
 
 The terminology, parameters, and notation used is previous version
 of R-RANSAC have varied which has created confusion and inconsistencies.
@@ -106,9 +1994,6 @@ in the past outside the time window.
 data and produces a measurement. We will often refer to a measurement
 source as just a source.
 \end{itemize}
-Don't worry if some of the terms do not make much sense now. We will
-elaborate on them later in the text.
-
 
 \subsection{Parameters}
 
@@ -119,13 +2004,16 @@ it clear, we will specify which one is a scalar and a tuple.
 \noindent RANSAC parameters
 \begin{itemize}
 \item $\ell$ - max iterations
-\item $\tau_{E}$ - RANSAC early termination threshold
+\item $\tau_{E}$ - If the size of a consensus set is greater than $\tau_{E}$,
+than RANSAC will terminate early.
 \item $\tau_{I}$ - RANSAC inlier threshold
+\item $\tau_{RM}$ - The minimum size of a track hypothesis's consensus
+set in order for the hypothesis to become a track
 \end{itemize}
 Cluster parameters
 \begin{itemize}
-\item $\tau_{D}$ - neighborhood distance threshold
-\item $\tau_{C}$ - cluster min cardinality threshold
+\item $\tau_{CD}$ - neighborhood distance threshold
+\item $\tau_{CM}$ - cluster minimum cardinality threshold
 \end{itemize}
 Model Management Parameters
 \begin{itemize}
@@ -145,1738 +2033,6 @@ Other
 \item $T_{W}$ - Time window
 \item $M$ - The number of models
 \end{itemize}
-
-
-
-\subsection{Time Notation}
-
-In this note we are assuming a discrete system whose measurements
-arrive at non-fixed time intervals. We denote the current time using
-a subscript $k$, the next previous time using a subscript $k^{-}$,
-and an arbitrary previous time using the subscript $m$ such that
-$m\leq k$. We use $\delta_{k}$ to denote the time elapsed from $k^{-}$
-to $k$, and $\delta_{m:k}$ to denote the time elapsed from $m$
-to $k$ such that $\delta_{m:k},\delta_{k^{-}}\geq0$ and $\delta_{k:m}=-\delta_{m:k}$. 
-
-
-\section{Lie Theory Review}
-
-The objective of this section is to provide a review of the pertinent
-concepts of Lie theory to establish notation. We assume that the reader
-is familiar with Lie group and Lie algebra theory. For those unfamiliar
-with this material, we refer the interested reader primarily to \cite{Sola2018}.
-Solá offers a very gentle introduction to Lie theory that covers the
-majority of information needed to understand this paper. We also follow
-much of the notation prescribed by Solá and Hertzberg in \cite{Sola2018}
-and \cite{Hertzberg2013}. For those who are interested in a more
-rigorous treatment of Lie theory, we refer the reader to \cite{Barfoot2019,Stillwell2008,Hall2003,Bullo2005a,Lee2013,Abraham1998}.
-In this document we will focus on targets with a discrete system model
-and constant velocity, this is merely to simplify the presentation
-of the material. With no loss in generality, everything we present
-can be extended to targets with a continuous system model and constant
-acceleration by using a semidirect product group formed from a Lie
-group and its Lie algebra. A good discussion of the semidirect product
-group can be found in \cite{Engo2003}. If using a continuous system
-that requires numerical integration on the manifold, we refer the
-reader to \cite{Munthe-Kaas1995,Munthe-Kaas1998,Munthe-Kaas1999}
-which describe the Runge-Kutta-Muthe-Kass numerical integration technique. 
-
-Let $G$ denote a Lie group and $\mathfrak{g}$ denote it's corresponding
-Lie algebra. The exponential function is a surjection that maps an
-element of the Lie algebra to an element of the Lie group, and the
-logarithmic map is the inverse of the exponential map. We denote these
-maps as\begin{subequations} 
-\begin{align*}
-\exp:\mathfrak{g} & \to G\\
-\log:G & \to\mathfrak{g}.
-\end{align*}
-\end{subequations} The definition of these maps is dependent on the
-Lie group. For matrix Lie groups, the exponential and logarithm maps
-are defined as the matrix exponential and matrix logarithm. 
-
-The Lie algebra is isomorphic to the Euclidean space $\mathbb{R}^{n}$
-where $n$ is the dimension of the Lie algebra. We will denote this
-Euclidean space as $E$. The Wedge function maps an element from the
-Euclidean space to the Lie algebra, and the Vee function is the inverse
-function which we denote as\begin{subequations} 
-\begin{align*}
-\cdot^{\wedge}:E\to\mathfrak{g} & \quad\left(v\right)\mapsto v^{\wedge}\\
-\cdot^{\vee}:\mathfrak{g}\to V & \quad\left(v^{\wedge}\right)^{\vee}\mapsto v.
-\end{align*}
-\end{subequations}. The definitions of these maps are dependent on
-the Lie algebra. We will rely on context to distinguish between elements
-of $E$ and $\mathfrak{g}$.
-
-Let $\text{Exp}:E\to G$ and its inverse be defined as the composite
-function \begin{subequations}
-\begin{align*}
-\text{Exp}\left(v\right) & =\exp\left(v^{\wedge}\right)\\
-\text{Log}\left(g\right) & =\log\left(g\right)^{\vee}.
-\end{align*}
-
-
-\end{subequations}
-
-Other functions of importance are the box-plus/minus and the o-plus/minus
-defined as \begin{subequations} 
-\begin{align*}
-\boxplus:G\times\mathfrak{g}\to G & \quad\left(g,u\right)\mapsto g\bullet\exp\left(u\right)\\
-\boxminus:G\times G\to\mathfrak{g} & \quad\left(g_{1},g_{2}\right)\mapsto\log\left(g_{2}^{-1}\bullet g_{1}\right)\\
-\oplus:G\times E\to G & \quad\left(g,v\right)\mapsto g\bullet\text{Exp}\left(v\right)\\
-\ominus:G\times G\to E & \quad\left(g_{1},g_{2}\right)\mapsto\text{Log}\left(g_{2}^{-1}\bullet g\right).
-\end{align*}
-\end{subequations} where $\bullet$ represents the group operator
-which we will omit in the future, and $g_{2}^{-1}$ is the inverse
-element of $g_{2}$. We have based the definition of these function
-on left trivializations (using vector fields that are left invariant)
-since we will present the material using the left trivialization.
-Note that we could easily use the right trivialization as well.
-
-The adjoint of $G$ is a representation of $G$ that acts on $\mathfrak{g}$,
-and is denoted and generically defined as 
-\begin{align*}
-Ad_{g}:\mathfrak{g} & \to\mathfrak{g};\quad\left(u\right)\mapsto gug^{-1}
-\end{align*}
-where $g\in G$. Since the adjoint is a linear function, we can find
-a matrix version that operates on the associated Euclidean space generically
-such that 
-\[
-\mathbf{Ad}_{g}:E\to E;\quad\left(v\right)\mapsto\mathbf{Ad}_{g}v
-\]
-where $\mathbf{Ad}_{g}$ is the matrix adjoint representation of $G$. 
-
-The adjoint of $\mathfrak{g}$ is a representation of $\mathfrak{g}$
-that acts on $\mathfrak{g}$. It is also the Lie bracket $\left[\cdot,\cdot\right]$
-which we will denoted and generically define as 
-\[
-ad_{u}:\mathfrak{g}\to\mathfrak{g};\quad\left(v\right)\mapsto\left[u,v\right]
-\]
-where $u\in\mathfrak{g}$. Since the adjoint is a linear function,
-we can find a matrix version that operates on the associated Euclidean
-space generically defined as 
-\[
-\mathbf{ad}_{u}:E\to E\quad\left(v\right)\mapsto\mathbf{ad}_{u}v
-\]
-
-
-where $u\in\mathfrak{g}$ and $\mathbf{ad}_{u}$ is the matrix adjoint
-representation of $\mathfrak{g}$. 
-
-As stated in \cite{Iserles2000a}, we can define the differential
-of the exponential mapping as the 'left trivialized' tangent of the
-exponential map or as the 'right trivialized' tangent of the exponential
-map. These differentials are also commonly called the right and left
-Jacobians. The right and left Jacobians , $J_{r},J_{l}:E\to GL\left(E\right)$,
-are defined as
-\begin{align*}
-J_{r}\left(v\right) & =\frac{^{r}\partial\text{Exp}\left(v\right)}{\partial v} &  & J_{l}\left(v\right)=\frac{^{l}\partial\text{Exp}\left(v\right)}{\partial v}.
-\end{align*}
-
-
-Their inverses are defined as 
-\begin{align*}
-J_{r}^{-1}\left(v\right) & =\frac{^{r}\partial\text{Log}\left(v\right)}{\partial v} &  & J_{l}^{-1}\left(v\right)=\frac{^{l}\partial\text{Log}\left(v\right)}{\partial v}.
-\end{align*}
-The right Jacobian has the property that for small $\delta v\in E$
-and $v\in E$ we get that 
-\begin{align*}
-\text{Exp}\left(\delta v+u\right) & \approx\text{Exp}\left(v\right)\text{Exp}\left(J_{r}\left(v\right)\delta v\right)\\
-\text{Exp}\left(v\right)\text{Exp}\left(\delta v\right) & \approx\text{Exp}\left(v+J_{r}^{-1}\left(v\right)\delta v\right)\\
-\text{Log}\left(\text{Exp}\left(v\right)\text{Exp}\left(\delta v\right)\right) & \approx v+J_{r}^{-1}\left(v\right)\delta v.
-\end{align*}
-The left Jacobian has the similar property that for small $\delta v\in E$
-and $v\in E$ we get that
-\begin{align*}
-\text{Exp}\left(v+\delta v\right) & \approx\text{Exp}\left(J_{l}\left(v\right)\delta v\right)\text{Exp}\left(v\right)\\
-\text{Exp}\left(\delta v\right)\text{Exp}\left(v\right) & \approx\text{Exp}\left(v+J_{l}^{-1}\left(v\right)\delta v\right)\\
-\text{Log}\left(\text{Exp}\left(\delta v\right)\text{Exp}\left(v\right)\right) & \approx v+J_{l}^{-1}\left(v\right)\delta v.
-\end{align*}
-
-
-The derivation of the left and right Jacobians stems from the Baker-Campbell-Hausdorff
-formula and can be studied in \cite{Hall2003} and \cite{Barfoot2019}. 
-
-An infinitesimal generator corresponding to $u\in\mathfrak{g}$ is
-a smooth vector field on $G$ defined as 
-\[
-\xi_{u}\left(g\right)=\left.\frac{d}{dt}\right|_{t=0}g\boxplus\left(tu\right)
-\]
-
-
-This is a very simplified definition that serves our purpose in deriving
-the discrete system model. For a more formal and encompassing definition
-of an infinitesimal generator, we refer the reader to the authors
-already mentioned. 
-
-
-\section{Problem Description}
-
-The objective is to estimate the states of multiple dynamic targets
-given a set of measurements from multiple sensors and a dynamic model
-without a prior information about the number of targets in the global
-surveillance region. Let the state of the system at time $k$ be given
-by $x_{k}=\left(g_{k},u_{k}\right)\in G\times E$ where $g_{k}\in G$
-and $u_{k}\in E$. We assume the system model to be continuous, near
-constant velocity, and time invariant defined as
-\begin{align*}
-\dot{g}_{k} & =\xi_{u_{k}}\left(g_{k}\right)\\
-\dot{u}_{k} & =w_{k}^{u},
-\end{align*}
-where $\xi_{u_{k}}\left(g_{k}\right)$ is an infinitesimal generator
-constructed from $u_{k}$, $w_{k}=\begin{bmatrix}w_{k}^{g}\\
-w_{k}^{u}
-\end{bmatrix}$ is process noise sampled from a zero-mean, white-noise, Gaussian
-distribution with covariance $Q$. Under the assumption that $w_{k}$
-stays constant over a time period $\delta_{k}$ we can discretize
-the model to get the discrete system model described as \begin{subequations}\label{eq:system-model}
-\begin{align}
-g_{k} & =g_{k^{-}}\oplus\left(\delta_{k}u_{k^{-}}+\delta_{k}w_{k}^{g}+\frac{\delta_{k}^{2}}{2}w_{k}^{u}\right)\\
-u_{k} & =u_{k^{-}}+\delta_{k}w_{k}^{u}.
-\end{align}
-\end{subequations} This form is similar to the one found in \cite{Sj=0000C3=00017Eberg2019},
-and is an exact solution provided that the Lie group is commutative.
-If the Lie group is not commutative, the exact numeric solution is
-cumbersome if not impossible to derive, in which case we use the system
-model as an approximate numerical solution.
-
-The complete discrete system is defined as\begin{subequations}\label{eq:system}
-\begin{align}
-x_{k} & =f\left(x_{k^{-}},w_{k},\delta_{k}\right)\\
-y_{k} & =h\left(x_{k},v_{k}\right),
-\end{align}
-\end{subequations} where $f$ is the system model defined in (\ref{eq:system-model}),
-$y_{k}\in N$ is a measurement and $N$ is a Lie group, $h:G\to N$
-is the observation model, and $v_{k}$ is measurement noise sampled
-from a zero-mean, white-noise, Gaussian distribution with covariance
-$R$.
-
-The state $x$ is a new Lie group generated from the Cartesian product
-of $G$ and $E$. The Lie algebra of $G\times E$ is simply $\mathfrak{g}\times E$
-which is isomorphic to $\mathbb{R}^{2n}$ with $n$ being the dimension
-of $G$. We will denote this space as $E^{*}$. All of the operations
-previously defined are simply inherited. For example, let $x\in G\times\mathfrak{g}$
-and $v=\left(a,b\right)^{\vee}\in E^{*}$, then 
-\begin{align*}
-x\oplus v & =\left(g,u\right)\oplus v\\
- & =\left(g,u\right)\boxplus\left(a,b\right)\\
- & =\left(g\exp\left(a\right),u+b\right),
-\end{align*}
-where $g\in G$, $a\in\mathfrak{g}$, and $u,b\in E$.
-
-Each sensor perceives a subset of the measurement space called a local
-surveillance region (LSR) which has a local frame that the data is
-expressed in and a volume denoted $V_{vol}$. Measurements are extracted
-from the data using algorithms. We call the unique sensor and algorithm
-pair a measurement source or source for short. In the case that multiple
-measurement sources have the same sensor, it is possible for duplication
-of information which, when incorporated into a state estimate of a
-target, would lead to overconfidence of the state estimate. We do
-not have a way to account for this except to assume it is minimal.
-
-A sensor scan occurs when a measurement source captures new data and
-has new measurements to provide R-RANSAC. Measurements from a source
-can either false or true measurements. We assume that false measurements
-are uniformly distributed in the LSR and that the number of false
-measurements from a source per sensor scan can be modeled using a
-Poisson distribution with parameter $\Lambda$ being the expected
-value. The expected number of false measurements per unit volume is
-called the spacial density and is $\lambda=\frac{\Lambda}{V_{vol}}$.
-We also assume that a measurement source provides at most one true
-measurement per target every sensor scan with probability $P_{D}$,
-i.e. the probability of detection. 
-
-R-RANSAC works in a single frame requiring all of the measurements
-to be transformed and expressed in a single global frame before being
-given to R-RANSAC. In the case that the global frame changes, a transformation
-$T$ must be provided to R-RANSAC that contains the information necessary
-to transform all the past measurements and models, stored in R-RANSAC,
-into the new global frame. 
-
-R-RANSAC uses the new measurements along with all the previous measurements
-from the time window $T_{W}$ to track targets. As time progresses,
-old measurements fall outside the time window and are removed. These
-measurements are called expired measurements. Below is a summary of
-our assumptions.
-\begin{enumerate}
-\item We assume that the system is observable.
-\item We assume that the process and measurement noises are represented
-by a white-noise, zero-mean, Gaussian distribution and that their
-covariances are known.
-\item We assume that all measurements are independent.
-\item We assume that the expected number of false measurements from each
-measurement source per sensor scan is modeled using a Poisson distribution
-with spatial parameter $\lambda$, and that the false measurements
-are uniformly distributed in the LSR.
-\item We assume that every measurement given to R-RANSAC is expressed in
-the current global frame. 
-\item If the global frame moves, a transformation is provided to R-RANSAC
-in order to transform the measurements and models to the current global
-frame.
-\end{enumerate}
-
-\section{Paradigm}
-
-
-\section{Lie Group Probability}
-
-In this section we define the prior distribution of the state $x$,
-the state transition distribution, the likelihood distribution of
-the measurement and other distributions in a Lie group framework necessary
-to develop the theory. We follow the convention, notation and terminology
-from \cite{Reid2001,Reid2001a,Thrun2006} adapted for the Lie group
-setting. Others have defined these distributions similarly as in \cite{Bourmaud2013a,Bourmaud2014};
-however, our derivation is suited for our system model. 
-
-We denote the state estimate at time $m$ as $\hat{x}_{m}\in G\times E$
-and the actual state as $x_{m}\in G\times E$. Let $\delta x_{m}\in E^{*}$
-denote a local perturbation around $\hat{x}_{m}$ that is a zero-mean,
-Gaussian, random variable with error covariance $P_{m}$ such that
-\[
-x_{m}=\hat{x}_{m}\oplus\delta x_{m}.
-\]
-
-
-We denote the prior distribution, or the belief distribution as $p\left(x_{m}\right)$
-and define it as 
-\begin{align*}
-p\left(x_{m}\right) & =\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus\hat{x}_{m}\right)^{\top}P_{m}^{-1}\left(x_{m}\ominus\hat{x}_{m}\right)\right)\\
- & =\eta\exp\left(-\frac{1}{2}\delta x_{m}^{\top}P_{m}^{-1}\delta x\right),
-\end{align*}
-where $\eta$ is a normalizing coefficient corresponding to the Gaussian
-distribution. We will use$\eta$ to denote any normalizing coefficient.
-We denote the state transition probability as $p\left(x_{m}\mid x_{m^{-}}\right)$
-and define it as 
-\[
-p\left(x_{m}\mid x_{m^{-}}\right)=\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus f\right)^{\top}Q^{-1}\left(x_{m}\ominus f\right)\right),
-\]
-where $x_{m}\ominus f=x_{m}\ominus f\left(x_{m^{-}},w_{k},\delta_{m}\right)$.
-
-We can approximate $p\left(x_{m}\mid x_{m^{-}}\right)$ with a Gaussian
-distribution by using the first order Taylor series expansion of $x_{m}\ominus f$
-and treating $\delta x_{m^{-}}$ and $w_{m}$ as perturbations; this
-is known as linearizing. Doing so, yields
-\[
-p\left(x_{m}\mid x_{m^{-}}\right)\approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus\tilde{f}\right)^{\top}\bar{Q}^{-1}\left(x_{m}\ominus\tilde{f}\right)\right),
-\]
-where
-\[
-x_{m}\ominus\tilde{f}=x_{m}\ominus f\left(\hat{x}_{m},0,\delta_{m}\right)+F_{m}\delta x_{m^{-}}+G_{m}w_{m},
-\]
- 
-\begin{align*}
-F_{m} & =\left.\frac{\partial x_{m}\ominus f\left(x_{m^{-}},w_{k},\delta_{m}\right)}{\partial x_{m^{-}}}\right|_{\hat{x}_{m^{-}},\hat{w}_{m},\delta_{m}}\\
- & =\begin{bmatrix}\mathbf{Ad}_{\text{Exp}\left(\delta_{m}\hat{u}_{m^{-}}\right)^{-1}}\\
-J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)
-\end{bmatrix},
-\end{align*}
-\begin{align*}
-G_{m} & =\left.\frac{\partial x_{m}\ominus f\left(x_{m^{-}},w_{k},\delta_{m}\right)}{\partial w_{m}}\right|_{\hat{x}_{m^{-}},\hat{w}_{m},\delta_{m}}\\
- & =\begin{bmatrix}J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)\delta_{m} & J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)\frac{\delta_{m}^{2}}{2}\\
-I\delta_{m} & 0
-\end{bmatrix},
-\end{align*}
-and $\hat{w}$ is the expected value of the process noise which is
-zero. 
-
-Let $\bar{p}\left(x_{m}\right)$ denote the probability of $x_{m}$
-after state propagation. It is calculated as 
-\[
-\bar{p}\left(x_{m}\right)=\int p\left(x_{m}\mid x_{m^{-}}\right)p\left(x_{m^{-}}\right)dx_{m^{-}}.
-\]
-We approximate $\bar{p}\left(x_{m}\right)$ by linearizing $p\left(x_{m}\mid x_{m}\right)$
-so that $\bar{p}\left(x_{m}\right)$ is a Gaussian distribution which
-is parametrized by the new state estimate $\hat{\bar{x}}_{m}$ and
-error covariance $\bar{P}_{m}$. We will not include the tedious derivation,
-but refer the reader to \cite{Thrun2006}. The new state estimate
-and error covariance is calculated as \begin{subequations}\label{eq:Kalman_propagation}
-\begin{align}
-\hat{\bar{x}}_{m} & =f\left(\hat{x}_{m^{-}},\hat{w}_{m},\delta_{m}\right)\\
-\bar{P}_{m} & =F_{m}P_{m^{-}}F_{m}^{\top}+G_{m}QG_{m}^{\top};
-\end{align}
-\end{subequations}this calculation is called the propagation or the
-prediction step.
-
-The probability of a measurement conditioned on the state is called
-the measurement probability or likelihood denoted as $p\left(y_{m}\mid x_{m}\right)$,
-and defined as 
-\[
-p\left(y_{m}\mid x_{m}\right)=\eta\exp\left(-\frac{1}{2}e^{\top}R^{-1}e\right),
-\]
-where 
-\[
-e=y_{m}\ominus h\left(x_{m},v_{m}\right).
-\]
-We can linearize the measurement probability to get 
-\[
-p\left(y_{m}\mid x_{m}\right)\approx\eta\exp\left(-\frac{1}{2}\tilde{e}^{\top}R^{-1}\tilde{e}\right)
-\]
-where
-\[
-\tilde{e}=y_{m}\ominus h\left(\hat{x}_{m},\hat{v}_{m}\right)+H_{m}\delta x_{m}+V_{m}v_{m},
-\]
- 
-\begin{align*}
-H_{m} & =\left.\frac{\partial y_{m}\ominus h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{\hat{x}_{m},\hat{v}_{m}},\\
- & =\left.\frac{\partial\log\left(\hat{e}\right)}{\partial z}\frac{\partial z}{\partial h^{-1}\left(x_{m},v_{m}\right)}\frac{\partial h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{\hat{x}_{m},\hat{v}_{m}}\\
- & =J_{r}^{-1}\left(\hat{e}\right)\mathbf{Ad}_{y_{m}^{-1}}\left.\frac{\partial h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{\hat{x}_{m},\hat{v}_{m}}
-\end{align*}
-\begin{align*}
-V_{m} & =\left.\frac{\partial y_{m}\ominus h\left(x_{m},v_{m}\right)}{\partial v_{m}}\right|_{\hat{x}_{m},\hat{v}_{m}},\\
- & =J_{r}^{-1}\left(\hat{e}\right)\mathbf{Ad}_{y_{m}^{-1}}\left.\frac{\partial h\left(x_{m},v_{m}\right)}{\partial v_{m}}\right|_{\hat{x}_{m},\hat{v}_{m}}
-\end{align*}
- $\hat{e}=y_{m}\ominus h\left(\hat{x}_{m},\hat{v}_{m}\right)$ and
-$\hat{v}_{m}$ is the expected value of the measurement noise which
-is zero.
-
-The probability of the state given a measurement is called the posterior
-denoted $p\left(x\mid y\right)$ and defined as 
-\[
-p\left(x\mid y\right)=\frac{p\left(y\mid x\right)\bar{p}\left(x\right)}{p\left(y\right)}.
-\]
-We improve the state estimate $\hat{x}_{m}$ by maximizing the posterior
-distribution. This process is outlined in \cite{Thrun2006} which
-gives us the standard Kalman filter update step:\begin{subequations}\label{eq:Kalman_update}
-\begin{alignat}{2}
-\text{Innovation :} & \quad & \hat{e} & =y_{m}\ominus h\left(\hat{x}_{m},\hat{v}_{m}\right)\\
-\text{Innovation cov. :} & \quad & S & =H_{m}\bar{P}_{m}H_{m}^{\top}+V_{m}RV_{m}^{\top}\\
-\text{Kalman gain :} & \quad & K & =\bar{P}_{m}H_{m}^{\top}S^{-1}\\
-\text{Observed error :} & \quad & \delta x_{m} & =K\hat{e}\\
-\text{State update :} & \quad & \hat{x}_{m} & =\hat{\bar{x}}_{m}\oplus\delta x_{m}\\
-\text{Cov. update :} & \quad & P_{m} & =P_{m}-KSK^{\top}.
-\end{alignat}
-\end{subequations}Depending on the data associating filter used,
-the update step will be different; however, the underlying basic idea
-is the same which will require computing the Jacobians $F_{m}$, $G_{m}$,
-$H_{m}$ and $V_{m}$.
-
-
-\section{RANSAC}
-
-The objective of RANSAC is to estimate the parameters of a model given
-a set of measurements which contains both false and true measurements.
-We follow a scheme similar to the one presented in \cite{Yang2017};
-that is, we perform RANSAC on every cluster seeding it with a measurement
-obtained from the current time. This process is described for a single
-cluster.
-
-Let $Y$ denote the set of measurements pertaining to a cluster, and
-let $y_{0:k}$ be a minimum subset of $Y$ that contains a measurement
-from the current time $k$ and other measurements randomly sampled
-from different times such that the system can be observed by the measurements
-in $y_{0:k}$. Using the measurements $y_{0:k}$, we create a model
-hypothesis by estimating a current hypothetical state $x_{k}$ that
-fit the measurements according to they system model described in (\ref{eq:system-model}).
-The hypothetical state $x_{k}$ is estimated using a log maximum likelihood
-estimate (LMLE) method described in section \ref{sec:LMLE}. Once
-$x_{k}$ is estimated, we construct a consensus set for the model
-hypothesis. The consensus set contains all of the measurements that
-are inliers to the model hypothesis. An inlier is a measurement that
-is within some distance of the estimated measurement obtained from
-$x_{k}$. Let $d_{I}:N\times N\to\mathbb{R}$ be a metric on the measurement
-space $N$, as described in \cite{Moon2000}, and let $\tau_{I}\in\mathbb{R}$
-be a threshold, then if 
-\[
-d_{I}\left(y_{m}^{j},\hat{y}_{m}\right)<\tau_{I},
-\]
-where $\hat{y}_{m}$ is the estimated measurement at time $m$, and
-$y_{m}^{j}$ is the $j^{th}$ measurement obtained at time $m$, then
-the measurement $y_{m}^{j}$ is considered an inlier to the model
-hypothesis and is added to the consensus set. The estimated measurement
-$\hat{y}_{m}$ is calculated using model inversion described in subsection
-\ref{sub:Model-Inversion}. The metric that we use is defined as 
-\[
-d_{I}\left(y_{m}^{j},\hat{y}_{m}\right)=\left(y_{m}^{i}\ominus\hat{y}_{m}\right)^{\top}\left(R_{k:m}^{j}\right)^{-1}\left(y_{m}^{i}\ominus\hat{y}_{m}\right),
-\]
-where $R_{k:m}^{j}$ is defined in (\ref{eq:meas_cov_time}). For
-help choosing $\tau_{I}$, see section (\ref{sec:Validation-Region}).
-
-This process is repeated at most $\ell$ times so that we have at
-most $\ell$ model hypothesis from each cluster. The model hypothesis
-with the largest consensus set from each cluster is kept and used
-to create a model using a filtering method that incorporates all of
-the measurements in the consensus set to calculate a current state
-estimate and error covariance. The size of the consensus set is not
-necessarily the cardinality of the consensus set. We define the size
-of the consensus set as the number of measurements from different
-sources at each time step. For example, if a source provided ten measurements
-at time $k$ and four of them were added to the consensus set, all
-four of them would count as one. The purpose of this definition is
-to ensure that one source is not weighted more heavily than another.
-RANSAC will terminate early if the size of a consensus set is greater
-than or equal to the threshold $\tau_{E}$, and the measurements in
-a model hypothesis's consensus set are removed from the data tree
-if the model hypothesis become a model.
-
-The filtering method that we employ uses the Kalman propagation step
-described in equation (\ref{eq:Kalman_propagation}) and an update
-step using centralized measurement fusion described in section \ref{sec:Centralized-Measurement-Fusion}.
-The centralized measurement fusion allows multiple measurements from
-different sources to be fused together. 
-
-
-\section{Log Maximum Likelihood Estimate\label{sec:LMLE}}
-
-We use LMLE to generate model hypotheses in RANSAC. A model hypotheses
-is created by taking a subset of measurements from a cluster $y_{0:k}\subseteq Y$
-which contains one measurement from the current time and other measurements
-which are randomly sampled from different times with enough measurements
-in order to estimate the state, i.e. the $\left|y_{0:k}\right|$ is
-greater than or equal to the observability index of the system. Using
-the measurements $y_{0:k}$ we employ the LMLE method to calculate
-a hypothetical state estimate, i.e. a possible state estimate of an
-actual target. 
-
-LMLE estimates the joint probability of all the states in the time
-window, $x_{0:k}$, conditioned on the measurements $y_{0:k}$ by
-maximizing the posterior probability. The posterior probability is
-\[
-p\left(x_{0:k}\mid y_{0:k}\right).
-\]
-Using Bayes rule we get
-\begin{align*}
-p\left(x_{0:k}\mid y_{0:k}\right) & =\frac{p\left(y_{k}\mid x_{0:k},y_{0:k^{-}}\right)p\left(x_{0:k}\mid y_{0:k^{-}}\right)}{p\left(y_{k}\mid y_{0:k^{-}}\right)}.
-\end{align*}
-Since $p\left(y_{k}\mid y_{0:k^{-}}\right)$ does not depend on the
-parameters we are trying to estimate, we can replace it with a constant
-$\frac{1}{\eta}$ so that the posterior becomes
-\[
-p\left(x_{0:k}\mid y_{0:k}\right)=\eta p\left(y_{k}\mid x_{0:k},y_{0:k^{-}}\right)p\left(x_{0:k}\mid y_{0:k^{-}}\right).
-\]
-Under the assumption that the system is a first order Markov process,
-we can simplify the posterior to
-\[
-p\left(x_{0:k}\mid y_{0:k^{-}}\right)=\eta p\left(y_{k}\mid x_{k}\right)p\left(x_{k}\mid x_{k^{-}}\right)p\left(x_{0:k^{-}}\mid y_{0:k^{-}}\right).
-\]
-Repeating the process recursively, we get 
-\begin{multline*}
-p\left(x_{0:k}\mid y_{0:k}\right)=\\
-\eta p\left(x_{0}\right)\prod_{m=1}^{k}\left[p\left(x_{m}\mid x_{m^{-}}\right)\right]\prod_{m=0}^{k}\prod_{j=1}^{\ell\left(m\right)}\left[p\left(y_{m}^{j}\mid x_{m}\right)\right],
-\end{multline*}
-where $\ell\left(m\right)$ is the number of measurements in $y_{0:k}$
-that were received at time $m$.
-
-Maximizing the posterior is equivalent to minimizing the negative
-log posterior. The negative log posterior is 
-\begin{multline*}
-\log\left(-p\left(x_{0:k}\mid y_{1:k}\right)\right)=\log\left(-\eta\right)+\log\left(-p\left(x_{0}\right)\right)\\
-+\sum_{m=1}^{k}\log\left(-p\left(x_{m}\mid x_{m^{-}}\right)\right)+\sum_{m=0}^{k}\sum_{j=1}^{\ell\left(m\right)}\log\left(-p\left(y_{m}^{j}\mid x_{m}\right)\right).
-\end{multline*}
-We can drop the term $\log\left(-\eta\right)$ since it will have
-no impact on the optimization problem. The term $\log\left(-p\left(x_{0}\right)\right)$
-is negligible compared to the rest of the optimization problem since
-its covariance is big indicating that we do not know the initial state
-$x_{0}$. We thus simplify the negative log posterior to 
-\[
-\sum_{m=1}^{k}\log\left(-p\left(x_{m}\mid x_{m^{-}}\right)\right)+\sum_{m=0}^{k}\sum_{j=1}^{\ell\left(m\right)}\log\left(-p\left(y_{m}^{j}\mid x_{m}\right)\right).
-\]
-
-
-Since we are only interested in estimating the current state $x_{k}$
-and because there is no input to the system, we simplify the negative
-log posterior to
-\[
-\sum_{m=0}^{k}\sum_{j=1}^{\ell\left(m\right)}\log\left(-p\left(y_{m}^{j}\mid x_{k}\right)\right).
-\]
-
-
-Using these simplifications, the minimization problem is defined as
-\[
-\arg\min_{x_{k}}\left(\sum_{m=0}^{k}\sum_{j=1}^{\ell\left(m\right)}\log\left(-p\left(y_{m}^{j}\mid x_{k}\right)\right)\right).
-\]
-This requires constructing a map from the current state $x_{k}$ to
-a previous state $x_{m}$ which is done by inverting the model.
-
-
-\subsection{Model Inversion\label{sub:Model-Inversion}}
-
-Given the current state $x_{k}$ we are interested in calculating
-the state and output at time $m<n$. We can easily invert the system
-model defined in (\ref{eq:system-model}). Ignoring the noise terms,
-we can propagate the pose of the system $g_{m}$ to $g_{k}$ by 
-\[
-g_{k}=g_{m}\exp\left(\delta_{m:k}u\right).
-\]
-Solving for $g_{m}$ yields 
-\begin{align*}
-g_{m} & =\exp^{-1}\left(\delta_{m:k}u\right)g_{k}\\
- & =\exp\left(-\delta_{m:k}u\right)g_{k}\\
- & =\exp\left(\delta_{k:m}u\right)g_{k}.
-\end{align*}
-Thus, the inverse of the system model $f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right)$
-is defined as \begin{subequations}\label{sub:model_inverse} 
-\begin{align}
-g_{m} & =g_{k}\oplus\left(\delta_{k:m}u_{k}+\delta_{k:m}w_{k}^{g}+\frac{\delta_{k:m}^{2}}{2}w_{k}^{u}\right)\\
-u_{m} & =u_{k}+\delta_{k:m}w_{k}^{u}.
-\end{align}
-\end{subequations} and the output at time $m$ is 
-\[
-y_{m}=h\left(f^{-1},v_{m}\right),
-\]
-where 
-\[
-f^{-1}=f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right)
-\]
-
-
-We are interested in the linearized likelihood $p\left(y_{m}^{j}\mid x_{k}\right)$.
-Since the likelihood is conditioned on the state, the state is not
-a random variable. This simplifies the Taylor series of 
-\[
-y_{m}^{j}\ominus h\left(f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),v_{m}\right),
-\]
-which is 
-\[
-y_{m}^{j}\ominus h\left(f^{-1},\hat{v}_{m}\right)+G_{k:m}^{j}w_{k}+Vv_{m},
-\]
-where 
-\begin{align*}
-G_{k:m}^{j} & =\left.\frac{\partial y_{m}\ominus h\left(f^{-1},v_{m}\right)}{\partial w_{k}}\right|_{x_{k},\hat{w}_{k},\hat{v}_{m}}=\\
- & =\left.J_{r}^{-1}\left(\hat{e}_{k:m}\right)\mathbf{Ad}_{y_{m}^{j-1}}\frac{\partial h\left(f^{-1},v_{m}\right)}{\partial w_{k}}\right|_{x_{k},\hat{w}_{k},\hat{v}_{m}},
-\end{align*}
-and 
-\[
-\hat{e}_{k:m}^{j}=y_{m}^{j}\ominus h\left(f^{-1}\left(x_{k},\hat{w}_{k},\delta_{k:m}\right),\hat{v}_{m}\right)
-\]
-which is the expected value of $p\left(y_{m}^{j}\mid x_{k}\right)$.
-The covariance of $p\left(y_{m}^{j}\mid x_{k}\right)$ is 
-\begin{equation}
-R_{k:m}^{j}=G_{k:m}^{j}Q\left(G_{k:m}^{j}\right)^{\top}+V_{m}RV_{m}^{\top};\label{eq:meas_cov_time}
-\end{equation}
-therefore, the linearized probability of $p\left(y_{m}\mid x_{k}\right)$
-is 
-\begin{equation}
-\eta\exp\left(-\frac{1}{2}\left(\hat{e}_{k:m}^{j}\right)^{\top}\left(R_{k:m}^{j}\right)^{-1}\hat{e}_{k:m}^{j}\right).\label{eq:likelihood_inverse}
-\end{equation}
-
-
-Using the linearized probability, we can write the minimization problem
-as 
-\begin{equation}
-\arg\min_{x_{k}}\left(\sum_{m=0}^{k}\sum_{j=1}^{\ell\left(m\right)}\left(\hat{e}_{k:m}^{j}\right)^{\top}\left(R_{k:m}^{j}\right)^{-1}\hat{e}_{k:m}^{j}\right).\label{eq:MLE_inverse}
-\end{equation}
-There are many methods that can be used to solve the optimization
-problem. If the system is linear, the optimization problem reduces
-to the one described in \cite{Niedfeldt2014a}. If the system is non-linear,
-the optimization problem can be solved using the Gauss-newton method
-or some other optimization method. Depending on the method used, you
-may need compute the derivative of $y_{m}^{j}\ominus h\left(f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),v_{m}\right)$
-with respect to the state. We denote this derivative as $H_{k:m}$
-which is defined as 
-\begin{align*}
-H_{k:m} & =\left.\frac{\partial y_{m}\ominus h\left(f^{-1},v_{m}\right)}{\partial x_{k}}\right|_{\hat{x}_{k},\hat{w}_{k},\hat{v}_{m}}\\
- & =\left.J_{r}^{-1}\left(\hat{e}_{k:m}\right)\mathbf{Ad}_{y_{m}^{-1}}\frac{\partial h\left(f^{-1},v_{m}\right)}{\partial x_{k}}\right|_{\hat{x}_{k},\hat{w}_{k},\hat{v}_{m}}.
-\end{align*}
-
-
-If the optimization is non-linear, a scheme to seed the optimization
-will drastically help. In the examples that we will present later,
-we will show same possible seeding methods. 
-
-Some of these calculations can be very costly. It may be worth increasing
-computation at a cost of quality by letting $R_{k:m}=R$.
-
-
-\section{Validation Region\label{sec:Validation-Region}}
-
-When new measurements are received, they are tested to see if they
-are inside a model's validation region. The validation region is a
-volume around an estimated state used for data association. Measurements
-that fall within the validation region are associated to the model
-and are used to update the model. We will use the validation region
-described in \cite{Bar-Shalom2011}. We assume that the probability
-of the $j^{th}$ measurement of dimension $n$ conditioned on the
-previous state, $p\left(y_{k}^{j}\mid x_{k^{-}}\right)$, is Normally
-distributed with mean $\hat{y}_{k}=h\left(f\left(\hat{x}_{k^{-}},\delta_{k}\right)\right)$
-and covariance $S$ where $S$ is the innovation covariance described
-in equation (\ref{eq:Kalman_update}). Let $z_{k}^{j}$ be the random
-variable defined as 
-\[
-z_{k}^{j}=S^{-\frac{1}{2}}y_{k}^{j}\ominus\hat{y}_{k},
-\]
-then $z_{k}^{j}$ is a standard multivariate Gaussian distribution.
-For clarity, we will drop the subscripts and superscripts. Let $d_{v}:N\times N\to\mathbb{R}$
-be the metric defined as 
-\begin{align*}
-d_{v}\left(y,\hat{y}\right) & =z^{\top}z\\
- & =\left(y\ominus\hat{y}\right)^{\top}S^{-1}\left(y\ominus\hat{y}\right).
-\end{align*}
-Note that the metric $d_{v}$ is simply the sum of the square of $n$
-Gaussian distributions. Thus, the values of the metric $d_{v}$ form
-a chi-square distribution with probability density function (PDF)
-\[
-p\left(d\left(y,\hat{y}\right)\right)=\frac{d\left(y,\hat{y}\right)^{n/2-1}\exp^{-n/2}}{2^{n/2}\Gamma\left(n/2\right)},
-\]
-where $\Gamma\left(n/2\right)$ is the gamma function.
-
-The validation region is defined as 
-\[
-\nu\left(\hat{y},\gamma\right)=\left\{ y\in N\,:\,d\left(y,\hat{y}\right)\leq\gamma\right\} ,
-\]
-where parameter $\gamma$ is called the gate threshold. The gate probability
-$P_{G}$ is the probability that a measurement produced by a target
-is within the validation region. This probability is defined as $p\left(d\left(y,\hat{y}\right)\leq\gamma\right)$,
-thus $P_{G}$ is the value of the cumulative distribution function
-(CDF) of the chi-square distribution with parameter $\gamma$. New
-measurements that fall within the validation region of a model are
-used to update the corresponding model using centralized measurement
-fusion described in section (\ref{sec:Centralized-Measurement-Fusion}).
-
-Some data association techniques require knowing the volume of the
-validation region $V_{vol}$. The volume is defined as 
-\begin{equation}
-V_{vol}=c_{n}\gamma^{n/2}\left|S\right|^{1/2},\label{eq:volume_validation_region}
-\end{equation}
-where $c_{n}$ is the volume of the unit hypersphere of dimension
-$n$ (dimension of the measurement space) calculated as 
-\[
-c_{n}=\frac{\pi^{n/2}}{\Gamma\left(n/2+1\right)}.
-\]
-
-
-
-\section{Centralized Measurement Fusion \label{sec:Centralized-Measurement-Fusion}}
-
-Validated measurements, or measurements associated to a model, can
-come from multiple different measurement sources at different times.
-In order to update the state estimate, we use the centralized measurement
-fusion method, as discussed in \cite{Bar-Shalom1988} and \cite{Millard2017},
-which assumes that measurements are statistically independent. We
-briefly review this method here only to adapt it to the Lie group
-setting. Let $N_{s}$ denote the number of measurement sources, $\theta_{m}^{i}=\left\{ y_{m}^{1},y_{m}^{2},\cdots,y_{m}^{n}\right\} $
-denote the set of measurements associated with the model that were
-received at time $m$ from the $i^{th}$ measurement source, $\beta_{m}^{j}$
-be the weight associated with measurement $y_{m}^{j}\in\theta_{m}^{i}$,
-$Z^{i}$ be defined as 
-\[
-Z^{i}=\begin{cases}
-\sum_{j=1}^{n}\beta^{j}H_{m}^{\top}\left(R^{i}\right)^{-1}y_{m}^{j}\ominus h\left(x_{m}\right) & \text{if }\left|\theta_{m}^{i}\right|>0\\
-0 & \text{else}
-\end{cases},
-\]
-and $P_{m}^{i}$ be the updated measurement covariance after incorporating
-only the measurements from the $i^{th}$ source, then the covariance
-update is 
-\[
-P_{m}^{-1}=\bar{P}_{m}^{-1}+\sum_{i=1}^{N_{s}}\left(\left(P_{m}^{i}\right)^{-1}-\bar{P}_{m}^{-1}\right),
-\]
-and the state update is 
-\[
-\hat{x}_{m}=\hat{\bar{x}}_{m}\oplus\left(P_{m}\sum_{i=1}^{N_{s}}Z^{i}\right).
-\]
-
-
-Recall that $H_{m}$ is the Jacobian of the measurement mode, $R^{i}$
-the measurement covariance of the $i^{th}$ measurement source, and
-$\bar{P}_{m}$ the error covariance after propagation but before any
-measurement updates. The weights $\beta_{m}^{j}$ are calculated from
-the data association filter used such as a PDAF. 
-
-
-\section{Track to Track Fusion}
-
-In the case where R-RANSAC initializes two different tracks and later
-decides that the two tracks represent the same target, the tracks
-need to be fused (merged) together. Calculating the cross covariance
-needed to optimally fuse the two tracks can be computationally complex
-and time expensive, or in our case unknown. Fortunately, the covariance
-intersection (CI) method can be used to fuse two tracks together without
-calculating the cross covariance. A good introduction to the CI method
-is presented in \cite{Deng2012}. Bar-Shalom, in \cite{Bar-Shalom2011},
-pointed out that the original CI method is so conservative in its
-estimation that it can indicate degradation of the state estimate
-due to fusion. An improved version of the CI method was presented
-in \cite{Tian2010} called the sampled covariance intersection (SCI)
-method. This is the method we will follow. In order to see if two
-tracks need to be fused together, we use a track association method
-prescribed in \cite{Bar-Shalom2011}. In this section we will briefly
-present the track association and fusion methods adapted for the Lie
-group setting. 
-
-
-\subsection{Track Association}
-
-Let $\hat{x}^{i}$ denote the state estimate of the $i^{th}$ track
-and $P^{i}$ be the corresponding error covariance. The estimation
-error between two tracks is denoted $\Delta^{ij}$ and defined as
-\[
-\Delta^{ij}=\hat{x}^{i}\ominus\hat{x}^{j}.
-\]
-Assuming that the two tracks are independent, the covariance of the
-estimation error is 
-\[
-T^{ij}=P^{i}+P^{j}.
-\]
-We next define a metric $d_{T}:\left(G\times\mathfrak{g}\right)\times\left(G\times\mathfrak{g}\right)\to\mathbb{R}$
-to be
-\[
-d_{T}\left(\hat{x}^{i},\hat{x}^{j}\right)=\left(\Delta^{ij}\right)^{\top}\left(T^{ij}\right)^{-1}\Delta^{ij}.
-\]
-If $d_{T}\left(\cdot,\cdot\right)<\tau_{S}$ where $\tau_{S}\in\mathbb{R}$,
-then the two tracks are deemed to be the same and should be merged.
-
-
-\subsection{Track Fusion}
-
-Let $\hat{x}^{1},\hat{x}^{2},\cdots,\hat{x}^{n}$ denote the state
-estimates of the tracks that need to be fused together and $P^{i}$
-be their corresponding error covariance. The fused estimate in SCI
-is calculated as if the tracks to be fused are independent; therefore,
-\begin{align*}
-P^{-1} & =\sum_{i=1}^{n}\left(P^{i}\right)^{-1}\\
-\hat{x}_{SCI} & =P\left(\sum_{i=1}^{n}\left(P^{i}\right)^{-1}\hat{x}^{i}\right).
-\end{align*}
-The error covariance $P^{-1}$ is overly optimistic, so we must adjust
-the size as follows:
-\begin{itemize}
-\item Generate $N$ (about 100 for a good distribution) random samples $x^{j}$,
-$j=1,2,\ldots,N$ from $x\sim\mathcal{N}\left(0,P\right)$
-\item Find
-\[
-r_{\text{max}}=\max_{j=1,\ldots,N}\frac{\left(x^{j}\right)^{\top}P^{-1}x^{j}}{\underset{j=1,\ldots,N}{\max}\left\{ \left(x^{j}\right)^{\top}P^{-1}x^{j}\right\} }
-\]
-and
-\[
-r_{\text{min}}=\min_{j=1,\ldots,N}\frac{\left(x^{j}\right)^{\top}P^{-1}x^{j}}{\underset{j=1,\ldots,N}{\max}\left\{ \left(x^{j}\right)^{\top}P^{-1}x^{j}\right\} }
-\]
-
-\item Then set
-\[
-P_{SCI}=\frac{P}{ur_{\text{min}}+\left(1-u\right)r_{\text{max}}}
-\]
-where $u\in\left[0,1\right]$ is used to adjust the performance of
-the SCI algorithm. When $u=1$, the fused covariance is conservative
-and when $u=0$, the fused covariance is optimistic. The authors of
-\cite{Tian2010} received good results by setting $u=0.5$.
-\end{itemize}
-The fused track will have the state estimate $\hat{x}_{SCI}$ with
-error covariance $P_{SCI}$.
-
-
-\section{Model Likelihood}
-
-R-RANSAC stores up to $\mathcal{M}$ models. Some of the models might
-not represent actual targets and could have been initialized from
-clustered false measurements. To account for this, we need a way to
-measure how likely a model represents an actual target. We will refer
-to this measure or probability as the model's likelihood. In the previous
-versions of R-RANSAC, the inlier ratio and the model's lifetime were
-used to indicate the model's likelihood. In this section, we present
-a different approach using a binary Bayes filter with static states. 
-
-Let $P_{D}^{i}$ denote the probability that the $i^{th}$ measurement
-source produced a true measurement of the target during the sensor
-scan, let $P_{G}^{i}$ denote the probability that the true measurement
-was validated, i.e. associated with the target during the data association
-process, then the probability that a true measurement was received
-and validated is $P_{D}^{i}P_{G}^{i}$. Let $\lambda^{i}$ denote
-the spatial density of the expected number of false measurements from
-the $i^{th}$ measurement source during a sensor scan. For example,
-let $V_{s}^{i}$ denote the volume of a surveillance region and $\Lambda^{i}$
-denote the expected number of false measurements per sensor scan from
-the $i^{th}$ measurement source, then $\lambda^{i}=\frac{\Lambda^{i}}{V_{s}^{i}}$.
-The expected number of false measurements within a validation region
-is $\lambda^{i}V_{vol}$ where $V_{vol}$ is the volume of the validation
-region defined in (\ref{eq:volume_validation_region}) and is depending
-on the measurement source and state estimate.
-
-Let $\theta_{m}^{i}$ denote the number of validated measurements
-from the $i^{th}$ measurement source at time $m$, $\theta_{m:k}^{i}$
-denote the number of validated measurements from the $i^{th}$ measurement
-source from time $m$ to time $k$ where $m<k$, and $\theta_{m:k}$
-the number of all validated measurements from all the measurement
-sources from time $m$ to time $k$. Let $z$ be a Bernoulli random
-variable with $z=1$ meaning that the model represents an actual target
-and $z=0$ meaning that the model doesn't represent a target. For
-notation purposes, we will denote $p\left(z=1\right)$ as $p\left(z\right)$
-and $p\left(z=0\right)$ as $p\left(\neg z\right)$. 
-
-We are interested in calculating the probability that the model represents
-an actual target conditioned on the validated measurements. We denote
-this probability as $p\left(z\mid\theta_{m:k}\right)$. Using Bayes
-rule we get 
-\begin{align*}
-p\left(z\mid\theta_{m:k}\right) & =\frac{p\left(\theta_{k}\mid z,\theta_{m:k^{-}}\right)p\left(z\mid\theta_{m:k^{-}}\right)}{p\left(\theta_{k}\mid\theta_{m:k^{-}}\right)}\\
- & =\frac{p\left(\theta_{k}\mid z\right)p\left(z\mid\theta_{m:k^{-}}\right)}{p\left(\theta_{k}\mid\theta_{m:k^{-}}\right)}.
-\end{align*}
-The probability $p\left(\theta_{k}\mid\theta_{m:k^{-}}\right)$ can
-be difficult to calculate; however, we can work around needing to
-know this probability by using a log odds ratio. For this method,
-we need $p\left(\neg z\mid\theta_{m:k}\right)$ which is 
-\[
-p\left(\neg z\mid\theta_{m:k}\right)=\frac{p\left(\theta_{k}\mid\neg z\right)p\left(\neg z\mid\theta_{m:k^{-}}\right)}{p\left(\theta_{k}\mid\theta_{m:k^{-}}\right)}.
-\]
-Taking the log (base 10) ratio of the probabilities $p\left(z\mid\theta_{m:k}\right)$
-and $p\left(\neg z\mid\theta_{m:k}\right)$, we get 
-\begin{align*}
-\log\left(\frac{p\left(z\mid\theta_{m:k}\right)}{p\left(\neg z\mid\theta_{m:k}\right)}\right) & =\log\left(\frac{p\left(\theta_{k}\mid z\right)p\left(z\mid\theta_{m:k^{-}}\right)}{p\left(\theta_{k}\mid\neg z\right)p\left(\neg z\mid\theta_{m:k^{-}}\right)}\right)\\
- & =\log\left(\frac{p\left(\theta_{k}\mid z\right)}{p\left(\theta_{k}\mid\neg z\right)}\right)+\sum_{n=m}^{k^{-}}\log\left(\frac{p\left(\theta_{n}\mid z\right)}{p\left(\theta_{n}\mid\neg z\right)}\right).
-\end{align*}
-
-
-Whenever new validated measurements are received, we calculate the
-term 
-\[
-l_{k}=\log\left(\frac{p\left(\theta_{k}\mid z\right)}{p\left(\theta_{k}\mid\neg z\right)}\right)
-\]
-and add it to the previous log odds ratio 
-\begin{align*}
-l_{k^{-}=} & \log\left(\frac{p\left(z\mid\theta_{m:k^{-}}\right)}{p\left(\neg z\mid\theta_{m:k^{-}}\right)}\right)\\
- & =\sum_{n=m}^{k^{-}}\log\left(\frac{p\left(\theta_{n}\mid z\right)}{p\left(\theta_{n}\mid\neg z\right)}\right).
-\end{align*}
-The term $l_{k}$ can be written as
-\[
-\log\left(\frac{p\left(\theta_{k}\mid z\right)}{p\left(\theta_{k}\mid\neg z\right)}\right)=\sum_{i\in1}^{s}\log\left(\frac{p\left(\theta_{k}^{i}\mid z\right)}{p\left(\theta_{k}^{i}\mid\neg z\right)}\right),
-\]
-where $s$ is the number of measurement sources. Thus we are left
-with calculating $p\left(\theta_{k}^{i}\mid z\right)$ and $p\left(\theta_{k}^{i}\mid\neg z\right)$
-for each measurement source. We assume that a measurement source can
-only produce at most one true measurement during a sensor scan. Therefore,
-we have the two possibilities for $p\left(\theta_{k}^{i}\mid z\right)$,
-that all $\theta_{k}^{i}$ measurements are false or all but one are
-false. Thus 
-\begin{multline*}
-p\left(\theta_{k}^{i}\mid z\right)=P_{G}^{i}P_{D}^{i}\exp\left(\lambda^{i}V_{vol}\right)\frac{\left(\lambda^{i}V_{vol}\right)^{\theta_{k}^{i}-1}}{\left(\theta_{k}^{i}-1\right)!}\\
-+\left(1-P_{G}^{i}P_{D}^{i}\right)\exp\left(\lambda^{i}V_{vol}\right)\frac{\left(\lambda^{i}V_{vol}\right)^{\theta_{k}^{i}}}{\left(\theta_{k}^{i}\right)!}.
-\end{multline*}
-There is only one possibility for $p\left(\theta_{k}^{i}\mid\neg z\right)$,
-that is the probability of all of the measurements being false 
-\[
-p\left(\theta_{k}^{i}\mid\neg z\right)=\exp\left(\lambda^{i}V_{vol}\right)\frac{\left(\lambda^{i}V_{vol}\right)^{\theta_{k}^{i}}}{\left(\theta_{k}^{i}\right)!}.
-\]
-Taking the ratio of the two, we get 
-\[
-\frac{p\left(\theta_{k}^{i}\mid z\right)}{p\left(\theta_{k}^{i}\mid\neg z\right)}=1+P_{G}^{i}P_{D}^{i}\left(\frac{\theta_{k}^{i}}{\lambda^{i}V_{vol}}-1\right).
-\]
-
-
-The model likelihood, $p\left(z\mid\theta_{m:k}\right)$, can be recovered
-from the log odds ratio by 
-\[
-p\left(z\mid\theta_{m:k}\right)=1-\frac{1}{1+10^{l_{k}}}.
-\]
-
-
-Note that if a model is outside the surveillance region of the measurement
-source, then $P_{D}$ should be zero and $p\left(z\mid\theta_{m:k}\right)$
-will not be affected since there won't be any measurements and the
-update to the log odds ratio is $0$. In the case that the target
-leaves the global surveillance region, we need a way to kill the model
-in order to make room for other models to be initialized. Thus, we
-assume that a model that has not received a measurement within $\tau_{\alpha}$
-seconds is no longer the the GSR and will be removed. A model is considered
-a good model if the $p\left(z\mid\theta_{m:k}\right)>\tau_{\rho}$;
-otherwise, it is considered a poor model. The parameters $\lambda^{i}$
-and $P_{D}^{i}$ can be easily estimated and $P_{G}^{i}$ is defined
-by the user.
-
-
-\section{LMLE Simplification \label{sec:LMLE-Simplification}}
-
-Recall that the purpose of the LMLE is to generate a current state
-estimate $x_{k}$ of a model hypothesis. Using state estimates we
-build the consensus set which is later used to refine the estimate
-using a filtering technique. So the estimate of LMLE doesn't have
-to be super refined, and we can simplify the optimization process
-in different ways. 
-
-Let's assume that the pose of the system is measurable. In other words,
-your observation model $h_{k}$ is defined as 
-\[
-h_{k}\left(x_{k},v_{k}\right)=g_{k}\exp\left(v_{k}\right),
-\]
-thus
-\[
-y_{k}=g_{k}\exp\left(v_{k}\right).
-\]
-
-
-When generating a model hypothesis, we always use a measurement from
-the current time. This allows us to use a measurement from the current
-time as our estimated pose $g_{k}$. All that remains is estimating
-the velocity term $u_{k}$ using one other measurement $y_{m}$. Under
-the assumption that $g_{k}$ is the true current state, the measurement
-$y_{m}$ is 
-\[
-y_{m}=g_{k}\exp\left(\delta_{k:m}u_{k}+\delta_{k:m}w_{k}^{g}+\frac{\delta_{k:m}^{2}}{2}w_{k}^{u}\right)\exp\left(v_{m}\right),
-\]
-which can be approximated as 
-\[
-y_{m}\approx g_{k}\exp\left(\delta_{k:m}u_{k}+\delta_{k:m}w_{k}^{g}+\frac{\delta_{k:m}^{2}}{2}w_{k}^{u}+v_{m}\right)
-\]
-By calculating the error between the measurement and the current state
-we get 
-\begin{align*}
-y_{m}\ominus g_{k} & =\log\left(g_{k}^{-1}y_{m}\right)\\
-e_{k:m} & \approx\delta_{k:m}u_{k}+\delta_{k:m}w_{k}^{g}+\frac{\delta_{k:m}^{2}}{2}w_{k}^{u}+v_{m}.
-\end{align*}
-The expected value of $e_{k:m}$ is 
-\[
-\text{E}\left[e_{k:m}\right]=\delta_{k:m}u_{k},
-\]
-and the covariance is 
-\begin{align*}
-\text{cov}\left[e_{k:m}\right] & \approx\delta_{k:m}^{2}Q^{g}+\frac{\delta_{k:m}^{2}}{2}Q^{u}+R\\
- & =R_{k:m}
-\end{align*}
-where 
-\[
-Q=\begin{bmatrix}Q^{g} & 0\\
-0 & Q^{u}
-\end{bmatrix}.
-\]
-We can simply estimate $u_{k}$ by letting $u_{k}=e_{k:m}/\delta_{k:m}$.
-We can improve the estimate using multiple measurements. Let $\Lambda$
-be and index such that $\cup_{m\in\Lambda}\left\{ y_{m}\right\} $
-is the set of measurements we will use to estimate $u_{k}$ and the
-subscript denotes the time the measurement was taken, then 
-\[
-u_{k}=\left(\sum_{j\in\Lambda}\delta_{k:j}R_{k:j}^{-1}\right)^{-1}\left(\sum_{j\in\Lambda}R_{k:j}^{-1}e_{k:j}\right).
-\]
-We can simplify the estimation further by letting 
-\[
-u_{k}=\frac{1}{\left|\Lambda\right|}\sum_{j\in\Lambda}e_{k:j}.
-\]
-
-
-Another possible simplification for any approach is by setting $R_{k:m}^{i}$,defined
-in (\ref{eq:meas_cov_time}), to identity element to get the simplified
-optimization problem
-\[
-\arg\min_{x_{k}}\left(\sum_{m=0}^{k}\sum_{j=1}^{\ell\left(m\right)}\left(\hat{e}_{k:m}^{j}\right)^{\top}\hat{e}_{k:m}^{j}\right).
-\]
- We propose this simplification because computing the covariance $R_{k:m}^{j}$
-can be CPU costly when it has to be done thousands of times whenever
-RANSAC is performed. 
-
-If you want the estimation to be as accurate as possible using the
-original optimization problem to solve the LMLE defined in (\ref{eq:likelihood_inverse}),
-we suggest you use the simplified approaches to seed the original
-optimization problem, unless the system is linear since the optimization
-problem is already simple. 
-
-
-\section{Examples}
-
-In this section we provide three examples of increasing complexity.
-The first example is to show how LG-R-RANSAC applies to Euclidean
-space of $\mathbb{R}^{n}$ with $n\in\mathbb{N}$. The second example
-applies LG-R-RANSAC to tracking targets on an image plane using $SE\left(2\right)$,
-and the third example applies LG-R-RANSAC to tracking UAVs moving
-on the configuration manifold $SE\left(3\right)$ using radar sensors. 
-
-
-\subsection{Euclidean Space $\mathbb{R}^{n}$}
-
-This is a brief section to show how the Lie group theory applies to
-Euclidean spaces of $\mathbb{R}^{n}$, where $n\in\mathbb{N}$, equipped
-with the standard topology and the group operation of addition. $\mathbb{R}^{n}$
-equipped with addition is an abelian group; thus the adjoint map is
-the identity map. Its corresponding Lie algebra is $\mathbb{R}^{n}$.
-Therefore, the exponential map and its inverse is simply the identity
-map. This implies that the left and right Jacobians of the exponential
-map is also the identity map. The box plus/minus and o plus/minus
-mapping are trivially derived; for example
-\begin{align*}
-g\oplus u & =g+u\\
-g_{1}\ominus g_{2} & =g_{1}-g_{2}
-\end{align*}
-where $g,g_{1},g_{2}\in G=\mathbb{R}^{2}$ and $u\in\mathfrak{g}=\mathbb{R}^{2}$.
-
-We can write the system model as 
-\begin{align*}
-g_{k} & =g_{k^{-}}+\delta_{k}\left(u_{k^{-}}+w_{k}^{g}\right)+\frac{\delta_{k}^{2}}{2}w_{k}^{u}\\
-u_{k} & =u_{k^{-}}+\delta_{k}w_{k}^{u}\\
-y_{k} & =g_{k}+v_{k},
-\end{align*}
-We can write this in the familiar matrix notation as 
-\begin{align*}
-x_{k} & =A_{k}x_{k^{-}}+B_{k}w_{k}\\
-y_{k} & =Cx_{k}+v_{k}
-\end{align*}
-where $x_{k}=\left[g_{k}^{\top},u_{k}^{\top}\right]^{\top}$,
-\begin{align*}
-A_{k}=\begin{bmatrix}I_{2\times2} & \delta_{k}I\\
-0 & I_{2\times2}
-\end{bmatrix}, & \thinspace & B_{k}=\begin{bmatrix}\delta_{k}I & \frac{\delta_{k}^{2}}{2}I\\
-0 & \delta_{k}I
-\end{bmatrix},
-\end{align*}
-and 
-\[
-C=\begin{bmatrix}I_{2\times2} & 0_{2\times2}\end{bmatrix}.
-\]
-In this form, we can easily recognize it as an linear time-invariant
-system with near constant velocity.
-
-The Jacobians are easily computed and are $F_{k}=A_{k}$, $G_{k}=B_{k}$
-, $H_{k}=C$, $F_{k:m}=CA_{k:m}$, and $G_{k:m}=CB_{k:m}$. The LMLE
-simplifies to a least squares problem. This type of system used with
-R-RANSAC is thoroughly discussed in \cite{Niedfeldt2014a}.
-
-
-\subsection{Constrained Problem for $SE\left(2\right)$: Tracking in the Image
-Plane \label{sub:tracking_image_plane}}
-
-Camera's are widely used as a sensor for target tracking. A popular
-application is to mount a camera on a UAV and track a moving target
-in the normalized image plane. For this example, we assume that the
-normalized image plane is the GSR, the global frame is coincident
-with the camera frame, and that measurements are point measurements,
-i.e. position only measurements. Since the global frame is coincident
-with the camera frame, a transformation must be provided to LG-R-RANSAC
-to transform all the measurements and models to the current global
-frame. We will use the Homography for this transformation.
-
-The Lie group configuration of a target moving in the normalized image
-plane is $SE\left(2\right)$, see appendix \ref{sec:SE2} for the
-system function and important Jacobians. Let $g_{k}\in SE\left(2\right)$
-and $u_{k}\in\mathfrak{se}\left(2\right)$. They can be written as
-\begin{align*}
-g_{k} & =\begin{bmatrix}R_{k} & t_{k}\\
-0_{1\times2} & 1
-\end{bmatrix}\\
-u_{k} & =\begin{bmatrix}\omega_{k} & \rho_{k}\\
-0_{1\times2} & 1
-\end{bmatrix},
-\end{align*}
-where $R_{k}\in SO\left(2\right)$, $\omega_{k}\in\mathfrak{se}\left(2\right)$,
-and $t_{k},\rho_{k}\in\mathbb{R}^{2}$. The observation model is 
-\begin{align*}
-y_{k} & =h\left(x_{k},v_{k}\right)\\
- & =t_{k}+v_{k},
-\end{align*}
-where $y_{k}\in\mathbb{R}^{2}$. The inverse observation model is
-\begin{align*}
-y_{m} & =h\left(f^{-1}\left(x_{k},\delta_{k:m},w_{k}\right),v_{k}\right)\\
- & =R_{k}V\left(\delta_{k:m}\left(\omega_{k}+w_{k}^{R}\right)+\frac{\delta_{k:m}^{2}w_{k}^{\omega}}{2}\right)\left(\delta_{k:m}\rho_{k}+\delta_{k:m}w_{k}^{\rho}\right)+t_{k}+w_{k}^{t}+v_{m},
-\end{align*}
-where $w_{k}=\left[\left(w_{k}^{t}\right)^{\top},\left(w_{k}^{R}\right)^{\top},\left(w_{k}^{\rho}\right)^{\top},\left(w_{k}^{u}\right)^{\top}\right]^{\top}$
-and $V$ is defined in equation (\ref{eq:se2_v}). Based on the observation
-model, we have three Jacobians to compute: $G_{k:m}$, $H_{k:m}$
-and $V_{m}$. 
-\begin{align*}
-H_{k:m}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial x} & =\begin{bmatrix}H_{k:m}^{t} & H_{k:m}^{R} & H_{k:m}^{\rho} & H_{k:m}^{\omega}\end{bmatrix},
-\end{align*}
-where
-\begin{align*}
-H_{k:m}^{t}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial t_{k}} & =I\\
-H_{k:m}^{R}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial R} & =\delta_{k:m}R_{k}\left[1\right]_{\times}V\left(\delta_{k:m}\omega\right)\rho\\
-H_{k:m}^{\rho}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\rho} & =\delta_{k:m}^{2}R_{k}V\left(\delta_{k:m}\omega\right)\\
-H_{k:m}^{\omega}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\omega} & =\delta_{k:m}^{2}R_{k}V^{'}\left(\delta_{k:m}\omega\right)\rho
-\end{align*}
-and 
-\[
-V^{'}\left(\omega\right)=\frac{\cos\left(\theta\right)\theta-\sin\left(\theta\right)}{\theta^{2}}I+\frac{\sin\left(\theta\right)\theta-\left(1-\cos\left(\theta\right)\right)}{\theta^{2}}\left[1\right]_{\times}.
-\]
-We quickly note that 
-\[
-H_{k}=H_{k:k}=\begin{bmatrix}I & 0_{2\times4}\end{bmatrix}.
-\]
-\[
-G_{k:m}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}}=\begin{bmatrix}G_{k:m}^{t} & G_{k:m}^{R} & G_{k:m}^{\rho} & G_{k:m}^{\omega}\end{bmatrix},
-\]
-where 
-\begin{align*}
-G_{k:m}^{t} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{t}}=I\\
-G_{k:m}^{R} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{R}}=\delta_{k:m}^{2}R_{k}V^{'}\left(\delta_{k:m}\omega\right)\rho\\
-G_{k:m}^{\rho} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{\rho}}=\delta_{k:m}^{2}R_{k}V\left(\delta_{k:m}\omega\right)\\
-G_{k:m}^{\omega} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{\omega}}=\frac{\delta_{k:m}^{3}}{2}R_{k}V^{'}\left(\delta_{k:m}\omega\right)\rho.
-\end{align*}
-Lastly $V_{m}=I$.
-
-Now that we have the Jacobians computed, we need to ensure that the
-system is observable. Since the system is nonlinear, the best we can
-do is ensure local observability. Given measurements from three different
-time steps, the observability matrix is 
-\[
-\mathcal{O}=\begin{bmatrix}H_{k:m_{1}}\\
-H_{k:m_{2}}\\
-H_{k:m_{3}}
-\end{bmatrix}.
-\]
-The observability matrix is not full rank. However, if the target
-has a circular trajectory and the target's heading is oriented along
-the body frame velocity, we can make the assumptions that $\rho=\left[\rho_{x},0\right]^{\top}$
-and $\rho_{x},\omega\neq0$. Using these assumptions, the system is
-observable. In addition, if the target is moving in a straight line,
-then we can make the assumptions that $\rho=\left[\rho_{x},0\right]^{\top}$,
-$\rho_{x}\neq0$ and $\omega=0$. Under these assumptions and constraints,
-the system is observable. We can identify which constrained measurement
-we are trying to track by looking at three different measurements
-from different times. If the three measurement do not form a line,
-then the system has first constrains; otherwise, the latter.
-
-Regardless of the constrained system we use, the rotation matrix can
-be off by a rotation of $\pi$ since the matrix exponential is surjective.
-In order to avoid calculating the wrong rotation matrix, we can seed
-the LMLE with approximate values. Let $\theta=\text{Log}\left(R\right)$
-and $\dot{t}$ be the derivative of $t$, then 
-\begin{align*}
-\dot{t}=\begin{bmatrix}\dot{t}_{x}\\
-\dot{t}_{y}
-\end{bmatrix} & =\text{Exp}\left(\theta\right)\rho\\
- & =\begin{bmatrix}\cos\left(\theta\right) & -\sin\left(\theta\right)\\
-\sin\left(\theta\right) & \cos\left(\theta\right)
-\end{bmatrix}\begin{bmatrix}\rho_{x}\\
-0
-\end{bmatrix}\\
- & =\begin{bmatrix}\rho_{x}\cos\left(\theta\right)\\
-\rho_{x}\sin\left(\theta\right)
-\end{bmatrix},
-\end{align*}
-dividing the two gives us 
-\[
-\theta=\arctan\left(\dot{t}_{y}/\dot{t}_{x}\right).
-\]
-The value of $\dot{t}$ can be numerically approximated, and the estimation
-for $\theta$ can be enhanced by using multiple measurements. Once
-$\theta$ is estimated, you can use a method described in section
-(\ref{sec:LMLE-Simplification}) to estimate $\omega$ and $\rho$.
-These estimates are used to see the LMLE during the RANSAC step of
-the algorithm.
-
-\textbf{Hardware Results}
-
-
-\subsection{Constrained Problem for SE$\left(3\right)$: Tracking UAVs with Radar}
-
-In this example, there are multiple fixed radar sensors with overlapping
-LSR. Their measurements are point measurements and are converted to
-the fixed global frame before being given to R-RANSAC. We also assume
-that the measurement covariance can vary. The objective is to track
-multiple fixed wing aircrafts (FWAs) that are in the GSR. This is
-a similar example as the one in subsection (\ref{sub:tracking_image_plane}),
-except that the FWAs' configuration manifold is $SE\left(3\right)$
-instead of $SE\left(2\right)$, making the problem a little more difficult;
-see appendix \ref{sec:SE3} for the system function and important
-Jacobians. 
-
-With only point measurements, the system is not observable unless
-constraints are made. 
-
-Let $g_{k}\in SE\left(3\right)$ and $u_{k}\in\mathfrak{se}\left(3\right)$.
-These elements can be written as 
-\begin{align*}
-g_{k} & =\begin{bmatrix}R_{k} & t_{k}\\
-0_{1\times2} & 1
-\end{bmatrix}\\
-u_{k} & =\begin{bmatrix}\omega_{k} & \rho_{k}\\
-0_{1\times2} & 1
-\end{bmatrix},
-\end{align*}
-where $R_{k}\in SO\left(3\right)$, $\omega_{k}\in\mathfrak{so}\left(3\right)$,
-and $t_{k},\rho_{k}\in\mathbb{R}^{3}$. The observation model is 
-\begin{align*}
-y_{k} & =h\left(x_{k},v_{k}\right)\\
- & =t_{k}+v_{k},
-\end{align*}
-where $y_{k}\in\mathbb{R}^{3}$. The inverse observation model is
-\begin{align*}
-y_{m} & =h\left(f^{-1}\left(x_{k},\delta_{k:m},w_{k}\right),v_{k}\right)\\
- & =R_{k}V\left(\delta_{k:m}\left(\omega_{k}+w_{k}^{R}\right)+\frac{\delta_{k:m}^{2}w_{k}^{\omega}}{2}\right)\left(\delta_{k:m}\rho_{k}+\delta_{k:m}w_{k}^{\rho}\right)+t_{k}+w_{k}^{t}+v_{m},
-\end{align*}
-
-
-where $w_{k}=\left[\left(w_{k}^{t}\right)^{\top},\left(w_{k}^{R}\right)^{\top},\left(w_{k}^{\rho}\right)^{\top},\left(w_{k}^{u}\right)^{\top}\right]^{\top}$
-and $V$ is defined in equation (\ref{eq:V_se3}). Based on the observation
-model, we have three Jacobians to compute: $G_{k:m}$, $H_{k:m}$
-and $V_{m}$. 
-\begin{align*}
-H_{k:m}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial x} & =\begin{bmatrix}H_{k:m}^{t} & H_{k:m}^{R} & H_{k:m}^{\rho} & H_{k:m}^{\omega}\end{bmatrix},
-\end{align*}
-where
-\begin{align*}
-H_{k:m}^{t}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial t_{k}} & =I\\
-H_{k:m}^{R}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial R} & =\delta_{k:m}R_{k}\left[-V\left(\delta_{k:m}\omega\right)\rho\right]_{\times}\\
-H_{k:m}^{\rho}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\rho} & =\delta_{k:m}^{2}R_{k}V\left(\delta_{k:m}\omega\right)\\
-H_{k:m}^{\omega}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\omega} & =\delta_{k:m}^{2}R_{k}\partial V_{\delta_{k:m}\omega}\left(\delta_{k:m}\rho\right),
-\end{align*}
-and$\partial V_{\delta_{k:m}\omega}\left(\rho\right)$ is defined
-in Lemma \ref{lem:dJl}. We quickly note that 
-\[
-H_{k}=H_{k:k}=\begin{bmatrix}I & 0_{2\times9}\end{bmatrix}.
-\]
-
-
-\[
-G_{k:m}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}}=\begin{bmatrix}G_{k:m}^{t} & G_{k:m}^{R} & G_{k:m}^{\rho} & G_{k:m}^{\omega}\end{bmatrix},
-\]
-where 
-\begin{align*}
-G_{k:m}^{t} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{t}}=I\\
-G_{k:m}^{R} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{R}}=\delta_{k:m}^{2}R_{k}\partial V_{\delta_{k:m}\omega}\left(\delta_{k:m}\rho\right)\\
-G_{k:m}^{\rho} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{\rho}}=\delta_{k:m}^{2}R_{k}V\left(\delta_{k:m}\omega\right)\\
-G_{k:m}^{\omega} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{\omega}}=\frac{\delta_{k:m}^{3}}{2}R_{k}\partial V_{\delta_{k:m}\omega}\left(\delta_{k:m}\rho\right).
-\end{align*}
-Lastly $V_{m}=I$.
-
-Now that we have the Jacobians computed, we need to ensure that the
-system is observable. Since the system is nonlinear, the best we can
-do is ensure local observability. Given measurements from four different
-time steps, the observability matrix is 
-\[
-\mathcal{O}=\begin{bmatrix}H_{k:m_{1}}\\
-H_{k:m_{2}}\\
-H_{k:m_{3}}\\
-H_{k:m_{4}}
-\end{bmatrix}.
-\]
-The observability matrix is not full rank. However, certain constraints,
-the system is observable. We described these constraints using two
-configuration. In the first configuration the FWA is making a coordinated
-turn or a spiral trajectory and we assume that that $\rho=\left[\rho_{x},0,0\right]$
-and $\omega\neq0$. In the second configuration, the FWA is moving
-in a straight line and we assume that $\rho=\left[\rho_{x},0,0\right]$,
-$\omega=0$, and the roll in attitude (using roll, pitch, yaw) is
-zero. To determine which configuration to use, we can look at four
-measurements, and see if they form a line. If they don't, then we
-use the first configuration; otherwise, the second. 
-
-Since the system is nonlinear, the LMLE can take a while to converge,
-and can converge to an undesirable state. To minimize these issues
-we can seed the optimization method. To do this, we will use the Euler
-angles (roll $\phi$, pitch $\theta$, yaw $\psi$) as local coordinates,
-assume $\rho_{x}>0$, and align the pitch and yaw angles with the
-translational velocities. The map from Euler angles configured in
-an NED frame to $SO\left(3\right)$ is defined as 
-\begin{equation}
-\mathcal{R}\left(\phi,\theta,\psi\right)=\begin{bmatrix}c_{\theta}c_{\psi} & s_{\phi}s_{\theta}c_{\psi}-c_{\phi}s_{\psi} & c_{\phi}s_{\theta}c_{\psi}+s_{\phi}s_{\psi}\\
-c_{\theta}s_{\psi} & s_{\phi}s_{\theta}s_{\psi}+c_{\phi}c_{\psi} & c_{\phi}s_{\theta}s_{\psi}-s_{\phi}c_{\psi}\\
--s_{\theta} & s_{\phi}c_{\theta} & c_{\phi}c_{\theta}
-\end{bmatrix}.\label{eq:euler_to_so3}
-\end{equation}
-Let $t_{k},t_{m},t_{n}$ denote measured positions at times $n,m,k$
-with $k$ being the current time and $n<m<k$. The derivative of the
-position vector $t$ is related to $\rho$ through the rotation matrix
-$R$. This allows us to write the constraints
-\begin{align*}
-\dot{t} & =R\rho\\
- & =\mathcal{R}\left(\phi,\theta,\psi\right)\rho.
-\end{align*}
-Letting $\dot{t}_{k}=\left[\dot{t}_{k_{x}},\dot{t}_{k_{y}},\dot{t}_{k_{z}}\right]^{\top}$,
-we get 
-\[
-\begin{bmatrix}\dot{t}_{x}\\
-\dot{t}_{y}\\
-\dot{t}_{z}
-\end{bmatrix}=\underbrace{\begin{bmatrix}c_{\theta}c_{\psi}\\
-c_{\theta}s_{\psi}\\
--s_{\theta}
-\end{bmatrix}}_{R_{k_{x}}}\rho_{x}.
-\]
-Since we receive position measurements, we can numerically estimate
-the positional derivatives $\dot{t}_{k}=\frac{t_{m}-t_{k}}{\delta_{k:m}}$
-and $\dot{t}_{m}=\frac{t_{n}-t_{m}}{\delta_{m:n}}$. Using $\dot{t}_{k}$
-we can estimate $R_{k}$ by solving for solve for $\phi_{k}$,$\theta_{k}$,
-$\psi_{k}$, and $\rho_{k_{x}}$ using the equations 
-\begin{align*}
-\psi_{k} & =\text{atan2}\left(\dot{t}_{k_{y}},\left|\dot{t}_{k_{x}}\right|\right)\\
-\theta_{k} & =\arctan\left(\frac{-\cos\left(\psi_{k}\right)\dot{t}_{k_{z}}}{\dot{t}_{k_{x}}}\right)\\
-\phi_{k} & =0\\
-\rho_{k_{x}} & =\frac{R_{k_{x}}^{\top}\dot{t}}{R_{k_{x}}^{\top}R_{k_{x}}}
-\end{align*}
-We have set $\phi_{k}=0$ since we cannot easily estimate it unless
-we assume the FWA is making a coordinated turn as described in \cite{Beard2008}.
-In the absence of sideslip, a coordinated turn has the constraint
-\[
-\dot{\psi}=\frac{g}{\left\Vert \dot{t}\right\Vert }\tan\left(\phi\right),
-\]
-where $g$ is the gravitational constant. Since we can estimate $\psi$
-at two different time periods, we can numerically estimate its derivative
-$\dot{\psi}$. Solving for $\phi$ we get 
-\[
-\phi_{k}=\arctan\left(\frac{\frac{\psi_{k}-\psi_{m}}{\delta_{k:m}}\left\Vert \dot{t}_{k}\right\Vert }{g}\right).
-\]
-From the estimated Euler angles $\phi_{k}$, $\theta_{k}$ and $\psi_{k}$
-we can construct the estimated rotation $R_{k}$ using equation (\ref{eq:euler_to_so3}).
-
-Lastly we estimate $\omega_{k}$ using the constraint 
-\[
-\dot{t}_{m}=R_{k}\exp\left(\delta_{k:m}\omega_{k}\right)\rho.
-\]
-Using a first order Taylor series approximation for the matrix exponential,
-we get 
-\[
-\frac{R_{k}^{\top}\dot{t}_{m}}{\rho_{k_{x}}}=\begin{bmatrix}1\\
-0\\
-0
-\end{bmatrix}+\begin{bmatrix}0\\
-\omega_{k_{z}}\\
--\omega_{k_{y}}
-\end{bmatrix}\delta_{k:m},
-\]
-From which we can estimate the angular rates $\omega_{k_{z}}$ and
-$\omega_{k_{y}}$, and we simply set $\omega_{k_{x}}=0$. We use these
-estimations to seed the LMLE optimization problem.
-
-\textbf{Hardware Results}
-
-
-\appendices{}
-
-
-\section{SE$\left(2\right)$\label{sec:SE2}}
-
-The special Euclidean group of two dimensions is a matrix Lie group
-and is the set 
-\[
-SE\left(2\right)=\left\{ \left.\begin{bmatrix}R & t\\
-0_{1\times2} & 1_{1\times1}
-\end{bmatrix}\,\right|\,R\in SO\left(2\right)\text{ and }t\in\mathbb{R}^{2}\right\} 
-\]
-equipped with matrix multiplication. The Lie algebra is 
-\[
-\mathfrak{se}\left(2\right)=\left\{ \left.\begin{bmatrix}\omega & \rho\\
-0 & 0
-\end{bmatrix}\,\right|\,\omega\in\mathfrak{s0}\left(2\right)\text{ and }\rho\in\mathbb{R}^{2}\right\} ,
-\]
-where $\theta\in\mathbb{R},$$\omega=\left[\theta\right]_{\times}$,
-and $\left[\cdot\right]_{\times}$ is the skew symmetric operator
-defined as 
-\[
-\left[\theta\right]_{\times}=\begin{bmatrix}0 & -\theta\\
-\theta & 0
-\end{bmatrix},
-\]
-and 
-\[
-\begin{bmatrix}\rho\\
-\theta
-\end{bmatrix}\in\mathbb{R}^{3}
-\]
-which is the Cartesian vector space. 
-
-Let $g\in SE\left(2\right)$ and $u\in\mathfrak{se}\left(2\right)$.
-Using an element of the Lie algebra, we can define the infinitesimal
-generator $\xi_{u}:G\to TG$ as 
-\begin{align*}
-\xi_{u}\left(g\right) & =gu\\
- & =\dot{g}.
-\end{align*}
-The discretized system function $f:SE\left(2\right)\times\mathbb{R}^{2}\to SE\left(2\right)\times\mathbb{R}^{2}$
-is 
-\begin{align*}
-g_{k} & =\text{\ensuremath{\exp}}\left(\delta_{k}\left(u_{k^{-}}+w_{k}^{g}\right)+\frac{\delta_{k}^{2}}{2}w_{k}^{u}\right)\\
-u_{k} & =u_{k^{-}}+\delta_{k}w_{k}^{u}
-\end{align*}
-
-
-
-\subsection{Group Operations}
-
-Let $g_{1},g_{2}\in SE\left(2\right)$. The inversion and group multiplication
-is matrix inversion and matrix multiplication as follows
-\begin{align*}
-g_{1}^{-1} & =\begin{bmatrix}R_{1}^{\top} & -R_{1}^{\top}t_{1}\\
-0 & 1
-\end{bmatrix}\\
-g_{1}g_{2} & =\begin{bmatrix}R_{1}R_{2} & R_{1}t_{2}+t_{1}\\
-0 & 1
-\end{bmatrix}.
-\end{align*}
- 
-
-
-\subsection{Exponential Map}
-
-The exponential map is the matrix exponential and it's inverse is
-the matrix logarithm. The matrix exponential is a surjective function;
-however, by restricting the domain to 
-\[
-U=\left\{ u\in\mathfrak{se}\left(2\right)\,\mid\,\left\Vert u\right\Vert <\pi\right\} ,
-\]
-it becomes a bijection. In this case, the exponential map and its
-inverse have a simplified form 
-\begin{align*}
-\text{\ensuremath{\exp}}\left(u\right) & =\begin{bmatrix}\exp\left(\omega\right) & V\left(\omega\right)\rho\\
-0_{1\times2} & 1
-\end{bmatrix}\\
-\text{\ensuremath{\log}}\left(g\right) & =\begin{bmatrix}\log\left(R\right) & V^{-1}\left(\omega\right)t\\
-0_{1\times2} & 0
-\end{bmatrix}
-\end{align*}
-with
-\begin{align}
-\exp\left(\omega\right) & =\begin{bmatrix}\cos\left(\theta\right) & -\sin\left(\theta\right)\\
-\sin\left(\theta\right) & \cos\left(\theta\right)
-\end{bmatrix}\\
-\log\left(R\right) & =\arctan\left(R_{21},R_{11}\right)\\
-\omega & =\log\left(R\right)\\
-V\left(\omega\right) & =\begin{cases}
-I & \text{if }\theta=0\\
-\frac{\sin\left(\theta\right)}{\theta}I+\frac{1-\cos\left(\theta\right)}{\theta}\left[1\right]_{\times} & \text{else}
-\end{cases}\label{eq:se2_v}\\
-V^{-1}\left(\omega\right) & =\begin{cases}
-I & \text{if }\theta=0\\
-\frac{\theta\sin\left(\theta\right)}{2\left(1-\cos\left(\theta\right)\right)}I-\frac{\theta}{2}\left[1\right]_{\times} & \text{else}
-\end{cases}.
-\end{align}
-
-
-
-\subsection{Jacobians}
-
-
-\subsubsection{Adjoint}
-
-The group adjoint representation is
-
-\[
-\mathbf{Ad}_{g}=\begin{bmatrix}R & -\left[1\right]_{\times}t\\
-0_{1\times2} & 1
-\end{bmatrix}
-\]
-with inverse 
-\[
-\mathbf{Ad}_{g}^{-1}=\begin{bmatrix}R^{\top} & R^{\top}\left[1\right]_{\times}t\\
-0_{1\times2} & 1
-\end{bmatrix}.
-\]
-The Lie algebra adjoint representation is 
-\[
-\mathbf{ad}_{u}=\begin{bmatrix}\left[\omega\right]_{\times} & -\left[1\right]_{\times}\rho\\
-0_{1\times2} & 0
-\end{bmatrix}.
-\]
-
-
-
-\subsubsection{Left and Right Jacobians}
-
-Let 
-\begin{align*}
-W_{r}\left(\theta\right) & =\frac{\cos\left(\theta\right)-1}{\theta}\left[1\right]_{\times}+\frac{\sin\left(\theta\right)}{\theta}I\\
-D_{r}\left(\theta\right) & =\frac{1-\cos\left(\theta\right)}{\theta^{2}}\left[1\right]_{\times}+\frac{\theta-\sin\left(\theta\right)}{\theta^{2}}I\\
-W_{l}\left(\theta\right) & =\frac{1-\cos\left(\theta\right)}{\theta}\left[1\right]_{\times}+\frac{\sin\left(\theta\right)}{\theta}I\\
-D_{l}\left(\theta\right) & =\frac{\cos\left(\theta\right)-1}{\theta^{2}}\left[1\right]_{\times}+\frac{\theta-\sin\left(\theta\right)}{\theta^{2}}I,
-\end{align*}
-then 
-\begin{align*}
-J_{r}\left(u\right) & =\begin{bmatrix}W_{r}\left(\theta\right) & D_{r}\left(\theta\right)\rho\\
-0 & 1
-\end{bmatrix},\\
-J_{l}\left(u\right) & =\begin{bmatrix}W_{l}\left(\theta\right) & D_{l}\left(\theta\right)\rho\\
-0 & 1
-\end{bmatrix}\\
-J_{r}^{-1}\left(u\right) & =\begin{bmatrix}W_{r}^{-1}\left(\theta\right) & -W_{r}^{-1}\left(\theta\right)D_{r}\left(\theta\right)\rho\\
-0 & 1
-\end{bmatrix}\\
-J_{l}^{-1}\left(u\right) & =\begin{bmatrix}W_{l}^{-1}\left(\theta\right) & -W_{l}^{-1}\left(\theta\right)D_{l}\left(\theta\right)\rho\\
-0 & 1
-\end{bmatrix}.
-\end{align*}
-If $\theta=0$, then the Jacobians and their inverses are 
-\[
-J_{r}\left(u\right)=J_{l}\left(u\right)=J_{r}^{-1}\left(u\right)=J_{l}^{-1}\left(u\right)=I.
-\]
-
-
-
-\section{SE$\left(3\right)$\label{sec:SE3}}
-
-The special Euclidean group of three dimensions is a matrix Lie group
-and is the set 
-\[
-SE\left(3\right)=\left\{ \left.\begin{bmatrix}R & t\\
-0_{1\times2} & 1_{1\times1}
-\end{bmatrix}\,\right|\,R\in SO\left(3\right)\text{ and }t\in\mathbb{R}^{3}\right\} 
-\]
-equipped with matrix multiplication. The Lie algebra is 
-\[
-\mathfrak{se}\left(3\right)=\left\{ \left.\begin{bmatrix}\omega & \rho\\
-0 & 0
-\end{bmatrix}\,\right|\,\omega\in\mathfrak{s0}\left(3\right)\text{ and }\rho\in\mathbb{R}^{3}\right\} ,
-\]
-where $\theta=\left[\theta_{1},\theta_{2},\theta_{2}\right]^{\top}\in\mathbb{R}^{3}$,
-$\omega=\left[\theta\right]_{\times}$ and $\left[\cdot\right]_{\times}$
-is the skew symmetric operator defined as 
-\[
-\left[\theta\right]_{\times}=\begin{bmatrix}0 & -\theta_{3} & \theta_{2}\\
-\theta_{3} & 0 & -\theta_{1}\\
--\theta_{2} & \theta_{1} & 0
-\end{bmatrix},
-\]
-and 
-\[
-\begin{bmatrix}\rho\\
-\theta
-\end{bmatrix}\in\mathbb{R}^{6}
-\]
-which is the Cartesian vector space. 
-
-Let $g\in SE\left(3\right)$ and $u\in\mathfrak{se}\left(3\right)$.
-Using an element of the Lie algebra, we can define the infinitesimal
-generator $\xi_{u}:G\to TG$ as 
-\begin{align*}
-\xi_{u}\left(g\right) & =gu\\
- & =\dot{g}.
-\end{align*}
-The discretized system function $f:SE\left(3\right)\times\mathbb{R}^{3}\to SE\left(3\right)\times\mathbb{R}^{3}$
-is 
-\begin{align*}
-g_{k} & =\exp\left(\delta_{k}\left(u_{k^{-}}+w_{k}^{g}\right)+\frac{\delta_{k}^{2}}{2}w_{k}^{u}\right)\\
-u_{k} & =u_{k^{-}}+\delta_{k}w_{k}^{u}
-\end{align*}
-
-
-
-\subsection{Group Operations}
-
-Let $g_{1},g_{2}\in SE\left(3\right)$. The inversion and group multiplication
-is matrix inversion and matrix multiplication as follows
-\begin{align*}
-g_{1}^{-1} & =\begin{bmatrix}R_{1}^{\top} & -R_{1}^{\top}t_{1}\\
-0 & 1
-\end{bmatrix}\\
-g_{1}g_{2} & =\begin{bmatrix}R_{1}R_{2} & R_{1}t_{2}+t_{1}\\
-0 & 1
-\end{bmatrix}.
-\end{align*}
- 
-
-
-\subsection{Exponential Map}
-
-The exponential map is the matrix exponential and it's inverse is
-the matrix logarithm. The matrix exponential is a surjective function;
-however, by restricting the domain to 
-\[
-U=\left\{ u\in\mathfrak{se}\left(3\right)\,\mid\,\left\Vert u\right\Vert <\pi\right\} ,
-\]
-it becomes a bijection. In this case, the exponential map and its
-inverse have a simplified form 
-\begin{align*}
-\exp\left(u\right) & =\begin{bmatrix}\exp\left(\left[\omega\right]_{\times}\right) & V\left(\omega\right)\rho\\
-0 & 1
-\end{bmatrix}\\
-\text{\ensuremath{\log}}\left(g\right) & =\begin{bmatrix}V^{-1}\left(\omega\right)t\\
-\log\left(R\right)
-\end{bmatrix}
-\end{align*}
-with $g=\exp\left(u\right)$,
-\begin{align}
-\phi & =\sqrt{\omega^{\top}\omega}\\
-\exp\left(\omega\right) & =I+\frac{\sin\left(\theta\right)}{\theta}\omega+\frac{1-\cos\left(\theta\right)}{\theta^{2}}\omega^{2}\\
-\phi & =\arccos\left(\frac{\text{trace}\left(R\right)-1}{2}\right)\\
-\log\left(R\right) & =\begin{cases}
-0_{2\times2} & \text{if }\phi=0\\
-\frac{\phi}{2\sin\left(\phi\right)}\left(R-R^{\top}\right) & \text{else}
-\end{cases}\\
-V\left(\omega\right) & =\begin{cases}
-I & \text{if }\phi=0\\
-I+\frac{1-\cos\left(\phi\right)}{\phi^{2}}\omega+\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\omega^{2} & \text{else}
-\end{cases}\label{eq:V_se3}\\
-V^{-1}\left(\omega\right) & =\begin{cases}
-I & \text{if }\theta=0\\
-I-\frac{\omega}{2}+\left(\frac{1}{\phi^{2}}-\frac{\phi\sin\left(\phi\right)}{2\phi^{2}\left(1-\cos\left(\phi\right)\right)}\right)\omega^{2} & \text{else}
-\end{cases}.
-\end{align}
-
-
-
-\subsection{Jacobians}
-
-
-\subsubsection{Adjoint}
-
-The group adjoint representation is
-
-\[
-\mathbf{Ad}_{g}=\begin{bmatrix}R & \left[t\right]_{\times}R\\
-0_{3\times3} & R
-\end{bmatrix}
-\]
-with inverse 
-\[
-\mathbf{Ad}_{g}^{-1}=\begin{bmatrix}R^{\top} & -R^{\top}\left[t\right]_{\times}\\
-0_{3\times3} & R^{\top}
-\end{bmatrix}.
-\]
-
-
-The Lie algebra representation is 
-\[
-\mathbf{ad}_{u}=\begin{bmatrix}\left[\omega\right]_{\times} & \left[\rho\right]_{\times}\\
-0_{3\times3} & \left[\omega\right]_{\times}
-\end{bmatrix}.
-\]
-
-
-
-\subsubsection{Left and Right Jacobians}
-
-Let $u=\begin{bmatrix}\omega & \rho\\
-0 & 0
-\end{bmatrix}\in\mathfrak{se}\left(3\right)$ and 
-\begin{align}
-\phi & =\sqrt{\omega^{\top}\omega}\nonumber \\
-a_{\phi} & =\frac{\cos\left(\phi\right)-1}{\phi^{2}}\nonumber \\
-b_{\phi} & =\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\nonumber \\
-c_{\phi} & =-\frac{1}{\phi^{3}}\sin\left(\phi\right)+2\left(\frac{1-\cos\left(\phi\right)}{\phi^{4}}\right)\nonumber \\
-d_{\theta} & =-\frac{2}{\phi^{4}}+\frac{3}{\phi^{5}}\sin\left(\phi\right)-\frac{1}{\phi^{4}}\cos\left(\phi\right)\nonumber \\
-q_{r}\left(\omega\right) & =\left(\left(\omega^{\vee}\right)^{\top}\rho\right)\left(d_{\phi}\omega^{2}+c_{\phi}\omega\right)\nonumber \\
-q_{l}\left(\omega\right) & =\left(\left(\omega^{\vee}\right)^{\top}\rho\right)\left(d_{\phi}\omega^{2}-c_{\phi}\omega\right)\nonumber \\
-B_{r}\left(u\right) & =q_{r}\left(\omega\right)+a_{\phi}\left[\rho\right]_{\times}+b_{\phi}\left(\omega\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\omega\right)\nonumber \\
-B_{l}\left(u\right) & =q_{l}\left(\omega\right)-a_{\phi}\left[\rho\right]_{\times}+b_{\phi}\left(\omega\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\omega\right)\nonumber \\
-J_{r}\left(\omega\right) & =I+\frac{\cos\left(\phi\right)-1}{\phi^{2}}\omega+\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\omega^{2}\nonumber \\
-J_{l}\left(\omega\right) & =I+\frac{1-\cos\left(\phi\right)}{\phi^{2}}\omega+\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\omega^{2}\label{eq:Jl_so3}\\
-J_{r}^{-1}\left(\omega\right) & =I+\frac{1}{2}\omega-\frac{\phi\cot\left(\frac{\phi}{2}\right)-2}{2\phi^{2}}\omega^{2}\nonumber \\
-J_{l}^{-1}\left(\omega\right) & =I-\frac{1}{2}\omega-\frac{\phi\cot\left(\frac{\phi}{2}\right)-2}{2\phi^{2}}\omega^{2}.\nonumber 
-\end{align}
-then 
-\begin{align*}
-J_{r}\left(u\right) & =\begin{bmatrix}J_{r}\left(\omega\right) & B_{r}\left(u\right)\\
-0 & J_{r}\left(\omega\right)
-\end{bmatrix}\\
-J_{l}\left(u\right) & =\begin{bmatrix}J_{l}\left(\omega\right) & B_{l}\left(u\right)\\
-0 & J_{l}\left(\omega\right)
-\end{bmatrix}\\
-J_{r}^{-1}\left(u\right) & =\begin{bmatrix}J_{r}^{-1}\left(\omega\right) & J_{r}^{-1}\left(\omega\right)B_{r}\left(u\right)J_{r}^{-1}\left(\omega\right)\\
-0 & J_{r}^{-1}\left(\omega\right)
-\end{bmatrix}\\
-J_{l}^{-1}\left(u\right) & =\begin{bmatrix}J_{l}^{-1}\left(\omega\right) & J_{l}^{-1}\left(\omega\right)B_{l}\left(u\right)J_{l}^{-1}\left(\omega\right)\\
-0 & J_{l}^{-1}\left(\omega\right)
-\end{bmatrix}.
-\end{align*}
-
-
-
-\section{Lemma}
-\begin{lem}
-\label{lem:dJl}Let $J_{l}\left(\omega\right)$ denote the left Jacobian
-of $SO\left(3\right)$ and $\rho\in\mathbb{R}^{3}$. The derivative
-of $J_{l}\left(\omega\right)p$ with respect to $\omega$, denote
-$\partial V_{\omega}\left(\rho\right)$, is 
-\begin{align*}
-\partial V_{\omega}\left(\rho\right) & =\left(\frac{1-\cos\left(\theta\right)}{\theta^{2}}\right)\left[-\rho\right]_{\times}\\
- & +\left(\frac{\theta-\sin\left(\theta\right)}{\theta^{3}}\right)\left(-2\omega\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\omega_{\times}\right)\\
- & +\left(\frac{\sin\left(\theta\right)\theta+2\left(\cos\left(\theta\right)-1\right)}{\theta^{4}}\right)\omega\rho\left(\omega^{\vee}\right)^{\top}\\
- & +\left(\frac{3\sin\left(\theta\right)-\cos\left(\theta\right)\theta-2\theta}{\theta^{5}}\right)\omega^{2}\rho\left(\omega^{\vee}\right)^{\top}.
-\end{align*}
-where $\omega\in\mathfrak{s0}\left(3\right)$, and $\theta=\sqrt{\left(\omega^{\vee}\right)^{\top}\omega^{\vee}}$.\end{lem}
-\begin{IEEEproof}
-We first note that $V\left(\omega\right)=J_{l}\left(\omega\right)$
-where $J_{l}\left(\omega\right)$ is defined in equation (\ref{eq:Jl_so3}).
-It follows directly that 
-\[
-\frac{\partial J_{l}\left(\omega\right)}{\partial\omega}=\frac{\partial}{\partial\omega}\left(I+\frac{1-\cos\left(\theta\right)}{\theta^{2}}\omega+\frac{\theta-\sin\left(\theta\right)}{\theta^{3}}\omega^{2}\right)\rho.
-\]
-Using the product rule, we can break up the derivation into parts:
-\[
-\frac{\partial}{\partial\omega}\frac{1-\cos\left(\theta\right)}{\theta^{2}}=\frac{\sin\left(\theta\right)\theta+2\left(\cos\left(\theta\right)+1\right)}{\theta^{3}}\left(\omega^{\vee}\right)^{\top}
-\]
-\[
-\frac{\partial}{\partial\omega}\frac{\theta-\sin\left(\theta\right)}{\theta^{3}}=\frac{3\sin\left(\theta\right)-\cos\left(\theta\right)\theta-2\theta}{\theta^{5}}
-\]
-\[
-\frac{\partial}{\partial\omega}\omega\rho=\left[-\rho\right]_{\times}
-\]
-and 
-\[
-\frac{\partial}{\partial\omega}\omega^{2}\rho=-2\omega\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\omega_{\times}.
-\]
-Putting the pieces together, we get solution stated in the lemma.
-\end{IEEEproof}
 \bibliographystyle{plain}
 \bibliography{/home/mark/Documents/mendeley/library}
 
