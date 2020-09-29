@@ -933,6 +933,16 @@ The following notation is used throughout.
 \end_inset
 
 .
+ Lastly, a subscript of 
+\begin_inset Formula $0$
+\end_inset
+
+ is used to denote the the time at the beginning of the time window, e.g,
+ 
+\begin_inset Formula $\delta_{0:k}=\delta_{k-T_{W}:k}$
+\end_inset
+
+.
  
 \end_layout
 
@@ -2151,7 +2161,7 @@ The probability of a measurement conditioned on the state is called the
 \begin_inset Formula $p\left(y_{m}\mid x_{m}\right)$
 \end_inset
 
-, and defined as 
+ and defined as 
 \begin_inset Formula 
 \[
 p\left(y_{m}\mid x_{m}\right)=\eta\exp\left(-\frac{1}{2}e^{\top}R^{-1}e\right),
@@ -2187,7 +2197,7 @@ where
 \begin_inset Formula 
 \begin{align*}
 H_{m} & =\left.\frac{\partial y_{m}\ominus h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{\hat{x}_{m},\hat{v}_{m}},\\
- & =\left.\frac{\partial\log\left(\hat{e}\right)}{\partial z}\frac{\partial e}{\partial h^{-1}\left(x_{m},v_{m}\right)}\frac{\partial h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{\hat{x}_{m},\hat{v}_{m}}\\
+ & =\left.\frac{\partial\log\left(e\right)}{\partial e}\frac{\partial e}{\partial h^{-1}\left(x_{m},v_{m}\right)}\frac{\partial h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{\hat{x}_{m},\hat{v}_{m}}\\
  & =J_{r}^{-1}\left(\hat{e}\right)\mathbf{Ad}_{y_{m}^{-1}}\left.\frac{\partial h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{\hat{x}_{m},\hat{v}_{m}}
 \end{align*}
 
@@ -2318,37 +2328,23 @@ name "sec:LMLE"
 \end_layout
 
 \begin_layout Standard
-We use LMLE to generate model hypotheses in RANSAC.
- A model hypotheses is created by taking a subset of measurements from a
+Log maximum likelihood estimation (LMLE) is used in RANSAC to generate track
+ hypotheses.
+ A track hypothesis is created by taking a subset of measurements from a
  cluster 
 \begin_inset Formula $y_{0:k}\subseteq Y$
 \end_inset
 
- which contains one measurement from the current time and other measurements
- which are randomly sampled from different times with enough measurements
- in order observe the system.
- Using the measurements 
-\begin_inset Formula $y_{0:k}$
-\end_inset
-
- we use the LMLE method to calculate a hypothetical current state estimate,
- i.e.
- a possible state estimate of an actual target.
+ which contains one measurement from the current time and enough measurements
+ that are randomly sampled such that a hypothetical current state estimate
+ can be estimated.
+ A hypothetical current state is possible current state estimate of an actual
+ target.
  
 \end_layout
 
 \begin_layout Standard
-LMLE estimates the joint probability of all the states in the time window,
- 
-\begin_inset Formula $x_{0:k}$
-\end_inset
-
-, conditioned on the measurements 
-\begin_inset Formula $y_{0:k}$
-\end_inset
-
- by maximizing the posterior probability.
- The posterior probability is 
+The typical LMLE maximizes the posterior probability 
 \begin_inset Formula $p\left(x_{0:k}\mid y_{0:k}\right).$
 \end_inset
 
@@ -2368,7 +2364,7 @@ key "Thrun2006"
 \begin_inset Formula 
 \begin{multline*}
 \log\left(-p\left(x_{0:k}\mid y_{1:k}\right)\right)=\log\left(-\eta\right)+\log\left(-p\left(x_{0}\right)\right)\\
-+\sum_{m=1}^{k}\log\left(-p\left(x_{m}\mid x_{m^{-}}\right)\right)+\sum_{m=0}^{k}\sum_{j=1}^{\ell\left(m\right)}\log\left(-p\left(y_{m}^{j}\mid x_{m}\right)\right).
++\sum_{m=1}^{k}\log\left(-p\left(x_{m}\mid x_{m^{-}}\right)\right)+\sum_{m=0}^{k}\sum_{j=1}^{\ell\left(m\right)}\log\left(-p\left(y_{m}^{j}\mid x_{m}\right)\right),
 \end{multline*}
 
 \end_inset
@@ -2390,17 +2386,13 @@ where
 \begin_inset Formula $\log\left(-\eta\right)$
 \end_inset
 
- since it will have no impact on the optimization problem.
- The term 
+ since it will have no impact on the optimization problem and we can drop
+ the term 
 \begin_inset Formula $\log\left(-p\left(x_{0}\right)\right)$
 \end_inset
 
- is negligible compared to the rest of the optimization problem since its
- covariance is big indicating that we do not know the initial state 
-\begin_inset Formula $x_{0}$
-\end_inset
-
-, and since we are only interested in estimating the current state 
+ to signify that the initial covariance is large.
+ Since we are only interested in estimating the current state 
 \begin_inset Formula $x_{k}$
 \end_inset
 
@@ -2451,12 +2443,11 @@ Given the current state
 \begin_inset Formula $x_{k}$
 \end_inset
 
- we are interested in calculating the state and output at time 
+ we calculate the state and output at time 
 \begin_inset Formula $m\leq n$
 \end_inset
 
-.
- This is done by inverting the system model defined in 
+ by inverting the system model in 
 \begin_inset CommandInset ref
 LatexCommand eqref
 reference "eq:system-model"
@@ -2556,14 +2547,13 @@ y_{m}=h\left(f^{-1},v_{m}\right).
 \end_layout
 
 \begin_layout Standard
-Using the inverted system model we can calculate the linearized probability
+Using the inverted system model we construct the linearized probability
  
 \begin_inset Formula $p\left(y_{m}^{j}\mid x_{k}\right)$
 \end_inset
 
-.
- We calculate the covariance and mean by taking the first order Tyalor series
- approximation of 
+ by calculating the mean an covariance.
+ We do this by linearizing the term 
 \begin_inset Formula 
 \[
 y_{m}^{j}\ominus h\left(f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),v_{m}\right),
@@ -2591,17 +2581,12 @@ G_{k:m}^{j} & =\left.\frac{\partial y_{m}\ominus h\left(f^{-1},v_{m}\right)}{\pa
 and 
 \begin_inset Formula 
 \[
-\hat{e}_{k:m}^{j}=y_{m}^{j}\ominus h\left(f^{-1}\left(x_{k},\hat{w}_{k},\delta_{k:m}\right),\hat{v}_{m}\right)
+\hat{e}_{k:m}^{j}=y_{m}^{j}\ominus h\left(f^{-1}\left(\hat{x}_{k},\hat{w}_{k},\delta_{k:m}\right),\hat{v}_{m}\right).
 \]
 
 \end_inset
 
-which is the expected value of 
-\begin_inset Formula $p\left(y_{m}^{j}\mid x_{k}\right)$
-\end_inset
-
-.
- The covariance of 
+The covariance of 
 \begin_inset Formula $p\left(y_{m}^{j}\mid x_{k}\right)$
 \end_inset
 
@@ -2704,8 +2689,8 @@ name "sub:Validation-Region"
 \end_layout
 
 \begin_layout Standard
-The validation region is a volume around a track's estimated state.
- Measurements that fall within the validation region are associated to the
+The validation region is a volume around a track's current state estimate.
+ Measurements that are within the validation region are associated to the
  model and are used to update the model.
  We will use the validation region described in 
 \begin_inset CommandInset citation
@@ -2769,7 +2754,7 @@ then
 \begin_inset Formula $d_{V}:N\times N\to\mathbb{R}$
 \end_inset
 
- be the metric defined as 
+ be a metric defined as 
 \begin_inset Formula 
 \begin{align*}
 d_{V}\left(y,\hat{y}\right) & =\left(y\ominus\hat{y}\right)^{\top}S^{-1}\left(y\ominus\hat{y}\right)\\
@@ -2786,7 +2771,7 @@ Note that the metric
 \begin_inset Formula $n$
 \end_inset
 
- Standard Gaussian distributions.
+ standard Gaussian distributions.
  Thus, the values of the metric 
 \begin_inset Formula $d_{V}$
 \end_inset
@@ -2795,7 +2780,7 @@ Note that the metric
 \end_layout
 
 \begin_layout Standard
-The validation region is defined as 
+The validation region is the set 
 \begin_inset Formula 
 \[
 \nu\left(\hat{y},\gamma\right)=\left\{ y\in N\,:\,d\left(y,\hat{y}\right)\leq\gamma\right\} ,
@@ -2828,16 +2813,7 @@ where parameter
 \end_inset
 
 .
- New measurements that fall within the validation region of a model are
- used to update the corresponding model using centralized measurement fusion
- described in section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:Centralized-Measurement-Fusion"
-
-\end_inset
-
-.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -2890,10 +2866,10 @@ name "sec:Centralized-Measurement-Fusion"
 \end_layout
 
 \begin_layout Standard
-Validated measurements, or measurements associated to a model, can come
- from multiple different measurement sources at different times.
+Validated measurements can come from multiple different measurement sources
+ at different times.
  In order to update the state estimate, we use the centralized measurement
- fusion method, as discussed in 
+ fusion method as described in 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Bar-Shalom2011"
@@ -2914,10 +2890,10 @@ key "Millard2017"
 \end_inset
 
  denote the number of measurement sources, 
-\begin_inset Formula $\theta_{m}^{i}=\left\{ y_{m}^{1},y_{m}^{2},\cdots,y_{m}^{n}\right\} $
+\begin_inset Formula $Y_{m}^{i}=\left\{ y_{m}^{1},y_{m}^{2},\cdots,y_{m}^{n}\right\} $
 \end_inset
 
- denote the set of measurements associated with the model that were received
+ denote the set of measurements associated with the track that was received
  at time 
 \begin_inset Formula $m$
 \end_inset
@@ -2931,7 +2907,7 @@ key "Millard2017"
 \end_inset
 
  be the weight associated with measurement 
-\begin_inset Formula $y_{m}^{j}\in\theta_{m}^{i}$
+\begin_inset Formula $y_{m}^{j}\in Y_{m}^{i}$
 \end_inset
 
 , 
@@ -2942,7 +2918,7 @@ key "Millard2017"
 \begin_inset Formula 
 \[
 Z^{i}=\begin{cases}
-\sum_{j=1}^{n}\beta^{j}H_{m}^{\top}\left(R^{i}\right)^{-1}y_{m}^{j}\ominus h\left(x_{m}\right) & \text{if }\left|\theta_{m}^{i}\right|>0\\
+\sum_{j=1}^{n}\beta^{j}H_{m}^{\top}\left(R^{i}\right)^{-1}y_{m}^{j}\ominus h\left(x_{m}\right) & \text{if }\left|Y_{m}^{i}\right|>0\\
 0 & \text{else}
 \end{cases},
 \]
@@ -2969,12 +2945,17 @@ P_{m}^{-1}=\bar{P}_{m}^{-1}+\sum_{i=1}^{N_{s}}\left(\left(P_{m}^{i}\right)^{-1}-
 and the state update is 
 \begin_inset Formula 
 \[
-\hat{x}_{m}=\hat{\bar{x}}_{m}\oplus\left(P_{m}\sum_{i=1}^{N_{s}}Z^{i}\right).
+\hat{x}_{m}=\hat{\bar{x}}_{m}\oplus\left(P_{m}\sum_{i=1}^{N_{s}}Z^{i}\right),
 \]
 
 \end_inset
 
+where 
+\begin_inset Formula $\bar{P}_{m}$
+\end_inset
 
+ is the error covariance before any updates are applied.
+ 
 \end_layout
 
 \begin_layout Standard
