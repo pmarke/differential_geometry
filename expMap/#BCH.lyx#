@@ -1582,7 +1582,7 @@ D_{l}\left(\theta\right) & =\frac{\cos\left(\theta\right)-1}{\theta^{2}}\left[1\
 then 
 \begin_inset Formula 
 \begin{align*}
-J_{r}\left(u\right) & =\begin{bmatrix}W\left(\theta\right) & D\left(\theta\right)\rho\\
+J_{r}\left(u\right) & =\begin{bmatrix}W_{r}\left(\theta\right) & D_{r}\left(\theta\right)\rho\\
 0 & 1
 \end{bmatrix},\\
 J_{l}\left(u\right) & =\begin{bmatrix}W_{l}\left(\theta\right) & D_{l}\left(\theta\right)\rho\\

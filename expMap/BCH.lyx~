@@ -2229,13 +2229,21 @@ It is sometimes needful to take the second derivative of the left and right
 
 
 \begin_inset Formula 
-\[
-\frac{\partial J_{l}\left(u\right)}{\partial u}
-\]
+\begin{align*}
+\frac{\partial J_{l}\left(u\right)}{\partial u} & =\frac{\partial\sum_{n=0}^{\infty}\frac{1}{\left(n+1\right)!}\left(\mathbf{ad}_{u}\right)^{n}}{\partial u}\\
+ & =\frac{\partial}{\partial u}\left(I+\frac{\mathbf{ad}_{u}}{2!}+\frac{\mathbf{ad}_{u}^{2}}{3!}+\frac{\mathbf{ad}_{u}^{3}}{4!}+\cdots\right)\\
+ & =\frac{I}{2!}+\frac{2\mathbf{ad}_{u}}{3!}+\frac{3\mathbf{ad}_{u}^{2}}{4!}+\frac{4\mathbf{ad}_{u}^{3}}{5!}+\cdots\\
+ & =\frac{I}{2}+\sum_{i=0}^{\infty}\frac{\left(2i+2\right)\mathbf{ad}_{u}^{2i+1}}{\left(2i+3\right)!}+\sum_{i=0}^{\infty}\frac{\left(2i+3\right)\mathbf{ad}_{u}^{2i+2}}{\left(2i+4\right)!}\\
+ & =\frac{I}{2}+\sum_{i=0}^{\infty}\frac{\left(2i+2\right)\left(-1\right)^{i}\theta^{2i}}{\left(2i+3\right)!}\mathbf{ad}_{u}+\sum_{i=0}^{\infty}\frac{\left(2i+3\right)\left(-1\right)^{i}\theta^{2i}}{\left(2i+4\right)!}\mathbf{ad}_{u}^{2},
+\end{align*}
 
 \end_inset
 
+where 
+\begin_inset Formula $\theta=\left\Vert \mathbf{ad}_{u}\right\Vert $
+\end_inset
 
+.
 \end_layout
 
 \begin_layout Standard

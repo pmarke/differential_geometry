@@ -40,7 +40,7 @@ th = 0.2;
 -x*sin(-th)
 
 %%
-v = [1;2;0.2];
+v = [1;2;3];
 jl = Jl(v);
 wl = Wl(v(3));
 dl = Dl(v(3));
@@ -49,16 +49,9 @@ jl_inv = Jl_inv(v)
 
 dt = 1e-6;
 e1 = [1;0;0];
-e2 = [0;1;0];
-e3 = [0;0;1];
-tmp = inv(myExp(v))*myExp(v+e2*dt);
-logm(tmp)/dt
 
-function W = wedge(u)
+logm(inv(myExp(v))*myExp(v+e1*dt))/dt
 
-W = [ssm(u(3)), u(1:2); zeros(1,3)];
-
-end
 
 function J = Jl(u)
 p = u(1:2);
@@ -84,9 +77,9 @@ p = u(1:2);
 th = u(3);
 
 R = [cos(th) -sin(th); sin(th) cos(th)];
-V = Wl(th);
+V = myV(u);
 
-g = [R V*p; zeros(1,2),1];
+g = [R V*p; zeros(1,3)];
 
 
 end
