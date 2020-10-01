@@ -1582,7 +1582,7 @@ D_{l}\left(\theta\right) & =\frac{\cos\left(\theta\right)-1}{\theta^{2}}\left[1\
 then 
 \begin_inset Formula 
 \begin{align*}
-J_{r}\left(u\right) & =\begin{bmatrix}W\left(\theta\right) & D_{r}\left(\theta\right)\rho\\
+J_{r}\left(u\right) & =\begin{bmatrix}W_{r}\left(\theta\right) & D_{r}\left(\theta\right)\rho\\
 0 & 1
 \end{bmatrix},\\
 J_{l}\left(u\right) & =\begin{bmatrix}W_{l}\left(\theta\right) & D_{l}\left(\theta\right)\rho\\
@@ -2179,8 +2179,8 @@ a_{\theta} & =\frac{\cos\left(\theta\right)-1}{\theta^{2}}\\
 b_{\theta} & =\frac{\theta-\sin\left(\theta\right)}{\theta^{3}}\\
 c_{\theta} & =-\frac{1}{\theta^{3}}\sin\left(\theta\right)+2\left(\frac{1-\cos\left(\theta\right)}{\theta^{4}}\right)\\
 d_{\theta} & =-\frac{2}{\theta^{4}}+\frac{3}{\theta^{5}}\sin\left(\theta\right)-\frac{1}{\theta^{4}}\cos\left(\theta\right)\\
-q_{r}\left(\omega\right) & =\left(\left(\omega^{\vee}\right)^{\top}\rho\right)\left(c_{\theta}\omega+d_{\theta}\omega^{2}\right)\\
-q_{l}\left(\omega\right) & =\left(\left(\omega^{\vee}\right)^{\top}\rho\right)\left(-c_{\theta}\omega+d_{\theta}\omega^{2}\right)\\
+q_{r}\left(\omega\right) & =\left(\left(\omega^{\vee}\right)^{\top}\rho\right)\left(d_{\theta}\omega^{2}+c_{\theta}\omega\right)\\
+q_{l}\left(\omega\right) & =\left(\left(\omega^{\vee}\right)^{\top}\rho\right)\left(d_{\theta}\omega^{2}-c_{\theta}\omega\right)\\
 B_{r}\left(u\right) & =\left(a_{\theta}\left[\rho\right]_{\times}+b_{\theta}\left(\omega\rho_{\times}+\left[\rho\right]_{\times}\omega\right)+q_{r}\left(\omega\right)\right)\\
 B_{l}\left(u\right) & =\left(-a_{\theta}\left[\rho\right]_{\times}+b_{\theta}\left(\omega\rho_{\times}+\left[\rho\right]_{\times}\omega\right)+q_{l}\left(\omega\right)\right)
 \end{align*}
@@ -2196,10 +2196,10 @@ J_{r}\left(u\right) & =\begin{bmatrix}J_{r}\left(\omega\right) & B_{r}\left(u\ri
 J_{l}\left(u\right) & =\begin{bmatrix}J_{l}\left(\omega\right) & B_{l}\left(u\right)\\
 0 & J_{l}\left(\omega\right)
 \end{bmatrix}\\
-J_{r}^{-1}\left(u\right) & =\begin{bmatrix}J_{r}^{-1}\left(\omega\right) & J_{r}^{-1}\left(\omega\right)B_{r}\left(u\right)J_{r}^{-1}\left(\omega\right)\\
+J_{r}^{-1}\left(u\right) & =\begin{bmatrix}J_{r}^{-1}\left(\omega\right) & -J_{r}^{-1}\left(\omega\right)B_{r}\left(u\right)J_{r}^{-1}\left(\omega\right)\\
 0 & J_{r}^{-1}\left(\omega\right)
 \end{bmatrix}\\
-J_{l}^{-1}\left(u\right) & =\begin{bmatrix}J_{l}^{-1}\left(\omega\right) & J_{l}^{-1}\left(\omega\right)B_{l}\left(u\right)J_{l}^{-1}\left(\omega\right)\\
+J_{l}^{-1}\left(u\right) & =\begin{bmatrix}J_{l}^{-1}\left(\omega\right) & -J_{l}^{-1}\left(\omega\right)B_{l}\left(u\right)J_{l}^{-1}\left(\omega\right)\\
 0 & J_{l}^{-1}\left(\omega\right)
 \end{bmatrix}.
 \end{align*}

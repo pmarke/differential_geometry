@@ -5510,7 +5510,7 @@ where
 \begin_inset Formula $J_{l}$
 \end_inset
 
- being the left Jacobian of 
+ is the left Jacobian of 
 \begin_inset Formula $SO\left(3\right)$
 \end_inset
 
@@ -5556,8 +5556,8 @@ with inverse
 The Lie algebra representation is 
 \begin_inset Formula 
 \[
-\mathbf{ad}_{u}=\begin{bmatrix}\left[\omega\right]_{\times} & \left[\rho\right]_{\times}\\
-0_{3\times3} & \left[\omega\right]_{\times}
+\mathbf{ad}_{u}=\begin{bmatrix}\omega & \left[\rho\right]_{\times}\\
+0_{3\times3} & \omega
 \end{bmatrix}.
 \]
 
@@ -6011,7 +6011,11 @@ noindent
 \begin_inset Formula $\tau_{E}$
 \end_inset
 
- - RANSAC early termination threshold
+ - If the size of a consensus set is greater than 
+\begin_inset Formula $\tau_{E}$
+\end_inset
+
+, than RANSAC will terminate early.
 \end_layout
 
 \begin_layout Itemize
@@ -6044,7 +6048,7 @@ Cluster parameters
 \begin_inset Formula $\tau_{CM}$
 \end_inset
 
- - cluster min cardinality threshold
+ - cluster minimum cardinality threshold
 \end_layout
 
 \begin_layout Standard
