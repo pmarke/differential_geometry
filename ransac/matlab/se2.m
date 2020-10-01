@@ -44,19 +44,37 @@ v = [1;2;0.2];
 jl = Jl(v);
 wl = Wl(v(3));
 dl = Dl(v(3));
+jr = Jr(v);
+
+vee(wedge(v));
 
 jl_inv = Jl_inv(v)
+Jr_inv(-v)
+jr_inv = Jr_inv(v);
 
-dt = 1e-6;
+dt = 1e-4;
 e1 = [1;0;0];
 e2 = [0;1;0];
 e3 = [0;0;1];
-tmp = inv(myExp(v))*myExp(v+e2*dt);
-logm(tmp)/dt
+tmp1 = inv(myExp(v))*expm(wedge(e1*dt));
+tmp2 = inv(myExp(v))*myExp(e2*dt);
+tmp3 = inv(myExp(v))*myExp(e3*dt);
+
+% ( vee(logm(myExp(v)*myExp(e1*dt))) - v)/dt
+% 
+% ( vee(logm(myExp(v)*myExp(e2*dt))) - v)/dt
+% 
+% ( vee(logm(myExp(v)*myExp(e3*dt))) - v)/dt
 
 function W = wedge(u)
 
 W = [ssm(u(3)), u(1:2); zeros(1,3)];
+
+end
+
+function w = vee(W)
+
+w = [W(1:2,3);W(2,1)];
 
 end
 
@@ -65,6 +83,23 @@ p = u(1:2);
 th = u(3);
 
 J = [Wl(th), Dl(th)*p; 0, 0,1];
+
+end
+
+function J = Jr(u)
+p = u(1:2);
+th = u(3);
+
+J = [Wr(th), Dr(th)*p; 0, 0,1];
+
+end
+
+function J = Jr_inv(u)
+
+p = u(1:2);
+th = u(3);
+W = inv(Wr(th));
+J = [W, -W*Dr(th)*p; 0,0,1];
 
 end
 
@@ -129,7 +164,7 @@ end
 
 function W = Wr(th)
 
-if (abs(th) > 1e-6 )
+if (abs(th) > 1e-7 )
 
 a = (cos(th) - 1)/th;
 b = sin(th)/th;
@@ -145,7 +180,7 @@ end
 
 function W = Wl(th)
 
-if (abs(th) > 1e-6 )
+if (abs(th) > 1e-7 )
 
 a = (1-cos(th))/th;
 b = sin(th)/th;
@@ -160,10 +195,10 @@ end
 
 function D = Dr(th)
 
-if(abs(th) > 1e-6)
+if(abs(th) > 1e-7)
     
 a = (1-cos(th))/th^2;
-b = (th-sin(th))/th;
+b = (th-sin(th))/th^2;
 
 D = a*ssm(1) + b*eye(2);
     
@@ -175,7 +210,7 @@ end
 
 function D = Dl(th)
 
-if(abs(th) > 1e-6)
+if(abs(th) > 1e-7)
     
 a = (cos(th)-1)/th^2;
 b = (th-sin(th))/th^2;
