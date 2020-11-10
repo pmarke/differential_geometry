@@ -1,7 +1,9 @@
-#LyX 2.1 created this file. For more info see http://www.lyx.org/
-\lyxformat 474
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
 \begin_document
 \begin_header
+\save_transient_properties true
+\origin unavailable
 \textclass IEEEtran
 \begin_preamble
 \usepackage{algorithm,algpseudocode,tabularx}
@@ -18,16 +20,18 @@
 \language_package default
 \inputencoding auto
 \fontencoding global
-\font_roman default
-\font_sans default
-\font_typewriter default
-\font_math auto
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
 \font_default_family default
 \use_non_tex_fonts false
 \font_sc false
 \font_osf false
-\font_sf_scale 100
-\font_tt_scale 100
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
 \graphics default
 \default_output_format default
 \output_sync 0
@@ -57,6 +61,7 @@
 \suppress_date false
 \justification true
 \use_refstyle 1
+\use_minted 0
 \index Index
 \shortcut idx
 \color #008000
@@ -69,7 +74,10 @@
 \tocdepth 3
 \paragraph_separation indent
 \paragraph_indentation default
-\quotes_language english
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
@@ -105,6 +113,7 @@ s tracking (MHT), and the probabilistic multi-hypothesis tracker (PHMT).
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Pulford2005"
+literal "true"
 
 \end_inset
 
@@ -121,6 +130,7 @@ nts to tracks based on distance without taking into account statistical
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Bar-Shalom2011"
+literal "true"
 
 \end_inset
 
@@ -148,6 +158,7 @@ The JPDAF is an extension of the probabilistic data association filter (PDAF)
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Bar-Shalom2009"
+literal "true"
 
 \end_inset
 
@@ -170,6 +181,7 @@ The MHT algorithm is a batch tracker that uses a hard data association technique
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Reid1979"
+literal "true"
 
 \end_inset
 
@@ -177,6 +189,7 @@ key "Reid1979"
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Kurien1990"
+literal "true"
 
 \end_inset
 
@@ -197,6 +210,7 @@ The PHMT is a soft data association algorithm that relaxes the criteria
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Dempster1977"
+literal "true"
 
 \end_inset
 
@@ -208,6 +222,7 @@ ts or a windowed batch of measurements.
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Crousey2009"
+literal "true"
 
 \end_inset
 
@@ -217,6 +232,7 @@ key "Crousey2009"
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Bar-Shalom2011"
+literal "true"
 
 \end_inset
 
@@ -247,6 +263,7 @@ R-RANSAC was first designed to estimate the parameters of multiple static
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Niedfeldt2013"
+literal "true"
 
 \end_inset
 
@@ -254,6 +271,7 @@ key "Niedfeldt2013"
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Niedfeldt"
+literal "true"
 
 \end_inset
 
@@ -263,6 +281,7 @@ key "Niedfeldt"
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Niedfeldt2014b,Niedfeldt2014,Niedfeldt2016,Ingersoll2015,Ingersoll2015a,Defranco2015,Lusk2018,Niedfeldt2017,Wikle2017,Millard2017,Yang2017,Yang2018"
+literal "true"
 
 \end_inset
 
@@ -271,6 +290,7 @@ key "Niedfeldt2014b,Niedfeldt2014,Niedfeldt2016,Ingersoll2015,Ingersoll2015a,Def
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Niedfeldt"
+literal "true"
 
 \end_inset
 
@@ -335,7 +355,10 @@ reference "sec:Examples"
  we present examples.
 \end_layout
 
-\begin_layout --Separator--
+\begin_layout Standard
+\begin_inset Separator parbreak
+\end_inset
+
 
 \end_layout
 
@@ -359,6 +382,7 @@ The objective of this section is to provide a review of the pertinent concepts
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Sola2018"
+literal "true"
 
 \end_inset
 
@@ -370,6 +394,7 @@ key "Sola2018"
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Sola2018"
+literal "true"
 
 \end_inset
 
@@ -377,6 +402,7 @@ key "Sola2018"
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Hertzberg2013"
+literal "true"
 
 \end_inset
 
@@ -386,6 +412,7 @@ key "Hertzberg2013"
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Barfoot2019,Stillwell2008,Hall2003,Bullo2005a,Lee2013,Abraham1998"
+literal "true"
 
 \end_inset
 
@@ -400,6 +427,7 @@ key "Barfoot2019,Stillwell2008,Hall2003,Bullo2005a,Lee2013,Abraham1998"
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Engo2003"
+literal "true"
 
 \end_inset
 
@@ -409,6 +437,7 @@ key "Engo2003"
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Munthe-Kaas1995,Munthe-Kaas1998,Munthe-Kaas1999"
+literal "true"
 
 \end_inset
 
@@ -745,6 +774,7 @@ As stated in
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Iserles2000a"
+literal "true"
 
 \end_inset
 
@@ -821,6 +851,7 @@ sdorff formula and can be studied in
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Hall2003"
+literal "true"
 
 \end_inset
 
@@ -828,6 +859,7 @@ key "Hall2003"
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Barfoot2019"
+literal "true"
 
 \end_inset
 
@@ -1048,6 +1080,7 @@ end{subequations}
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Sjoberg2019"
+literal "true"
 
 \end_inset
 
@@ -1344,6 +1377,7 @@ In R-RANSAC, we use three different data structures: the data tree, clusters,
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Daszykowski2009"
+literal "true"
 
 \end_inset
 
@@ -1365,6 +1399,7 @@ key "Daszykowski2009"
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Yang2017"
+literal "true"
 
 \end_inset
 
@@ -1377,6 +1412,7 @@ key "Yang2017"
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Moon2000"
+literal "true"
 
 \end_inset
 
@@ -1430,6 +1466,7 @@ good
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Niedfeldt2017"
+literal "true"
 
 \end_inset
 
@@ -1579,6 +1616,7 @@ reference "sec:Track-to-Track-fusion"
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Ingersoll2015a"
+literal "true"
 
 \end_inset
 
@@ -1910,6 +1948,7 @@ Our implementation of R-RANSAC uses a probabilistic framework which requires
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Bourmaud2013a,Bourmaud2014"
+literal "true"
 
 \end_inset
 
@@ -1918,6 +1957,7 @@ key "Bourmaud2013a,Bourmaud2014"
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Reid2001,Reid2001a,Thrun2006"
+literal "true"
 
 \end_inset
 
@@ -2044,8 +2084,8 @@ x_{m}\ominus\tilde{f}=x_{m}\ominus f\left(\hat{x}_{m},0,\delta_{m}\right)+F_{m}\
 \begin_inset Formula 
 \begin{align*}
 F_{m} & =\left.\frac{\partial x_{m}\ominus f\left(x_{m^{-}},w_{k},\delta_{m}\right)}{\partial x_{m^{-}}}\right|_{\hat{x}_{m^{-}},\hat{w}_{m},\delta_{m}}\\
- & =\begin{bmatrix}\mathbf{Ad}_{\text{Exp}\left(\delta_{m}\hat{u}_{m^{-}}\right)^{-1}}\\
-J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)
+ & =\begin{bmatrix}\mathbf{Ad}_{\text{Exp}\left(\delta_{m}\hat{u}_{m^{-}}\right)^{-1}} & J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)\delta_{m}\\
+0 & I
 \end{bmatrix},
 \end{align*}
 
@@ -2246,6 +2286,7 @@ We improve the state estimate
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Thrun2006"
+literal "true"
 
 \end_inset
 
@@ -2424,7 +2465,7 @@ This requires constructing a map from the current state
 Model Inversion
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:Model-Inversion"
+name "subsec:Model-Inversion"
 
 \end_inset
 
@@ -2498,7 +2539,7 @@ begin{subequations}
 
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:model_inverse"
+name "subsec:model_inverse"
 
 \end_inset
 
@@ -2621,6 +2662,7 @@ There are many methods that can be used to solve the optimization problem.
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Niedfeldt2014a"
+literal "true"
 
 \end_inset
 
@@ -2674,7 +2716,7 @@ As previously discussed, there are many ways to associate new measurements
 Validation Region 
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:Validation-Region"
+name "subsec:Validation-Region"
 
 \end_inset
 
@@ -2689,6 +2731,7 @@ The validation region is a volume around a track's current state estimate.
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Bar-Shalom2011,Bar-Shalom1988"
+literal "true"
 
 \end_inset
 
@@ -2866,6 +2909,7 @@ Validated measurements can come from multiple different measurement sources
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Bar-Shalom2011"
+literal "true"
 
 \end_inset
 
@@ -2873,6 +2917,7 @@ key "Bar-Shalom2011"
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Millard2017"
+literal "true"
 
 \end_inset
 
@@ -3319,6 +3364,7 @@ RANSAC is a regression algorithm that estimates parameters while mitigating
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Fischler1981"
+literal "true"
 
 \end_inset
 
@@ -3328,6 +3374,7 @@ key "Fischler1981"
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Choi2009"
+literal "true"
 
 \end_inset
 
@@ -3337,6 +3384,7 @@ key "Choi2009"
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Yang2017"
+literal "true"
 
 \end_inset
 
@@ -3439,7 +3487,7 @@ where
  is calculated using model inversion described in subsection 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:Model-Inversion"
+reference "subsec:Model-Inversion"
 
 \end_inset
 
@@ -3547,6 +3595,7 @@ e between two tracks which is computationally complex and time expensive,
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Deng2012"
+literal "true"
 
 \end_inset
 
@@ -3555,6 +3604,7 @@ key "Deng2012"
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Tian2010"
+literal "true"
 
 \end_inset
 
@@ -3564,6 +3614,7 @@ key "Tian2010"
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Bar-Shalom2011"
+literal "true"
 
 \end_inset
 
@@ -3734,6 +3785,7 @@ where
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Tian2010"
+literal "true"
 
 \end_inset
 
@@ -4116,6 +4168,7 @@ The Jacobians are easily computed and are
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Niedfeldt2014a"
+literal "true"
 
 \end_inset
 
@@ -4130,7 +4183,7 @@ Constrained Problem for
 : Tracking in the Image Plane 
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:tracking_image_plane"
+name "subsec:tracking_image_plane"
 
 \end_inset
 
@@ -4162,6 +4215,7 @@ s to the current global frame.
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Ma"
+literal "true"
 
 \end_inset
 
@@ -4169,6 +4223,7 @@ key "Ma"
 \begin_inset CommandInset citation
 LatexCommand cite
 key "White2019"
+literal "true"
 
 \end_inset
 
@@ -4291,7 +4346,7 @@ H_{k:m}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial x} & =\begin{bmatrix
 where
 \begin_inset Formula 
 \begin{align*}
-H_{k:m}^{t}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial t_{k}} & =I\\
+H_{k:m}^{t}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial t_{k}} & =R_{k}\\
 H_{k:m}^{R}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial R} & =\delta_{k:m}R_{k}\left[1\right]_{\times}J_{l}\left(\delta_{k:m}\omega\right)\rho\\
 H_{k:m}^{\rho}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\rho} & =\delta_{k:m}^{2}R_{k}J_{l}\left(\delta_{k:m}\omega\right)\\
 H_{k:m}^{\omega}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\omega} & =\delta_{k:m}^{2}R_{k}J_{l}^{'}\left(\delta_{k:m}\omega\right)\rho
@@ -4897,6 +4952,7 @@ We have set
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Beard2008"
+literal "true"
 
 \end_inset
 
@@ -5584,7 +5640,7 @@ Let
 a_{\phi} & =\frac{\cos\left(\phi\right)-1}{\phi^{2}}\\
 b_{\phi} & =\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\\
 c_{\phi} & =-\frac{1}{\phi^{3}}\sin\left(\phi\right)+2\left(\frac{1-\cos\left(\phi\right)}{\phi^{4}}\right)\\
-d_{\theta} & =-\frac{2}{\phi^{4}}+\frac{3}{\phi^{5}}\sin\left(\phi\right)-\frac{1}{\phi^{4}}\cos\left(\phi\right)\\
+d_{\phi} & =-\frac{2}{\phi^{4}}+\frac{3}{\phi^{5}}\sin\left(\phi\right)-\frac{1}{\phi^{4}}\cos\left(\phi\right)\\
 q_{r}\left(\omega\right) & =\left(\left(\omega^{\vee}\right)^{\top}\rho\right)\left(d_{\phi}\omega^{2}+c_{\phi}\omega\right)\\
 q_{l}\left(\omega\right) & =\left(\left(\omega^{\vee}\right)^{\top}\rho\right)\left(d_{\phi}\omega^{2}-c_{\phi}\omega\right)\\
 B_{r}\left(u\right) & =q_{r}\left(\omega\right)+a_{\phi}\left[\rho\right]_{\times}+b_{\phi}\left(\omega\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\omega\right)\\
@@ -5604,10 +5660,10 @@ J_{r}\left(u\right) & =\begin{bmatrix}J_{r}\left(\omega\right) & B_{r}\left(u\ri
 J_{l}\left(u\right) & =\begin{bmatrix}J_{l}\left(\omega\right) & B_{l}\left(u\right)\\
 0 & J_{l}\left(\omega\right)
 \end{bmatrix}\\
-J_{r}^{-1}\left(u\right) & =\begin{bmatrix}J_{r}^{-1}\left(\omega\right) & J_{r}^{-1}\left(\omega\right)B_{r}\left(u\right)J_{r}^{-1}\left(\omega\right)\\
+J_{r}^{-1}\left(u\right) & =\begin{bmatrix}J_{r}^{-1}\left(\omega\right) & -J_{r}^{-1}\left(\omega\right)B_{r}\left(u\right)J_{r}^{-1}\left(\omega\right)\\
 0 & J_{r}^{-1}\left(\omega\right)
 \end{bmatrix}\\
-J_{l}^{-1}\left(u\right) & =\begin{bmatrix}J_{l}^{-1}\left(\omega\right) & J_{l}^{-1}\left(\omega\right)B_{l}\left(u\right)J_{l}^{-1}\left(\omega\right)\\
+J_{l}^{-1}\left(u\right) & =\begin{bmatrix}J_{l}^{-1}\left(\omega\right) & -J_{l}^{-1}\left(\omega\right)B_{l}\left(u\right)J_{l}^{-1}\left(\omega\right)\\
 0 & J_{l}^{-1}\left(\omega\right)
 \end{bmatrix}.
 \end{align*}
@@ -6120,12 +6176,16 @@ Other
  - The number of models
 \end_layout
 
-\begin_layout --Separator--
+\begin_layout Standard
 \begin_inset CommandInset bibtex
 LatexCommand bibtex
 bibfiles "/home/mark/Documents/mendeley/library"
 options "plain"
 
+\end_inset
+
+
+\begin_inset Separator latexpar
 \end_inset
 
 

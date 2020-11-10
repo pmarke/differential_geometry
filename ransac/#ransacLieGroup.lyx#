@@ -4346,7 +4346,7 @@ H_{k:m}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial x} & =\begin{bmatrix
 where
 \begin_inset Formula 
 \begin{align*}
-H_{k:m}^{t}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial t_{k}} & =R_{k}\\
+H_{k:m}^{t}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial t_{k}} & =I\\
 H_{k:m}^{R}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial R} & =\delta_{k:m}R_{k}\left[1\right]_{\times}J_{l}\left(\delta_{k:m}\omega\right)\rho\\
 H_{k:m}^{\rho}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\rho} & =\delta_{k:m}^{2}R_{k}J_{l}\left(\delta_{k:m}\omega\right)\\
 H_{k:m}^{\omega}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\omega} & =\delta_{k:m}^{2}R_{k}J_{l}^{'}\left(\delta_{k:m}\omega\right)\rho
@@ -4708,7 +4708,7 @@ H_{k:m}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial x} & =\begin{bmatrix
 where
 \begin_inset Formula 
 \begin{align*}
-H_{k:m}^{t}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial t_{k}} & =R_{k}\\
+H_{k:m}^{t}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial t_{k}} & =I\\
 H_{k:m}^{R}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial R} & =\delta_{k:m}R_{k}\left[-J_{l}\left(\delta_{k:m}\omega\right)\rho\right]_{\times}\\
 H_{k:m}^{\rho}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\rho} & =\delta_{k:m}^{2}R_{k}J_{l}\left(\delta_{k:m}\omega\right)\\
 H_{k:m}^{\omega}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\omega} & =\delta_{k:m}^{2}R_{k}\partial J_{l}\left(\delta_{k:m}\omega,\delta_{k:m}\rho\right),
