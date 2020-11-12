@@ -6176,6 +6176,93 @@ Other
  - The number of models
 \end_layout
 
+\begin_layout Section
+Homography
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula 
+\[
+H=\begin{bmatrix}H_{1} & h_{2}\\
+h_{3}^{\top} & h_{4}
+\end{bmatrix},
+\]
+
+\end_inset
+
+and 
+\begin_inset Formula $\rho^{a}\in\mathbb{R}^{2}$
+\end_inset
+
+ denote a pixel location.
+ Then
+\begin_inset Formula 
+\begin{eqnarray*}
+\rho^{b} & = & g\left(H,\rho^{a}\right)
+\end{eqnarray*}
+
+\end_inset
+
+where 
+\begin_inset Formula 
+\[
+g\left(H,\rho^{a}\right)=\frac{H_{1}\rho^{a}+h_{2}}{h_{3}^{\top}\rho^{a}+h_{4}}.
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+G\left(H,\rho^{a}\right)=\frac{\left(h_{3}^{\top}\rho^{a}+h_{4}\right)H_{1}-\left(H_{1}\rho^{a}+h_{2}\right)h_{3}^{\top}}{\left(h_{3}^{\top}\rho^{a}+h_{4}\right)^{2}}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial g}{\partial\rho} & =G\left(H,\rho\right)\\
+\frac{\partial g}{\partial\dot{\rho}} & =0
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+M=\frac{\partial G\dot{\rho}^{a}}{\partial\rho} & =\frac{-H_{1}\dot{\rho}^{a}h_{3}^{\top}}{\left(h_{3}^{\top}\rho^{a}+h_{4}\right)^{2}}-\frac{H_{1}h_{3}^{\top}\dot{\rho}^{a}}{\left(h_{3}^{\top}\rho^{a}+h_{4}\right)^{2}}+\frac{2\left(H_{1}\rho^{a}+h_{2}\right)h_{3}^{\top}\dot{\rho}^{a}h_{3}^{\top}}{\left(h_{3}^{\top}\rho^{a}+h_{4}\right)^{3}}\\
+ & =\frac{2\left(H_{1}\rho^{a}+h_{2}\right)h_{3}^{\top}\dot{\rho}^{a}h_{3}^{\top}-H_{1}\dot{\rho}^{a}h_{3}^{\top}\eta-H_{1}h_{3}^{\top}\dot{\rho}^{a}\eta}{\eta^{3}}
+\end{align*}
+
+\end_inset
+
+= with 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\eta=\left(h_{3}^{\top}\rho^{a}+h_{4}\right)
+\]
+
+\end_inset
+
+Covariance is transformed as 
+\begin_inset Formula 
+\begin{align*}
+T & =\begin{bmatrix}G & 0\\
+M & G
+\end{bmatrix}\\
+ & TCT^{\top}
+\end{align*}
+
+\end_inset
+
+This has been tested 
+\end_layout
+
 \begin_layout Standard
 \begin_inset CommandInset bibtex
 LatexCommand bibtex
