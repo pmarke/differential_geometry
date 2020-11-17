@@ -4498,54 +4498,55 @@ To improve the LMLE used to estimate the current state, we can seed it as
 
 \end_inset
 
-Now let 
-\begin_inset Formula $\theta_{k}=\text{Log}\left(R_{k}\right)$
+
+\end_layout
+
+\begin_layout Standard
+Using the constraint that the heading of the UAS is aligned with the translation
+al velocity, we get that 
+\begin_inset Formula 
+\[
+R=\frac{1}{\left\Vert \dot{t}_{k}\right\Vert }\begin{bmatrix}\dot{t}_{k_{x}} & -\dot{t}_{k_{y}}\\
+\dot{t}_{k_{y}} & \dot{t}_{k_{x}}
+\end{bmatrix}
+\]
+
 \end_inset
 
-, then 
+where 
 \begin_inset Formula 
-\begin{align*}
+\[
 \dot{t}_{k}=\begin{bmatrix}\dot{t}_{k_{x}}\\
 \dot{t}_{k_{y}}
-\end{bmatrix} & =\text{Exp}\left(\theta_{k}\right)\rho_{k}\\
- & =\begin{bmatrix}\cos\left(\theta_{k}\right) & -\sin\left(\theta_{k}\right)\\
-\sin\left(\theta_{k}\right) & \cos\left(\theta_{k}\right)
-\end{bmatrix}\begin{bmatrix}\rho_{k_{x}}\\
-0
-\end{bmatrix}\\
- & =\underbrace{\begin{bmatrix}\cos\left(\theta_{k}\right)\\
-\sin\left(\theta_{k}\right)
-\end{bmatrix}}_{R_{k_{x}}}\rho_{k_{x}}.
-\end{align*}
+\end{bmatrix},
+\]
 
 \end_inset
 
-We can now solve for 
-\begin_inset Formula $\theta_{k}$
-\end_inset
-
- and 
-\begin_inset Formula $\rho_{k_{x}}$
-\end_inset
-
- 
+and that 
 \begin_inset Formula 
-\begin{align*}
-\theta_{k} & =\text{atan2}\left(\dot{t}_{k_{y}},\dot{t}_{k_{y}}\right)\\
-\rho_{k_{x}} & =\frac{R_{k_{x}}^{\top}\dot{t}_{k}}{R_{k_{x}}^{\top}R_{k_{x}}}.
-\end{align*}
+\[
+\rho_{k}=\begin{bmatrix}\left\Vert \dot{t}_{k}\right\Vert \\
+0
+\end{bmatrix}.
+\]
 
 \end_inset
 
 Note that 
 \begin_inset Formula 
 \[
-\dot{t}_{m}=R_{k}\exp\left(\delta_{k:m}\dot{\theta}_{k}\right)\rho_{k}.
+\dot{t}_{m}=R_{k}\exp\left(\delta_{k:m}\dot{\theta}_{k}\right)\rho_{k},
 \]
 
 \end_inset
 
-Let 
+where 
+\begin_inset Formula $\dot{\theta}_{k}$
+\end_inset
+
+ is the angular velocity.
+ Let 
 \begin_inset Formula 
 \begin{align*}
 z & =R_{k}^{\top}\dot{t}_{m}/\rho_{k}\\
@@ -4938,7 +4939,7 @@ Since we receive position measurements, we can numerically estimate the
 \psi_{k} & =\text{atan2}\left(\dot{t}_{k_{y}},\left|\dot{t}_{k_{x}}\right|\right)\\
 \theta_{k} & =\arctan\left(\frac{-\cos\left(\psi_{k}\right)\dot{t}_{k_{z}}}{\dot{t}_{k_{x}}}\right)\\
 \phi_{k} & =0\\
-\rho_{k_{x}} & =\frac{R_{k_{x}}^{\top}\dot{t}_{k}}{R_{k_{x}}^{\top}R_{k_{x}}}
+\rho_{k_{x}} & =\left\Vert \dot{t}_{k}\right\Vert 
 \end{align*}
 
 \end_inset
@@ -5406,7 +5407,7 @@ where
 \end_inset
 
 , 
-\begin_inset Formula $\theta=\left[\theta_{1},\theta_{2},\theta_{2}\right]^{\top}\in\mathbb{R}^{3}$
+\begin_inset Formula $\theta=\left[\theta_{1},\theta_{2},\theta_{3}\right]^{\top}\in\mathbb{R}^{3}$
 \end_inset
 
  and 
@@ -6232,13 +6233,31 @@ G\left(H,\rho^{a}\right)=\frac{\left(h_{3}^{\top}\rho^{a}+h_{4}\right)H_{1}-\lef
 
 \begin_inset Formula 
 \begin{align*}
-M=\frac{\partial G\dot{\rho}^{a}}{\partial\rho} & =\frac{-H_{1}\dot{\rho}^{a}h_{3}^{\top}}{\left(h_{3}^{\top}\rho^{a}+h_{4}\right)^{2}}-\frac{H_{1}h_{3}^{\top}\dot{\rho}^{a}}{\left(h_{3}^{\top}\rho^{a}+h_{4}\right)^{2}}+\frac{2\left(H_{1}\rho^{a}+h_{2}\right)h_{3}^{\top}\dot{\rho}^{a}h_{3}^{\top}}{\left(h_{3}^{\top}\rho^{a}+h_{4}\right)^{3}}\\
+M=\frac{\partial G\left(H,\rho^{a}\right)\dot{\rho}^{a}}{\partial\rho^{a}} & =\frac{-H_{1}\dot{\rho}^{a}h_{3}^{\top}}{\left(h_{3}^{\top}\rho^{a}+h_{4}\right)^{2}}-\frac{H_{1}h_{3}^{\top}\dot{\rho}^{a}}{\left(h_{3}^{\top}\rho^{a}+h_{4}\right)^{2}}+\frac{2\left(H_{1}\rho^{a}+h_{2}\right)h_{3}^{\top}\dot{\rho}^{a}h_{3}^{\top}}{\left(h_{3}^{\top}\rho^{a}+h_{4}\right)^{3}}\\
  & =\frac{2\left(H_{1}\rho^{a}+h_{2}\right)h_{3}^{\top}\dot{\rho}^{a}h_{3}^{\top}-H_{1}\dot{\rho}^{a}h_{3}^{\top}\eta-H_{1}h_{3}^{\top}\dot{\rho}^{a}\eta}{\eta^{3}}
 \end{align*}
 
 \end_inset
 
-= with 
+which can be simplified to 
+\begin_inset Formula 
+\[
+M=-\frac{G\left(\dot{\rho}^{a}h_{3}^{\top}+Ih_{3}^{\top}\dot{\rho}^{a}\right)}{\eta}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+f\left(\rho^{a},\dot{\rho}^{a}\right)=\begin{bmatrix}g\left(H,\rho^{a}\right)\\
+G\left(H,\rho^{a}\right)\dot{\rho}^{a}
+\end{bmatrix}
+\]
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -6260,6 +6279,233 @@ M & G
 
 \end_inset
 
+This has been tested
+\end_layout
+
+\begin_layout Standard
+For 
+\begin_inset Formula $SE\left(2\right)$
+\end_inset
+
+ the rotation matrix can be constructed as 
+\begin_inset Formula 
+\[
+R^{a}=\frac{1}{\left\Vert \dot{\rho}^{a}\right\Vert }\begin{bmatrix}\dot{\rho}^{a}\cdot e_{1} & -\dot{\rho}^{a}\cdot e_{2}\\
+\dot{\rho}^{a}\cdot e_{2} & \dot{\rho}^{a}\cdot e_{1}
+\end{bmatrix}.
+\]
+
+\end_inset
+
+To transform it using the Homography we get 
+\begin_inset Formula 
+\[
+R_{t}=\frac{1}{\left\Vert G\dot{\rho}^{a}\right\Vert }\begin{bmatrix}e_{1}^{\top}G\dot{\rho}^{a} & -e_{2}^{\top}G\dot{\rho}^{a}\\
+e_{2}^{\top}G\dot{\rho}^{a} & e_{1}^{\top}G\dot{\rho}^{a}
+\end{bmatrix}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Since we assume that the UAV has constant velocity in the body frame, the
+ acceleration in the inertial frame is due to angular rotation, that is,
+ 
+\begin_inset Formula 
+\begin{align*}
+\ddot{\rho}^{i} & =\left[\omega^{i}\right]_{\times}\dot{\rho}^{i}\\
+\ddot{\rho}^{i} & =R_{b}^{i}\left[\omega^{b}\right]_{\times}\left(R_{b}^{i}\right)^{\top}\dot{\rho}^{i}\\
+ & =R_{b}^{i}\left[\omega^{b}\right]_{\times}\left(R_{b}^{i}\right)^{\top}R_{b}^{i}\dot{\rho}^{b}\\
+ & =R_{b}^{i}\left[\omega^{b}\right]_{\times}\dot{\rho}^{b}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Recall that 
+\begin_inset Formula 
+\[
+\dot{\rho}^{n}=G\left(H,\rho^{c}\right)\dot{\rho}^{c},
+\]
+
+\end_inset
+
+taking the derivative w.r.t.
+ to time, holding 
+\begin_inset Formula $H$
+\end_inset
+
+ constant and assuming constant velocity in the body frame we get that 
+\begin_inset Formula 
+\begin{align*}
+\ddot{\rho}^{n} & =\left(\frac{\partial}{\partial\rho^{c}}G\left(H,\rho^{c}\right)\dot{\rho}^{c}\right)\frac{\partial\rho^{c}}{\partial t}+\frac{\partial}{\partial\dot{\rho}^{c}}\left(G\left(H,\rho^{c}\right)\dot{\rho}^{c}\right)\frac{\partial\dot{\rho}^{c}}{\partial t}\\
+\left[\omega^{n}\right]_{\times}\dot{\rho}^{n} & =M\dot{\rho}^{c}+G\left(H,\rho^{c}\right)\left[\omega^{c}\right]_{\times}\dot{\rho}^{c}\\
+\left[\omega^{n}\right]_{\times}G\left(H,\rho^{c}\right)\dot{\rho}^{c} & =\left(M+G\left(H,\rho^{c}\right)\left[\omega^{c}\right]_{\times}\right)\dot{\rho}^{c}\\
+\theta^{n}\left[1\right]_{\times}G\left(H,\rho^{c}\right)\dot{\rho}^{c} & =\left(M+G\left(H,\rho^{c}\right)\left[\omega^{c}\right]_{\times}\right)\dot{\rho}^{c}\\
+\\
+\left(\dot{\rho}^{c}\right)^{\top}\left[\omega^{n}\right]_{\times}G\left(H,\rho^{c}\right)\dot{\rho}^{c} & =\left(\dot{\rho}^{c}\right)^{\top}\left(M+G\left(H,\rho^{c}\right)\left[\omega^{c}\right]_{\times}\right)\dot{\rho}^{c}\\
+\left(\dot{\rho}^{c}\right)^{\top}\left[\omega^{n}\right]_{\times} & =\theta^{n}\left(\dot{\rho}^{c}\right)^{\top}\left[1\right]_{\times}\\
+\theta^{n} & =\frac{\left(\dot{\rho}^{c}\right)^{\top}\left(M+G\left(H,\rho^{c}\right)\left[\omega^{c}\right]_{\times}\right)\dot{\rho}^{c}}{\left(\dot{\rho}^{c}\right)^{\top}\left[1\right]_{\times}G\left(H,\rho^{c}\right)\dot{\rho}^{c}}\\
+\left(\left[\omega^{n}\right]_{\times}G\left(H,\rho^{c}\right)-\left(M+G\left(H,\rho^{c}\right)\left[\omega^{c}\right]_{\times}\right)\right)\dot{\rho}^{c} & =0_{2\times2}
+\end{align*}
+
+\end_inset
+
+implies that 
+\begin_inset Formula 
+\[
+\left[\omega^{n}\right]_{\times}=\left(M+G\left(H,\rho^{c}\right)\left[\omega^{c}\right]_{\times}\right)G\left(H,\rho^{c}\right)^{-1}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note that this is only valid in the virtual image frame.
+ In other words 
+\begin_inset Formula 
+\[
+H=R-\frac{tn^{\top}}{d}
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $R=R\left(\psi\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $n^{\top}=\left[0,0,1\right]$
+\end_inset
+
+.
+ Note that this transformation can be simplified to 
+\begin_inset Formula 
+\[
+\left[\omega^{n}\right]_{\times}=\left[\omega^{c}\right]_{\times}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Homography NVIP SE2
+\end_layout
+
+\begin_layout Standard
+When working with a camera and tracking a target whose manifold configuration
+ is 
+\begin_inset Formula $SE\left(2\right)$
+\end_inset
+
+, tracking is done in the normalized virtual image frame (NVIF).
+ In other words, the normalized virtual image plane is parallel to the ground
+ and the virtual optical axis is pointing down to the Earth's core.
+ Tracking has to be done in the NVIF, becuase when the UAS pitches or rolls,
+ the circular trajectory of the target becomes an ellipse which doesn't
+ follow the constraint that the target has constant velocity.
+ 
+\end_layout
+
+\begin_layout Standard
+Tracking targets in the NVIF simplifies the homography to 
+\begin_inset Formula 
+\[
+H=\begin{bmatrix}R\left(\psi\right) & -\pi_{e_{3}}P/d\\
+0 & 1-e_{3}^{\top}P/d
+\end{bmatrix}
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $R\left(\psi\right)$
+\end_inset
+
+ is the rotation of the UAS due to yaw, 
+\begin_inset Formula $P$
+\end_inset
+
+ is the translation of the UAS, 
+\begin_inset Formula $d$
+\end_inset
+
+ is the distance the UAS is from the tracking plane and 
+\begin_inset Formula $\pi_{e_{3}}$
+\end_inset
+
+ is the projection onto the plane orthogonal to 
+\begin_inset Formula $e_{3}$
+\end_inset
+
+.
+ Using the decomposition of the homography
+\begin_inset Formula 
+\[
+H=\begin{bmatrix}H_{1} & h_{2}\\
+h_{3}^{\top} & h_{4}
+\end{bmatrix},
+\]
+
+\end_inset
+
+the position, rotation and velocity transformation is 
+\begin_inset Formula 
+\[
+g\left(H,\rho^{c}\right)=\frac{H_{1}\rho^{c}+h_{2}}{h_{4}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+R & ^{n}=H_{1}R^{c}\\
+\dot{\rho}^{n} & =\frac{\rho^{c}}{h_{4}}\\
+\omega^{n} & =\omega^{c}.
+\end{align*}
+
+\end_inset
+
+The covariance transformation is 
+\begin_inset Formula 
+\[
+TCT^{\top}
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $C$
+\end_inset
+
+ is the covariance and  
+\begin_inset Formula 
+\[
+T=\text{diag}\left(\frac{1}{h_{4}},\frac{1}{h_{4}},1,\frac{1}{h_{4}},\frac{1}{h_{4}},1\right).
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The 5th entry is really zero since we assume that the body velocity in the
+ left and right direction is zero.
  
 \end_layout
 

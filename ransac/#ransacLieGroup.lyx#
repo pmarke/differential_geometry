@@ -4536,17 +4536,12 @@ and that
 Note that 
 \begin_inset Formula 
 \[
-\dot{t}_{m}=R_{k}\exp\left(\delta_{k:m}\dot{\theta}_{k}\right)\rho_{k},
+\dot{t}_{m}=R_{k}\exp\left(\delta_{k:m}\dot{\theta}_{k}\right)\rho_{k}.
 \]
 
 \end_inset
 
-where 
-\begin_inset Formula $\dot{\theta}_{k}$
-\end_inset
-
- is the angular velocity.
- Let 
+Let 
 \begin_inset Formula 
 \begin{align*}
 z & =R_{k}^{\top}\dot{t}_{m}/\rho_{k}\\
@@ -4939,7 +4934,7 @@ Since we receive position measurements, we can numerically estimate the
 \psi_{k} & =\text{atan2}\left(\dot{t}_{k_{y}},\left|\dot{t}_{k_{x}}\right|\right)\\
 \theta_{k} & =\arctan\left(\frac{-\cos\left(\psi_{k}\right)\dot{t}_{k_{z}}}{\dot{t}_{k_{x}}}\right)\\
 \phi_{k} & =0\\
-\rho_{k_{x}} & =\left\Vert \dot{t}_{k}\right\Vert 
+\rho_{k_{x}} & =\frac{R_{k_{x}}^{\top}\dot{t}_{k}}{R_{k_{x}}^{\top}R_{k_{x}}}
 \end{align*}
 
 \end_inset
@@ -6483,16 +6478,12 @@ R & ^{n}=H_{1}R^{c}\\
 The covariance transformation is 
 \begin_inset Formula 
 \[
-C^{n}=TC^{c}T^{\top}
+T\text{cov}T^{\top}
 \]
 
 \end_inset
 
 where 
-\begin_inset Formula $C$
-\end_inset
-
- is the covariance and 
 \begin_inset Formula 
 \[
 T=\text{diag}\left(\frac{1}{h_{4}},\frac{1}{h_{4}},1,\frac{1}{h_{4}},\frac{1}{h_{4}},1\right).
