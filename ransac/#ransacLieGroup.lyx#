@@ -2096,7 +2096,7 @@ F_{m} & =\left.\frac{\partial x_{m}\ominus f\left(x_{m^{-}},w_{k},\delta_{m}\rig
 \begin{align*}
 G_{m} & =\left.\frac{\partial x_{m}\ominus f\left(x_{m^{-}},w_{k},\delta_{m}\right)}{\partial w_{m}}\right|_{\hat{x}_{m^{-}},\hat{w}_{m},\delta_{m}}\\
  & =\begin{bmatrix}J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)\delta_{m} & J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)\frac{\delta_{m}^{2}}{2}\\
-I\delta_{m} & 0
+0 & I\delta_{m}
 \end{bmatrix},
 \end{align*}
 
@@ -2318,7 +2318,7 @@ name "eq:Kalman_update"
 \text{Kalman gain :} & \quad & K & =\bar{P}_{m}H_{m}^{\top}S^{-1}\\
 \text{Observed error :} & \quad & \delta x_{m} & =K\hat{e}\\
 \text{State update :} & \quad & \hat{x}_{m} & =\hat{\bar{x}}_{m}\oplus\delta x_{m}\\
-\text{Cov. update :} & \quad & P_{m} & =P_{m}-KSK^{\top}.
+\text{Cov. update :} & \quad & P_{m} & =\bar{P}_{m}-KSK^{\top}.
 \end{alignat}
 
 \end_inset
@@ -2956,7 +2956,7 @@ literal "true"
 \begin_inset Formula 
 \[
 Z^{i}=\begin{cases}
-\sum_{j=1}^{n}\beta^{j}H_{m}^{\top}\left(R^{i}\right)^{-1}y_{m}^{j}\ominus h\left(x_{m}\right) & \text{if }\left|Y_{m}^{i}\right|>0\\
+\sum_{j=1}^{n}\beta^{j}H_{m}^{\top}\left(V_{m}R^{i}V_{m}^{\top}\right)^{-1}y_{m}^{j}\ominus h\left(x_{m}\right) & \text{if }\left|Y_{m}^{i}\right|>0\\
 0 & \text{else}
 \end{cases},
 \]
@@ -4536,12 +4536,17 @@ and that
 Note that 
 \begin_inset Formula 
 \[
-\dot{t}_{m}=R_{k}\exp\left(\delta_{k:m}\dot{\theta}_{k}\right)\rho_{k}.
+\dot{t}_{m}=R_{k}\exp\left(\delta_{k:m}\dot{\theta}_{k}\right)\rho_{k},
 \]
 
 \end_inset
 
-Let 
+where 
+\begin_inset Formula $\dot{\theta}_{k}$
+\end_inset
+
+ is the angular velocity.
+ Let 
 \begin_inset Formula 
 \begin{align*}
 z & =R_{k}^{\top}\dot{t}_{m}/\rho_{k}\\
@@ -4934,7 +4939,7 @@ Since we receive position measurements, we can numerically estimate the
 \psi_{k} & =\text{atan2}\left(\dot{t}_{k_{y}},\left|\dot{t}_{k_{x}}\right|\right)\\
 \theta_{k} & =\arctan\left(\frac{-\cos\left(\psi_{k}\right)\dot{t}_{k_{z}}}{\dot{t}_{k_{x}}}\right)\\
 \phi_{k} & =0\\
-\rho_{k_{x}} & =\frac{R_{k_{x}}^{\top}\dot{t}_{k}}{R_{k_{x}}^{\top}R_{k_{x}}}
+\rho_{k_{x}} & =\left\Vert \dot{t}_{k}\right\Vert 
 \end{align*}
 
 \end_inset
@@ -6478,12 +6483,16 @@ R & ^{n}=H_{1}R^{c}\\
 The covariance transformation is 
 \begin_inset Formula 
 \[
-T\text{cov}T^{\top}
+C^{n}=TC^{c}T^{\top}
 \]
 
 \end_inset
 
 where 
+\begin_inset Formula $C$
+\end_inset
+
+ is the covariance and 
 \begin_inset Formula 
 \[
 T=\text{diag}\left(\frac{1}{h_{4}},\frac{1}{h_{4}},1,\frac{1}{h_{4}},\frac{1}{h_{4}},1\right).
@@ -6498,6 +6507,10 @@ T=\text{diag}\left(\frac{1}{h_{4}},\frac{1}{h_{4}},1,\frac{1}{h_{4}},\frac{1}{h_
 The 5th entry is really zero since we assume that the body velocity in the
  left and right direction is zero.
  
+\end_layout
+
+\begin_layout Section
+PDAF with 
 \end_layout
 
 \begin_layout Standard

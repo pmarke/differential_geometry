@@ -2096,7 +2096,7 @@ F_{m} & =\left.\frac{\partial x_{m}\ominus f\left(x_{m^{-}},w_{k},\delta_{m}\rig
 \begin{align*}
 G_{m} & =\left.\frac{\partial x_{m}\ominus f\left(x_{m^{-}},w_{k},\delta_{m}\right)}{\partial w_{m}}\right|_{\hat{x}_{m^{-}},\hat{w}_{m},\delta_{m}}\\
  & =\begin{bmatrix}J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)\delta_{m} & J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)\frac{\delta_{m}^{2}}{2}\\
-I\delta_{m} & 0
+0 & I\delta_{m}
 \end{bmatrix},
 \end{align*}
 
@@ -2318,7 +2318,7 @@ name "eq:Kalman_update"
 \text{Kalman gain :} & \quad & K & =\bar{P}_{m}H_{m}^{\top}S^{-1}\\
 \text{Observed error :} & \quad & \delta x_{m} & =K\hat{e}\\
 \text{State update :} & \quad & \hat{x}_{m} & =\hat{\bar{x}}_{m}\oplus\delta x_{m}\\
-\text{Cov. update :} & \quad & P_{m} & =P_{m}-KSK^{\top}.
+\text{Cov. update :} & \quad & P_{m} & =\bar{P}_{m}-KSK^{\top}.
 \end{alignat}
 
 \end_inset
@@ -2956,7 +2956,7 @@ literal "true"
 \begin_inset Formula 
 \[
 Z^{i}=\begin{cases}
-\sum_{j=1}^{n}\beta^{j}H_{m}^{\top}\left(R^{i}\right)^{-1}y_{m}^{j}\ominus h\left(x_{m}\right) & \text{if }\left|Y_{m}^{i}\right|>0\\
+\sum_{j=1}^{n}\beta^{j}H_{m}^{\top}\left(V_{m}R^{i}V_{m}^{\top}\right)^{-1}y_{m}^{j}\ominus h\left(x_{m}\right) & \text{if }\left|Y_{m}^{i}\right|>0\\
 0 & \text{else}
 \end{cases},
 \]
@@ -6507,6 +6507,74 @@ T=\text{diag}\left(\frac{1}{h_{4}},\frac{1}{h_{4}},1,\frac{1}{h_{4}},\frac{1}{h_
 The 5th entry is really zero since we assume that the body velocity in the
  left and right direction is zero.
  
+\end_layout
+
+\begin_layout Section
+PDAF with varying noise covariances
+\end_layout
+
+\begin_layout Standard
+State update
+\begin_inset Formula 
+\[
+x_{k}=x_{k^{-}}+\sum_{i}K_{k,i}\beta_{i}\nu_{i}
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\nu_{i}$
+\end_inset
+
+ is the innovation term associated with the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ measurement and 
+\begin_inset Formula 
+\[
+K_{k,i}=\bar{P}_{k}H_{k}^{\top}S_{k,i}^{-1}
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula 
+\[
+S_{k,i}^{-1}=\left(H_{k}\bar{P}_{k}H_{k}^{\top}+V_{k}R_{k,i}V_{k}^{\top}\right)^{-1}
+\]
+
+\end_inset
+
+and 
+\begin_inset Formula $R_{k,i}$
+\end_inset
+
+ is the measurement noise associated with the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ measurement.
+\end_layout
+
+\begin_layout Standard
+The covariance update is 
+\begin_inset Formula 
+\[
+P_{k}=\bar{P}_{k}-\sum_{i}\beta_{i}K_{k,i}S_{k,i}K_{k,i}^{\top}+\sum_{i}K_{k,i}\beta_{i}\nu_{i}\nu_{i}^{\top}-\nu\nu^{\top}K_{k,i}^{\top}
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula 
+\[
+\nu=\sum_{i}\beta_{i}\nu_{i}
+\]
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
