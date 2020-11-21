@@ -2956,7 +2956,7 @@ literal "true"
 \begin_inset Formula 
 \[
 Z^{i}=\begin{cases}
-\sum_{j=1}^{n}\beta^{j}H_{m}^{\top}\left(V_{m}R^{i}V_{m}^{\top}\right)^{-1}y_{m}^{j}\ominus h\left(x_{m}\right) & \text{if }\left|Y_{m}^{i}\right|>0\\
+\sum_{j=1}^{n}\beta^{j}H_{m}^{\top}\left(S_{m}^{i}\right)^{-1}y_{m}^{j}\ominus h\left(x_{m}\right) & \text{if }\left|Y_{m}^{i}\right|>0\\
 0 & \text{else}
 \end{cases},
 \]
@@ -2983,7 +2983,7 @@ P_{m}^{-1}=\bar{P}_{m}^{-1}+\sum_{i=1}^{N_{s}}\left(\left(P_{m}^{i}\right)^{-1}-
 and the state update is 
 \begin_inset Formula 
 \[
-\hat{x}_{m}=\hat{\bar{x}}_{m}\oplus\left(P_{m}\sum_{i=1}^{N_{s}}Z^{i}\right).
+\hat{x}_{m}=\hat{\bar{x}}_{m}\oplus\left(\bar{P}_{m}\sum_{i=1}^{N_{s}}Z^{i}\right).
 \]
 
 \end_inset
@@ -6541,7 +6541,7 @@ K_{k,i}=\bar{P}_{k}H_{k}^{\top}S_{k,i}^{-1}
 where 
 \begin_inset Formula 
 \[
-S_{k,i}^{-1}=\left(H_{k}\bar{P}_{k}H_{k}^{\top}+V_{k}R_{k,i}V_{k}^{\top}\right)^{-1}
+S_{k,i}=\left(H_{k}\bar{P}_{k}H_{k}^{\top}+V_{k}R_{k,i}V_{k}^{\top}\right)
 \]
 
 \end_inset
@@ -6561,7 +6561,7 @@ and
 The covariance update is 
 \begin_inset Formula 
 \[
-P_{k}=\bar{P}_{k}-\sum_{i}\beta_{i}K_{k,i}S_{k,i}K_{k,i}^{\top}+\sum_{i}K_{k,i}\beta_{i}\nu_{i}\nu_{i}^{\top}-\nu\nu^{\top}K_{k,i}^{\top}
+P_{k}=\bar{P}_{k}-\sum_{i}\beta_{i}K_{k,i}S_{k,i}K_{k,i}^{\top}+\sum_{i}\left(\beta_{i}K_{k,i}\nu_{i}\nu_{i}^{\top}-\nu\nu^{\top}K_{k,i}^{\top}\right)
 \]
 
 \end_inset
