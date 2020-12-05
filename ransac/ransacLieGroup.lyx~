@@ -2752,7 +2752,7 @@ literal "true"
 \begin_inset Formula $\hat{y}_{k}=h\left(f\left(\hat{x}_{k^{-}},\delta_{k}\right)\right)$
 \end_inset
 
- and covariance 
+ and innovation covariance 
 \begin_inset Formula $S$
 \end_inset
 
@@ -2760,7 +2760,7 @@ literal "true"
 \begin_inset Formula $S$
 \end_inset
 
- is the innovation covariance described in equation 
+ is described in equation 
 \begin_inset CommandInset ref
 LatexCommand eqref
 reference "eq:Kalman_update"
@@ -2983,7 +2983,7 @@ P_{m}^{-1}=\bar{P}_{m}^{-1}+\sum_{i=1}^{N_{s}}\left(\left(P_{m}^{i}\right)^{-1}-
 and the state update is 
 \begin_inset Formula 
 \[
-\hat{x}_{m}=\hat{\bar{x}}_{m}\oplus\left(P_{m}\sum_{i=1}^{N_{s}}Z^{i}\right).
+\hat{x}_{m}=\hat{\bar{x}}_{m}\oplus\left(\bar{P}_{m}\sum_{i=1}^{N_{s}}Z^{i}\right).
 \]
 
 \end_inset
@@ -3711,6 +3711,22 @@ P^{-1} & =\sum_{i=1}^{n}\left(P^{i}\right)^{-1}\\
 
 \end_inset
 
+
+\end_layout
+
+\begin_layout Standard
+For Lie group settings, the state update is 
+\begin_inset Formula 
+\[
+\hat{x}_{SCI}=\hat{x}^{1}\oplus\left(P\sum_{i=2}^{n}\left(\left(P^{i}\right)^{-1}\left(\hat{x}^{i}\ominus\hat{x}^{1}\right)\right)\right),
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 The error covariance 
 \begin_inset Formula $P^{-1}$
 \end_inset
