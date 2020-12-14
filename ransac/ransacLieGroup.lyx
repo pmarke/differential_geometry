@@ -3756,6 +3756,15 @@ Generate
 
 \begin_layout Itemize
 Find
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+btprint "btPrintCited"
+bibfiles "/home/mark/Documents/library"
+options "plain"
+
+\end_inset
+
+
 \begin_inset Formula 
 \[
 r_{\text{max}}=\max_{j=1,\ldots,N}\frac{\left(x^{j}\right)^{\top}P^{-1}x^{j}}{\underset{i=1,\ldots,N}{\max}\left\{ \left(x^{j}\right)^{\top}\left(P^{i}\right)^{-1}x^{j}\right\} }

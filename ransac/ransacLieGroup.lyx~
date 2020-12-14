@@ -3758,7 +3758,7 @@ Generate
 Find
 \begin_inset Formula 
 \[
-r_{\text{max}}=\max_{j=1,\ldots,N}\frac{\left(x^{j}\right)^{\top}P^{-1}x^{j}}{\underset{j=1,\ldots,N}{\max}\left\{ \left(x^{j}\right)^{\top}P^{-1}x^{j}\right\} }
+r_{\text{max}}=\max_{j=1,\ldots,N}\frac{\left(x^{j}\right)^{\top}P^{-1}x^{j}}{\underset{i=1,\ldots,N}{\max}\left\{ \left(x^{j}\right)^{\top}\left(P^{i}\right)^{-1}x^{j}\right\} }
 \]
 
 \end_inset
@@ -3766,7 +3766,7 @@ r_{\text{max}}=\max_{j=1,\ldots,N}\frac{\left(x^{j}\right)^{\top}P^{-1}x^{j}}{\u
 and
 \begin_inset Formula 
 \[
-r_{\text{min}}=\min_{j=1,\ldots,N}\frac{\left(x^{j}\right)^{\top}P^{-1}x^{j}}{\underset{j=1,\ldots,N}{\max}\left\{ \left(x^{j}\right)^{\top}P^{-1}x^{j}\right\} }
+r_{\text{min}}=\min_{j=1,\ldots,N}\frac{\left(x^{j}\right)^{\top}P^{-1}x^{j}}{\underset{i=1,\ldots,N}{\max}\left\{ \left(x^{j}\right)^{\top}\left(P^{i}\right)^{-1}x^{j}\right\} }
 \]
 
 \end_inset
