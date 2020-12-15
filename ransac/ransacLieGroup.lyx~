@@ -2075,7 +2075,7 @@ p\left(x_{m}\mid x_{m^{-}}\right)\approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\om
 where
 \begin_inset Formula 
 \[
-x_{m}\ominus\tilde{f}=x_{m}\ominus f\left(\hat{x}_{m},0,\delta_{m}\right)+F_{m}\delta x_{m^{-}}+G_{m}w_{m},
+x_{m}\ominus\tilde{f}=x_{m}\ominus f\left(\hat{x}_{m^{-}},0,\delta_{m^{-}}\right)+F_{m}\delta x_{m^{-}}+G_{m}w_{m},
 \]
 
 \end_inset
@@ -2220,7 +2220,7 @@ e=y_{m}\ominus h\left(x_{m},v_{m}\right).
 We can linearize the measurement probability to get 
 \begin_inset Formula 
 \[
-p\left(y_{m}\mid x_{m}\right)\approx\eta\exp\left(-\frac{1}{2}\tilde{e}^{\top}R^{-1}\tilde{e}\right)
+p\left(y_{m}\mid x_{m}\right)\approx\eta\exp\left(-\frac{1}{2}\tilde{e}_{m}^{\top}R^{-1}\tilde{e}_{m}\right)
 \]
 
 \end_inset
@@ -2228,7 +2228,7 @@ p\left(y_{m}\mid x_{m}\right)\approx\eta\exp\left(-\frac{1}{2}\tilde{e}^{\top}R^
 where
 \begin_inset Formula 
 \[
-\tilde{e}=y_{m}\ominus h\left(\hat{x}_{m},\hat{v}_{m}\right)+H_{m}\delta x_{m}+V_{m}v_{m},
+\tilde{e}_{m}=y_{m}\ominus h\left(\hat{x}_{m},\hat{v}_{m}\right)+H_{m}\delta x_{m}+V_{m}\hat{v}_{m},
 \]
 
 \end_inset
@@ -2435,6 +2435,31 @@ where
 \[
 \sum_{m=0}^{k}\sum_{j=1}^{\ell\left(m\right)}\log\left(-p\left(y_{m}^{j}\mid x_{k}\right)\right).
 \]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+According to the theorm of total probability
+\begin_inset Formula 
+\[
+p\left(y_{m}\mid x_{k}\right)=\int_{x_{m}}p\left(y_{m}\mid x_{m}\right)p\left(x_{m}\mid x_{k}\right)dx_{m}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Linearizing the probability and expanding it out we get 
+\begin_inset Formula 
+\begin{align*}
+p\left(y_{m}\mid x_{k}\right) & \approx\eta\int_{\delta x_{m}}\exp\left(-\frac{1}{2}\left(y_{m}\ominus h\left(\hat{x}_{m},\hat{v}_{m}\right)+H_{m}\delta x_{m}\right)^{\top}R^{-1}y_{m}\ominus h\left(\hat{x}_{m},\hat{v}_{m}\right)+H_{m}\delta x_{m}\right)\\
+ & \exp\left(-\frac{1}{2}\left(x_{m}\ominus f\left(\hat{x}_{k},0,\delta_{m}\right)+F_{m}\delta x_{m}\right)^{\top}Q^{-1}\left(x_{m}\ominus f\left(\hat{x}_{m},0,\delta_{m}\right)+F_{m}\delta x_{m^{-}}\right)\right)d\delta x_{m}
+\end{align*}
 
 \end_inset
 
@@ -3756,6 +3781,15 @@ Generate
 
 \begin_layout Itemize
 Find
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+btprint "btPrintCited"
+bibfiles "/home/mark/Documents/library"
+options "plain"
+
+\end_inset
+
+
 \begin_inset Formula 
 \[
 r_{\text{max}}=\max_{j=1,\ldots,N}\frac{\left(x^{j}\right)^{\top}P^{-1}x^{j}}{\underset{i=1,\ldots,N}{\max}\left\{ \left(x^{j}\right)^{\top}\left(P^{i}\right)^{-1}x^{j}\right\} }

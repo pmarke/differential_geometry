@@ -6694,20 +6694,15 @@ p\left(y_{m}^{j}\mid x_{k}\right),
 
 \end_inset
 
-according to the total probability theorm, is
+according to the total probability theorm is
 \begin_inset Formula 
 \[
-\int_{x_{m}}p\left(y_{m}\mid x_{m}\right)p\left(x_{m}\mid x_{k}\right)d_{x_{m}}.
+\int_{x_{m}}p\left(y_{m}^{j}\mid x_{m}\right)p\left(x_{m}\mid x_{k}\right)d_{x_{m}}.
 \]
 
 \end_inset
 
-where we dropped the superscript 
-\begin_inset Formula $j$
-\end_inset
-
-.
- We solve this integral by first linearizing the two probabilities
+We solve this integra by first linearizing the two probabilities
 \end_layout
 
 \begin_layout Standard
@@ -6721,7 +6716,7 @@ p\left(x_{m}\mid x_{k}\right)\approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus
 
 \begin_inset Formula 
 \[
-p\left(y_{m}^{j}\mid x_{m}\right)\approx\eta\exp\left(-\frac{1}{2}\left(y_{m}\ominus h\left(\hat{x}_{m},\hat{v}_{m}\right)+H_{m}\delta x_{m}+V_{m}\hat{v}_{m}\right)^{\top}R^{-1}\left(y_{m}\ominus h\left(\hat{x}_{m},\hat{v}_{m}\right)+H_{m}\delta x_{m}+V_{m}\hat{v}_{m}\right)\right)
+p\left(y_{m}^{j}\mid x_{m}\right)\approx\eta\exp\left(\right)
 \]
 
 \end_inset
@@ -6735,16 +6730,7 @@ where
 \end_inset
 
  is a normalizing coefficient which we overload.
- Multiplying the two probabilities together yields 
-\begin_inset Formula 
-\begin{align*}
-p\left(y_{m}\mid x_{m}\right)p\left(x_{m}\mid x_{k}\right)= & \eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus f^{-1}\left(\hat{x}_{k},0,\delta_{k:m}\right)+F_{k}^{-1}\delta x_{k}+G_{k}w_{k}\right)^{\top}Q^{-1}\left(x_{m}\ominus f^{-1}\left(\hat{x}_{k},0,\delta_{k:m}\right)+F_{k}^{-1}\delta x_{k}+G_{k}w_{k}\right)+\right.\\
- & \left.-\frac{1}{2}\left(y_{m}\ominus h\left(\hat{x}_{m},\hat{v}_{m}\right)+H_{m}\delta x_{m}+V_{m}\hat{v}_{m}\right)^{\top}R^{-1}\left(y_{m}\ominus h\left(\hat{x}_{m},\hat{v}_{m}\right)+H_{m}\delta x_{m}+V_{m}\hat{v}_{m}\right)\right)
-\end{align*}
-
-\end_inset
-
-
+ 
 \end_layout
 
 \begin_layout Standard
