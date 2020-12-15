@@ -2030,84 +2030,109 @@ where
 \begin_inset Formula $p\left(x_{m}\mid x_{m^{-}}\right)$
 \end_inset
 
- and define it as 
+ which we can calculate by taking the first and second moments of 
+\begin_inset Formula $x_{m}$
+\end_inset
+
+ conditioned on 
+\begin_inset Formula $x_{m^{-}}$
+\end_inset
+
+.
+ In other words, calculate the first and second moments of 
 \begin_inset Formula 
 \[
-p\left(x_{m}\mid x_{m^{-}}\right)=\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus f\right)^{\top}Q^{-1}\left(x_{m}\ominus f\right)\right),
+x_{m}=f\left(x_{m^{-}},w_{m},\delta_{m}\right).
+\]
+
+\end_inset
+
+Since 
+\begin_inset Formula $p\left(x_{m}\mid x_{m^{-}}\right)$
+\end_inset
+
+ is conditioned on 
+\begin_inset Formula $x_{m^{-}}$
+\end_inset
+
+, 
+\begin_inset Formula $x_{m^{-}}$
+\end_inset
+
+ is not a random variable; however, the noise term 
+\begin_inset Formula $w_{m}$
+\end_inset
+
+ is.
+ In the case that 
+\begin_inset Formula $f$
+\end_inset
+
+ is non linear in the noise term, we need to linearize 
+\begin_inset Formula $f$
+\end_inset
+
+ w.r.t.
+ the process noise in order to approximate 
+\begin_inset Formula $p\left(x_{m}\mid x_{m^{-}}\right)$
+\end_inset
+
+ as Gaussian.
+ Thus
+\begin_inset Formula 
+\[
+x_{m}\approx f\left(x_{m^{-}},0,\delta_{m}\right)+G_{m}w_{m}
 \]
 
 \end_inset
 
 where 
-\begin_inset Formula $x_{m}\ominus f=x_{m}\ominus f\left(x_{m^{-}},w_{k},\delta_{m}\right)$
+\begin_inset Formula 
+\[
+G_{m}=\left.\frac{\partial f\left(x_{m^{-}},w_{m},\delta_{m}\right)}{\partial w_{m}}\right|_{w_{m}=0}.
+\]
+
 \end_inset
 
-.
-\end_layout
 
-\begin_layout Standard
-We can approximate 
+\begin_inset Formula $G_{m}$
+\end_inset
+
+ is evaluated at 
+\begin_inset Formula $w_{m}=0$
+\end_inset
+
+ since 
+\begin_inset Formula $0$
+\end_inset
+
+ is the mean of the process noise.
+ We can now calculate the first and second moments of 
+\begin_inset Formula $x_{m}$
+\end_inset
+
+ to get 
+\begin_inset Formula 
+\begin{align*}
+\text{E}\left[x_{m}\right] & =f\left(x_{m^{-}},0,\delta_{m}\right)\\
+\text{cov}\left[x_{m}\right] & =G_{m}QG_{m}^{\top}.
+\end{align*}
+
+\end_inset
+
+Using the first and second moments to approximate 
 \begin_inset Formula $p\left(x_{m}\mid x_{m^{-}}\right)$
 \end_inset
 
- with a Gaussian distribution by using the first order Taylor series expansion
- of 
-\begin_inset Formula $x_{m}\ominus f$
-\end_inset
-
- and treating 
-\begin_inset Formula $\delta x_{m^{-}}$
-\end_inset
-
- and 
-\begin_inset Formula $w_{m}$
-\end_inset
-
- as perturbations; this is known as linearizing.
- Doing so yields
+, we get 
 \begin_inset Formula 
 \[
-p\left(x_{m}\mid x_{m^{-}}\right)\approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus\tilde{f}\right)^{\top}Q^{-1}\left(x_{m}\ominus\tilde{f}\right)\right),
+p\left(x_{m}\mid x_{m^{-}}\right)\approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus f\left(x_{m^{-}},0,\delta_{m}\right)\right)^{\top}\left(G_{m}QG_{m}^{\top}\right)^{-1}\left(x_{m}\ominus f\left(x_{m^{-}},0,\delta_{m}\right)\right)\right).
 \]
 
 \end_inset
 
-where
-\begin_inset Formula 
-\[
-x_{m}\ominus\tilde{f}=x_{m}\ominus f\left(\hat{x}_{m^{-}},0,\delta_{m^{-}}\right)+F_{m}\delta x_{m^{-}}+G_{m}w_{m},
-\]
 
-\end_inset
-
- 
-\begin_inset Formula 
-\begin{align*}
-F_{m} & =\left.\frac{\partial x_{m}\ominus f\left(x_{m^{-}},w_{k},\delta_{m}\right)}{\partial x_{m^{-}}}\right|_{\hat{x}_{m^{-}},\hat{w}_{m},\delta_{m}}\\
- & =\begin{bmatrix}\mathbf{Ad}_{\text{Exp}\left(\delta_{m}\hat{u}_{m^{-}}\right)^{-1}} & J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)\delta_{m}\\
-0 & I
-\end{bmatrix},
-\end{align*}
-
-\end_inset
-
-
-\begin_inset Formula 
-\begin{align*}
-G_{m} & =\left.\frac{\partial x_{m}\ominus f\left(x_{m^{-}},w_{k},\delta_{m}\right)}{\partial w_{m}}\right|_{\hat{x}_{m^{-}},\hat{w}_{m},\delta_{m}}\\
- & =\begin{bmatrix}J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)\delta_{m} & J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)\frac{\delta_{m}^{2}}{2}\\
-0 & I\delta_{m}
-\end{bmatrix},
-\end{align*}
-
-\end_inset
-
-and 
-\begin_inset Formula $\hat{w}_{m}$
-\end_inset
-
- is the expected value of the process noise which is zero.
- 
 \end_layout
 
 \begin_layout Standard
@@ -2120,14 +2145,22 @@ Let
 \end_inset
 
  after state propagation.
- It is defined as 
+ According to the theorem of total probability, 
+\begin_inset Formula $\bar{p}\left(x_{m}\right)$
+\end_inset
+
+ is defined as
 \begin_inset Formula 
 \[
-\bar{p}\left(x_{m}\right)=\int p\left(x_{m}\mid x_{m^{-}}\right)p\left(x_{m^{-}}\right)dx_{m^{-}}.
+\bar{p}\left(x_{m}\right)=\int_{x_{m^{-}}}p\left(x_{m}\mid x_{m^{-}}\right)p\left(x_{m^{-}}\right)dx_{m^{-}}.
 \]
 
 \end_inset
 
+
+\end_layout
+
+\begin_layout Standard
 We approximate 
 \begin_inset Formula $\bar{p}\left(x_{m}\right)$
 \end_inset
@@ -2149,8 +2182,7 @@ We approximate
 \begin_inset Formula $\bar{P}_{m}$
 \end_inset
 
-.
- The new state estimate and error covariance is calculated as 
+.The new state estimate and error covariance is calculated as 
 \begin_inset ERT
 status open
 
@@ -2192,7 +2224,43 @@ end{subequations}
 
 \end_inset
 
-this calculation is called the propagation or the prediction step.
+ with 
+\begin_inset Formula 
+\begin{align*}
+F_{m} & =\left.\frac{\partial x_{m}\ominus f\left(x_{m^{-}},w_{k},\delta_{m}\right)}{\partial x_{m^{-}}}\right|_{\hat{x}_{m^{-}},\hat{w}_{m},\delta_{m}}\\
+ & =\begin{bmatrix}\mathbf{Ad}_{\text{Exp}\left(\delta_{m}\hat{u}_{m^{-}}\right)^{-1}} & J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)\delta_{m}\\
+0 & I
+\end{bmatrix},
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+G_{m} & =\left.\frac{\partial x_{m}\ominus f\left(x_{m^{-}},w_{k},\delta_{m}\right)}{\partial w_{m}}\right|_{\hat{x}_{m^{-}},\hat{w}_{m},\delta_{m}}\\
+ & =\begin{bmatrix}J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)\delta_{m} & J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)\frac{\delta_{m}^{2}}{2}\\
+0 & I\delta_{m}
+\end{bmatrix}.
+\end{align*}
+
+\end_inset
+
+This calculation is called the propagation or the prediction step.
+ Using the calculated mean and covariance, we can approximate 
+\begin_inset Formula $\bar{p}\left(x_{m}\right)$
+\end_inset
+
+ as.
+\begin_inset Formula 
+\begin{align*}
+\bar{p}\left(x_{m}\right) & \approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus\hat{\bar{x}}_{m}\right)^{\top}\bar{P}_{m}^{-1}\left(x_{m}\ominus\hat{\bar{x}}_{m}\right)\right).\\
+ & \approx\exp\left(-\frac{1}{2}\delta x_{m}^{\top}\bar{P}_{m}^{-1}\delta x_{m}\right).
+\end{align*}
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -2201,88 +2269,72 @@ The probability of a measurement conditioned on the state is called the
 \begin_inset Formula $p\left(y_{m}\mid x_{m}\right)$
 \end_inset
 
- and defined as 
+ which we can calculate by taking the first and second moments of 
+\begin_inset Formula $y_{m}$
+\end_inset
+
+ conditioned on 
+\begin_inset Formula $x_{m}$
+\end_inset
+
+.
+ If the observation function is non-linear in the measurement noise, then
+ we approximate 
+\begin_inset Formula $p\left(y_{m}\mid x_{m}\right)$
+\end_inset
+
+ via linearization to get 
 \begin_inset Formula 
 \[
-p\left(y_{m}\mid x_{m}\right)=\eta\exp\left(-\frac{1}{2}e^{\top}R^{-1}e\right),
+p\left(y_{m}\mid x_{m}\right)\approx\eta\exp\left(-\frac{1}{2}y_{m}\ominus h\left(x_{m},0\right)^{\top}\left(V_{m}^{\top}RV_{m}\right)^{-1}y_{m}\ominus h\left(x_{m},0\right)\right),
 \]
 
 \end_inset
 
 where 
 \begin_inset Formula 
-\[
-e=y_{m}\ominus h\left(x_{m},v_{m}\right).
-\]
-
-\end_inset
-
-We can linearize the measurement probability to get 
-\begin_inset Formula 
-\[
-p\left(y_{m}\mid x_{m}\right)\approx\eta\exp\left(-\frac{1}{2}\tilde{e}_{m}^{\top}R^{-1}\tilde{e}_{m}\right)
-\]
-
-\end_inset
-
-where
-\begin_inset Formula 
-\[
-\tilde{e}_{m}=y_{m}\ominus h\left(\hat{x}_{m},\hat{v}_{m}\right)+H_{m}\delta x_{m}+V_{m}\hat{v}_{m},
-\]
-
-\end_inset
-
- 
-\begin_inset Formula 
 \begin{align*}
-H_{m} & =\left.\frac{\partial y_{m}\ominus h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{\hat{x}_{m},\hat{v}_{m}},\\
- & =\left.\frac{\partial\log\left(e\right)}{\partial e}\frac{\partial e}{\partial h^{-1}\left(x_{m},v_{m}\right)}\frac{\partial h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{\hat{x}_{m},\hat{v}_{m}}\\
- & =J_{r}^{-1}\left(\hat{e}\right)\mathbf{Ad}_{y_{m}^{-1}}\left.\frac{\partial h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{\hat{x}_{m},\hat{v}_{m}}
+V_{m} & =\left.\frac{\partial y_{m}\ominus h\left(x_{m},v_{m}\right)}{\partial v_{m}}\right|_{v_{m}=0}.
 \end{align*}
 
 \end_inset
 
 
-\begin_inset Formula 
-\begin{align*}
-V_{m} & =\left.\frac{\partial y_{m}\ominus h\left(x_{m},v_{m}\right)}{\partial v_{m}}\right|_{\hat{x}_{m},\hat{v}_{m}},\\
- & =J_{r}^{-1}\left(\hat{e}\right)\mathbf{Ad}_{y_{m}^{-1}}\left.\frac{\partial h\left(x_{m},v_{m}\right)}{\partial v_{m}}\right|_{\hat{x}_{m},\hat{v}_{m}}
-\end{align*}
-
-\end_inset
-
- 
-\begin_inset Formula $\hat{e}=y_{m}\ominus h\left(\hat{x}_{m},\hat{v}_{m}\right)$
-\end_inset
-
- and 
-\begin_inset Formula $\hat{v}_{m}$
-\end_inset
-
- is the expected value of the measurement noise which is zero.
 \end_layout
 
 \begin_layout Standard
 The probability of the state given a measurement is called the posterior
  denoted 
-\begin_inset Formula $p\left(x\mid y\right)$
+\begin_inset Formula $p\left(x_{m}\mid y_{m}\right)$
 \end_inset
 
  and defined as 
 \begin_inset Formula 
 \[
-p\left(x\mid y\right)=\frac{p\left(y\mid x\right)\bar{p}\left(x\right)}{p\left(y\right)}.
+p\left(x_{m}\mid y_{m}\right)=\frac{p\left(y_{m}\mid x_{m}\right)\bar{p}\left(x_{m}\right)}{p\left(y_{m}\right)}.
 \]
 
 \end_inset
 
-We improve the state estimate 
-\begin_inset Formula $\hat{x}_{m}$
+
+\end_layout
+
+\begin_layout Standard
+We cannot directly calcualte 
+\begin_inset Formula $p\left(x_{m}\mid y_{m}\right)$
 \end_inset
 
- by maximizing the posterior distribution.
- This process is outlined in 
+ since 
+\begin_inset Formula $p\left(y_{m}\right)$
+\end_inset
+
+ is unknown.
+ However, it is often the case that we want to maximize 
+\begin_inset Formula $p\left(x_{m}\mid y_{m}\right)$
+\end_inset
+
+.
+ To do this, we follow a simimliar process to the one outlined in 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Thrun2006"
@@ -2290,7 +2342,155 @@ literal "true"
 
 \end_inset
 
- which gives us the standard Kalman filter update step:
+, except we modify it for the Lie group setting.
+ We begin by rewriting 
+\begin_inset Formula $p\left(x_{m}\mid y_{m}\right)$
+\end_inset
+
+ as 
+\begin_inset Formula 
+\[
+p\left(x_{m}\mid y_{m}\right)=\eta p\left(y_{m}\mid x_{m}\right)\bar{p}\left(x_{m}\right)
+\]
+
+\end_inset
+
+where we have absorbed 
+\begin_inset Formula $p\left(y_{m}\right)$
+\end_inset
+
+ into 
+\begin_inset Formula $\eta$
+\end_inset
+
+ since it won't impact the maximization.
+ In order to enforce 
+\begin_inset Formula $p\left(x_{m}\mid y_{m}\right)$
+\end_inset
+
+, we linearize it to get 
+\begin_inset Formula 
+\[
+p\left(x_{m}\mid y_{m}\right)\approx\eta\exp\left(-\frac{1}{2}\delta x_{m}^{\top}\bar{P}_{m}^{-1}\delta x_{m}-\frac{1}{2}\left(y_{m}\ominus h\left(\hat{x}_{m},0\right)+H_{m}\delta x_{m}\right)^{\top}\left(V_{m}^{\top}RV_{m}\right)^{-1}\left(y_{m}\ominus h\left(\hat{x}_{m},0\right)+H_{m}\delta x_{m}\right)\right)
+\]
+
+\end_inset
+
+with 
+\begin_inset Formula 
+\begin{align*}
+H_{m} & =\left.\frac{\partial y_{m}\ominus h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{x_{m}=\hat{x}_{m},V_{m}=0},\\
+ & =\left.\frac{\partial\log\left(e\right)}{\partial e}\frac{\partial e}{\partial h^{-1}\left(x_{m},v_{m}\right)}\frac{\partial h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{x_{m}=\hat{x}_{m},V_{m}=0}\\
+ & =J_{r}^{-1}\left(\hat{e}\right)\mathbf{Ad}_{y_{m}^{-1}}\left.\frac{\partial h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{x_{m}=\hat{x}_{m},V_{m}=0}
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+V_{m} & =\left.\frac{\partial y_{m}\ominus h\left(x_{m},v_{m}\right)}{\partial v_{m}}\right|_{x_{m}=\hat{x}_{m},V_{m}=0},\\
+ & =J_{r}^{-1}\left(\hat{e}\right)\mathbf{Ad}_{y_{m}^{-1}}\left.\frac{\partial h\left(x_{m},v_{m}\right)}{\partial v_{m}}\right|_{x_{m}=\hat{x}_{m},V_{m}=0}.
+\end{align*}
+
+\end_inset
+
+Note that we have redefined 
+\begin_inset Formula $V_{m}$
+\end_inset
+
+ to evaluate at a different linearized state.
+\end_layout
+
+\begin_layout Standard
+Maximizing 
+\begin_inset Formula $p\left(x_{m}\mid y_{m}\right)$
+\end_inset
+
+ is the same as minimizing 
+\begin_inset Formula $\log\left(-p\left(x_{m}\mid y_{m}\right)\right)$
+\end_inset
+
+, thus the problem is simplified to 
+\begin_inset Formula 
+\[
+\log\left(-\eta\right)+\frac{1}{2}\delta x_{m}^{\top}\bar{P}_{m}^{-1}\delta x_{m}+\frac{1}{2}\left(y_{m}\ominus h\left(\hat{x}_{m},0\right)+H_{m}\delta x_{m}\right)^{\top}\left(V_{m}^{\top}RV_{m}\right)^{-1}\left(y_{m}\ominus h\left(\hat{x}_{m},0\right)+H_{m}\delta x_{m}\right).
+\]
+
+\end_inset
+
+Since the term 
+\begin_inset Formula $\log\left(-\eta\right)$
+\end_inset
+
+ is a constant, it has no impact on the optimization and can be removed
+ to finally get the optimization problem
+\begin_inset Formula 
+\[
+\underset{\delta x_{m}}{\text{min}}J_{m}=\frac{1}{2}\delta x_{m}^{\top}\bar{P}_{m}^{-1}\delta x_{m}+\frac{1}{2}\left(y_{m}\ominus h\left(\hat{x}_{m},0\right)+H_{m}\delta x_{m}\right)^{\top}\left(V_{m}^{\top}RV_{m}\right)^{-1}\left(y_{m}\ominus h\left(\hat{x}_{m},0\right)+H_{m}\delta x_{m}\right).
+\]
+
+\end_inset
+
+Since it is quadratic, we can easily find the minimum by taking the first
+ derivative, setting it to zero and solving for 
+\begin_inset Formula $\delta x_{m}^{\top}$
+\end_inset
+
+.
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial J_{m}}{\partial\delta x_{m}} & =\delta x_{m}^{\top}\bar{P}_{m}^{-1}+y_{m}\ominus h\left(\hat{x}_{m},0\right)^{\top}\left(V_{m}^{\top}RV_{m}\right)^{-1}H_{m}+\delta x_{m}^{\top}H_{m}^{\top}\left(V_{m}^{\top}RV_{m}\right)^{-1}H_{m}
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\delta x_{m}=-\left(\bar{P}_{m}^{-1}+H_{m}^{\top}\left(V_{m}^{\top}RV_{m}\right)^{-1}H_{m}\right)^{-1}H_{m}^{\top}\left(V_{m}^{\top}RV_{m}\right)^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)^{\top}
+\]
+
+\end_inset
+
+which can be rewritten as 
+\begin_inset Formula 
+\[
+\delta x_{m}=-\bar{P}_{m}H_{m}^{\top}\left(H_{m}\bar{P}_{m}H_{m}^{\top}+V_{m}RV_{m}^{\top}\right)^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)^{\top}
+\]
+
+\end_inset
+
+which is the mean that miximizes the Gaussian approximation of 
+\begin_inset Formula $p\left(x_{m}\mid y_{m}\right)$
+\end_inset
+
+.
+ The corresponding covariance of Gaussian approximation of 
+\begin_inset Formula $p\left(x_{m}\mid y_{m}\right)$
+\end_inset
+
+ is 
+\begin_inset Formula 
+\[
+\frac{\partial^{2}J_{m}}{\partial\left(\delta x_{m}\right)^{2}}=\left(\bar{P}_{m}^{-1}+H_{m}^{\top}\left(V_{m}^{\top}RV_{m}\right)^{-1}H_{m}\right)^{-1}.
+\]
+
+\end_inset
+
+In order for 
+\begin_inset Formula $\delta x_{m}$
+\end_inset
+
+ to be zero mean, we add its mean onto the estimate of 
+\begin_inset Formula $\hat{\bar{x}}$
+\end_inset
+
+ such that 
+\end_layout
+
+\begin_layout Standard
+Putting everything together, we get the standard Kalman filter for Lie groups:
 \begin_inset ERT
 status open
 
@@ -2316,7 +2516,7 @@ name "eq:Kalman_update"
 \text{Innovation :} & \quad & \hat{e} & =y_{m}\ominus h\left(\hat{x}_{m},\hat{v}_{m}\right)\\
 \text{Innovation cov. :} & \quad & S & =H_{m}\bar{P}_{m}H_{m}^{\top}+V_{m}RV_{m}^{\top}\\
 \text{Kalman gain :} & \quad & K & =\bar{P}_{m}H_{m}^{\top}S^{-1}\\
-\text{Observed error :} & \quad & \delta x_{m} & =K\hat{e}\\
+\text{Observed error :} & \quad & \delta x_{m} & =-K\hat{e}\\
 \text{State update :} & \quad & \hat{x}_{m} & =\hat{\bar{x}}_{m}\oplus\delta x_{m}\\
 \text{Cov. update :} & \quad & P_{m} & =\bar{P}_{m}-KSK^{\top}.
 \end{alignat}
@@ -2611,7 +2811,7 @@ Using the inverted system model we construct the linearized probability
 \begin_inset Formula $p\left(y_{m}^{j}\mid x_{k}\right)$
 \end_inset
 
- by calculating the mean an covariance.
+ by calculating the mean and covariance.
  We do this by linearizing the term 
 \begin_inset Formula 
 \[
@@ -6702,13 +6902,34 @@ according to the total probability theorm, is
 
 \end_inset
 
+
+\end_layout
+
+\begin_layout Standard
 where we dropped the superscript 
 \begin_inset Formula $j$
 \end_inset
 
 .
- We solve this integral by approximating the probabilities as Gaussian distribut
-ions using the first and second moments
+ We quickly recall that 
+\begin_inset Formula $x_{m}=\hat{x}_{m}\oplus\delta x_{m}$
+\end_inset
+
+ where 
+\begin_inset Formula $\delta x_{m}$
+\end_inset
+
+ is a random variable; therefore, the integral can also be written in terms
+ of 
+\begin_inset Formula $\delta x_{m}$
+\end_inset
+
+ which we will exploit later.
+\end_layout
+
+\begin_layout Standard
+We solve this integral by first approximating the probabilities as Gaussian
+ distributions using the first and second moments
 \end_layout
 
 \begin_layout Standard
@@ -6722,16 +6943,28 @@ p\left(x_{m}\mid x_{k}\right)\approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus
 
 \begin_inset Formula 
 \[
-p\left(y_{m}^{j}\mid x_{m}\right)\approx\eta\exp\left(-\frac{1}{2}\left(y_{m}\ominus h\left(x_{m},0\right)\right)^{\top}\left(V_{m}RV_{m}^{\top}\right)^{-1}\left(y_{m}\ominus h\left(x_{m},0\right)\right)\right)
+p\left(y_{m}^{j}\mid x_{m}\right)\approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)\right)^{\top}\left(V_{m}RV_{m}^{\top}\right)^{-1}\left(y_{m}\ominus h\left(x_{m},0\right)\right)\right)
 \]
 
 \end_inset
 
 where 
-\begin_inset Formula $x_{k}=\hat{x}_{k}\exp\left(\delta x_{k}\right)$
+\begin_inset Formula 
+\[
+G_{k:m}=\left.\frac{\partial x_{m}\ominus f^{-1}\left(x_{k},w_{m},\delta_{k:m}\right)}{\partial w_{m}}\right|_{w_{m}=0}
+\]
+
 \end_inset
 
- and 
+maps the process noise to state space, 
+\begin_inset Formula 
+\[
+V_{m}=\left.\frac{\partial x_{m}\ominus f^{-1}\left(x_{k},v_{m},\delta_{k:m}\right)}{\partial v_{m}}\right|_{v_{m}=0}
+\]
+
+\end_inset
+
+maps the measurement noise to the measurement space and 
 \begin_inset Formula $\eta$
 \end_inset
 
@@ -6739,7 +6972,7 @@ where
  Multiplying the two probabilities together yields 
 \begin_inset Formula 
 \begin{align*}
-p\left(y_{m}\mid x_{m}\right)p\left(x_{m}\mid x_{k}\right)= & \eta\exp\left(-L_{t}\right)
+p\left(y_{m}\mid x_{m}\right)p\left(x_{m}\mid x_{k}\right)= & \eta\exp\left(-L_{m}\right)
 \end{align*}
 
 \end_inset
@@ -6747,7 +6980,7 @@ p\left(y_{m}\mid x_{m}\right)p\left(x_{m}\mid x_{k}\right)= & \eta\exp\left(-L_{
 with 
 \begin_inset Formula 
 \begin{align*}
-L_{t} & =\frac{1}{2}\left(x_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)\right)^{\top}\bar{Q}^{-1}\left(x_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)\right)\\
+L_{m} & =\frac{1}{2}\left(x_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)\right)^{\top}\bar{Q}^{-1}\left(x_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)\right)\\
  & +\frac{1}{2}\left(y_{m}\ominus h\left(x_{m},0\right)\right)^{\top}\bar{R}^{-1}\left(y_{m}\ominus h\left(x_{m},0\right)\right)\\
 \bar{Q} & =G_{k:m}QG_{k:m}^{\top}\\
 \bar{R} & =V_{m}RV_{m}^{\top}
@@ -6760,11 +6993,11 @@ L_{t} & =\frac{1}{2}\left(x_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)\r
 
 \begin_layout Standard
 We decompose 
-\begin_inset Formula $L_{t}$
+\begin_inset Formula $L_{m}$
 \end_inset
 
  into two functions 
-\begin_inset Formula $L_{t}\left(x_{k},x_{m}\right)+L_{t}\left(x_{k}\right)$
+\begin_inset Formula $L_{m}\left(x_{k},x_{m}\right)+L_{m}\left(x_{k}\right)$
 \end_inset
 
  where the first function depends on 
@@ -6784,7 +7017,7 @@ We decompose
  we have 
 \begin_inset Formula 
 \[
-\int_{x_{m}}p\left(y_{m}\mid x_{m}\right)p\left(x_{m}\mid x_{k}\right)d_{x_{m}}=\eta\exp\left(-L_{t}\left(x_{k}\right)\right)\int\exp\left(-L_{t}\left(x_{k},x_{m}\right)\right)dx_{m}.
+\int_{x_{m}}p\left(y_{m}\mid x_{m}\right)p\left(x_{m}\mid x_{k}\right)d_{x_{m}}=\eta\exp\left(-L_{m}\left(x_{k}\right)\right)\int\bar{\eta}\exp\left(-L_{m}\left(x_{k},x_{m}\right)\right)dx_{m}.
 \]
 
 \end_inset
@@ -6794,23 +7027,23 @@ We decompose
 
 \begin_layout Standard
 By constructing 
-\begin_inset Formula $L_{t}\left(x_{k},x_{m}\right)$
+\begin_inset Formula $L_{m}\left(x_{k},x_{m}\right)$
 \end_inset
 
  so that 
-\begin_inset Formula $\eta\exp\left(-L_{t}\left(x_{k},x_{m}\right)\right)$
+\begin_inset Formula $\bar{\eta}\exp\left(-L_{t}\left(x_{k},x_{m}\right)\right)$
 \end_inset
 
- is a Gaussian distribution for some 
-\begin_inset Formula $\eta$
+ is a Gaussian distribution, the integral would be 
+\begin_inset Formula 
+\[
+\int\bar{\eta}\exp\left(-L_{t}\left(x_{k},x_{m}\right)\right)d_{x_{m}}=1,
+\]
+
 \end_inset
 
-, the integral 
-\begin_inset Formula $\int\eta\exp\left(-L_{t}\left(x_{k},x_{m}\right)\right)d_{x_{m}}=1$
-\end_inset
-
-, which would make the optimization independent of 
-\begin_inset Formula $L_{t}\left(x_{k},x_{m}\right)$
+which would make the optimization independent of 
+\begin_inset Formula $L_{m}\left(x_{k},x_{m}\right)$
 \end_inset
 
 , and we could absorb the constant integral into 
@@ -6818,30 +7051,89 @@ By constructing
 \end_inset
 
 .
- To construct 
-\begin_inset Formula $L_{t}\left(x_{k},x_{m}\right)$
+ 
+\end_layout
+
+\begin_layout Standard
+To construct 
+\begin_inset Formula $L_{m}\left(x_{k},x_{m}\right)$
 \end_inset
 
 , we first linearize 
-\begin_inset Formula $L_{t}$
+\begin_inset Formula $L_{m}$
 \end_inset
 
- about 
+ by taking the first order Taylor series expansion of 
+\begin_inset Formula $L_{m}$
+\end_inset
+
+ w.r.t.
+ 
+\begin_inset Formula $x_{m}$
+\end_inset
+
+ evaluated at 
 \begin_inset Formula $\hat{x}_{m}=f^{-1}\left(x_{k},0,\delta_{k:m}\right)=x_{m}\oplus\left(-\delta x_{m}\right)$
 \end_inset
 
- to get 
+.
+ We set 
+\begin_inset Formula $\hat{x}_{m}$
+\end_inset
+
+ to 
+\begin_inset Formula $f^{-1}\left(x_{k},0,\delta_{k:m}\right)$
+\end_inset
+
+ because it will be the most likely value.
+ The linearized 
+\begin_inset Formula $L_{m}$
+\end_inset
+
+ is 
 \begin_inset Formula 
 \begin{align*}
-L_{t} & \approx\frac{1}{2}\left(\hat{x}_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)+F_{k:m}\delta x_{m}\right)^{\top}\bar{Q}^{-1}\left(x_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)+F_{k:m}\delta x_{m}\right)\\
+L_{m} & \approx\frac{1}{2}\left(\hat{x}_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)+F_{k:m}\delta x_{m}\right)^{\top}\bar{Q}^{-1}\left(x_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)+F_{k:m}\delta x_{m}\right)\\
  & +\frac{1}{2}\left(y_{m}\ominus h\left(\hat{x}_{m},0\right)+H_{m}\delta x_{m}\right)^{\top}\bar{R}^{-1}\left(y_{m}\ominus h\left(\hat{x}_{m},0\right)+H_{m}\delta x_{m}\right)
 \end{align*}
 
 \end_inset
 
+where 
+\begin_inset Formula 
+\[
+F_{k:m}=\left.\frac{\partial x_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)}{\partial x_{m}}\right|_{x_{m}=\hat{x}_{m}}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $L_{m}$
+\end_inset
+
+ simplifies to 
+\begin_inset Formula 
+\begin{align*}
+L_{m} & \approx\frac{1}{2}\left(F_{k:m}\delta x_{m}\right)^{\top}\bar{Q}^{-1}\left(F_{k:m}\delta x_{m}\right)\\
+ & +\frac{1}{2}\left(y_{m}\ominus h\left(\hat{x}_{m},0\right)+H_{m}\delta x_{m}\right)^{\top}\bar{R}^{-1}\left(y_{m}\ominus h\left(\hat{x}_{m},0\right)+H_{m}\delta x_{m}\right)
+\end{align*}
+
+\end_inset
+
+since 
+\begin_inset Formula $\hat{x}_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)=0$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
 Then we take the first and second derivatives of the linearized version
  of 
-\begin_inset Formula $L_{t}$
+\begin_inset Formula $L_{m}$
 \end_inset
 
  with respect to 
@@ -6850,20 +7142,20 @@ Then we take the first and second derivatives of the linearized version
 
  (note that this is the same as taking the first and second derivative of
  
-\begin_inset Formula $L_{t}$
+\begin_inset Formula $L_{m}$
 \end_inset
 
  with respect to 
 \begin_inset Formula $x_{m}$
 \end_inset
 
-, we decided to break it up into two steps.
+, but we decided to break it up into two steps to simplify the process).
  
 \begin_inset Formula 
 \begin{align*}
-\frac{\partial L_{t}}{\delta x_{m}} & =\hat{x}_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)^{\top}\bar{Q}^{-1}F_{k:m}+\delta x_{m}^{\top}F_{k:m}^{\top}\bar{Q}^{-1}F_{k:m}\\
+\frac{\partial L_{m}}{\delta x_{m}} & =\delta x_{m}^{\top}F_{k:m}^{\top}\bar{Q}^{-1}F_{k:m}\\
  & +y_{m}\ominus h\left(\hat{x}_{m},0\right)^{\top}\bar{R}^{-1}H_{m}+\delta x_{m}^{\top}H_{m}^{\top}\bar{R}^{-1}H_{m}\\
-\frac{\partial^{2}L_{t}}{\delta x_{m}^{2}} & =H_{m}^{\top}\bar{R}^{-1}H_{m}+F_{k:m}^{\top}\bar{Q}^{-1}F_{k:m}\\
+\frac{\partial^{2}L_{m}}{\delta x_{m}^{2}} & =H_{m}^{\top}\bar{R}^{-1}H_{m}+F_{k:m}^{\top}\bar{Q}^{-1}F_{k:m}\\
  & =\Psi^{-1}
 \end{align*}
 
@@ -6876,36 +7168,36 @@ Setting the first derivative to zero and solving for
  gives us
 \begin_inset Formula 
 \begin{align*}
-\delta x_{m}^{\top}\Psi^{-1} & =-\hat{x}_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)^{\top}\bar{Q}^{-1}F_{k:m}-y_{m}\ominus h\left(\hat{x}_{m},0\right)^{\top}\bar{R}^{-1}H_{m}\\
-\delta x_{m} & =-\Psi\left(F_{k:m}^{\top}\bar{Q}^{-1}\hat{x}_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)+H_{m}^{\top}\bar{R}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right).
+\delta x_{m}^{\top}\Psi^{-1} & =-y_{m}\ominus h\left(\hat{x}_{m},0\right)^{\top}\bar{R}^{-1}H_{m}\\
+\delta x_{m} & =-\Psi\left(H_{m}^{\top}\bar{R}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right).
 \end{align*}
 
 \end_inset
 
 We can now define the quadratic function 
-\begin_inset Formula $L_{t}\left(x_{k},x_{m}\right)$
+\begin_inset Formula $L_{m}\left(x_{k},x_{m}\right)$
 \end_inset
 
  as 
 \begin_inset Formula 
 \begin{align*}
-L_{t}\left(x_{k},x_{m}\right) & =\frac{1}{2}\left(\delta x_{m}+\Psi\left(F_{k:m}^{\top}\bar{Q}^{-1}\hat{x}_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)+H_{m}^{\top}\bar{R}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right)\right)^{\top}\psi^{-1}\\
- & \left(\delta x_{m}+\Psi\left(F_{k:m}^{\top}\bar{Q}^{-1}\hat{x}_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)+H_{m}^{\top}\bar{R}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right)\right)
+L_{m}\left(x_{k},x_{m}\right) & =\frac{1}{2}\left(\delta x_{m}+\Psi\left(H_{m}^{\top}\bar{R}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right)\right)^{\top}\Psi^{-1}\\
+ & \left(\delta x_{m}+\Psi\left(H_{m}^{\top}\bar{R}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right)\right)
 \end{align*}
 
 \end_inset
 
 and solve for 
-\begin_inset Formula $L_{t}\left(x_{k}\right)=L_{t}-L_{t}\left(x_{k},x_{m}\right)$
+\begin_inset Formula $L_{m}\left(x_{k}\right)=L_{m}-L_{m}\left(x_{k},x_{m}\right)$
 \end_inset
 
 
 \begin_inset Formula 
 \begin{align*}
-L_{t}\left(x_{k}\right) & =\frac{1}{2}\left(\hat{x}_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)+F_{k:m}\delta x_{m}\right)^{\top}\bar{Q}^{-1}\left(x_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)+F_{k:m}\delta x_{m}\right)\\
+L_{m}\left(x_{k}\right) & =\frac{1}{2}\left(F_{k:m}\delta x_{m}\right)^{\top}\bar{Q}^{-1}\left(F_{k:m}\delta x_{m}\right)\\
  & +\frac{1}{2}\left(y_{m}\ominus h\left(\hat{x}_{m},0\right)+H_{m}\delta x_{m}\right)^{\top}\bar{R}^{-1}\left(y_{m}\ominus h\left(\hat{x}_{m},0\right)+H_{m}\delta x_{m}\right)\\
- & -\frac{1}{2}\left(\delta x_{m}+\Psi\left(F_{k:m}^{\top}\bar{Q}^{-1}\hat{x}_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)+H_{m}^{\top}\bar{R}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right)\right)^{\top}\psi^{-1}\\
- & \left(\delta x_{m}+\Psi\left(F_{k:m}^{\top}\bar{Q}^{-1}\hat{x}_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)+H_{m}^{\top}\bar{R}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right)\right)
+ & -\frac{1}{2}\left(\delta x_{m}+\Psi\left(H_{m}^{\top}\bar{R}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right)\right)^{\top}\Psi^{-1}\\
+ & \left(\delta x_{m}+\Psi\left(H_{m}^{\top}\bar{R}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right)\right)
 \end{align*}
 
 \end_inset
@@ -6913,16 +7205,14 @@ L_{t}\left(x_{k}\right) & =\frac{1}{2}\left(\hat{x}_{m}\ominus f^{-1}\left(x_{k}
 with algebraic manipulation we get 
 \begin_inset Formula 
 \begin{align*}
-L_{t}\left(x_{k}\right) & =\frac{1}{2}\hat{x}_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)^{\top}\bar{Q}^{-1}x_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)\\
- & +\hat{x}_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)\bar{Q}^{-1}F_{k:m}\delta x_{m}\\
- & +\frac{1}{2}\delta x_{m}^{\top}F_{k:m}^{\top}\bar{Q}_{m}^{-1}F_{k:m}\delta x_{m}\\
+L_{m}\left(x_{k}\right) & =\frac{1}{2}\delta x_{m}^{\top}F_{k:m}^{\top}\bar{Q}_{m}^{-1}F_{k:m}\delta x_{m}\\
  & +\frac{1}{2}y_{m}\ominus h\left(\hat{x}_{m},0\right)^{\top}\bar{R}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\\
  & +y_{m}\ominus h\left(\hat{x}_{m},0\right)^{\top}\bar{R}^{-1}H_{m}\delta x_{m}\\
  & +\frac{1}{2}\delta x_{m}^{\top}H_{m}^{\top}\bar{R}^{-1}H_{m}\delta x_{m}\\
  & -\frac{1}{2}\delta x_{m}^{\top}\Psi^{-1}\delta x_{m}\\
- & -\left(F_{k:m}^{\top}\bar{Q}^{-1}\hat{x}_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)+H_{m}^{\top}\bar{R}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right)^{\top}\delta x_{m}\\
- & -\frac{1}{2}\Psi\left(F_{k:m}^{\top}\bar{Q}^{-1}\hat{x}_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)+H_{m}^{\top}\bar{R}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right)^{\top}\\
- & \left(F_{k:m}^{\top}\bar{Q}^{-1}\hat{x}_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)+H_{m}^{\top}\bar{R}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right)
+ & -\left(H_{m}^{\top}\bar{R}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right)^{\top}\delta x_{m}\\
+ & -\frac{1}{2}\Psi\left(H_{m}^{\top}\bar{R}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right)^{\top}\\
+ & \left(H_{m}^{\top}\bar{R}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right)
 \end{align*}
 
 \end_inset
@@ -6930,8 +7220,7 @@ L_{t}\left(x_{k}\right) & =\frac{1}{2}\hat{x}_{m}\ominus f^{-1}\left(x_{k},0,\de
 which simplifies to 
 \begin_inset Formula 
 \begin{align*}
-L_{t}\left(x_{k}\right) & =\\
- & +\frac{1}{2}y_{m}\ominus h\left(\hat{x}_{m},0\right)^{\top}\bar{R}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\\
+L_{m}\left(x_{k}\right) & =\frac{1}{2}y_{m}\ominus h\left(\hat{x}_{m},0\right)^{\top}\bar{R}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\\
  & -\frac{1}{2}\Psi\left(H_{m}^{\top}\bar{R}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right)^{\top}\\
  & \left(H_{m}^{\top}\bar{R}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right)
 \end{align*}
@@ -6941,7 +7230,7 @@ L_{t}\left(x_{k}\right) & =\\
 In quadratic form is
 \begin_inset Formula 
 \[
-L_{t}\left(x_{k}\right)=\frac{1}{2}y_{m}\ominus h\left(\hat{x}_{m},0\right)^{\top}\left(\bar{R}^{-1}-\bar{R}^{-1}H_{m}\left(H_{m}^{\top}\bar{R}^{-1}H_{m}+F_{k:m}^{\top}\bar{Q}^{-1}F_{k:m}\right)^{-1}H_{m}^{\top}\bar{R}^{-1}\right)y_{m}\ominus h\left(\hat{x}_{m},0\right)
+L_{m}\left(x_{k}\right)=\frac{1}{2}y_{m}\ominus h\left(\hat{x}_{m},0\right)^{\top}\left(\bar{R}^{-1}-\bar{R}^{-1}H_{m}\left(H_{m}^{\top}\bar{R}^{-1}H_{m}+F_{k:m}^{\top}\bar{Q}^{-1}F_{k:m}\right)^{-1}H_{m}^{\top}\bar{R}^{-1}\right)y_{m}\ominus h\left(\hat{x}_{m},0\right)
 \]
 
 \end_inset
@@ -6965,12 +7254,37 @@ literal "false"
  we get 
 \begin_inset Formula 
 \[
-L_{t}\left(x_{k}\right)=\frac{1}{2}y_{m}\ominus h\left(\hat{x}_{m},0\right)^{\top}\left(\bar{R}^{-1}-\bar{R}^{-1}H_{m}\left(H_{m}^{\top}\bar{R}^{-1}H_{m}+F_{k:m}^{\top}\bar{Q}^{-1}F_{k:m}\right)^{-1}H_{m}^{\top}\bar{R}^{-1}\right)y_{m}\ominus h\left(\hat{x}_{m},0\right)
+L_{m}\left(x_{k}\right)=\frac{1}{2}y_{m}\ominus h\left(f^{-1}\left(x_{k},0,\delta_{k:m}\right),0\right)^{\top}\left(H_{m}^{\top}\bar{R}^{-1}H_{m}+F_{k:m}^{\top}\bar{Q}^{-1}F_{k:m}\right)^{-1}y_{m}\ominus h\left(f^{-1}\left(x_{k},0,\delta_{k:m}\right),0\right).
 \]
 
 \end_inset
 
- 
+Therefore, 
+\begin_inset Formula 
+\begin{align*}
+p\left(y_{m}^{j}\mid x_{k}\right) & =\int_{x_{m}}p\left(y_{m}\mid x_{m}\right)p\left(x_{m}\mid x_{k}\right)d_{x_{m}}\\
+ & \approx\eta\exp\left(-L_{m}\left(x_{k}\right)\right)
+\end{align*}
+
+\end_inset
+
+and the LMLE approximated as 
+\begin_inset Formula 
+\[
+\underset{x_{k}}{\text{min}}\sum_{m=0}^{k}\sum_{j=1}^{\ell\left(m\right)}L_{m}^{j}\left(x_{k}\right)
+\]
+
+\end_inset
+
+where the superscript 
+\begin_inset Formula $j$
+\end_inset
+
+ index the measurements at time stamp 
+\begin_inset Formula $m$
+\end_inset
+
+.
 \begin_inset CommandInset bibtex
 LatexCommand bibtex
 bibfiles "/home/mark/Documents/mendeley/library"
