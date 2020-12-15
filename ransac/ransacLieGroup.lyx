@@ -6707,13 +6707,14 @@ where we dropped the superscript
 \end_inset
 
 .
- We solve this integral by first linearizing the two probabilities
+ We solve this integral by approximating the probabilities as Gaussian distribut
+ions using the first and second moments
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \[
-p\left(x_{m}\mid x_{k}\right)\approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus f^{-1}\left(\hat{x}_{k},0,\delta_{k:m}\right)+F_{k}^{-1}\delta x_{k}+G_{k}w_{k}\right)^{\top}Q^{-1}\left(x_{m}\ominus f^{-1}\left(\hat{x}_{k},0,\delta_{k:m}\right)+F_{k}^{-1}\delta x_{k}+G_{k}w_{k}\right)\right)
+p\left(x_{m}\mid x_{k}\right)\approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)\right)^{\top}\left(G_{k:m}QG_{k:m}^{\top}\right)^{-1}\left(x_{m}\ominus f^{-1}\left(\hat{x}_{k},0,\delta_{k:m}\right)\right)\right)
 \]
 
 \end_inset
@@ -6721,7 +6722,7 @@ p\left(x_{m}\mid x_{k}\right)\approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus
 
 \begin_inset Formula 
 \[
-p\left(y_{m}^{j}\mid x_{m}\right)\approx\eta\exp\left(-\frac{1}{2}\left(y_{m}\ominus h\left(\hat{x}_{m},\hat{v}_{m}\right)+H_{m}\delta x_{m}+V_{m}\hat{v}_{m}\right)^{\top}R^{-1}\left(y_{m}\ominus h\left(\hat{x}_{m},\hat{v}_{m}\right)+H_{m}\delta x_{m}+V_{m}\hat{v}_{m}\right)\right)
+p\left(y_{m}^{j}\mid x_{m}\right)\approx\eta\exp\left(-\frac{1}{2}\left(y_{m}\ominus h\left(x_{m},0\right)\right)^{\top}\left(V_{m}RV_{m}^{\top}\right)^{-1}\left(y_{m}\ominus h\left(x_{m},0\right)\right)\right)
 \]
 
 \end_inset
@@ -6738,8 +6739,18 @@ where
  Multiplying the two probabilities together yields 
 \begin_inset Formula 
 \begin{align*}
-p\left(y_{m}\mid x_{m}\right)p\left(x_{m}\mid x_{k}\right)= & \eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus f^{-1}\left(\hat{x}_{k},0,\delta_{k:m}\right)+F_{k}^{-1}\delta x_{k}+G_{k}w_{k}\right)^{\top}Q^{-1}\left(x_{m}\ominus f^{-1}\left(\hat{x}_{k},0,\delta_{k:m}\right)+F_{k}^{-1}\delta x_{k}+G_{k}w_{k}\right)+\right.\\
- & \left.-\frac{1}{2}\left(y_{m}\ominus h\left(\hat{x}_{m},\hat{v}_{m}\right)+H_{m}\delta x_{m}+V_{m}\hat{v}_{m}\right)^{\top}R^{-1}\left(y_{m}\ominus h\left(\hat{x}_{m},\hat{v}_{m}\right)+H_{m}\delta x_{m}+V_{m}\hat{v}_{m}\right)\right)
+p\left(y_{m}\mid x_{m}\right)p\left(x_{m}\mid x_{k}\right)= & \eta\exp\left(-L_{t}\right)
+\end{align*}
+
+\end_inset
+
+with 
+\begin_inset Formula 
+\begin{align*}
+L_{t} & =\frac{1}{2}\left(x_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)\right)^{\top}\bar{Q}^{-1}\left(x_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)\right)\\
+ & +\frac{1}{2}\left(y_{m}\ominus h\left(x_{m},0\right)\right)^{\top}\bar{R}^{-1}\left(y_{m}\ominus h\left(x_{m},0\right)\right)\\
+\bar{Q} & =G_{k:m}QG_{k:m}^{\top}\\
+\bar{R} & =V_{m}RV_{m}^{\top}
 \end{align*}
 
 \end_inset
@@ -6748,6 +6759,235 @@ p\left(y_{m}\mid x_{m}\right)p\left(x_{m}\mid x_{k}\right)= & \eta\exp\left(-\fr
 \end_layout
 
 \begin_layout Standard
+We decompose 
+\begin_inset Formula $L_{t}$
+\end_inset
+
+ into two functions 
+\begin_inset Formula $L_{t}\left(x_{k},x_{m}\right)+L_{t}\left(x_{k}\right)$
+\end_inset
+
+ where the first function depends on 
+\begin_inset Formula $x_{k}$
+\end_inset
+
+ and 
+\begin_inset Formula $x_{m}$
+\end_inset
+
+ and the latter function only depends on 
+\begin_inset Formula $x_{k}$
+\end_inset
+
+.
+ This will allow us to move the latter function out of the integral so that
+ we have 
+\begin_inset Formula 
+\[
+\int_{x_{m}}p\left(y_{m}\mid x_{m}\right)p\left(x_{m}\mid x_{k}\right)d_{x_{m}}=\eta\exp\left(-L_{t}\left(x_{k}\right)\right)\int\exp\left(-L_{t}\left(x_{k},x_{m}\right)\right)dx_{m}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+By constructing 
+\begin_inset Formula $L_{t}\left(x_{k},x_{m}\right)$
+\end_inset
+
+ so that 
+\begin_inset Formula $\eta\exp\left(-L_{t}\left(x_{k},x_{m}\right)\right)$
+\end_inset
+
+ is a Gaussian distribution for some 
+\begin_inset Formula $\eta$
+\end_inset
+
+, the integral 
+\begin_inset Formula $\int\eta\exp\left(-L_{t}\left(x_{k},x_{m}\right)\right)d_{x_{m}}=1$
+\end_inset
+
+, which would make the optimization independent of 
+\begin_inset Formula $L_{t}\left(x_{k},x_{m}\right)$
+\end_inset
+
+, and we could absorb the constant integral into 
+\begin_inset Formula $\eta$
+\end_inset
+
+.
+ To construct 
+\begin_inset Formula $L_{t}\left(x_{k},x_{m}\right)$
+\end_inset
+
+, we first linearize 
+\begin_inset Formula $L_{t}$
+\end_inset
+
+ about 
+\begin_inset Formula $\hat{x}_{m}=f^{-1}\left(x_{k},0,\delta_{k:m}\right)=x_{m}\oplus\left(-\delta x_{m}\right)$
+\end_inset
+
+ to get 
+\begin_inset Formula 
+\begin{align*}
+L_{t} & \approx\frac{1}{2}\left(\hat{x}_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)+F_{k:m}\delta x_{m}\right)^{\top}\bar{Q}^{-1}\left(x_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)+F_{k:m}\delta x_{m}\right)\\
+ & +\frac{1}{2}\left(y_{m}\ominus h\left(\hat{x}_{m},0\right)+H_{m}\delta x_{m}\right)^{\top}\bar{R}^{-1}\left(y_{m}\ominus h\left(\hat{x}_{m},0\right)+H_{m}\delta x_{m}\right)
+\end{align*}
+
+\end_inset
+
+Then we take the first and second derivatives of the linearized version
+ of 
+\begin_inset Formula $L_{t}$
+\end_inset
+
+ with respect to 
+\begin_inset Formula $\delta x_{m}$
+\end_inset
+
+ (note that this is the same as taking the first and second derivative of
+ 
+\begin_inset Formula $L_{t}$
+\end_inset
+
+ with respect to 
+\begin_inset Formula $x_{m}$
+\end_inset
+
+, we decided to break it up into two steps.
+ 
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial L_{t}}{\delta x_{m}} & =\hat{x}_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)^{\top}\bar{Q}^{-1}F_{k:m}+\delta x_{m}^{\top}F_{k:m}^{\top}\bar{Q}^{-1}F_{k:m}\\
+ & +y_{m}\ominus h\left(\hat{x}_{m},0\right)^{\top}\bar{R}^{-1}H_{m}+\delta x_{m}^{\top}H_{m}^{\top}\bar{R}^{-1}H_{m}\\
+\frac{\partial^{2}L_{t}}{\delta x_{m}^{2}} & =H_{m}^{\top}\bar{R}^{-1}H_{m}+F_{k:m}^{\top}\bar{Q}^{-1}F_{k:m}\\
+ & =\Psi^{-1}
+\end{align*}
+
+\end_inset
+
+Setting the first derivative to zero and solving for 
+\begin_inset Formula $\delta x_{m}$
+\end_inset
+
+ gives us
+\begin_inset Formula 
+\begin{align*}
+\delta x_{m}^{\top}\Psi^{-1} & =-\hat{x}_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)^{\top}\bar{Q}^{-1}F_{k:m}-y_{m}\ominus h\left(\hat{x}_{m},0\right)^{\top}\bar{R}^{-1}H_{m}\\
+\delta x_{m} & =-\Psi\left(F_{k:m}^{\top}\bar{Q}^{-1}\hat{x}_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)+H_{m}^{\top}\bar{R}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right).
+\end{align*}
+
+\end_inset
+
+We can now define the quadratic function 
+\begin_inset Formula $L_{t}\left(x_{k},x_{m}\right)$
+\end_inset
+
+ as 
+\begin_inset Formula 
+\begin{align*}
+L_{t}\left(x_{k},x_{m}\right) & =\frac{1}{2}\left(\delta x_{m}+\Psi\left(F_{k:m}^{\top}\bar{Q}^{-1}\hat{x}_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)+H_{m}^{\top}\bar{R}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right)\right)^{\top}\psi^{-1}\\
+ & \left(\delta x_{m}+\Psi\left(F_{k:m}^{\top}\bar{Q}^{-1}\hat{x}_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)+H_{m}^{\top}\bar{R}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right)\right)
+\end{align*}
+
+\end_inset
+
+and solve for 
+\begin_inset Formula $L_{t}\left(x_{k}\right)=L_{t}-L_{t}\left(x_{k},x_{m}\right)$
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+L_{t}\left(x_{k}\right) & =\frac{1}{2}\left(\hat{x}_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)+F_{k:m}\delta x_{m}\right)^{\top}\bar{Q}^{-1}\left(x_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)+F_{k:m}\delta x_{m}\right)\\
+ & +\frac{1}{2}\left(y_{m}\ominus h\left(\hat{x}_{m},0\right)+H_{m}\delta x_{m}\right)^{\top}\bar{R}^{-1}\left(y_{m}\ominus h\left(\hat{x}_{m},0\right)+H_{m}\delta x_{m}\right)\\
+ & -\frac{1}{2}\left(\delta x_{m}+\Psi\left(F_{k:m}^{\top}\bar{Q}^{-1}\hat{x}_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)+H_{m}^{\top}\bar{R}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right)\right)^{\top}\psi^{-1}\\
+ & \left(\delta x_{m}+\Psi\left(F_{k:m}^{\top}\bar{Q}^{-1}\hat{x}_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)+H_{m}^{\top}\bar{R}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right)\right)
+\end{align*}
+
+\end_inset
+
+with algebraic manipulation we get 
+\begin_inset Formula 
+\begin{align*}
+L_{t}\left(x_{k}\right) & =\frac{1}{2}\hat{x}_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)^{\top}\bar{Q}^{-1}x_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)\\
+ & +\hat{x}_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)\bar{Q}^{-1}F_{k:m}\delta x_{m}\\
+ & +\frac{1}{2}\delta x_{m}^{\top}F_{k:m}^{\top}\bar{Q}_{m}^{-1}F_{k:m}\delta x_{m}\\
+ & +\frac{1}{2}y_{m}\ominus h\left(\hat{x}_{m},0\right)^{\top}\bar{R}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\\
+ & +y_{m}\ominus h\left(\hat{x}_{m},0\right)^{\top}\bar{R}^{-1}H_{m}\delta x_{m}\\
+ & +\frac{1}{2}\delta x_{m}^{\top}H_{m}^{\top}\bar{R}^{-1}H_{m}\delta x_{m}\\
+ & -\frac{1}{2}\delta x_{m}^{\top}\Psi^{-1}\delta x_{m}\\
+ & -\left(F_{k:m}^{\top}\bar{Q}^{-1}\hat{x}_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)+H_{m}^{\top}\bar{R}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right)^{\top}\delta x_{m}\\
+ & -\frac{1}{2}\Psi\left(F_{k:m}^{\top}\bar{Q}^{-1}\hat{x}_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)+H_{m}^{\top}\bar{R}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right)^{\top}\\
+ & \left(F_{k:m}^{\top}\bar{Q}^{-1}\hat{x}_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)+H_{m}^{\top}\bar{R}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right)
+\end{align*}
+
+\end_inset
+
+which simplifies to 
+\begin_inset Formula 
+\begin{align*}
+L_{t}\left(x_{k}\right) & =\\
+ & +\frac{1}{2}y_{m}\ominus h\left(\hat{x}_{m},0\right)^{\top}\bar{R}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\\
+ & -\frac{1}{2}\Psi\left(H_{m}^{\top}\bar{R}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right)^{\top}\\
+ & \left(H_{m}^{\top}\bar{R}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right)
+\end{align*}
+
+\end_inset
+
+In quadratic form is
+\begin_inset Formula 
+\[
+L_{t}\left(x_{k}\right)=\frac{1}{2}y_{m}\ominus h\left(\hat{x}_{m},0\right)^{\top}\left(\bar{R}^{-1}-\bar{R}^{-1}H_{m}\left(H_{m}^{\top}\bar{R}^{-1}H_{m}+F_{k:m}^{\top}\bar{Q}^{-1}F_{k:m}\right)^{-1}H_{m}^{\top}\bar{R}^{-1}\right)y_{m}\ominus h\left(\hat{x}_{m},0\right)
+\]
+
+\end_inset
+
+Using the Inversion Lemma in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Thrun2006"
+literal "false"
+
+\end_inset
+
+ and substituting in 
+\begin_inset Formula $f^{-1}\left(x_{k},0,\delta_{k:m}\right)$
+\end_inset
+
+ for 
+\begin_inset Formula $\hat{x}_{m}$
+\end_inset
+
+ we get 
+\begin_inset Formula 
+\[
+L_{t}\left(x_{k}\right)=\frac{1}{2}y_{m}\ominus h\left(f^{-1}\left(x_{k},0,\delta_{k:m}\right),0\right)^{\top}\left(H_{m}^{\top}\bar{R}^{-1}H_{m}+F_{k:m}^{\top}\bar{Q}^{-1}F_{k:m}\right)^{-1}y_{m}\ominus h\left(f^{-1}\left(x_{k},0,\delta_{k:m}\right),0\right).
+\]
+
+\end_inset
+
+Therefore, 
+\begin_inset Formula 
+\begin{align*}
+p\left(y_{m}^{j}\mid x_{k}\right) & =\int_{x_{m}}p\left(y_{m}\mid x_{m}\right)p\left(x_{m}\mid x_{k}\right)d_{x_{m}}\\
+ & \approx\eta\exp\left(-L_{t}\left(x_{k}\right)\right)
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+.
+\]
+
+\end_inset
+
+
 \begin_inset CommandInset bibtex
 LatexCommand bibtex
 bibfiles "/home/mark/Documents/mendeley/library"
