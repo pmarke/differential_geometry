@@ -1976,7 +1976,7 @@ literal "true"
 \end_inset
 
 .
- We also follow some of the derivation, the convention, notation and terminology
+ We also follow some of the derivation, convention, notation and terminology
  from 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -1986,6 +1986,72 @@ literal "true"
 \end_inset
 
  but adapted for the Lie group setting.
+ 
+\end_layout
+
+\begin_layout Standard
+We present the PDAF for one target, but it is trivially extended to the
+ case of multiple targets.
+ Also, we present the PDAF for the case of multiple targets.
+ The following notation is used in this secion.
+ Let 
+\begin_inset Formula $\mathcal{K}=\left\{ 1,\ldots,k\right\} $
+\end_inset
+
+ be the indexing set to sources, and 
+\begin_inset Formula $Y_{m}^{k}$
+\end_inset
+
+ be the set of measurements associated to the model at time 
+\begin_inset Formula $m$
+\end_inset
+
+ produced by 
+\begin_inset Formula $k^{th}$
+\end_inset
+
+ source.
+ It is possible that 
+\begin_inset Formula $Y_{m}^{k}=\emptyset$
+\end_inset
+
+ if a source didn't produce any measurements.
+ We assume that each source produces at most one measurement originated
+ from a target with probability of detection 
+\begin_inset Formula $P_{D}^{k}$
+\end_inset
+
+.
+ Also, the source produces clutter (noisy measurements) uniformly in the
+ local surveillance region, where the number of clutter measurements per
+ scan is modeled with a Poisson distribution with spatial density 
+\begin_inset Formula $\lambda^{k}$
+\end_inset
+
+.
+ The spatial density 
+\begin_inset Formula $\lambda^{k}$
+\end_inset
+
+ is the expected number of clutter measurements per sensor scan divided
+ by the volume of the local surveillance region.
+ Lastly, let 
+\begin_inset Formula $y_{m}^{k,j}\in Y_{m}^{k}$
+\end_inset
+
+ denote the 
+\begin_inset Formula $j^{th}$
+\end_inset
+
+ measurement in 
+\begin_inset Formula $Y_{m}^{k}$
+\end_inset
+
+ assuming that 
+\begin_inset Formula $Y_{m}^{k}\neq\emptyset$
+\end_inset
+
+.
  
 \end_layout
 
@@ -2262,7 +2328,7 @@ begin{subequations}
 
 \begin_inset CommandInset label
 LatexCommand label
-name "eq:Kalman_propagation"
+name "eq:JPDAF_propagation"
 
 \end_inset
 
@@ -2351,11 +2417,14 @@ literal "true"
 \end_layout
 
 \begin_layout Standard
-The volume is determined by the probability of a measurement which we define
- as 
+The volume is determined by the probability of a measurement 
+\begin_inset Formula $y_{m}^{k,j}$
+\end_inset
+
+ which is defined as 
 \begin_inset Formula 
 \[
-p\left(y_{m}\right)=\int_{\delta\bar{x}_{m}}p\left(y_{m}\mid x_{m}\right)\bar{p}\left(x_{m}\right)d\delta\bar{x}_{m}.
+p\left(y_{m}^{k,j}\right)=\int_{\delta\bar{x}_{m}}p\left(y_{m}^{k,j}\mid x_{m}\right)\bar{p}\left(x_{m}\right)d\delta\bar{x}_{m}.
 \]
 
 \end_inset
@@ -2364,7 +2433,12 @@ p\left(y_{m}\right)=\int_{\delta\bar{x}_{m}}p\left(y_{m}\mid x_{m}\right)\bar{p}
 \end_layout
 
 \begin_layout Standard
-In order to solve the integral, we linearize the measurement probability
+For readability, we will droip the superscripts on 
+\begin_inset Formula $y_{m}^{k,j}$
+\end_inset
+
+.
+ In order to solve the integral, we linearize the measurement probability
  
 \begin_inset Formula $p\left(y_{m}\mid x_{m}\right)$
 \end_inset
@@ -2386,8 +2460,8 @@ In order to solve the integral, we linearize the measurement probability
  Doing so yields 
 \begin_inset Formula 
 \begin{align*}
-p\left(y_{m}\right) & \approx\eta\int_{\delta x_{m}}\exp\left(-\frac{1}{2}\left(y_{m}\ominus\hat{y}_{m}+H_{m}\delta\bar{x}_{m}\right)^{\top}\right.\\
- & \left.\bar{R}^{-1}\left(y_{m}\ominus\hat{y}_{m}+H_{m}\delta\bar{x}_{m}\right)\right)\\
+p\left(y_{m}\right) & \approx\eta\int_{\delta x_{m}}\exp\left(-\frac{1}{2}\left(y_{m}\ominus\hat{y}_{m}+H_{m}^{k}\delta\bar{x}_{m}\right)^{\top}\right.\\
+ & \left.\bar{R}^{-1}\left(y_{m}\ominus\hat{y}_{m}+H_{m}^{k}\delta\bar{x}_{m}\right)\right)\\
  & \exp\left(-\frac{1}{2}\bar{x}_{m}^{\top}\bar{P}_{m}^{-1}\delta\bar{x}_{m}\right)d\delta\bar{x}_{m}
 \end{align*}
 
@@ -2396,7 +2470,7 @@ p\left(y_{m}\right) & \approx\eta\int_{\delta x_{m}}\exp\left(-\frac{1}{2}\left(
 with 
 \begin_inset Formula 
 \begin{align*}
-\bar{R} & =\left(V_{m}RV_{m}^{\top}\right),\\
+\bar{R} & =\left(V_{m}R^{k}V_{m}^{\top}\right),\\
 \hat{y}_{m} & =h\left(\hat{\bar{x}}_{m},0\right)
 \end{align*}
 
@@ -2405,7 +2479,7 @@ with
 
 \begin_inset Formula 
 \begin{align}
-H_{m} & =\left.\frac{\partial y_{m}\ominus h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{x_{m}=\hat{x}_{m},V_{m}=0}\nonumber \\
+H_{m}^{k} & =\left.\frac{\partial y_{m}\ominus h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{x_{m}=\hat{x}_{m},V_{m}=0}\nonumber \\
  & =\left.\frac{\partial\log\left(e\right)}{\partial e}\frac{\partial e}{\partial h^{-1}\left(x_{m},v_{m}\right)}\frac{\partial h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{x_{m}=\hat{x}_{m},V_{m}=0}\label{eq:ObservationJacobianState}\\
  & =J_{r}^{-1}\left(\hat{e}\right)\mathbf{Ad}_{y_{m}^{-1}}\left.\frac{\partial h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{x_{m}=\hat{x}_{m},V_{m}=0},\nonumber 
 \end{align}
@@ -2415,7 +2489,7 @@ H_{m} & =\left.\frac{\partial y_{m}\ominus h\left(x_{m},v_{m}\right)}{\partial x
 
 \begin_inset Formula 
 \begin{align}
-V_{m} & =\left.\frac{\partial y_{m}\ominus h\left(x_{m},v_{m}\right)}{\partial v_{m}}\right|_{x_{m}=\hat{x}_{m},V_{m}=0}\label{eq:ObservationJacobianNoise}\\
+V_{m}^{k} & =\left.\frac{\partial y_{m}\ominus h\left(x_{m},v_{m}\right)}{\partial v_{m}}\right|_{x_{m}=\hat{x}_{m},V_{m}=0}\label{eq:ObservationJacobianNoise}\\
  & =J_{r}^{-1}\left(\hat{e}\right)\mathbf{Ad}_{y_{m}^{-1}}\left.\frac{\partial h\left(x_{m},v_{m}\right)}{\partial v_{m}}\right|_{x_{m}=\hat{x}_{m},V_{m}=0},\nonumber 
 \end{align}
 
@@ -2429,7 +2503,24 @@ e=h\left(\hat{\bar{x}}_{m},0\right)^{-1}y_{m}.
 
 \end_inset
 
+The superscript on 
+\begin_inset Formula $H_{m}^{k}$
+\end_inset
 
+, 
+\begin_inset Formula $V_{m}^{k}$
+\end_inset
+
+ and 
+\begin_inset Formula $R^{k}$
+\end_inset
+
+ indicate that these terms are for the 
+\begin_inset Formula $k^{th}$
+\end_inset
+
+ measurement source.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -2441,8 +2532,8 @@ By rearranging the terms in the linearized
 \begin_inset Formula 
 \begin{align*}
 p\left(y_{m}\right) & \approx\eta\exp\left(-\frac{1}{2}\left(y_{m}\ominus\hat{y}_{m}\right)^{\top}\right.\\
- & \left.S^{-1}\left(y_{m}\ominus\hat{y}_{m}\right)\right)\\
- & \int_{\delta x_{m}}\exp\left(-\frac{1}{2}l\left(\delta\bar{x}_{m}\right)^{\top}S^{-1}l\left(\delta\bar{x}_{m}\right)\right)d\delta\bar{x}_{m}
+ & \left.\left(S^{k}\right)^{-1}\left(y_{m}\ominus\hat{y}_{m}\right)\right)\\
+ & \int_{\delta x_{m}}\exp\left(-\frac{1}{2}l\left(\delta\bar{x}_{m}\right)^{\top}\left(S^{k}\right)^{-1}l\left(\delta\bar{x}_{m}\right)\right)d\delta\bar{x}_{m}
 \end{align*}
 
 \end_inset
@@ -2450,7 +2541,7 @@ p\left(y_{m}\right) & \approx\eta\exp\left(-\frac{1}{2}\left(y_{m}\ominus\hat{y}
 with
 \begin_inset Formula 
 \begin{align*}
-l\left(\delta\bar{x}_{m}\right) & =\left(\delta\bar{x}_{m}+SH_{m}\bar{R}^{-1}y_{m}\ominus\hat{y}_{m}\right)
+l\left(\delta\bar{x}_{m}\right) & =\left(\delta\bar{x}_{m}+S^{k}H_{m}^{k}\bar{R}^{-1}y_{m}\ominus\hat{y}_{m}\right)
 \end{align*}
 
 \end_inset
@@ -2462,7 +2553,7 @@ l\left(\delta\bar{x}_{m}\right) & =\left(\delta\bar{x}_{m}+SH_{m}\bar{R}^{-1}y_{
 and the innovation covariance
 \begin_inset Formula 
 \begin{equation}
-S=\left(V_{m}RV_{m}^{\top}+H_{m}PH_{m}^{\top}\right).\label{eq:innovation_cov}
+S^{k}=\left(V_{m}^{k}R^{k}\left(V_{m}^{k}\right)^{\top}+H_{m}^{k}P\left(H_{m}^{k}\right)^{\top}\right).\label{eq:innovation_cov}
 \end{equation}
 
 \end_inset
@@ -2486,7 +2577,7 @@ Note that we were able to pull a term outside of the exponential, and the
 \begin_inset Formula 
 \begin{align}
 p\left(y_{m}\right) & \approx\eta\exp\left(-\frac{1}{2}\left(y_{m}\ominus\hat{y}_{m}\right)^{\top}\right.\nonumber \\
- & \left.S^{-1}\left(y_{m}\ominus\hat{y}_{m}\right)\right).\label{eq:probability_y}
+ & \left.\left(S^{k}\right)^{-1}\left(y_{m}\ominus\hat{y}_{m}\right)\right).\label{eq:probability_y}
 \end{align}
 
 \end_inset
@@ -2521,7 +2612,7 @@ z_{m}=S^{-\frac{1}{2}}y_{m}\ominus\hat{y}_{m}.
  be a metric defined as 
 \begin_inset Formula 
 \begin{align}
-d_{V}\left(y_{m},\hat{y}_{m}\right) & =\left(y_{m}\ominus\hat{y}_{m}\right)^{\top}S^{-1}\left(y_{m}\ominus\hat{y}_{m}\right)\label{eq:validation_region_metric}\\
+d_{V}\left(y_{m},\hat{y}_{m}\right) & =\left(y_{m}\ominus\hat{y}_{m}\right)^{\top}\left(S^{k}\right)^{-1}\left(y_{m}\ominus\hat{y}_{m}\right)\label{eq:validation_region_metric}\\
  & =z_{m}^{\top}z_{m}.\nonumber 
 \end{align}
 
@@ -2598,13 +2689,13 @@ where
 
 \begin_layout Standard
 The volume of the validation region, 
-\begin_inset Formula $V_{vol}$
+\begin_inset Formula $V_{vol}^{k}$
 \end_inset
 
 , is defined as 
 \begin_inset Formula 
 \begin{equation}
-V_{vol}=c_{n}\gamma^{n/2}\left|S\right|^{1/2},\label{eq:volume_validation_region}
+V_{vol}^{k}=c_{n}\gamma^{n/2}\left|S^{k}\right|^{1/2},\label{eq:volume_validation_region}
 \end{equation}
 
 \end_inset
@@ -2631,8 +2722,12 @@ and
 
  is the gamma function.
  Since the validation region depends on the measurement noise covariance,
- each measurement source will have a different validation region.
- 
+ there will be a different validation region for each measurement source.
+ Also, the number of expected measurements in the validation region is 
+\begin_inset Formula $\lambda^{k}V_{vol}^{k}$
+\end_inset
+
+ for each source.
 \end_layout
 
 \begin_layout Subsection
@@ -2645,67 +2740,19 @@ The PDAF assumes that a measurement source produces at most one measurement
  Thus, the PDAF assigns a weight to each measurement indicating how likely
  the measurement originated from the target.
  These weights are calculated for each measurement source.
- In other words, let 
-\begin_inset Formula $Y_{m}^{i}$
+ Let 
+\begin_inset Formula $\beta^{k,j}$
 \end_inset
 
- be the set of associated measurement produced from the 
-\begin_inset Formula $i^{th}$
-\end_inset
-
- source, then the weights are calculated for each 
-\begin_inset Formula $Y_{m}^{i}$
+denote the weight assigned to measurement 
+\begin_inset Formula $y_{m}^{k,j}$
 \end_inset
 
 .
- 
-\end_layout
-
-\begin_layout Standard
-The parametric PDAF assumes that a source produces a clutter (noisy) measurement
- with probabilty defined by a Poisson distribution with spatial clutter
- density 
-\begin_inset Formula $\lambda$
-\end_inset
-
-.
- The spatial clutter density is the expected number of clutter measurements
- per scan divided by the volume of the source's surveillance region.
- Thus, given the volume of a validation region, the number of expected measureme
-nts in the validation region is 
-\begin_inset Formula $\lambda V_{vol}$
-\end_inset
-
-.
- A source detects the target with probabily 
-\begin_inset Formula $P_{D}$
-\end_inset
-
-.
- 
-\end_layout
-
-\begin_layout Standard
-Let 
-\begin_inset Formula $y_{m}^{j}\in Y_{m}^{i}$
-\end_inset
-
- denote the 
-\begin_inset Formula $j^{th}$
-\end_inset
-
- measurement in 
-\begin_inset Formula $Y_{m}^{i}$
-\end_inset
-
-, then the corresponding weight 
-\begin_inset Formula $\beta_{j}$
-\end_inset
-
- is calculated as 
+ The weight is calculate as
 \begin_inset Formula 
 \[
-\beta_{j}=\frac{\mathcal{L}_{j}\left(y_{m}^{j}\right)}{1-P_{D}P_{G}+\sum_{n=1}^{\left|Y_{m}^{i}\right|}\mathcal{L}_{n}\left(y_{m}^{n}\right)},
+\beta^{k,j}=\frac{\mathcal{L}\left(y_{m}^{k,j}\right)}{1-P_{D}P_{G}+\sum_{y\in Y_{m}^{k}}\mathcal{L}\left(y\right)},
 \]
 
 \end_inset
@@ -2713,13 +2760,13 @@ Let
 with 
 \begin_inset Formula 
 \[
-\mathcal{L}_{j}\left(y_{m}^{j}\right)=\frac{P\left(y_{m}^{j}\right)P_{D}}{\lambda}
+\mathcal{L}\left(y_{m}^{k,j}\right)=\frac{P\left(y_{m}^{k,j}\right)P_{D}}{\lambda}
 \]
 
 \end_inset
 
 and 
-\begin_inset Formula $P\left(y_{m}^{j}\right)$
+\begin_inset Formula $P\left(y_{m}^{k,j}\right)$
 \end_inset
 
  being defined in 
@@ -2733,10 +2780,31 @@ noprefix "false"
 \end_inset
 
 .
+ The null weight 
+\begin_inset Formula $\beta^{k,0}$
+\end_inset
+
+ is the probability that none of the associated measurements from 
+\begin_inset Formula $Y_{m}^{k}$
+\end_inset
+
+ originated from the target and is calculated as 
+\begin_inset Formula 
+\[
+\beta^{k,0}=\frac{1-P_{D}P_{G}}{1-P_{D}P_{G}+\sum_{y\in Y_{m}^{k}}\mathcal{L}\left(y\right)}.
+\]
+
+\end_inset
+
+Note that 
+\begin_inset Formula $\sum_{i=0}^{\left|Y_{m}^{k}\right|}\beta^{k,i}=1$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsection
-Single Souorce Update
+Update
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:Single-Souorce-Update"
@@ -2747,54 +2815,89 @@ name "subsec:Single-Souorce-Update"
 \end_layout
 
 \begin_layout Standard
-The probability of a measurement conditioned on the state is called the
- measurement probability denoted as 
-\begin_inset Formula $p\left(y_{m}\mid x_{m}\right)$
-\end_inset
+The PDAF originally assumes only one measurement source.
+ In the case of multiple measurement sources, we apply the update step for
+ each source and fuse the results together using the centralized measurement
+ fusion discussed in subsection 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Centralized-Measurement-Fusion"
+plural "false"
+caps "false"
+noprefix "false"
 
- which we can calculate by taking the first and second moments of 
-\begin_inset Formula $y_{m}$
-\end_inset
-
- conditioned on 
-\begin_inset Formula $x_{m}$
 \end_inset
 
 .
- If the observation function is non-linear in the measurement noise, then
- we approximate 
-\begin_inset Formula $p\left(y_{m}\mid x_{m}\right)$
+ For each 
+\begin_inset Formula $Y_{m}^{k}$
 \end_inset
 
- via linearization to get 
+ we compute perform the PDAF update step 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Bar-Shalom2011"
+literal "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $y_{m}^{k,j}\in Y_{m}^{k}$
+\end_inset
+
+ where 
+\begin_inset Formula $j>0$
+\end_inset
+
+ denotes the 
+\begin_inset Formula $j^{th}$
+\end_inset
+
+ element.
+ The innovation term is 
 \begin_inset Formula 
 \[
-p\left(y_{m}\mid x_{m}\right)\approx\eta\exp\left(-\frac{1}{2}y_{m}\ominus h\left(x_{m},0\right)^{\top}\left(V_{m}^{\top}RV_{m}\right)^{-1}y_{m}\ominus h\left(x_{m},0\right)\right),
+\nu_{m}^{k,j}=y_{m}^{k,j}\ominus h\left(\hat{\bar{x}}_{m},0\right),
+\]
+
+\end_inset
+
+and the combined innovation term is 
+\begin_inset Formula 
+\begin{equation}
+\nu_{m}^{k}=\sum_{j=1}^{\left|Y_{m}^{i}\right|}\beta^{k,i}\nu_{m}^{k,j}.\label{eq:JPDAF_combined_innvo}
+\end{equation}
+
+\end_inset
+
+Using the combined innovation term, the state update for the 
+\begin_inset Formula $k^{th}$
+\end_inset
+
+ source is 
+\begin_inset Formula 
+\[
+\hat{x}_{m}^{k}=\hat{\bar{x}}_{m}\oplus W_{m}^{k}\nu_{m}^{k},
 \]
 
 \end_inset
 
 where 
-\begin_inset Formula 
-\begin{align*}
-V_{m} & =\left.\frac{\partial y_{m}\ominus h\left(x_{m},v_{m}\right)}{\partial v_{m}}\right|_{v_{m}=0}.
-\end{align*}
-
+\begin_inset Formula $W_{m}^{k}$
 \end_inset
 
-
-\end_layout
-
-\begin_layout Standard
-The probability of the state given a measurement is called the posterior
- denoted 
-\begin_inset Formula $p\left(x_{m}\mid y_{m}\right)$
+ is the gain associated with the 
+\begin_inset Formula $k^{th}$
 \end_inset
 
- and defined as 
+ sourced defined as 
 \begin_inset Formula 
 \[
-p\left(x_{m}\mid y_{m}\right)=\frac{p\left(y_{m}\mid x_{m}\right)\bar{p}\left(x_{m}\right)}{p\left(y_{m}\right)}.
+W_{m}^{k}=\bar{P}_{m}\left(H_{m}^{k}\right)^{\top}\left(S_{m}^{k}\right)^{-1}.
 \]
 
 \end_inset
@@ -2803,231 +2906,507 @@ p\left(x_{m}\mid y_{m}\right)=\frac{p\left(y_{m}\mid x_{m}\right)\bar{p}\left(x_
 \end_layout
 
 \begin_layout Standard
-We cannot directly calcualte 
-\begin_inset Formula $p\left(x_{m}\mid y_{m}\right)$
+\begin_inset Formula $\bar{P}_{m}$
 \end_inset
 
- since 
-\begin_inset Formula $p\left(y_{m}\right)$
+ is the error covariance before update defined in 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:JPDAF_propagation"
+plural "false"
+caps "false"
+noprefix "false"
+
 \end_inset
 
- is unknown.
- However, it is often the case that we want to maximize 
-\begin_inset Formula $p\left(x_{m}\mid y_{m}\right)$
+, 
+\begin_inset Formula $H_{m}^{k}$
+\end_inset
+
+ is the observation Jacobian for the 
+\begin_inset Formula $k^{th}$
+\end_inset
+
+ source defined in 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:ObservationJacobianState"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, and 
+\begin_inset Formula $S_{m}^{k}$
+\end_inset
+
+ is the innovation covariance of the 
+\begin_inset Formula $k^{th}$
+\end_inset
+
+ source defined in 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:innovation_cov"
+plural "false"
+caps "false"
+noprefix "false"
+
 \end_inset
 
 .
- To do this, we follow a simimliar process to the one outlined in 
+\end_layout
+
+\begin_layout Standard
+The covariance update is 
+\begin_inset Formula 
+\begin{equation}
+P_{m}^{k}=\beta^{k,0}\bar{P}_{m}+\left(1-\beta^{k,0}\right)P_{m}^{k,c}+\tilde{P}_{m}^{k},\label{eq:JPDAF_cov_update}
+\end{equation}
+
+\end_inset
+
+where the covariance of the state updated with the correct measurement is
+ 
+\begin_inset Formula 
+\[
+P^{k,c}=\bar{P}_{m}-W_{m}^{k}S_{m}^{k}\left(W_{m}^{k}\right)^{\top},
+\]
+
+\end_inset
+
+and the spread of the innovations term 
+\begin_inset Formula 
+\[
+\tilde{P}_{m}^{k}=W_{m}^{k}\left[\sum_{j=1}^{\left|Y_{m}^{i}\right|}\beta^{k,i}\nu_{m}^{k,j}\left(\nu_{m}^{k,j}\right)^{\top}-\nu_{m}^{k}\left(\nu_{m}^{k}\right)^{\top}\right]\left(W_{m}^{k}\right)^{\top}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We now have 
+\begin_inset Formula $\left|\mathcal{K}_{m}\right|$
+\end_inset
+
+ updated states and error covariance; one for each measurement source.
+ We show how to fuse them together in the next subsection.
+\end_layout
+
+\begin_layout Subsection
+Centralized Measurement Fusion 
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Centralized-Measurement-Fusion"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We use the centralized measurement fusion algorithm described in 
 \begin_inset CommandInset citation
 LatexCommand cite
-key "Thrun2006"
+key "Bar-Shalom2011"
 literal "true"
 
 \end_inset
 
-, except we modify it for the Lie group setting.
- We begin by rewriting 
-\begin_inset Formula $p\left(x_{m}\mid y_{m}\right)$
+ and 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Millard2017"
+literal "true"
+
 \end_inset
 
- as 
+ to fuse together the 
+\begin_inset Formula $\left|\mathcal{K}_{m}\right|$
+\end_inset
+
+ updated states and error covariance.
+ We briefly review this method here only to adapt it to the Lie group setting
+ and for the specific case of the JPDAF.
+ The covariance fusion is 
 \begin_inset Formula 
 \[
-p\left(x_{m}\mid y_{m}\right)=\eta p\left(y_{m}\mid x_{m}\right)\bar{p}\left(x_{m}\right)
+P_{m}^{-1}=\bar{P}_{m}^{-1}+\sum_{k\in\mathcal{K}_{m}}\left(\left(P_{m}^{k}\right)^{-1}-\bar{P}_{m}^{-1}\right),
 \]
 
 \end_inset
 
-where we have absorbed 
-\begin_inset Formula $p\left(y_{m}\right)$
-\end_inset
-
- into 
-\begin_inset Formula $\eta$
-\end_inset
-
- since it won't impact the maximization.
- In order to enforce 
-\begin_inset Formula $p\left(x_{m}\mid y_{m}\right)$
-\end_inset
-
-, we linearize it to get 
+and the state update is 
 \begin_inset Formula 
 \[
-p\left(x_{m}\mid y_{m}\right)\approx\eta\exp\left(-\frac{1}{2}\delta x_{m}^{\top}\bar{P}_{m}^{-1}\delta x_{m}-\frac{1}{2}\left(y_{m}\ominus h\left(\hat{x}_{m},0\right)+H_{m}\delta x_{m}\right)^{\top}\left(V_{m}^{\top}RV_{m}\right)^{-1}\left(y_{m}\ominus h\left(\hat{x}_{m},0\right)+H_{m}\delta x_{m}\right)\right)
+\hat{x}_{m}=\hat{\bar{x}}_{m}\oplus\left(\bar{P}_{m}\sum_{k\in\mathcal{K}_{m}}\nu_{m}^{k}\right),
 \]
 
 \end_inset
 
-with where the inverse is the group inverse.
- Note that we have redefined 
-\begin_inset Formula $V_{m}$
+with 
+\begin_inset Formula $P_{m}^{k}$
 \end_inset
 
- to evaluate at a different linearized state.
-\end_layout
-
-\begin_layout Standard
-Maximizing 
-\begin_inset Formula $p\left(x_{m}\mid y_{m}\right)$
-\end_inset
-
- is the same as minimizing 
-\begin_inset Formula $\log\left(-p\left(x_{m}\mid y_{m}\right)\right)$
-\end_inset
-
-, thus the problem is simplified to 
-\begin_inset Formula 
-\[
-\log\left(-\eta\right)+\frac{1}{2}\delta x_{m}^{\top}\bar{P}_{m}^{-1}\delta x_{m}+\frac{1}{2}\left(y_{m}\ominus h\left(\hat{x}_{m},0\right)+H_{m}\delta x_{m}\right)^{\top}\left(V_{m}^{\top}RV_{m}\right)^{-1}\left(y_{m}\ominus h\left(\hat{x}_{m},0\right)+H_{m}\delta x_{m}\right).
-\]
+ being defined in 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:JPDAF_cov_update"
+plural "false"
+caps "false"
+noprefix "false"
 
 \end_inset
 
-Since the term 
-\begin_inset Formula $\log\left(-\eta\right)$
+ and 
+\begin_inset Formula $\nu_{m}^{k}$
 \end_inset
 
- is a constant, it has no impact on the optimization and can be removed
- to finally get the optimization problem
-\begin_inset Formula 
-\[
-\underset{\delta x_{m}}{\text{min}}J_{m}=\frac{1}{2}\delta x_{m}^{\top}\bar{P}_{m}^{-1}\delta x_{m}+\frac{1}{2}\left(y_{m}\ominus h\left(\hat{x}_{m},0\right)+H_{m}\delta x_{m}\right)^{\top}\left(V_{m}^{\top}RV_{m}\right)^{-1}\left(y_{m}\ominus h\left(\hat{x}_{m},0\right)+H_{m}\delta x_{m}\right).
-\]
+ is defined in 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:JPDAF_combined_innvo"
+plural "false"
+caps "false"
+noprefix "false"
 
-\end_inset
-
-Since it is quadratic, we can easily find the minimum by taking the first
- derivative, setting it to zero and solving for 
-\begin_inset Formula $\delta x_{m}^{\top}$
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Section
+Track Likelihood
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Track-Likelihood"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The track likelihood is a measure of how well a track represents an actual
+ target.
+ In the previous versions of R-RANSAC, the track's inlier ratio and lifetime
+ were used to indicate the track's likelihood which doesn't have much theoretica
+l basis other than intuition.
+ In this section, we present a different approach using a binary Bayes filter
+ with static states.
+ 
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $P_{D}^{k}$
+\end_inset
+
+ denote the probability that the 
+\begin_inset Formula $k^{th}$
+\end_inset
+
+ measurement source produces a true measurement of the target during the
+ sensor scan, let 
+\begin_inset Formula $P_{G}^{k}$
+\end_inset
+
+ denote the probability that the true measurement is validated (associated),
+ then the probability that a true measurement was received and validated
+ is 
+\begin_inset Formula $P_{D}^{k}P_{G}^{k}$
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $\lambda^{k}$
+\end_inset
+
+ denote the spatial density of the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ source.
+ The expected number of false measurements within a validation region is
+ 
+\begin_inset Formula $\lambda^{i}V_{vol}$
+\end_inset
+
+ where 
+\begin_inset Formula $V_{vol}$
+\end_inset
+
+ is the volume of the validation region defined in 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:volume_validation_region"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $\theta_{m}^{i}$
+\end_inset
+
+ denote the number of validated measurements from the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ measurement source at time 
+\begin_inset Formula $m$
+\end_inset
+
+, 
+\begin_inset Formula $\theta_{m:k}^{i}$
+\end_inset
+
+ denote the number of validated measurements from the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ measurement source from time 
+\begin_inset Formula $m$
+\end_inset
+
+ to time 
+\begin_inset Formula $k$
+\end_inset
+
+ where 
+\begin_inset Formula $m<k$
+\end_inset
+
+, and 
+\begin_inset Formula $\theta_{m:k}$
+\end_inset
+
+ the number of all validated measurements from all the measurement sources
+ from time 
+\begin_inset Formula $m$
+\end_inset
+
+ to time 
+\begin_inset Formula $k$
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $z$
+\end_inset
+
+ be a Bernoulli random variable with 
+\begin_inset Formula $z=1$
+\end_inset
+
+ meaning that the track represents an actual target and 
+\begin_inset Formula $z=0$
+\end_inset
+
+ meaning that the track doesn't represent a target.
+ For notation purposes, we will denote 
+\begin_inset Formula $p\left(z=1\right)$
+\end_inset
+
+ as 
+\begin_inset Formula $p\left(z\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $p\left(z=0\right)$
+\end_inset
+
+ as 
+\begin_inset Formula $p\left(\neg z\right)$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+We are interested in calculating the probability 
+\begin_inset Formula $p\left(z\mid\theta_{m:k}\right)$
+\end_inset
+
+ which is the probability that the track represents an actual target conditioned
+ on the number of validated measurements.
+ Using Bayes rule we get 
 \begin_inset Formula 
 \begin{align*}
-\frac{\partial J_{m}}{\partial\delta x_{m}} & =\delta x_{m}^{\top}\bar{P}_{m}^{-1}+y_{m}\ominus h\left(\hat{x}_{m},0\right)^{\top}\left(V_{m}^{\top}RV_{m}\right)^{-1}H_{m}+\delta x_{m}^{\top}H_{m}^{\top}\left(V_{m}^{\top}RV_{m}\right)^{-1}H_{m}
+p\left(z\mid\theta_{m:k}\right) & =\frac{p\left(\theta_{k}\mid z\right)p\left(z\mid\theta_{m:k^{-}}\right)}{p\left(\theta_{k}\mid\theta_{m:k^{-}}\right)},
+\end{align*}
+
+\end_inset
+
+and 
+\begin_inset Formula 
+\[
+p\left(\neg z\mid\theta_{m:k}\right)=\frac{p\left(\theta_{k}\mid\neg z\right)p\left(\neg z\mid\theta_{m:k^{-}}\right)}{p\left(\theta_{k}\mid\theta_{m:k^{-}}\right)}.
+\]
+
+\end_inset
+
+Taking the log (base 10) ratio of the probabilities 
+\begin_inset Formula $p\left(z\mid\theta_{m:k}\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $p\left(\neg z\mid\theta_{m:k}\right)$
+\end_inset
+
+, we get 
+\begin_inset Formula 
+\begin{align*}
+\log\left(\frac{p\left(z\mid\theta_{m:k}\right)}{p\left(\neg z\mid\theta_{m:k}\right)}\right) & =\log\left(\frac{p\left(\theta_{k}\mid z\right)p\left(z\mid\theta_{m:k^{-}}\right)}{p\left(\theta_{k}\mid\neg z\right)p\left(\neg z\mid\theta_{m:k^{-}}\right)}\right)\\
+ & =\underbrace{\log\left(\frac{p\left(\theta_{k}\mid z\right)}{p\left(\theta_{k}\mid\neg z\right)}\right)}_{l_{k}}\\
+ & +\underbrace{\sum_{n=m}^{k^{-}}\log\left(\frac{p\left(\theta_{n}\mid z\right)}{p\left(\theta_{n}\mid\neg z\right)}\right)}_{l_{k^{-}}}.
 \end{align*}
 
 \end_inset
 
 
-\begin_inset Formula 
-\[
-\delta x_{m}=-\left(\bar{P}_{m}^{-1}+H_{m}^{\top}\left(V_{m}^{\top}RV_{m}\right)^{-1}H_{m}\right)^{-1}H_{m}^{\top}\left(V_{m}^{\top}RV_{m}\right)^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)^{\top}
-\]
+\end_layout
 
+\begin_layout Standard
+Whenever new validated measurements are received, we calculate 
+\begin_inset Formula $l_{k}$
 \end_inset
 
-which can be rewritten as 
-\begin_inset Formula 
-\[
-\delta x_{m}=-\bar{P}_{m}H_{m}^{\top}\left(H_{m}\bar{P}_{m}H_{m}^{\top}+V_{m}RV_{m}^{\top}\right)^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)^{\top}
-\]
-
-\end_inset
-
-which is the mean that miximizes the Gaussian approximation of 
-\begin_inset Formula $p\left(x_{m}\mid y_{m}\right)$
-\end_inset
-
-.
- The corresponding covariance of Gaussian approximation of 
-\begin_inset Formula $p\left(x_{m}\mid y_{m}\right)$
-\end_inset
-
- is 
-\begin_inset Formula 
-\[
-\frac{\partial^{2}J_{m}}{\partial\left(\delta x_{m}\right)^{2}}=\left(\bar{P}_{m}^{-1}+H_{m}^{\top}\left(V_{m}^{\top}RV_{m}\right)^{-1}H_{m}\right)^{-1}.
-\]
-
-\end_inset
-
-In order for 
-\begin_inset Formula $\delta x_{m}$
-\end_inset
-
- to be zero mean, we add its mean onto the estimate of 
-\begin_inset Formula $\hat{\bar{x}}$
-\end_inset
-
- such that 
-\begin_inset Formula $\hat{x}_{m}=\hat{\bar{x}}_{m}\oplus\delta x_{m}$
+ and add it to the previous log odds ratio 
+\begin_inset Formula $l_{k^{-}}$
 \end_inset
 
 .
 \end_layout
 
 \begin_layout Standard
-Putting everything together, we get the standard Kalman filter for Lie groups:
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{subequations}
-\end_layout
-
+The term 
+\begin_inset Formula $l_{k}$
 \end_inset
 
-
-\begin_inset CommandInset label
-LatexCommand label
-name "eq:Kalman_update"
-
-\end_inset
-
-
+ can be written as
 \begin_inset Formula 
-\begin{alignat}{2}
-\text{Innovation :} & \quad & \hat{e} & =y_{m}\ominus h\left(\hat{x}_{m},\hat{v}_{m}\right)\\
-\text{Innovation cov. :} & \quad & S & =H_{m}\bar{P}_{m}H_{m}^{\top}+V_{m}RV_{m}^{\top}\\
-\text{Kalman gain :} & \quad & K & =\bar{P}_{m}H_{m}^{\top}S^{-1}\\
-\text{Observed error :} & \quad & \delta x_{m} & =-K\hat{e}\\
-\text{State update :} & \quad & \hat{x}_{m} & =\hat{\bar{x}}_{m}\oplus\delta x_{m}\\
-\text{Cov. update :} & \quad & P_{m} & =\bar{P}_{m}-KSK^{\top}.
-\end{alignat}
+\[
+\log\left(\frac{p\left(\theta_{k}\mid z\right)}{p\left(\theta_{k}\mid\neg z\right)}\right)=\sum_{i\in1}^{N_{s}}\log\left(\frac{p\left(\theta_{k}^{i}\mid z\right)}{p\left(\theta_{k}^{i}\mid\neg z\right)}\right),
+\]
 
 \end_inset
 
-
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{subequations}
-\end_layout
-
+where 
+\begin_inset Formula $N_{s}$
 \end_inset
 
-Depending on the data associating filter used, the update step will be different
-; however, the underlying basic idea is the same which will require computing
- the Jacobians 
-\begin_inset Formula $F_{m}$
-\end_inset
-
-, 
-\begin_inset Formula $G_{m}$
-\end_inset
-
-, 
-\begin_inset Formula $H_{m}$
+ is the number of measurement sources.
+ Thus we are left with calculating 
+\begin_inset Formula $p\left(\theta_{k}^{i}\mid z\right)$
 \end_inset
 
  and 
-\begin_inset Formula $V_{m}$
+\begin_inset Formula $p\left(\theta_{k}^{i}\mid\neg z\right)$
 \end_inset
 
-.
+ for each measurement source.
+ We assume that a measurement source can only produce at most one true measureme
+nt during a sensor scan.
+ Therefore, we have the two possibilities for 
+\begin_inset Formula $p\left(\theta_{k}^{i}\mid z\right)$
+\end_inset
+
+: that all 
+\begin_inset Formula $\theta_{k}^{i}$
+\end_inset
+
+ measurements are false or all but one are false.
+ Thus 
+\begin_inset Formula 
+\begin{multline*}
+p\left(\theta_{k}^{i}\mid z\right)=P_{G}^{i}P_{D}^{i}\exp\left(\lambda^{i}V_{vol}\right)\frac{\left(\lambda^{i}V_{vol}\right)^{\theta_{k}^{i}-1}}{\left(\theta_{k}^{i}-1\right)!}\\
++\left(1-P_{G}^{i}P_{D}^{i}\right)\exp\left(\lambda^{i}V_{vol}\right)\frac{\left(\lambda^{i}V_{vol}\right)^{\theta_{k}^{i}}}{\left(\theta_{k}^{i}\right)!}.
+\end{multline*}
+
+\end_inset
+
+There is only one possibility for 
+\begin_inset Formula $p\left(\theta_{k}^{i}\mid\neg z\right)$
+\end_inset
+
+, that is the probability of all of the measurements being false 
+\begin_inset Formula 
+\[
+p\left(\theta_{k}^{i}\mid\neg z\right)=\exp\left(\lambda^{i}V_{vol}\right)\frac{\left(\lambda^{i}V_{vol}\right)^{\theta_{k}^{i}}}{\left(\theta_{k}^{i}\right)!}.
+\]
+
+\end_inset
+
+Taking the ratio of the two, we get 
+\begin_inset Formula 
+\[
+\frac{p\left(\theta_{k}^{i}\mid z\right)}{p\left(\theta_{k}^{i}\mid\neg z\right)}=1+P_{G}^{i}P_{D}^{i}\left(\frac{\theta_{k}^{i}}{\lambda^{i}V_{vol}}-1\right).
+\]
+
+\end_inset
+
+
 \end_layout
 
-\begin_layout Subsection
-Centralized Measurement Fusion
+\begin_layout Standard
+The model likelihood, 
+\begin_inset Formula $p\left(z\mid\theta_{m:k}\right)$
+\end_inset
+
+, can be recovered from the log odds ratio by 
+\begin_inset Formula 
+\[
+p\left(z\mid\theta_{m:k}\right)=1-\frac{1}{1+10^{l_{k}}}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+If a track is outside the LSR of the source, then 
+\begin_inset Formula $P_{D}$
+\end_inset
+
+ should be zero and 
+\begin_inset Formula $p\left(z\mid\theta_{m:k}\right)$
+\end_inset
+
+ will not be affected.
+ In the case that the track leaves the GSR, we need a way to kill the track
+ in order to make room for other tracks to be initialized.
+ Thus, we assume that a track that has not received a measurement within
+ 
+\begin_inset Formula $\tau_{\alpha}$
+\end_inset
+
+ seconds is no longer in the GSR and will be pruned.
+ A track is considered a good track if the 
+\begin_inset Formula $p\left(z\mid\theta_{m:k}\right)>\tau_{\rho}$
+\end_inset
+
+; otherwise, it is considered a poor track.
+ The parameters 
+\begin_inset Formula $\lambda^{i}$
+\end_inset
+
+ and 
+\begin_inset Formula $P_{D}^{i}$
+\end_inset
+
+ can be easily estimated and 
+\begin_inset Formula $P_{G}^{i}$
+\end_inset
+
+ is defined by the user.
 \end_layout
 
 \begin_layout Section
@@ -3722,480 +4101,6 @@ literal "true"
 \end_layout
 
 \begin_layout Section
-Data Association 
-\begin_inset CommandInset label
-LatexCommand label
-name "sec:Data-Association"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-As previously discussed, there are many ways to associate new measurements
- to existing tracks.
- 
-\end_layout
-
-\begin_layout Subsection
-Centralized Measurement Fusion 
-\begin_inset CommandInset label
-LatexCommand label
-name "sec:Centralized-Measurement-Fusion"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Validated measurements can come from multiple different measurement sources
- at different times.
- In order to update the state estimate, we use the centralized measurement
- fusion method as described in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Bar-Shalom2011"
-literal "true"
-
-\end_inset
-
- and 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Millard2017"
-literal "true"
-
-\end_inset
-
-, which assumes that measurements are statistically independent.
- We briefly review this method here only to adapt it to the Lie group setting.
- Let 
-\begin_inset Formula $N_{s}$
-\end_inset
-
- denote the number of measurement sources, 
-\begin_inset Formula $Y_{m}^{i}=\left\{ y_{m}^{1},y_{m}^{2},\cdots,y_{m}^{n}\right\} $
-\end_inset
-
- denote the set of measurements associated with the track that was received
- at time 
-\begin_inset Formula $m$
-\end_inset
-
- from the 
-\begin_inset Formula $i^{th}$
-\end_inset
-
- measurement source, 
-\begin_inset Formula $\beta_{m}^{j}$
-\end_inset
-
- be the weight associated with measurement 
-\begin_inset Formula $y_{m}^{j}\in Y_{m}^{i}$
-\end_inset
-
-, 
-\begin_inset Formula $Z^{i}$
-\end_inset
-
- be defined as 
-\begin_inset Formula 
-\[
-Z^{i}=\begin{cases}
-\sum_{j=1}^{n}\beta^{j}H_{m}^{\top}\left(S_{m}^{i}\right)^{-1}y_{m}^{j}\ominus h\left(x_{m}\right) & \text{if }\left|Y_{m}^{i}\right|>0\\
-0 & \text{else}
-\end{cases},
-\]
-
-\end_inset
-
-and 
-\begin_inset Formula $P_{m}^{i}$
-\end_inset
-
- be the updated measurement covariance after incorporating only the measurements
- from the 
-\begin_inset Formula $i^{th}$
-\end_inset
-
- source, then the covariance update is 
-\begin_inset Formula 
-\[
-P_{m}^{-1}=\bar{P}_{m}^{-1}+\sum_{i=1}^{N_{s}}\left(\left(P_{m}^{i}\right)^{-1}-\bar{P}_{m}^{-1}\right),
-\]
-
-\end_inset
-
-and the state update is 
-\begin_inset Formula 
-\[
-\hat{x}_{m}=\hat{\bar{x}}_{m}\oplus\left(\bar{P}_{m}\sum_{i=1}^{N_{s}}Z^{i}\right).
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Recall that 
-\begin_inset Formula $H_{m}$
-\end_inset
-
- is the Jacobian of the measurement function, 
-\begin_inset Formula $R^{i}$
-\end_inset
-
- the measurement covariance of the 
-\begin_inset Formula $i^{th}$
-\end_inset
-
- measurement source, and 
-\begin_inset Formula $\bar{P}_{m}$
-\end_inset
-
- the error covariance after propagation but before any measurement updates.
- The weights 
-\begin_inset Formula $\beta_{m}^{j}$
-\end_inset
-
- are calculated from the data association filter used.
-\end_layout
-
-\begin_layout Section
-Track Likelihood
-\begin_inset CommandInset label
-LatexCommand label
-name "sec:Track-Likelihood"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-The track likelihood is a measure of how well a track represents an actual
- target.
- In the previous versions of R-RANSAC, the track's inlier ratio and lifetime
- were used to indicate the track's likelihood which doesn't have much theoretica
-l basis other than intuition.
- In this section, we present a different approach using a binary Bayes filter
- with static states.
- 
-\end_layout
-
-\begin_layout Standard
-Let 
-\begin_inset Formula $P_{D}^{i}$
-\end_inset
-
- denote the probability that the 
-\begin_inset Formula $i^{th}$
-\end_inset
-
- measurement source produces a true measurement of the target during the
- sensor scan, let 
-\begin_inset Formula $P_{G}^{i}$
-\end_inset
-
- denote the probability that the true measurement is validated (associated),
- then the probability that a true measurement was received and validated
- is 
-\begin_inset Formula $P_{D}^{i}P_{G}^{i}$
-\end_inset
-
-.
- Let 
-\begin_inset Formula $\lambda^{i}$
-\end_inset
-
- denote the spatial density of the 
-\begin_inset Formula $i^{th}$
-\end_inset
-
- source.
- The expected number of false measurements within a validation region is
- 
-\begin_inset Formula $\lambda^{i}V_{vol}$
-\end_inset
-
- where 
-\begin_inset Formula $V_{vol}$
-\end_inset
-
- is the volume of the validation region defined in 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:volume_validation_region"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-Let 
-\begin_inset Formula $\theta_{m}^{i}$
-\end_inset
-
- denote the number of validated measurements from the 
-\begin_inset Formula $i^{th}$
-\end_inset
-
- measurement source at time 
-\begin_inset Formula $m$
-\end_inset
-
-, 
-\begin_inset Formula $\theta_{m:k}^{i}$
-\end_inset
-
- denote the number of validated measurements from the 
-\begin_inset Formula $i^{th}$
-\end_inset
-
- measurement source from time 
-\begin_inset Formula $m$
-\end_inset
-
- to time 
-\begin_inset Formula $k$
-\end_inset
-
- where 
-\begin_inset Formula $m<k$
-\end_inset
-
-, and 
-\begin_inset Formula $\theta_{m:k}$
-\end_inset
-
- the number of all validated measurements from all the measurement sources
- from time 
-\begin_inset Formula $m$
-\end_inset
-
- to time 
-\begin_inset Formula $k$
-\end_inset
-
-.
- Let 
-\begin_inset Formula $z$
-\end_inset
-
- be a Bernoulli random variable with 
-\begin_inset Formula $z=1$
-\end_inset
-
- meaning that the track represents an actual target and 
-\begin_inset Formula $z=0$
-\end_inset
-
- meaning that the track doesn't represent a target.
- For notation purposes, we will denote 
-\begin_inset Formula $p\left(z=1\right)$
-\end_inset
-
- as 
-\begin_inset Formula $p\left(z\right)$
-\end_inset
-
- and 
-\begin_inset Formula $p\left(z=0\right)$
-\end_inset
-
- as 
-\begin_inset Formula $p\left(\neg z\right)$
-\end_inset
-
-.
- 
-\end_layout
-
-\begin_layout Standard
-We are interested in calculating the probability 
-\begin_inset Formula $p\left(z\mid\theta_{m:k}\right)$
-\end_inset
-
- which is the probability that the track represents an actual target conditioned
- on the number of validated measurements.
- Using Bayes rule we get 
-\begin_inset Formula 
-\begin{align*}
-p\left(z\mid\theta_{m:k}\right) & =\frac{p\left(\theta_{k}\mid z\right)p\left(z\mid\theta_{m:k^{-}}\right)}{p\left(\theta_{k}\mid\theta_{m:k^{-}}\right)},
-\end{align*}
-
-\end_inset
-
-and 
-\begin_inset Formula 
-\[
-p\left(\neg z\mid\theta_{m:k}\right)=\frac{p\left(\theta_{k}\mid\neg z\right)p\left(\neg z\mid\theta_{m:k^{-}}\right)}{p\left(\theta_{k}\mid\theta_{m:k^{-}}\right)}.
-\]
-
-\end_inset
-
-Taking the log (base 10) ratio of the probabilities 
-\begin_inset Formula $p\left(z\mid\theta_{m:k}\right)$
-\end_inset
-
- and 
-\begin_inset Formula $p\left(\neg z\mid\theta_{m:k}\right)$
-\end_inset
-
-, we get 
-\begin_inset Formula 
-\begin{align*}
-\log\left(\frac{p\left(z\mid\theta_{m:k}\right)}{p\left(\neg z\mid\theta_{m:k}\right)}\right) & =\log\left(\frac{p\left(\theta_{k}\mid z\right)p\left(z\mid\theta_{m:k^{-}}\right)}{p\left(\theta_{k}\mid\neg z\right)p\left(\neg z\mid\theta_{m:k^{-}}\right)}\right)\\
- & =\underbrace{\log\left(\frac{p\left(\theta_{k}\mid z\right)}{p\left(\theta_{k}\mid\neg z\right)}\right)}_{l_{k}}\\
- & +\underbrace{\sum_{n=m}^{k^{-}}\log\left(\frac{p\left(\theta_{n}\mid z\right)}{p\left(\theta_{n}\mid\neg z\right)}\right)}_{l_{k^{-}}}.
-\end{align*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Whenever new validated measurements are received, we calculate 
-\begin_inset Formula $l_{k}$
-\end_inset
-
- and add it to the previous log odds ratio 
-\begin_inset Formula $l_{k^{-}}$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-The term 
-\begin_inset Formula $l_{k}$
-\end_inset
-
- can be written as
-\begin_inset Formula 
-\[
-\log\left(\frac{p\left(\theta_{k}\mid z\right)}{p\left(\theta_{k}\mid\neg z\right)}\right)=\sum_{i\in1}^{N_{s}}\log\left(\frac{p\left(\theta_{k}^{i}\mid z\right)}{p\left(\theta_{k}^{i}\mid\neg z\right)}\right),
-\]
-
-\end_inset
-
-where 
-\begin_inset Formula $N_{s}$
-\end_inset
-
- is the number of measurement sources.
- Thus we are left with calculating 
-\begin_inset Formula $p\left(\theta_{k}^{i}\mid z\right)$
-\end_inset
-
- and 
-\begin_inset Formula $p\left(\theta_{k}^{i}\mid\neg z\right)$
-\end_inset
-
- for each measurement source.
- We assume that a measurement source can only produce at most one true measureme
-nt during a sensor scan.
- Therefore, we have the two possibilities for 
-\begin_inset Formula $p\left(\theta_{k}^{i}\mid z\right)$
-\end_inset
-
-: that all 
-\begin_inset Formula $\theta_{k}^{i}$
-\end_inset
-
- measurements are false or all but one are false.
- Thus 
-\begin_inset Formula 
-\begin{multline*}
-p\left(\theta_{k}^{i}\mid z\right)=P_{G}^{i}P_{D}^{i}\exp\left(\lambda^{i}V_{vol}\right)\frac{\left(\lambda^{i}V_{vol}\right)^{\theta_{k}^{i}-1}}{\left(\theta_{k}^{i}-1\right)!}\\
-+\left(1-P_{G}^{i}P_{D}^{i}\right)\exp\left(\lambda^{i}V_{vol}\right)\frac{\left(\lambda^{i}V_{vol}\right)^{\theta_{k}^{i}}}{\left(\theta_{k}^{i}\right)!}.
-\end{multline*}
-
-\end_inset
-
-There is only one possibility for 
-\begin_inset Formula $p\left(\theta_{k}^{i}\mid\neg z\right)$
-\end_inset
-
-, that is the probability of all of the measurements being false 
-\begin_inset Formula 
-\[
-p\left(\theta_{k}^{i}\mid\neg z\right)=\exp\left(\lambda^{i}V_{vol}\right)\frac{\left(\lambda^{i}V_{vol}\right)^{\theta_{k}^{i}}}{\left(\theta_{k}^{i}\right)!}.
-\]
-
-\end_inset
-
-Taking the ratio of the two, we get 
-\begin_inset Formula 
-\[
-\frac{p\left(\theta_{k}^{i}\mid z\right)}{p\left(\theta_{k}^{i}\mid\neg z\right)}=1+P_{G}^{i}P_{D}^{i}\left(\frac{\theta_{k}^{i}}{\lambda^{i}V_{vol}}-1\right).
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-The model likelihood, 
-\begin_inset Formula $p\left(z\mid\theta_{m:k}\right)$
-\end_inset
-
-, can be recovered from the log odds ratio by 
-\begin_inset Formula 
-\[
-p\left(z\mid\theta_{m:k}\right)=1-\frac{1}{1+10^{l_{k}}}.
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-If a track is outside the LSR of the source, then 
-\begin_inset Formula $P_{D}$
-\end_inset
-
- should be zero and 
-\begin_inset Formula $p\left(z\mid\theta_{m:k}\right)$
-\end_inset
-
- will not be affected.
- In the case that the track leaves the GSR, we need a way to kill the track
- in order to make room for other tracks to be initialized.
- Thus, we assume that a track that has not received a measurement within
- 
-\begin_inset Formula $\tau_{\alpha}$
-\end_inset
-
- seconds is no longer in the GSR and will be pruned.
- A track is considered a good track if the 
-\begin_inset Formula $p\left(z\mid\theta_{m:k}\right)>\tau_{\rho}$
-\end_inset
-
-; otherwise, it is considered a poor track.
- The parameters 
-\begin_inset Formula $\lambda^{i}$
-\end_inset
-
- and 
-\begin_inset Formula $P_{D}^{i}$
-\end_inset
-
- can be easily estimated and 
-\begin_inset Formula $P_{G}^{i}$
-\end_inset
-
- is defined by the user.
-\end_layout
-
-\begin_layout Section
 RANSAC
 \begin_inset CommandInset label
 LatexCommand label
@@ -4397,7 +4302,7 @@ We create a track from a track hypothesis using a filtering method.
  equation 
 \begin_inset CommandInset ref
 LatexCommand eqref
-reference "eq:Kalman_propagation"
+reference "eq:JPDAF_propagation"
 
 \end_inset
 
