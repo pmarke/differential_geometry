@@ -1929,7 +1929,7 @@ name "alg:rransac"
 \end_layout
 
 \begin_layout Section
-Lie Group Probability 
+Probabilistic Data Association Filter 
 \begin_inset CommandInset label
 LatexCommand label
 name "sec:Lie-Group-Probability"
@@ -1940,11 +1940,34 @@ name "sec:Lie-Group-Probability"
 \end_layout
 
 \begin_layout Standard
-Our implementation of R-RANSAC uses a probabilistic framework which requires
- us to represent certain probabilistic distributions on Lie groups.
- In this section we define several probabilities in a Lie group framework
- that are necessary for our implementation.
- Similar definitions have already been done in 
+As mentioned in the introduction, there are a variety of ways to propagate
+ the models, associate measurements, and update the models with the associated
+ measurements.
+ For our implementation, we have chosen to use the Probabilistic Data Associatio
+n Filter (PDAF) even though we are tracking multiple targets
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Bar-Shalom2009"
+literal "true"
+
+\end_inset
+
+.
+ Because of the modular design of R-RANSAC we could implement it with a
+ JPDAF, but we decided that the little increase in tracking accuracy is
+ not worth the large increase in computation as discussed in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Ingersoll2015a"
+literal "false"
+
+\end_inset
+
+.
+ In this section we present the PDAF in a Lie group setting focusing only
+ on the parts we believe need further discussion.
+ For some additional background on presenting Lie groups in a probabilistic
+ frame work we refer the reader to 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Bourmaud2013a,Bourmaud2014"
@@ -1952,8 +1975,9 @@ literal "true"
 
 \end_inset
 
-; however, we need to define them for our specific purposes.
- We follow the convention, notation and terminology from 
+.
+ We also follow some of the derivation, the convention, notation and terminology
+ from 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Reid2001,Reid2001a,Thrun2006"
@@ -1961,12 +1985,17 @@ literal "true"
 
 \end_inset
 
- adapted for the Lie group setting.
+ but adapted for the Lie group setting.
  
 \end_layout
 
+\begin_layout Subsection
+Propagation
+\end_layout
+
 \begin_layout Standard
-We denote the state estimate at time 
+In this section we present the model propagation step used in the PDAF.
+ We denote the state estimate at time 
 \begin_inset Formula $m$
 \end_inset
 
@@ -2000,6 +2029,18 @@ x_{m}=\hat{x}_{m}\oplus\delta x_{m}.
 \end_inset
 
 
+\begin_inset Formula $x_{m}$
+\end_inset
+
+ and 
+\begin_inset Formula $\delta x_{m}$
+\end_inset
+
+ are both random variables, but 
+\begin_inset Formula $\hat{x}_{m}$
+\end_inset
+
+ is not.
 \end_layout
 
 \begin_layout Standard
@@ -2126,9 +2167,10 @@ Using the first and second moments to approximate
 
 , we get 
 \begin_inset Formula 
-\[
-p\left(x_{m}\mid x_{m^{-}}\right)\approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus f\left(x_{m^{-}},0,\delta_{m}\right)\right)^{\top}\left(G_{m}QG_{m}^{\top}\right)^{-1}\left(x_{m}\ominus f\left(x_{m^{-}},0,\delta_{m}\right)\right)\right).
-\]
+\begin{align*}
+p\left(x_{m}\mid x_{m^{-}}\right) & \approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus f\left(x_{m^{-}},0,\delta_{m}\right)\right)^{\top}\right.\\
+ & \left.\left(G_{m}QG_{m}^{\top}\right)^{-1}\left(x_{m}\ominus f\left(x_{m^{-}},0,\delta_{m}\right)\right)\right).
+\end{align*}
 
 \end_inset
 
@@ -2151,9 +2193,11 @@ Let
 
  is defined as
 \begin_inset Formula 
-\[
-\bar{p}\left(x_{m}\right)=\int_{x_{m^{-}}}p\left(x_{m}\mid x_{m^{-}}\right)p\left(x_{m^{-}}\right)dx_{m^{-}}.
-\]
+\begin{align*}
+\bar{p}\left(x_{m}\right) & =\int_{x_{m^{-}}}p\left(x_{m}\mid x_{m^{-}}\right)p\left(x_{m^{-}}\right)dx_{m^{-}}.\\
+ & \approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus\hat{\bar{x}}_{m}\right)^{\top}\bar{P}_{m}^{-1}\left(x_{m}\ominus\hat{\bar{x}}_{m}\right)\right)\\
+ & =\eta\exp\left(-\frac{1}{2}\delta\bar{x}_{m}^{\top}\bar{P}_{m}^{-1}\delta\bar{x}_{m}\right)
+\end{align*}
 
 \end_inset
 
@@ -2169,7 +2213,8 @@ We approximate
 \begin_inset Formula $p\left(x_{m}\mid x_{m}\right)$
 \end_inset
 
- so that 
+ w.r.t.
+ the state and process noise so that 
 \begin_inset Formula $\bar{p}\left(x_{m}\right)$
 \end_inset
 
@@ -2182,7 +2227,26 @@ We approximate
 \begin_inset Formula $\bar{P}_{m}$
 \end_inset
 
-.The new state estimate and error covariance is calculated as 
+.
+ The derivation of 
+\begin_inset Formula $\bar{p}\left(x_{m}\right)$
+\end_inset
+
+ for 
+\begin_inset Formula $\mathbb{R}^{n}$
+\end_inset
+
+ is shown in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Thrun2006"
+literal "false"
+
+\end_inset
+
+, and it's extension to the Lie group setting is easy to derived; thus,
+ we don't include it here.
+ The new state estimate and error covariance is calculated as 
 \begin_inset ERT
 status open
 
@@ -2247,16 +2311,435 @@ G_{m} & =\left.\frac{\partial x_{m}\ominus f\left(x_{m^{-}},w_{k},\delta_{m}\rig
 \end_inset
 
 This calculation is called the propagation or the prediction step.
- Using the calculated mean and covariance, we can approximate 
-\begin_inset Formula $\bar{p}\left(x_{m}\right)$
+ Note that this definition of 
+\begin_inset Formula $G_{m}$
 \end_inset
 
- as.
+ is different than the one above since we linearized about the state and
+ not just the noise.
+ 
+\end_layout
+
+\begin_layout Standard
+If a transformation is provided to R-RANSAC, you would transform the model
+ after propagating and before associating new measurements.
+ This is because new measurements are in the current global frame, and so
+ the models must also be in the current global frame for proper data association.
+ 
+\end_layout
+
+\begin_layout Subsection
+Association
+\end_layout
+
+\begin_layout Standard
+The PDAF uses a validation region to indicate if a measurement should be
+ associated with a model.
+ The validation region is a volume around a track's current state estimate.
+ Measurements that are within the validation region are associated to the
+ model and are used to update the model.
+ We will use the validation region described in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Bar-Shalom2011,Bar-Shalom1988"
+literal "true"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+The volume is determined by the probability of a measurement which we define
+ as 
+\begin_inset Formula 
+\[
+p\left(y_{m}\right)=\int_{\delta\bar{x}_{m}}p\left(y_{m}\mid x_{m}\right)\bar{p}\left(x_{m}\right)d\delta\bar{x}_{m}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In order to solve the integral, we linearize the measurement probability
+ 
+\begin_inset Formula $p\left(y_{m}\mid x_{m}\right)$
+\end_inset
+
+ about 
+\begin_inset Formula $\hat{\bar{x}}_{m}$
+\end_inset
+
+ and the measurement noise.
+ This serves two purposes: first it ensures the 
+\begin_inset Formula $p\left(y_{m}\right)$
+\end_inset
+
+ stays Gaussian and second it exposes 
+\begin_inset Formula $\delta x_{m}$
+\end_inset
+
+ which is the integrating term.
+ Doing so yields 
 \begin_inset Formula 
 \begin{align*}
-\bar{p}\left(x_{m}\right) & \approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus\hat{\bar{x}}_{m}\right)^{\top}\bar{P}_{m}^{-1}\left(x_{m}\ominus\hat{\bar{x}}_{m}\right)\right).\\
- & \approx\exp\left(-\frac{1}{2}\delta x_{m}^{\top}\bar{P}_{m}^{-1}\delta x_{m}\right).
+p\left(y_{m}\right) & \approx\eta\int_{\delta x_{m}}\exp\left(-\frac{1}{2}\left(y_{m}\ominus\hat{y}_{m}+H_{m}\delta\bar{x}_{m}\right)^{\top}\right.\\
+ & \left.\bar{R}^{-1}\left(y_{m}\ominus\hat{y}_{m}+H_{m}\delta\bar{x}_{m}\right)\right)\\
+ & \exp\left(-\frac{1}{2}\bar{x}_{m}^{\top}\bar{P}_{m}^{-1}\delta\bar{x}_{m}\right)d\delta\bar{x}_{m}
 \end{align*}
+
+\end_inset
+
+with 
+\begin_inset Formula 
+\begin{align*}
+\bar{R} & =\left(V_{m}RV_{m}^{\top}\right),\\
+\hat{y}_{m} & =h\left(\hat{\bar{x}}_{m},0\right)
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align}
+H_{m} & =\left.\frac{\partial y_{m}\ominus h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{x_{m}=\hat{x}_{m},V_{m}=0}\nonumber \\
+ & =\left.\frac{\partial\log\left(e\right)}{\partial e}\frac{\partial e}{\partial h^{-1}\left(x_{m},v_{m}\right)}\frac{\partial h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{x_{m}=\hat{x}_{m},V_{m}=0}\label{eq:ObservationJacobianState}\\
+ & =J_{r}^{-1}\left(\hat{e}\right)\mathbf{Ad}_{y_{m}^{-1}}\left.\frac{\partial h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{x_{m}=\hat{x}_{m},V_{m}=0},\nonumber 
+\end{align}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align}
+V_{m} & =\left.\frac{\partial y_{m}\ominus h\left(x_{m},v_{m}\right)}{\partial v_{m}}\right|_{x_{m}=\hat{x}_{m},V_{m}=0}\label{eq:ObservationJacobianNoise}\\
+ & =J_{r}^{-1}\left(\hat{e}\right)\mathbf{Ad}_{y_{m}^{-1}}\left.\frac{\partial h\left(x_{m},v_{m}\right)}{\partial v_{m}}\right|_{x_{m}=\hat{x}_{m},V_{m}=0},\nonumber 
+\end{align}
+
+\end_inset
+
+and 
+\begin_inset Formula 
+\[
+e=h\left(\hat{\bar{x}}_{m},0\right)^{-1}y_{m}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+By rearranging the terms in the linearized 
+\begin_inset Formula $p\left(y_{m}\right)$
+\end_inset
+
+ we get 
+\begin_inset Formula 
+\begin{align*}
+p\left(y_{m}\right) & \approx\eta\exp\left(-\frac{1}{2}\left(y_{m}\ominus\hat{y}_{m}\right)^{\top}\right.\\
+ & \left.S^{-1}\left(y_{m}\ominus\hat{y}_{m}\right)\right)\\
+ & \int_{\delta x_{m}}\exp\left(-\frac{1}{2}l\left(\delta\bar{x}_{m}\right)^{\top}S^{-1}l\left(\delta\bar{x}_{m}\right)\right)d\delta\bar{x}_{m}
+\end{align*}
+
+\end_inset
+
+with
+\begin_inset Formula 
+\begin{align*}
+l\left(\delta\bar{x}_{m}\right) & =\left(\delta\bar{x}_{m}+SH_{m}\bar{R}^{-1}y_{m}\ominus\hat{y}_{m}\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+and the innovation covariance
+\begin_inset Formula 
+\begin{equation}
+S=\left(V_{m}RV_{m}^{\top}+H_{m}PH_{m}^{\top}\right).\label{eq:innovation_cov}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note that we were able to pull a term outside of the exponential, and the
+ term inside of the exponential is a Gaussian distribution which integrates
+ to a constant regardless of 
+\begin_inset Formula $\delta\bar{x}_{m}$
+\end_inset
+
+.
+ Therefore, we can absorb the constant integral into 
+\begin_inset Formula $\eta$
+\end_inset
+
+ to get 
+\begin_inset Formula 
+\begin{align}
+p\left(y_{m}\right) & \approx\eta\exp\left(-\frac{1}{2}\left(y_{m}\ominus\hat{y}_{m}\right)^{\top}\right.\nonumber \\
+ & \left.S^{-1}\left(y_{m}\ominus\hat{y}_{m}\right)\right).\label{eq:probability_y}
+\end{align}
+
+\end_inset
+
+We don't want to associate every measurement to the model, only the measurements
+ with a high probability.
+ This is done by using a gating technique as follows.
+ Let 
+\begin_inset Formula $p\left(z_{m}\right)$
+\end_inset
+
+ be the standardized Gaussian probability of 
+\begin_inset Formula $p\left(y_{m}\right)$
+\end_inset
+
+ where 
+\begin_inset Formula $z_{m}$
+\end_inset
+
+ is defined as 
+\begin_inset Formula 
+\[
+z_{m}=S^{-\frac{1}{2}}y_{m}\ominus\hat{y}_{m}.
+\]
+
+\end_inset
+
+ Let 
+\begin_inset Formula $d_{V}:N\times N\to\mathbb{R}$
+\end_inset
+
+ be a metric defined as 
+\begin_inset Formula 
+\begin{align}
+d_{V}\left(y_{m},\hat{y}_{m}\right) & =\left(y_{m}\ominus\hat{y}_{m}\right)^{\top}S^{-1}\left(y_{m}\ominus\hat{y}_{m}\right)\label{eq:validation_region_metric}\\
+ & =z_{m}^{\top}z_{m}.\nonumber 
+\end{align}
+
+\end_inset
+
+Note that the metric 
+\begin_inset Formula $d_{V}$
+\end_inset
+
+ is simply the sum of the square of 
+\begin_inset Formula $n$
+\end_inset
+
+ standard Gaussian distributions.
+ Thus, the values of the metric 
+\begin_inset Formula $d_{V}$
+\end_inset
+
+ form a chi-square distribution.
+\end_layout
+
+\begin_layout Standard
+The validation region is the set 
+\begin_inset Formula 
+\[
+\nu\left(\hat{y}_{m},\gamma\right)=\left\{ y_{m}\in Y_{m}\,:\,d\left(y_{m},\hat{y}_{m}\right)\leq\gamma\right\} ,
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $Y_{m}$
+\end_inset
+
+ is the set of measurements received at time 
+\begin_inset Formula $m$
+\end_inset
+
+ and the parameter 
+\begin_inset Formula $\gamma$
+\end_inset
+
+ is called the gate threshold.
+ The gate probability 
+\begin_inset Formula $P_{G}$
+\end_inset
+
+ is the probability that a measurement produced by a target is within the
+ validation region.
+ This probability is defined as 
+\begin_inset Formula $p\left(d_{V}\left(y_{m},\hat{y}_{m}\right)\leq\gamma\right)$
+\end_inset
+
+, thus 
+\begin_inset Formula $P_{G}$
+\end_inset
+
+ is the value of the chi-square cumulative distribution function (CDF) with
+ parameter 
+\begin_inset Formula $\gamma$
+\end_inset
+
+.
+ We can thus calculate 
+\begin_inset Formula $\gamma$
+\end_inset
+
+ for a specific 
+\begin_inset Formula $P_{G}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The volume of the validation region, 
+\begin_inset Formula $V_{vol}$
+\end_inset
+
+, is defined as 
+\begin_inset Formula 
+\begin{equation}
+V_{vol}=c_{n}\gamma^{n/2}\left|S\right|^{1/2},\label{eq:volume_validation_region}
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $c_{n}$
+\end_inset
+
+ is the volume of the unit hypersphere of dimension 
+\begin_inset Formula $n$
+\end_inset
+
+ (dimension of the measurement space) calculated as 
+\begin_inset Formula 
+\[
+c_{n}=\frac{\pi^{n/2}}{\Gamma\left(n/2+1\right)}
+\]
+
+\end_inset
+
+and 
+\begin_inset Formula $\Gamma$
+\end_inset
+
+ is the gamma function.
+ Since the validation region depends on the measurement noise covariance,
+ each measurement source will have a different validation region.
+ 
+\end_layout
+
+\begin_layout Subsection
+Measurement Weight
+\end_layout
+
+\begin_layout Standard
+The PDAF assumes that a measurement source produces at most one measurement
+ originated from the target and that all other measurements are noise.
+ Thus, the PDAF assigns a weight to each measurement indicating how likely
+ the measurement originated from the target.
+ These weights are calculated for each measurement source.
+ In other words, let 
+\begin_inset Formula $Y_{m}^{i}$
+\end_inset
+
+ be the set of associated measurement produced from the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ source, then the weights are calculated for each 
+\begin_inset Formula $Y_{m}^{i}$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+The parametric PDAF assumes that a source produces a clutter (noisy) measurement
+ with probabilty defined by a Poisson distribution with spatial clutter
+ density 
+\begin_inset Formula $\lambda$
+\end_inset
+
+.
+ The spatial clutter density is the expected number of clutter measurements
+ per scan divided by the volume of the source's surveillance region.
+ Thus, given the volume of a validation region, the number of expected measureme
+nts in the validation region is 
+\begin_inset Formula $\lambda V_{vol}$
+\end_inset
+
+.
+ A source detects the target with probabily 
+\begin_inset Formula $P_{D}$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $y_{m}^{j}\in Y_{m}^{i}$
+\end_inset
+
+ denote the 
+\begin_inset Formula $j^{th}$
+\end_inset
+
+ measurement in 
+\begin_inset Formula $Y_{m}^{i}$
+\end_inset
+
+, then the corresponding weight 
+\begin_inset Formula $\beta_{j}$
+\end_inset
+
+ is calculated as 
+\begin_inset Formula 
+\[
+\beta_{j}=\frac{\mathcal{L}_{j}\left(y_{m}^{j}\right)}{1-P_{D}P_{G}+\sum_{n=1}^{\left|Y_{m}^{i}\right|}\mathcal{L}_{n}\left(y_{m}^{n}\right)},
+\]
+
+\end_inset
+
+with 
+\begin_inset Formula 
+\[
+\mathcal{L}_{j}\left(y_{m}^{j}\right)=\frac{P\left(y_{m}^{j}\right)P_{D}}{\lambda}
+\]
+
+\end_inset
+
+and 
+\begin_inset Formula $P\left(y_{m}^{j}\right)$
+\end_inset
+
+ being defined in 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:probability_y"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Single Souorce Update
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Single-Souorce-Update"
 
 \end_inset
 
@@ -2376,34 +2859,7 @@ p\left(x_{m}\mid y_{m}\right)\approx\eta\exp\left(-\frac{1}{2}\delta x_{m}^{\top
 
 \end_inset
 
-with 
-\begin_inset Formula 
-\begin{align}
-H_{m} & =\left.\frac{\partial y_{m}\ominus h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{x_{m}=\hat{x}_{m},V_{m}=0},\nonumber \\
- & =\left.\frac{\partial\log\left(e\right)}{\partial e}\frac{\partial e}{\partial h^{-1}\left(x_{m},v_{m}\right)}\frac{\partial h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{x_{m}=\hat{x}_{m},V_{m}=0}\label{eq:ObservationJacobianState}\\
- & =J_{r}^{-1}\left(\hat{e}\right)\mathbf{Ad}_{y_{m}^{-1}}\left.\frac{\partial h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{x_{m}=\hat{x}_{m},V_{m}=0}\nonumber 
-\end{align}
-
-\end_inset
-
-
-\begin_inset Formula 
-\begin{align}
-V_{m} & =\left.\frac{\partial y_{m}\ominus h\left(x_{m},v_{m}\right)}{\partial v_{m}}\right|_{x_{m}=\hat{x}_{m},V_{m}=0}\label{eq:ObservationJacobianNoise}\\
- & =J_{r}^{-1}\left(\hat{e}\right)\mathbf{Ad}_{y_{m}^{-1}}\left.\frac{\partial h\left(x_{m},v_{m}\right)}{\partial v_{m}}\right|_{x_{m}=\hat{x}_{m},V_{m}=0},\nonumber 
-\end{align}
-
-\end_inset
-
-with 
-\begin_inset Formula 
-\[
-e=h\left(x_{m},v_{m}\right)^{-1}y_{m}
-\]
-
-\end_inset
-
-where the inverse is the group inverse.
+with where the inverse is the group inverse.
  Note that we have redefined 
 \begin_inset Formula $V_{m}$
 \end_inset
@@ -2568,6 +3024,10 @@ Depending on the data associating filter used, the update step will be different
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Subsection
+Centralized Measurement Fusion
 \end_layout
 
 \begin_layout Section
@@ -2912,8 +3372,8 @@ name "eq:InverseTransitionFunctionJacobianNoise"
 G_{k:m} & =\left.\frac{\partial x_{m}\ominus f^{-1}\left(x_{k},w_{m},\delta_{k:m}\right)}{\partial w_{m}}\right|_{x_{m}=\hat{x}_{m},w_{m}=0}\\
  & =\left.\frac{\partial\log\left(e\right)}{\partial e}\frac{\partial e}{\partial\left(f^{-1}\right)^{-1}}\frac{\partial\left(f^{-1}\right)^{-1}}{\partial f^{-1}}\frac{\partial f^{-1}}{\partial w_{m}}\right|_{x_{m}=\hat{x}_{m},w_{m}=0}\\
  & =\left.J_{r}^{-1}\left(e\right)\text{Ad}\left(x_{m}\right)\left(-\text{Ad}\left(f^{-1}\right)\right)\frac{\partial f^{-1}}{\partial w_{m}}\right|_{x_{m}=\hat{x}_{m},w_{m}=0}\\
- & =\left.\frac{\partial f^{-1}}{\partial w_{m}}\right|_{x_{m}=\hat{x}_{m},w_{m}=0},\\
-\frac{\partial f^{-1}}{\partial w_{m}} & =\begin{bmatrix}J_{r}\left(\delta_{k:m}u_{k}\right)\delta_{k:m} & J_{r}\left(\delta_{k:m}u_{k}\right)\frac{\delta_{k:m}^{2}}{2}\\
+ & =\left.\frac{\partial f^{-1}}{\partial w_{m}}\right|_{x_{m}=\hat{x}_{m},w_{m}=0}\\
+ & =\begin{bmatrix}J_{r}\left(\delta_{k:m}u_{k}\right)\delta_{k:m} & J_{r}\left(\delta_{k:m}u_{k}\right)\frac{\delta_{k:m}^{2}}{2}\\
 0 & I\delta_{k:m}
 \end{bmatrix},\\
 e & =x_{m}\ominus f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),
@@ -3275,190 +3735,7 @@ name "sec:Data-Association"
 \begin_layout Standard
 As previously discussed, there are many ways to associate new measurements
  to existing tracks.
- We use a validation region to indicate if a measurement should be associated
- with a track.
- Once measurements are associated, we use a centralized measurement fusion
- with the PDAF to update the tracks, add the associated measurements to
- the consensus set and use the associated measurements to update the track's
- likelihood.
-\end_layout
-
-\begin_layout Subsection
-Validation Region 
-\begin_inset CommandInset label
-LatexCommand label
-name "subsec:Validation-Region"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-The validation region is a volume around a track's current state estimate.
- Measurements that are within the validation region are associated to the
- model and are used to update the model.
- We will use the validation region described in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Bar-Shalom2011,Bar-Shalom1988"
-literal "true"
-
-\end_inset
-
-.
- We assume that the probability of the 
-\begin_inset Formula $j^{th}$
-\end_inset
-
- measurement of dimension 
-\begin_inset Formula $n$
-\end_inset
-
- conditioned on the previous state, 
-\begin_inset Formula $p\left(y_{k}^{j}\mid x_{k^{-}}\right)$
-\end_inset
-
-, is Normally distributed with mean 
-\begin_inset Formula $\hat{y}_{k}=h\left(f\left(\hat{x}_{k^{-}},\delta_{k}\right)\right)$
-\end_inset
-
- and innovation covariance 
-\begin_inset Formula $S$
-\end_inset
-
- where 
-\begin_inset Formula $S$
-\end_inset
-
- is described in equation 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:Kalman_update"
-
-\end_inset
-
-.
- Let 
-\begin_inset Formula $z_{k}^{j}$
-\end_inset
-
- be the random variable defined as 
-\begin_inset Formula 
-\[
-z_{k}^{j}=S^{-\frac{1}{2}}y_{k}^{j}\ominus\hat{y}_{k},
-\]
-
-\end_inset
-
-then 
-\begin_inset Formula $z_{k}^{j}$
-\end_inset
-
- is a standard multivariate Gaussian distribution.
- For clarity, we will drop the subscripts and superscripts.
- Let 
-\begin_inset Formula $d_{V}:N\times N\to\mathbb{R}$
-\end_inset
-
- be a metric defined as 
-\begin_inset Formula 
-\begin{align*}
-d_{V}\left(y,\hat{y}\right) & =\left(y\ominus\hat{y}\right)^{\top}S^{-1}\left(y\ominus\hat{y}\right)\\
- & =z^{\top}z.
-\end{align*}
-
-\end_inset
-
-Note that the metric 
-\begin_inset Formula $d_{V}$
-\end_inset
-
- is simply the sum of the square of 
-\begin_inset Formula $n$
-\end_inset
-
- standard Gaussian distributions.
- Thus, the values of the metric 
-\begin_inset Formula $d_{V}$
-\end_inset
-
- form a chi-square distribution.
-\end_layout
-
-\begin_layout Standard
-The validation region is the set 
-\begin_inset Formula 
-\[
-\nu\left(\hat{y},\gamma\right)=\left\{ y\in N\,:\,d\left(y,\hat{y}\right)\leq\gamma\right\} ,
-\]
-
-\end_inset
-
-where parameter 
-\begin_inset Formula $\gamma$
-\end_inset
-
- is called the gate threshold.
- The gate probability 
-\begin_inset Formula $P_{G}$
-\end_inset
-
- is the probability that a measurement produced by a target is within the
- validation region.
- This probability is defined as 
-\begin_inset Formula $p\left(d\left(y,\hat{y}\right)\leq\gamma\right)$
-\end_inset
-
-, thus 
-\begin_inset Formula $P_{G}$
-\end_inset
-
- is the value of the chi-square cumulative distribution function (CDF) with
- parameter 
-\begin_inset Formula $\gamma$
-\end_inset
-
-.
  
-\end_layout
-
-\begin_layout Standard
-Some data association techniques require knowing the volume of the validation
- region 
-\begin_inset Formula $V_{vol}$
-\end_inset
-
-.
- The volume is defined as 
-\begin_inset Formula 
-\begin{equation}
-V_{vol}=c_{n}\gamma^{n/2}\left|S\right|^{1/2},\label{eq:volume_validation_region}
-\end{equation}
-
-\end_inset
-
-where 
-\begin_inset Formula $c_{n}$
-\end_inset
-
- is the volume of the unit hypersphere of dimension 
-\begin_inset Formula $n$
-\end_inset
-
- (dimension of the measurement space) calculated as 
-\begin_inset Formula 
-\[
-c_{n}=\frac{\pi^{n/2}}{\Gamma\left(n/2+1\right)}
-\]
-
-\end_inset
-
-and 
-\begin_inset Formula $\Gamma$
-\end_inset
-
- is the gamma function.
 \end_layout
 
 \begin_layout Subsection
