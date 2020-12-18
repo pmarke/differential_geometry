@@ -120,6 +120,7 @@ literal "true"
  for a survey of the more common algorithms.
  We briefly present some of these common algorithms in order to compare
  and contrast them.
+ (Add something about PHD filter)
 \end_layout
 
 \begin_layout Standard
@@ -908,7 +909,7 @@ name "sec:Problem-Description"
 
 \begin_layout Standard
 The objective is to track multiple dynamic targets by estimating their states
- given a set of measurements from multiple sensors without a prior information
+ given a set of measurements from multiple sensors without prior information
  about the number of targets.
  
 \end_layout
@@ -1085,9 +1086,9 @@ literal "true"
 \end_inset
 
  and is an exact solution provided that the Lie group is commutative.
- If the Lie group is not commutative, the exact numeric solution is cumbersome
- if not impossible to derive, in which case we use the system model as an
- approximate numerical solution.
+ If the Lie group is not commutative, the exact solution is cumbersome if
+ not impossible to derive, in which case we use the system model as an approxima
+te numerical solution.
 \end_layout
 
 \begin_layout Standard
@@ -1385,12 +1386,8 @@ literal "true"
  Each R*-Tree contains measurements obtained at a unique time.
  This allows us to easily remove and add measurements that have the same
  time stamp while being able to search the data structures quickly.
- The data tree, 
-\begin_inset Formula $\mathcal{T}$
-\end_inset
-
-, contains all of the measurements within the time window that are not in
- a cluster or a consensus set.
+ The data tree contains all of the measurements within the time window that
+ are not in a cluster or a consensus set.
  A cluster, 
 \begin_inset Formula $\mathcal{C}$
 \end_inset
@@ -1429,7 +1426,11 @@ literal "true"
 \begin_inset Formula $d_{C}\left(y_{j},y_{k}\right)<\tau_{CD}$
 \end_inset
 
-.
+ with 
+\begin_inset Formula $\tau_{CD}$
+\end_inset
+
+ being a user defined parameter.
  A consensus set, 
 \begin_inset Formula $\mathcal{CS}^{i}$
 \end_inset
@@ -1440,19 +1441,36 @@ literal "true"
 \end_inset
 
  track.
- A track is a model of a target consisting of the state estimate 
+ A track, 
+\begin_inset Formula $\mathcal{T}$
+\end_inset
+
+, is a model of a target consisting of the state estimate 
 \begin_inset Formula $\hat{x}$
 \end_inset
 
-, error covariance 
+; error covariance 
 \begin_inset Formula $P$
 \end_inset
 
-, consensus set 
+; consensus set 
 \begin_inset Formula $\mathcal{CS}$
 \end_inset
 
-, track likelihood, and label.
+; track likelihood, 
+\begin_inset Formula $TL$
+\end_inset
+
+; and label, 
+\begin_inset Formula $L$
+\end_inset
+
+ , i.e.
+ the tuple 
+\begin_inset Formula $\mathcal{T}=\left(\hat{x},P,\mathcal{CS},TL,L\right)$
+\end_inset
+
+.
  The track likelihood is a measurement of how 
 \begin_inset Quotes eld
 \end_inset
@@ -1489,7 +1507,7 @@ Data management occurs after a sensor scan provides new measurements
 \begin_inset Formula $\Psi_{k}$
 \end_inset
 
- and possibly a new transformation 
+ and a new transformation 
 \begin_inset Formula $T$
 \end_inset
 
@@ -1509,10 +1527,13 @@ The new measurements are checked to see if they should be associated to
  a track and used to update the track's state estimate and likelihood.
  The data association and track update could be implemented using any single
  scan tracker.
- Our data association method is described in section 
+ Our data association method is described in subsection 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sec:Data-Association"
+reference "subsec:Data-Association"
+plural "false"
+caps "false"
+noprefix "false"
 
 \end_inset
 
@@ -1551,7 +1572,7 @@ Track Initialization and Track Management
 \end_layout
 
 \begin_layout Standard
-Track initialization and track management occurs at specified times by the
+Track initialization and track management occurs at times specified by the
  user.
  The track initialization phase performs RANSAC, see section 
 \begin_inset CommandInset ref
@@ -1612,7 +1633,7 @@ reference "sec:Track-to-Track-fusion"
 \end_inset
 
  then it is promoted to a good track; otherwise, it is a poor track.
- Good tracks receive a unique numerical label to identify it , see 
+ Good tracks receive a unique numerical label to identify it , 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Ingersoll2015a"
@@ -1992,8 +2013,9 @@ literal "true"
 \begin_layout Standard
 We present the PDAF for one target, but it is trivially extended to the
  case of multiple targets.
- Also, we present the PDAF for the case of multiple targets.
- The following notation is used in this secion.
+ Also, the PDAF is orignally designed to work with a single measurement
+ source, but we extend it to work with multiple measurement sources.
+ To facilitate this, we establish additional notation.
  Let 
 \begin_inset Formula $\mathcal{S}=\left\{ 1,\ldots,N_{s}\right\} $
 \end_inset
@@ -2006,7 +2028,7 @@ We present the PDAF for one target, but it is trivially extended to the
 \begin_inset Formula $Y_{m}^{s}$
 \end_inset
 
- be the set of measurements associated to the model at time 
+ being the set of measurements associated to the model at time 
 \begin_inset Formula $m$
 \end_inset
 
@@ -2064,8 +2086,12 @@ Propagation
 \end_layout
 
 \begin_layout Standard
-In this section we present the model propagation step used in the PDAF.
- We denote the state estimate at time 
+In this section we present the model propagation step used in the PDAF adapted
+ to Lie groups.
+ When working with Lie groups, uncertainty is modeled in the Cartesian space
+ isomorphic to the Lie algebra since Gaussian distributions are defined
+ in Cartesian space.
+ To demonstrate this, we denote the state estimate at time 
 \begin_inset Formula $m$
 \end_inset
 
@@ -2099,26 +2125,25 @@ x_{m}=\hat{x}_{m}\oplus\delta x_{m}.
 \end_inset
 
 
-\begin_inset Formula $x_{m}$
-\end_inset
-
- and 
 \begin_inset Formula $\delta x_{m}$
 \end_inset
 
- are both random variables, but 
+ is the error of the estimate or mean 
 \begin_inset Formula $\hat{x}_{m}$
 \end_inset
 
- is not.
-\end_layout
+.
+ When representing the probability of a state 
+\begin_inset Formula $x_{m}$
+\end_inset
 
-\begin_layout Standard
-We denote the prior distribution, or the belief distribution as 
+, we represent it using the error that's in the Cartesian space.
+ For example, the probability of the prior distribution, or the belief distribut
+ion, 
 \begin_inset Formula $p\left(x_{m}\right)$
 \end_inset
 
- and define it as 
+, is 
 \begin_inset Formula 
 \begin{align*}
 p\left(x_{m}\right) & =\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus\hat{x}_{m}\right)^{\top}P_{m}^{-1}\left(x_{m}\ominus\hat{x}_{m}\right)\right)\\
@@ -2137,20 +2162,12 @@ where
 \end_inset
 
  to denote any normalizing coefficient.
- We denote the state transition probability as 
-\begin_inset Formula $p\left(x_{m}\mid x_{m^{-}}\right)$
-\end_inset
+ 
+\end_layout
 
- which we can calculate by taking the first and second moments of 
-\begin_inset Formula $x_{m}$
-\end_inset
-
- conditioned on 
-\begin_inset Formula $x_{m^{-}}$
-\end_inset
-
-.
- In other words, calculate the first and second moments of 
+\begin_layout Standard
+The state of the model is propagated according to the system model which
+ is 
 \begin_inset Formula 
 \[
 x_{m}=f\left(x_{m^{-}},w_{m},\delta_{m}\right).
@@ -2158,155 +2175,24 @@ x_{m}=f\left(x_{m^{-}},w_{m},\delta_{m}\right).
 
 \end_inset
 
-Since 
-\begin_inset Formula $p\left(x_{m}\mid x_{m^{-}}\right)$
-\end_inset
-
- is conditioned on 
-\begin_inset Formula $x_{m^{-}}$
-\end_inset
-
-, 
-\begin_inset Formula $x_{m^{-}}$
-\end_inset
-
- is not a random variable; however, the noise term 
+The process noise 
 \begin_inset Formula $w_{m}$
 \end_inset
 
- is.
- In the case that 
-\begin_inset Formula $f$
+, and the previous state 
+\begin_inset Formula $x_{m^{-}}$
 \end_inset
 
- is non linear in the noise term, we need to linearize 
-\begin_inset Formula $f$
+ are both random variables, and we are interested in 
+\begin_inset Formula $p\left(x_{m}\right)$
 \end_inset
 
- w.r.t.
- the process noise in order to approximate 
-\begin_inset Formula $p\left(x_{m}\mid x_{m^{-}}\right)$
-\end_inset
-
- as Gaussian.
- Thus
-\begin_inset Formula 
-\[
-x_{m}\approx f\left(x_{m^{-}},0,\delta_{m}\right)+G_{m}w_{m}
-\]
-
-\end_inset
-
-where 
-\begin_inset Formula 
-\[
-G_{m}=\left.\frac{\partial f\left(x_{m^{-}},w_{m},\delta_{m}\right)}{\partial w_{m}}\right|_{w_{m}=0}.
-\]
-
-\end_inset
-
-
-\begin_inset Formula $G_{m}$
-\end_inset
-
- is evaluated at 
-\begin_inset Formula $w_{m}=0$
-\end_inset
-
- since 
-\begin_inset Formula $0$
-\end_inset
-
- is the mean of the process noise.
- We can now calculate the first and second moments of 
-\begin_inset Formula $x_{m}$
-\end_inset
-
- to get 
-\begin_inset Formula 
-\begin{align*}
-\text{E}\left[x_{m}\right] & =f\left(x_{m^{-}},0,\delta_{m}\right)\\
-\text{cov}\left[x_{m}\right] & =G_{m}QG_{m}^{\top}.
-\end{align*}
-
-\end_inset
-
-Using the first and second moments to approximate 
-\begin_inset Formula $p\left(x_{m}\mid x_{m^{-}}\right)$
-\end_inset
-
-, we get 
-\begin_inset Formula 
-\begin{align*}
-p\left(x_{m}\mid x_{m^{-}}\right) & \approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus f\left(x_{m^{-}},0,\delta_{m}\right)\right)^{\top}\right.\\
- & \left.\left(G_{m}QG_{m}^{\top}\right)^{-1}\left(x_{m}\ominus f\left(x_{m^{-}},0,\delta_{m}\right)\right)\right).
-\end{align*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Let 
-\begin_inset Formula $\bar{p}\left(x_{m}\right)$
-\end_inset
-
- denote the probability of 
-\begin_inset Formula $x_{m}$
-\end_inset
-
- after state propagation.
- According to the theorem of total probability, 
-\begin_inset Formula $\bar{p}\left(x_{m}\right)$
-\end_inset
-
- is defined as
-\begin_inset Formula 
-\begin{align*}
-\bar{p}\left(x_{m}\right) & =\int_{x_{m^{-}}}p\left(x_{m}\mid x_{m^{-}}\right)p\left(x_{m^{-}}\right)dx_{m^{-}}.\\
- & \approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus\hat{\bar{x}}_{m}\right)^{\top}\bar{P}_{m}^{-1}\left(x_{m}\ominus\hat{\bar{x}}_{m}\right)\right)\\
- & =\eta\exp\left(-\frac{1}{2}\delta\bar{x}_{m}^{\top}\bar{P}_{m}^{-1}\delta\bar{x}_{m}\right)
-\end{align*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-We approximate 
-\begin_inset Formula $\bar{p}\left(x_{m}\right)$
-\end_inset
-
- by linearizing 
-\begin_inset Formula $p\left(x_{m}\mid x_{m}\right)$
-\end_inset
-
- w.r.t.
- the state and process noise so that 
-\begin_inset Formula $\bar{p}\left(x_{m}\right)$
-\end_inset
-
- is a Gaussian distribution which is parametrized by the new state estimate
- 
-\begin_inset Formula $\hat{\bar{x}}_{m}$
-\end_inset
-
- and error covariance 
-\begin_inset Formula $\bar{P}_{m}$
+ assuming we know 
+\begin_inset Formula $p\left(x_{m^{-}}\right)$
 \end_inset
 
 .
- The derivation of 
-\begin_inset Formula $\bar{p}\left(x_{m}\right)$
-\end_inset
-
- for 
-\begin_inset Formula $\mathbb{R}^{n}$
-\end_inset
-
- is shown in 
+ According to the total probability theorem discussed in 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Thrun2006"
@@ -2314,9 +2200,137 @@ literal "false"
 
 \end_inset
 
-, and it's extension to the Lie group setting is easy to derived; thus,
- we don't include it here.
- The new state estimate and error covariance is calculated as 
+,
+\begin_inset Formula 
+\[
+p\left(x_{m}\right)=\int_{\delta x_{m^{-}}}p\left(x_{m}\mid x_{m^{-}}\right)p\left(x_{m^{-}}\right)d\delta x_{m^{-}},
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $p\left(x_{m}\mid x_{m^{-}}\right)$
+\end_inset
+
+ is the state transition probability.
+ We assume that 
+\begin_inset Formula $p\left(x_{m^{-}}\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $p\left(w_{m}\right)$
+\end_inset
+
+ are Gaussian distributions; however, if the state transistion function
+ 
+\begin_inset Formula $f$
+\end_inset
+
+ is not linear in either of the terms, then 
+\begin_inset Formula $p\left(x_{m}\right)$
+\end_inset
+
+ will not be Gaussian.
+ We can approximate 
+\begin_inset Formula $p\left(x_{m}\right)$
+\end_inset
+
+ as Gaussian by linearizing the state transition function around the mean
+ of 
+\begin_inset Formula $x_{m^{-}}$
+\end_inset
+
+ and 
+\begin_inset Formula $w_{m}$
+\end_inset
+
+.
+ Doing so yields 
+\begin_inset Formula 
+\begin{align*}
+p\left(x_{m}\right) & \approx\eta\int\exp\left(-\frac{1}{2}\left(x_{m}\ominus f_{\hat{x}_{m^{-}}}+F_{m}\delta x_{m}\right)^{\top}\right.\\
+ & \left.\bar{Q}_{m}^{-1}\left(x_{m}\ominus f_{\hat{x}_{m^{-}}}+F_{m}\delta x_{m}\right)\right)\\
+ & \exp\left(-\frac{1}{2}\delta x_{m}^{\top}P_{m}^{-1}\delta x\right)d\delta x_{m^{-}}
+\end{align*}
+
+\end_inset
+
+with 
+\begin_inset Formula 
+\begin{align*}
+\bar{Q}_{m} & =G_{m}QG_{m}^{\top}\\
+f_{\hat{x}_{m^{-}}} & =f\left(\hat{x}_{m^{-}},0,\delta_{m}\right)
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+F_{m} & =\left.\frac{\partial x_{m}\ominus f\left(x_{m^{-}},w_{m},\delta_{m}\right)}{\partial x_{m^{-}}}\right|_{\begin{array}{c}
+x_{m^{-}}=\hat{x}_{m^{-}}\\
+w_{m}=0
+\end{array}}\\
+ & =\begin{bmatrix}\mathbf{Ad}_{\text{Exp}\left(\delta_{m}\hat{u}_{m^{-}}\right)^{-1}} & J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)\delta_{m}\\
+0 & I
+\end{bmatrix},
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+G_{m} & =\left.\frac{\partial x_{m}\ominus f\left(x_{m^{-}},w_{m},\delta_{m}\right)}{\partial w_{m}}\right|_{\begin{array}{c}
+x_{m^{-}}=\hat{x}_{m^{-}}\\
+w_{m}=0
+\end{array}}\\
+ & =\begin{bmatrix}J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)\delta_{m} & J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)\frac{\delta_{m}^{2}}{2}\\
+0 & I\delta_{m}
+\end{bmatrix}.
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Now that we have a linearized version of 
+\begin_inset Formula $p\left(x_{m}\right)$
+\end_inset
+
+, we can pull terms that are not dependent on 
+\begin_inset Formula $\delta x_{m}$
+\end_inset
+
+ out of the integral and simplify the expression using a procedure similar
+ to the one described in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Thrun2006"
+literal "false"
+
+\end_inset
+
+.
+ Doing so yields
+\begin_inset Formula 
+\begin{align*}
+p\left(x_{m}\right) & \approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus f_{\hat{x}_{m^{-}}}\right)^{\top}P_{m}^{-1}\left(x_{m}\ominus f_{\hat{x}_{m^{-}}}\right)\right)
+\end{align*}
+
+\end_inset
+
+with
+\begin_inset Formula 
+\[
+P_{m}=F_{m}P_{m^{-}}F_{m}^{\top}+G_{m}QG_{m}^{\top}.
+\]
+
+\end_inset
+
+Thus the new state estimate and error covariance are 
 \begin_inset ERT
 status open
 
@@ -2339,8 +2353,8 @@ name "eq:JPDAF_propagation"
  
 \begin_inset Formula 
 \begin{align}
-\hat{\bar{x}}_{m} & =f\left(\hat{x}_{m^{-}},\hat{w}_{m},\delta_{m}\right)\\
-\bar{P}_{m} & =F_{m}P_{m^{-}}F_{m}^{\top}+G_{m}QG_{m}^{\top};
+\hat{\bar{x}}_{m} & =f\left(\hat{x}_{m^{-}},0,\delta_{m}\right)\\
+\bar{P}_{m} & =F_{m}P_{m^{-}}F_{m}^{\top}+G_{m}QG_{m}^{\top},
 \end{align}
 
 \end_inset
@@ -2358,41 +2372,18 @@ end{subequations}
 
 \end_inset
 
- with 
-\begin_inset Formula 
-\begin{align*}
-F_{m} & =\left.\frac{\partial x_{m}\ominus f\left(x_{m^{-}},w_{k},\delta_{m}\right)}{\partial x_{m^{-}}}\right|_{\hat{x}_{m^{-}},\hat{w}_{m},\delta_{m}}\\
- & =\begin{bmatrix}\mathbf{Ad}_{\text{Exp}\left(\delta_{m}\hat{u}_{m^{-}}\right)^{-1}} & J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)\delta_{m}\\
-0 & I
-\end{bmatrix},
-\end{align*}
-
+ where the 
+\begin_inset Formula $\bar{}$
 \end_inset
 
-
-\begin_inset Formula 
-\begin{align*}
-G_{m} & =\left.\frac{\partial x_{m}\ominus f\left(x_{m^{-}},w_{k},\delta_{m}\right)}{\partial w_{m}}\right|_{\hat{x}_{m^{-}},\hat{w}_{m},\delta_{m}}\\
- & =\begin{bmatrix}J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)\delta_{m} & J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)\frac{\delta_{m}^{2}}{2}\\
-0 & I\delta_{m}
-\end{bmatrix}.
-\end{align*}
-
-\end_inset
-
-This calculation is called the propagation or the prediction step.
- Note that this definition of 
-\begin_inset Formula $G_{m}$
-\end_inset
-
- is different than the one above since we linearized about the state and
- not just the noise.
+ notation indicates that measurements have not been incorporated into the
+ state and covariance estiamte.
  
 \end_layout
 
 \begin_layout Standard
-If a transformation is provided to R-RANSAC, you would transform the model
- after propagating and before associating new measurements.
+After propagating the model, it is transformed using the provided transformation
+ from the user before associating new measurements.
  This is because new measurements are in the current global frame, and so
  the models must also be in the current global frame for proper data association.
  
@@ -3099,12 +3090,22 @@ name "sec:Track-Likelihood"
 \begin_layout Standard
 The track likelihood is a measure of how well a track represents an actual
  target.
- In the previous versions of R-RANSAC, the track's inlier ratio and lifetime
- were used to indicate the track's likelihood which doesn't have much theoretica
-l basis other than intuition.
- In this section, we present a different approach using a binary Bayes filter
- with static states.
- Let 
+ In 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Niedfeldt2013,Niedfeldt,Ingersoll2015,Niedfeldt2017"
+literal "false"
+
+\end_inset
+
+, the track's inlier ratio and lifetime were used to indicate the track's
+ likelihood which are add-hoc techniques.
+ This section presents a theoretically justified approach using a binary
+ Bayes filter.
+\end_layout
+
+\begin_layout Standard
+Let 
 \begin_inset Formula $\theta_{m}^{s}$
 \end_inset
 
@@ -3137,33 +3138,17 @@ l basis other than intuition.
 \begin_inset Formula $z$
 \end_inset
 
- be a Bernoulli random variable with 
-\begin_inset Formula $z=1$
+ be a Bernoulli random variable that is true when the track represents an
+ actual target and false when the track does not represent a target.
+ For notation purposes we will use 
+\begin_inset Formula $\neg z$
 \end_inset
 
- meaning that the track represents an actual target and 
-\begin_inset Formula $z=0$
+ to denote that 
+\begin_inset Formula $z$
 \end_inset
 
- meaning that the track doesn't represent a target.
- For notational purposes, we will denote 
-\begin_inset Formula $p\left(z=1\right)$
-\end_inset
-
- as 
-\begin_inset Formula $p\left(z\right)$
-\end_inset
-
- and 
-\begin_inset Formula $p\left(z=0\right)$
-\end_inset
-
- as 
-\begin_inset Formula $p\left(\neg z\right)$
-\end_inset
-
-.
- 
+ is false.
 \end_layout
 
 \begin_layout Standard
@@ -3172,9 +3157,105 @@ We are interested in calculating the probability
 \end_inset
 
  which is the probability that the track represents an actual target conditioned
- on the number of validated measurements from each source and at each time
- step.
- Using Bayes rule we get 
+ on the number of validated measurements from time 
+\begin_inset Formula $m$
+\end_inset
+
+ to 
+\begin_inset Formula $k$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Theorem
+Let 
+\begin_inset Formula $P_{D}^{s}$
+\end_inset
+
+ denote the probability that the 
+\begin_inset Formula $s^{th}$
+\end_inset
+
+ measurement source produces a true measurement of the target during the
+ sensor scan, and let 
+\begin_inset Formula $P_{G}$
+\end_inset
+
+ denote the probability that the measurement is validated (associated).
+ Furthermore, let 
+\begin_inset Formula $\lambda^{s}$
+\end_inset
+
+ denote the spatial density of the 
+\begin_inset Formula $s^{th}$
+\end_inset
+
+ source, and let 
+\begin_inset Formula $V_{m,vol}^{s}$
+\end_inset
+
+ denote the volume of the validation region associated with the 
+\begin_inset Formula $s^{th}$
+\end_inset
+
+ source at time 
+\begin_inset Formula $m$
+\end_inset
+
+ defined in 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:volume_validation_region"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Then the probability that the track represents an actual target conditioned
+ on the number of validated measurements between times 
+\begin_inset Formula $m$
+\end_inset
+
+ and 
+\begin_inset Formula $k$
+\end_inset
+
+ is given by 
+\begin_inset Formula 
+\begin{equation}
+p\left(z\mid\theta_{m:k}\right)=1-\frac{1}{1+10^{l_{k}}},\label{eq:track_likelihood}
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $\ell_{k}$
+\end_inset
+
+ satisfies
+\begin_inset Formula 
+\[
+\ell_{j}=\ell_{j^{-}}+\sum_{s=1}^{N_{s}}\log_{10}\left(1+P_{G}P_{D}^{s}\left(\frac{\theta_{j}^{s}}{\lambda^{s}V_{j,vol}^{s}}-1\right)\right)
+\]
+
+\end_inset
+
+for 
+\begin_inset Formula $j=m,\ldots,k$
+\end_inset
+
+ and whree 
+\begin_inset Formula $\ell_{m^{-}}=0$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+Bayes rule gives us 
 \begin_inset Formula 
 \begin{align*}
 p\left(z\mid\theta_{m:k}\right) & =\frac{p\left(\theta_{k}\mid z\right)p\left(z\mid\theta_{m:k^{-}}\right)}{p\left(\theta_{k}\mid\theta_{m:k^{-}}\right)},
@@ -3182,7 +3263,7 @@ p\left(z\mid\theta_{m:k}\right) & =\frac{p\left(\theta_{k}\mid z\right)p\left(z\
 
 \end_inset
 
-and 
+
 \begin_inset Formula 
 \[
 p\left(\neg z\mid\theta_{m:k}\right)=\frac{p\left(\theta_{k}\mid\neg z\right)p\left(\neg z\mid\theta_{m:k^{-}}\right)}{p\left(\theta_{k}\mid\theta_{m:k^{-}}\right)}.
@@ -3190,20 +3271,36 @@ p\left(\neg z\mid\theta_{m:k}\right)=\frac{p\left(\theta_{k}\mid\neg z\right)p\l
 
 \end_inset
 
-Taking the log ratio of the probabilities 
-\begin_inset Formula $p\left(z\mid\theta_{m:k}\right)$
+Let 
+\begin_inset Formula 
+\[
+\ell_{k}\triangleq\log_{10}\left(\frac{p\left(z\mid\theta_{m:k}\right)}{p\left(\neg z\mid\theta_{m:k}\right)}\right)
+\]
+
 \end_inset
 
- and 
-\begin_inset Formula $p\left(\neg z\mid\theta_{m:k}\right)$
+denote the log ratio of the probabilities, and note that the relationship
+ 
+\begin_inset Formula $p\left(z\mid\theta_{m:k}\right)+p\left(\neg z\mid\theta_{m:k}\right)=1$
 \end_inset
 
-, we get 
+ gives equation 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:track_likelihood"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Furthermore, we have that 
 \begin_inset Formula 
 \begin{align*}
-\log\left(\frac{p\left(z\mid\theta_{m:k}\right)}{p\left(\neg z\mid\theta_{m:k}\right)}\right) & =\log\left(\frac{p\left(\theta_{k}\mid z\right)p\left(z\mid\theta_{m:k^{-}}\right)}{p\left(\theta_{k}\mid\neg z\right)p\left(\neg z\mid\theta_{m:k^{-}}\right)}\right)\\
- & =\underbrace{\log\left(\frac{p\left(\theta_{k}\mid z\right)}{p\left(\theta_{k}\mid\neg z\right)}\right)}_{l_{k}}\\
- & +\underbrace{\sum_{n=m}^{k^{-}}\log\left(\frac{p\left(\theta_{n}\mid z\right)}{p\left(\theta_{n}\mid\neg z\right)}\right)}_{l_{k^{-}}}.
+\ell_{k} & =\log\left(\frac{p\left(\theta_{k}\mid z\right)p\left(z\mid\theta_{m:k^{-}}\right)}{p\left(\theta_{k}\mid\neg z\right)p\left(\neg z\mid\theta_{m:k^{-}}\right)}\right)\\
+ & =\log\left(\frac{p\left(\theta_{m:k^{-}}\mid z\right)}{p\left(\theta_{m:k^{-}}\mid\neg z\right)}\right)+\log\left(\frac{p\left(\theta_{k}\mid z\right)}{p\left(\theta_{k}\mid\neg z\right)}\right)\\
+ & =\ell_{k^{-}}+\sum_{s=0}^{N_{s}}\log\left(\frac{p\left(\theta_{k}^{s}\mid z\right)}{p\left(\theta_{k}^{s}\mid\neg z\right)}\right).
 \end{align*}
 
 \end_inset
@@ -3211,44 +3308,22 @@ Taking the log ratio of the probabilities
 
 \end_layout
 
-\begin_layout Standard
-Whenever new validated measurements are received, we calculate 
-\begin_inset Formula $l_{k}$
-\end_inset
-
- and add it to the previous log odds ratio 
-\begin_inset Formula $l_{k^{-}}$
+\begin_layout Proof
+The probability that a true measurement was received and validated is 
+\begin_inset Formula $P_{D}^{s}P_{G}$
 \end_inset
 
 .
-\end_layout
-
-\begin_layout Standard
-The term 
-\begin_inset Formula $l_{k}$
+ The expected number of false measurements within a validation region at
+ time 
+\begin_inset Formula $m$
 \end_inset
 
- can be written as
-\begin_inset Formula 
-\[
-\log\left(\frac{p\left(\theta_{k}\mid z\right)}{p\left(\theta_{k}\mid\neg z\right)}\right)=\sum_{s\in\mathcal{S}_{k}}\log\left(\frac{p\left(\theta_{k}^{s}\mid z\right)}{p\left(\theta_{k}^{s}\mid\neg z\right)}\right).
-\]
-
+ is 
+\begin_inset Formula $\lambda^{s}V_{m,vol}^{s}$
 \end_inset
 
-
-\end_layout
-
-\begin_layout Standard
-Thus we are left with calculating 
-\begin_inset Formula $p\left(\theta_{k}^{s}\mid z\right)$
-\end_inset
-
- and 
-\begin_inset Formula $p\left(\theta_{k}^{s}\mid\neg z\right)$
-\end_inset
-
- for each measurement source.
+.
  We assume that a measurement source can only produce at most one true measureme
 nt during a sensor scan.
  Therefore, we have the two possibilities for 
@@ -3281,7 +3356,7 @@ p\left(\theta_{k}^{s}\mid\neg z\right)=\exp\left(\lambda^{s}V_{vol}^{s}\right)\f
 
 \end_inset
 
-Taking the ratio of the two, we get 
+Taking the ratio of the two gives
 \begin_inset Formula 
 \[
 \frac{p\left(\theta_{k}^{s}\mid z\right)}{p\left(\theta_{k}^{s}\mid\neg z\right)}=1+P_{G}^{s}P_{D}^{s}\left(\frac{\theta_{k}^{s}}{\lambda^{s}V_{vol}^{s}}-1\right).
@@ -3293,23 +3368,7 @@ Taking the ratio of the two, we get
 \end_layout
 
 \begin_layout Standard
-The model likelihood, 
-\begin_inset Formula $p\left(z\mid\theta_{m:k}\right)$
-\end_inset
-
-, can be recovered from the log odds ratio by 
-\begin_inset Formula 
-\[
-p\left(z\mid\theta_{m:k}\right)=1-\frac{1}{1+10^{l_{k}}}.
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-If a track is outside the LSR of the 
+If a track is outside the local surveillance region (LSR) of the 
 \begin_inset Formula $s^{th}$
 \end_inset
 
@@ -3322,8 +3381,9 @@ If a track is outside the LSR of the
 \end_inset
 
  will not be affected.
- In the case that the track leaves the GSR, we need a way to kill the track
- in order to make room for other tracks to be initialized.
+ In the case that the track leaves the global surveillance region (GSR),
+ we need a way to kill the track in order to make room for other tracks
+ to be initialized.
  Thus, we assume that a track that has not received a measurement within
  
 \begin_inset Formula $\tau_{\alpha}$
@@ -3688,7 +3748,7 @@ noprefix "false"
 .
  Each track hypothesis is scored as discussed in subsection 
 \begin_inset CommandInset ref
-LatexCommand eqref
+LatexCommand ref
 reference "subsec:Scoring"
 plural "false"
 caps "false"
@@ -3701,7 +3761,7 @@ noprefix "false"
  meets a minimum threshold is initialized into a new track as we will discuss
  in subsection 
 \begin_inset CommandInset ref
-LatexCommand eqref
+LatexCommand ref
 reference "subsec:Track-Initialization"
 plural "false"
 caps "false"
@@ -3712,65 +3772,8 @@ noprefix "false"
 .
  In the case that there are multiple clusters, RANSAC is performed on each
  cluster.
- 
-\end_layout
-
-\begin_layout Standard
-This process is repeated at most 
-\begin_inset Formula $\ell$
-\end_inset
-
- times.
- The model hypothesis with the largest consensus set from each cluster is
- kept and used to create a track provided that the size of the consensus
- set is at least 
-\begin_inset Formula $\tau_{RM}$
-\end_inset
-
-.
- The size of the consensus set is not necessarily the cardinality of the
- consensus set since we count all the measurements from a source per sensor
- scan as a single measurement.
- This is to ensure that one source is not weighted more heavily than another.
- RANSAC will terminate early if the size of a consensus set is greater than
- or equal to the threshold 
-\begin_inset Formula $\tau_{E}$
-\end_inset
-
-.
- If a track is initialized, the measurements in its consensus set are removed
- from the cluster.
- 
-\end_layout
-
-\begin_layout Standard
-We create a track from a track hypothesis using a filtering method.
- In our filtering method we use the Kalman propagation step described in
- equation 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:JPDAF_propagation"
-
-\end_inset
-
- and an update step using centralized measurement fusion described in section
- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:Centralized-Measurement-Fusion"
-
-\end_inset
-
-.
- We also initialize the track's likelihood using the consensus set and the
- method described in section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:Track-Likelihood"
-
-\end_inset
-
-.
+ If a track is initialized, the measurements used to initialize the track
+ are removed from the cluster.
 \end_layout
 
 \begin_layout Subsection
@@ -7494,80 +7497,215 @@ where
 \end_layout
 
 \begin_layout Section
-LMLE Revised
+Derivation of Jacobians
 \end_layout
 
 \begin_layout Standard
-Depending on the method used, you may need compute the derivative of 
-\begin_inset Formula $y_{m}^{j}\ominus h\left(f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),v_{m}\right)$
+This section presents the derivation of Jacobians used in R-RANSAC.
+ We use similar notation and procedure presenting in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Sola2018"
+literal "false"
+
 \end_inset
 
- with respect to the state.
- We denote this derivative as 
-\begin_inset Formula $H_{k:m}$
+.
+\end_layout
+
+\begin_layout Lemma
+Let 
+\begin_inset Formula $f$
 \end_inset
 
- which is defined as 
+ be the state transition function defined in 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:system-model"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, 
+\begin_inset Formula $x_{k}$
+\end_inset
+
+ and 
+\begin_inset Formula $x_{m}$
+\end_inset
+
+ be states at two different times with 
+\begin_inset Formula $m<k$
+\end_inset
+
+, 
+\begin_inset Formula $w_{k}$
+\end_inset
+
+ be process noise described in section 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "sec:Problem-Description"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, and 
+\begin_inset Formula $\delta_{m:k}=k-m$
+\end_inset
+
+, then the partial derivative of 
+\begin_inset Formula $f$
+\end_inset
+
+ w.r.t.
+ 
+\begin_inset Formula $x_{m}$
+\end_inset
+
+ and 
+\begin_inset Formula $w_{k}$
+\end_inset
+
+ evaluated at 
+\begin_inset Formula $x_{m}=\hat{x}_{m}$
+\end_inset
+
+ and 
+\begin_inset Formula $w_{k}=0$
+\end_inset
+
+ is
+\begin_inset Formula 
+\[
+\left.\frac{\partial x_{k}\ominus f\left(x_{m},w_{k},\delta_{m:k}\right)}{\partial x_{m}}\right|_{\begin{array}{c}
+x_{m}=\hat{x}_{m}\\
+w_{k}=0
+\end{array}}=F_{m:k}
+\]
+
+\end_inset
+
+and 
+\begin_inset Formula 
+\[
+\left.\frac{\partial x_{k}\ominus f\left(x_{m},w_{k},\delta_{m:k}\right)}{\partial w_{m}}\right|_{\begin{array}{c}
+x_{m}=\hat{x}_{m}\\
+w_{k}=0
+\end{array}}=G_{m:k}
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula 
+\[
+F_{m:k}=\begin{bmatrix}\mathbf{Ad}_{\text{Exp}\left(\delta_{m:k}\hat{u}_{m}\right)^{-1}} & J_{r}\left(\delta_{m:k}\hat{u}_{m}\right)\delta_{m:k}\\
+0 & I
+\end{bmatrix}
+\]
+
+\end_inset
+
+and 
+\begin_inset Formula 
+\[
+G_{m:k}=\begin{bmatrix}J_{r}\left(\delta_{m:k}\hat{u}_{m}\right)\delta_{m:k} & J_{r}\left(\delta_{m:k}\hat{u}_{m}\right)\frac{\delta_{m:k}^{2}}{2}\\
+0 & I\delta_{m:k}
+\end{bmatrix}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Proof
+We will first prove the statement regarding 
+\begin_inset Formula $F_{m:k}$
+\end_inset
+
+ and then prove the statement regarding 
+\begin_inset Formula $G_{m:k}$
+\end_inset
+
+.
+ Expanding out the expression 
+\begin_inset Formula $x_{k}\ominus f\left(x_{m},w_{k},\delta_{m:k}\right)$
+\end_inset
+
+ using equation 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:system-model"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ gives 
 \begin_inset Formula 
 \begin{align*}
-H_{k:m} & =\left.\frac{\partial y_{m}\ominus h\left(f^{-1},v_{m}\right)}{\partial x_{k}}\right|_{\hat{x}_{k},\hat{w}_{k},\hat{v}_{m}}\\
- & =\left.J_{r}^{-1}\left(\hat{e}_{k:m}\right)\mathbf{Ad}_{y_{m}^{-1}}\frac{\partial h\left(f^{-1},v_{m}\right)}{\partial x_{k}}\right|_{\hat{x}_{k},\hat{w}_{k},\hat{v}_{m}}.
+g_{k}\ominus\left(g_{m}\exp\left(\delta_{m:k}\left(u_{m}+w_{m}^{g}+\delta_{m:k}w_{m}^{u}\right)\right)\right)\\
+w_{k}-w_{m}-\delta_{m:k}w_{m}^{u}
+\end{align*}
+
+\end_inset
+
+The derivative of the first term w.r.t.
+ 
+\begin_inset Formula $g_{m}$
+\end_inset
+
+ is 
+\begin_inset Formula 
+\begin{align*}
+ & \lim_{\alpha\to0}\frac{g_{k}\ominus\left(g_{m}\exp\left(\alpha\right)\exp\left(U\right)\right)-g_{k}\ominus\left(g_{m}\exp\left(U\right)\right)}{\alpha}\\
+ & =\lim_{\alpha\to0}\frac{\log\left(\exp\left(-U\right)\exp\left(-\alpha\right)g_{m}^{-1}g_{k}\right)-0}{\alpha}\\
+ & =\lim_{\alpha\to0}\frac{\log\left(\exp\left(-\mathbf{Ad}_{\exp\left(-U\right)}\alpha\right)\exp\left(-U\right)g_{m}^{-1}g_{k}\right)}{\alpha}\\
+ & =\lim_{\alpha\to0}\frac{\log\left(\exp\left(-\mathbf{Ad}_{\exp\left(-U\right)}\alpha\right)\right)}{\alpha}\\
+ & =\lim_{\alpha\to0}\frac{-\mathbf{Ad}_{\exp\left(-U\right)}\alpha}{\alpha}\\
+ & =-\mathbf{Ad}_{\exp\left(-U\right)}
 \end{align*}
 
 \end_inset
 
 
-\begin_inset Formula 
-\[
-H_{m}=J_{r}^{-1}\left(\hat{e}\right)\mathbf{Ad}_{y_{m}^{-1}}\left.\frac{\partial h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{x_{m}=\hat{x}_{m},V_{m}=0}
-\]
-
-\end_inset
-
-
-\begin_inset Formula 
-\[
-G_{k:m}^{o}=J_{r}^{-1}\left(e\right)Ad_{y}\frac{\partial h\left(f^{-1},v_{m}\right)}{\partial f^{-1}}\frac{\partial f^{-1}}{\partial w}
-\]
-
-\end_inset
-
-
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+-
+\backslash
+mathbf{Ad}_{
+\backslash
+exp
+\backslash
+left(-U
+\backslash
+right)}
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula 
-\begin{align*}
-G_{k:m} & =\left.\frac{\partial x_{m}\ominus f^{-1}\left(x_{k},w_{m},\delta_{k:m}\right)}{\partial w_{m}}\right|_{x_{m}=\hat{x}_{m},w_{m}=0}\\
- & =\left.\frac{\partial\log\left(e\right)}{\partial e}\frac{\partial e}{\partial\left(f^{-1}\right)^{-1}}\frac{\partial\left(f^{-1}\right)^{-1}}{\partial f^{-1}}\frac{\partial f^{-1}}{\partial w_{m}}\right|_{x_{m}=\hat{x}_{m},w_{m}=0}\\
- & =\left.J_{r}^{-1}\left(e\right)\text{Ad}\left(x_{m}\right)\left(-\text{Ad}\left(f^{-1}\right)\right)\frac{\partial f^{-1}}{\partial w_{m}}\right|_{x_{m}=\hat{x}_{m},w_{m}=0}\\
- & =\left.I\frac{\partial f^{-1}}{\partial w_{m}}\right|_{x_{m}=\hat{x}_{m},w_{m}=0},\\
-\frac{\partial f^{-1}}{\partial w_{m}} & =\begin{bmatrix}J_{r}\left(\delta_{k:m}u_{k}\right)\delta_{k:m} & J_{r}\left(\delta_{k:m}u_{k}\right)\frac{\delta_{k:m}^{2}}{2}\\
-0 & I\delta_{k:m}
-\end{bmatrix},\\
-e & =x_{m}\ominus f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),
-\end{align*}
-
-\end_inset
-
-
-\begin_inset Formula 
-\[
-\bar{R}+H_{m}^{\top}\bar{Q}H_{m}=\left(V_{m}RV_{m}^{\top}\right)+H_{m}G_{k:m}QG_{k:m}^{\top}H_{m}^{\top}
-\]
-
-\end_inset
-
-
 \begin_inset CommandInset bibtex
 LatexCommand bibtex
-bibfiles "/home/mark/Documents/mendeley/library"
+btprint "btPrintCited"
+bibfiles "/home/mark/Documents/Mendeley/library"
 options "plain"
 
-\end_inset
-
-
-\begin_inset Separator latexpar
 \end_inset
 
 
