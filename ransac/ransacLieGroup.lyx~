@@ -711,7 +711,15 @@ where
 \end_inset
 
 .
- 
+ A useful property of the adjoint is 
+\begin_inset Formula 
+\[
+g\text{Exp}\left(v\right)=\text{Exp}\left(\mathbf{Ad}_{g}v\right)g.
+\]
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -865,7 +873,24 @@ literal "true"
 \end_inset
 
 .
- 
+ Another useful property of the left and right Jacobians are 
+\begin_inset Formula 
+\begin{align*}
+J_{r}\left(-v\right) & =J_{l}\left(v\right)\\
+J_{l}\left(-v\right) & =J_{r}\left(v\right)
+\end{align*}
+
+\end_inset
+
+which is discussed in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Sola2018"
+literal "false"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -1138,7 +1163,7 @@ end{subequations}
 \begin_inset Formula $f$
 \end_inset
 
- is the state transition model defined in 
+ is the state transition function defined in 
 \begin_inset CommandInset ref
 LatexCommand eqref
 reference "eq:system-model"
@@ -1241,6 +1266,68 @@ where
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Standard
+The inverse state transition function, denoted as 
+\begin_inset Formula $f^{-1}$
+\end_inset
+
+, is defined as 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{subequations}
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "eq:model_inverse"
+
+\end_inset
+
+ 
+\begin_inset Formula 
+\begin{align}
+g_{m} & =g_{k}\oplus\left(\delta_{k:m}u_{k}+\delta_{k:m}w_{k}^{g}+\frac{\delta_{k:m}^{2}}{2}w_{k}^{u}\right)\\
+u_{m} & =u_{k}+\delta_{k:m}w_{k}^{u}.
+\end{align}
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{subequations}
+\end_layout
+
+\end_inset
+
+ and the output at time 
+\begin_inset Formula $m$
+\end_inset
+
+ is 
+\begin_inset Formula 
+\begin{equation}
+y_{m}=h\left(f^{-1}\left(x_{k},w_{k}\right),v_{m}\right).\label{eq:observation_inverse_f}
+\end{equation}
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -2213,44 +2300,24 @@ where
 \end_inset
 
  is the state transition probability.
- We assume that 
-\begin_inset Formula $p\left(x_{m^{-}}\right)$
+ According to lemma 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "lem:a_posterior"
+plural "false"
+caps "false"
+noprefix "false"
+
 \end_inset
 
- and 
-\begin_inset Formula $p\left(w_{m}\right)$
-\end_inset
-
- are Gaussian distributions; however, if the state transistion function
- 
-\begin_inset Formula $f$
-\end_inset
-
- is not linear in either of the terms, then 
+, the Gaussian linearization of 
 \begin_inset Formula $p\left(x_{m}\right)$
 \end_inset
 
- will not be Gaussian.
- We can approximate 
-\begin_inset Formula $p\left(x_{m}\right)$
-\end_inset
-
- as Gaussian by linearizing the state transition function around the mean
- of 
-\begin_inset Formula $x_{m^{-}}$
-\end_inset
-
- and 
-\begin_inset Formula $w_{m}$
-\end_inset
-
-.
- Doing so yields 
+ is 
 \begin_inset Formula 
 \begin{align*}
-p\left(x_{m}\right) & \approx\eta\int\exp\left(-\frac{1}{2}\left(x_{m}\ominus f_{\hat{x}_{m^{-}}}+F_{m}\delta x_{m}\right)^{\top}\right.\\
- & \left.\bar{Q}_{m}^{-1}\left(x_{m}\ominus f_{\hat{x}_{m^{-}}}+F_{m}\delta x_{m}\right)\right)\\
- & \exp\left(-\frac{1}{2}\delta x_{m}^{\top}P_{m}^{-1}\delta x\right)d\delta x_{m^{-}}
+p\left(x_{m}\right) & \approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus f_{\hat{x}_{m^{-}}}\right)^{\top}P_{m}^{-1}\left(x_{m}\ominus f_{\hat{x}_{m^{-}}}\right)\right)
 \end{align*}
 
 \end_inset
@@ -2258,7 +2325,7 @@ p\left(x_{m}\right) & \approx\eta\int\exp\left(-\frac{1}{2}\left(x_{m}\ominus f_
 with 
 \begin_inset Formula 
 \begin{align*}
-\bar{Q}_{m} & =G_{m}QG_{m}^{\top}\\
+P_{m} & =F_{m}P_{m^{-}}F_{m}^{\top}+G_{m}QG_{m}^{\top}\\
 f_{\hat{x}_{m^{-}}} & =f\left(\hat{x}_{m^{-}},0,\delta_{m}\right)
 \end{align*}
 
@@ -2273,7 +2340,7 @@ w_{m}=0
 \end{array}}\\
  & =\begin{bmatrix}\mathbf{Ad}_{\text{Exp}\left(\delta_{m}\hat{u}_{m^{-}}\right)^{-1}} & J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)\delta_{m}\\
 0 & I
-\end{bmatrix},
+\end{bmatrix}
 \end{align*}
 
 \end_inset
@@ -2292,44 +2359,28 @@ w_{m}=0
 
 \end_inset
 
-
-\end_layout
-
-\begin_layout Standard
-Now that we have a linearized version of 
-\begin_inset Formula $p\left(x_{m}\right)$
+The derivations of 
+\begin_inset Formula $F_{m}$
 \end_inset
 
-, we can pull terms that are not dependent on 
-\begin_inset Formula $\delta x_{m}$
+ and 
+\begin_inset Formula $G_{m}$
 \end_inset
 
- out of the integral and simplify the expression using a procedure similar
- to the one described in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Thrun2006"
-literal "false"
+ can be found using a combination of the Jacobians defined in lemma 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "lem:transition_func_jacobians"
+plural "false"
+caps "false"
+noprefix "false"
 
 \end_inset
 
 .
- Doing so yields
-\begin_inset Formula 
-\begin{align*}
-p\left(x_{m}\right) & \approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus f_{\hat{x}_{m^{-}}}\right)^{\top}P_{m}^{-1}\left(x_{m}\ominus f_{\hat{x}_{m^{-}}}\right)\right)
-\end{align*}
+\end_layout
 
-\end_inset
-
-with
-\begin_inset Formula 
-\[
-P_{m}=F_{m}P_{m^{-}}F_{m}^{\top}+G_{m}QG_{m}^{\top}.
-\]
-
-\end_inset
-
+\begin_layout Standard
 Thus the new state estimate and error covariance are 
 \begin_inset ERT
 status open
@@ -2353,8 +2404,8 @@ name "eq:JPDAF_propagation"
  
 \begin_inset Formula 
 \begin{align}
-\hat{\bar{x}}_{m} & =f\left(\hat{x}_{m^{-}},0,\delta_{m}\right)\\
-\bar{P}_{m} & =F_{m}P_{m^{-}}F_{m}^{\top}+G_{m}QG_{m}^{\top},
+\hat{x}_{m} & =f\left(\hat{x}_{m^{-}},0,\delta_{m}\right)\\
+P_{m} & =F_{m}P_{m^{-}}F_{m}^{\top}+G_{m}QG_{m}^{\top},
 \end{align}
 
 \end_inset
@@ -2372,13 +2423,7 @@ end{subequations}
 
 \end_inset
 
- where the 
-\begin_inset Formula $\bar{}$
-\end_inset
-
- notation indicates that measurements have not been incorporated into the
- state and covariance estiamte.
- 
+.
 \end_layout
 
 \begin_layout Standard
@@ -2405,7 +2450,7 @@ The PDAF uses a validation region to indicate if a measurement should be
  associated with a model.
  The validation region is a volume around a track's current state estimate.
  Measurements that are within the validation region are associated to the
- model and are used to update the model.
+ model and used to update the model.
  We will use the validation region described in 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -2414,7 +2459,7 @@ literal "true"
 
 \end_inset
 
-.
+, and present it here adapted to the Lie group setting.
  
 \end_layout
 
@@ -2423,10 +2468,10 @@ The volume is determined by the probability of a measurement
 \begin_inset Formula $y_{m}^{s,j}$
 \end_inset
 
- which is defined as 
+ which is 
 \begin_inset Formula 
 \[
-p\left(y_{m}^{s,j}\right)=\int_{\delta\bar{x}_{m}}p\left(y_{m}^{s,j}\mid x_{m}\right)\bar{p}\left(x_{m}\right)d\delta\bar{x}_{m}.
+p\left(y_{m}^{s,j}\right)=\int_{\delta x_{m}}p\left(y_{m}^{s,j}\mid x_{m}\right)p\left(x_{m}\right)d\delta x_{m}.
 \]
 
 \end_inset
@@ -2435,64 +2480,48 @@ p\left(y_{m}^{s,j}\right)=\int_{\delta\bar{x}_{m}}p\left(y_{m}^{s,j}\mid x_{m}\r
 \end_layout
 
 \begin_layout Standard
-For readability, we will droip the superscripts on 
-\begin_inset Formula $y_{m}^{s,j}$
+Using lemma 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "lem:a_posterior"
+plural "false"
+caps "false"
+noprefix "false"
+
 \end_inset
 
-.
- In order to solve the integral, we linearize the measurement probability
- 
-\begin_inset Formula $p\left(y_{m}\mid x_{m}\right)$
+, the Gaussian linearization of 
+\begin_inset Formula $p\left(y_{m}^{s,j}\right)$
 \end_inset
 
- about 
-\begin_inset Formula $\hat{\bar{x}}_{m}$
-\end_inset
-
- and the measurement noise.
- This serves two purposes: first it ensures the 
-\begin_inset Formula $p\left(y_{m}\right)$
-\end_inset
-
- stays Gaussian and second it exposes 
-\begin_inset Formula $\delta x_{m}$
-\end_inset
-
- which is the integrating term.
- Doing so yields 
+ is 
 \begin_inset Formula 
-\begin{align*}
-p\left(y_{m}\right) & \approx\eta\int_{\delta x_{m}}\exp\left(-\frac{1}{2}\left(y_{m}\ominus\hat{y}_{m}+H_{m}^{s}\delta\bar{x}_{m}\right)^{\top}\right.\\
- & \left.\left(\bar{R}^{s}\right)^{-1}\left(y_{m}\ominus\hat{y}_{m}+H_{m}^{s}\delta\bar{x}_{m}\right)\right)\\
- & \exp\left(-\frac{1}{2}\bar{x}_{m}^{\top}\bar{P}_{m}^{-1}\delta\bar{x}_{m}\right)d\delta\bar{x}_{m}
-\end{align*}
+\begin{align}
+p\left(y_{m}^{s,j}\right) & \approx\eta\exp\left(-\frac{1}{2}\left(y_{m}\ominus\hat{y}_{m}\right)^{\top}\right..\label{eq:probability_y}\\
+ & \left.\left(S_{m}^{s}\right)^{-1}\left(y_{m}\ominus\hat{y}_{m}\right)\right)\nonumber 
+\end{align}
 
 \end_inset
 
 with 
 \begin_inset Formula 
-\begin{align*}
-\bar{R}^{s} & =\left(V_{m}R^{s}V_{m}^{\top}\right),\\
-\hat{y}_{m} & =h\left(\hat{\bar{x}}_{m},0\right)
-\end{align*}
+\begin{align}
+S_{m}^{s} & =V_{m}^{s}R^{s}\left(V_{m}^{s}\right)^{\top}+H_{m}^{s}P\left(H_{m}^{s}\right)^{\top},\label{eq:innovation_covariance}
+\end{align}
 
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
 \begin_inset Formula 
 \begin{align}
-H_{m}^{s} & =\left.\frac{\partial y_{m}\ominus h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{\begin{array}{c}
+H_{m}^{s} & =\frac{\partial y_{m}^{s,j}\ominus h\left(x_{m},v_{m}\right)}{\partial x_{m}}\label{eq:ObservationJacobianState}\\
+ & =J_{l}^{-1}\left(e\right)\left.\frac{\partial h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{\begin{array}{c}
 x_{m}=\hat{x}_{m},\\
 v_{m}=0
-\end{array}}\nonumber \\
- & =\left.\frac{\partial\log\left(e\right)}{\partial e}\frac{\partial e}{\partial h^{-1}\left(x_{m},v_{m}\right)}\frac{\partial h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{\begin{array}{c}
-x_{m}=\hat{x}_{m},\\
-v_{m}=0
-\end{array}}\label{eq:ObservationJacobianState}\\
- & =J_{r}^{-1}\left(\hat{e}\right)\mathbf{Ad}_{y_{m}^{-1}}\left.\frac{\partial h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{\begin{array}{c}
-x_{m}=\hat{x}_{m},\\
-v_{m}=0
-\end{array}},\nonumber 
+\end{array}}
 \end{align}
 
 \end_inset
@@ -2500,27 +2529,51 @@ v_{m}=0
 
 \begin_inset Formula 
 \begin{align}
-V_{m}^{s} & =\left.\frac{\partial y_{m}\ominus h\left(x_{m},v_{m}\right)}{\partial v_{m}}\right|_{\begin{array}{c}
+V_{m}^{s} & =\frac{\partial y_{m}^{s,j}\ominus h\left(x_{m},v_{m}\right)}{\partial v_{m}}\label{eq:ObservationJacobianNoise}\\
+ & =J_{l}^{-1}\left(e\right)\left.\frac{\partial h\left(x_{m},v_{m}\right)}{\partial v_{m}}\right|_{\begin{array}{c}
 x_{m}=\hat{x}_{m},\\
 v_{m}=0
-\end{array}}\label{eq:ObservationJacobianNoise}\\
- & =J_{r}^{-1}\left(\hat{e}\right)\mathbf{Ad}_{y_{m}^{-1}}\left.\frac{\partial h\left(x_{m},v_{m}\right)}{\partial v_{m}}\right|_{\begin{array}{c}
-x_{m}=\hat{x}_{m},\\
-v_{m}=0
-\end{array}},\nonumber 
+\end{array}}
 \end{align}
 
 \end_inset
 
+
+\end_layout
+
+\begin_layout Standard
 and 
 \begin_inset Formula 
 \[
-e=h\left(\hat{\bar{x}}_{m},0\right)^{-1}y_{m}.
+e=h\left(x_{m},v_{m}\right)^{-1}y_{m}.
 \]
 
 \end_inset
 
-The superscript on 
+
+\end_layout
+
+\begin_layout Standard
+The derivatives of 
+\begin_inset Formula $H_{m}^{s}$
+\end_inset
+
+ and 
+\begin_inset Formula $V_{m}^{s}$
+\end_inset
+
+ are derived from lemma 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "lem:observation_func_jacobians"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ The superscript on 
 \begin_inset Formula $H_{m}^{s}$
 \end_inset
 
@@ -2541,64 +2594,6 @@ The superscript on
 \end_layout
 
 \begin_layout Standard
-By rearranging the terms in the linearized 
-\begin_inset Formula $p\left(y_{m}\right)$
-\end_inset
-
- we get 
-\begin_inset Formula 
-\begin{align*}
-p\left(y_{m}\right) & \approx\eta\exp\left(-\frac{1}{2}\left(y_{m}\ominus\hat{y}_{m}\right)^{\top}\right.\\
- & \left.\left(S^{s}\right)^{-1}\left(y_{m}\ominus\hat{y}_{m}\right)\right)\\
- & \int_{\delta x_{m}}\exp\left(-\frac{1}{2}l\left(\delta\bar{x}_{m}\right)^{\top}\left(S^{s}\right)^{-1}l\left(\delta\bar{x}_{m}\right)\right)d\delta\bar{x}_{m}
-\end{align*}
-
-\end_inset
-
-with
-\begin_inset Formula 
-\begin{align*}
-l\left(\delta\bar{x}_{m}\right) & =\left(\delta\bar{x}_{m}+S^{s}H_{m}^{s}\left(\bar{R}^{s}\right)^{-1}y_{m}\ominus\hat{y}_{m}\right)
-\end{align*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-and the innovation covariance
-\begin_inset Formula 
-\begin{equation}
-S^{s}=\left(V_{m}^{s}R^{s}\left(V_{m}^{s}\right)^{\top}+H_{m}^{s}P\left(H_{m}^{s}\right)^{\top}\right).\label{eq:innovation_cov}
-\end{equation}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Note that we were able to pull a term outside of the exponential, and the
- term inside of the exponential is a Gaussian distribution which integrates
- to a constant regardless of 
-\begin_inset Formula $\delta\bar{x}_{m}$
-\end_inset
-
-.
- Therefore, we can absorb the constant integral into 
-\begin_inset Formula $\eta$
-\end_inset
-
- to get 
-\begin_inset Formula 
-\begin{align}
-p\left(y_{m}\right) & \approx\eta\exp\left(-\frac{1}{2}\left(y_{m}\ominus\hat{y}_{m}\right)^{\top}\right.\nonumber \\
- & \left.\left(S^{s}\right)^{-1}\left(y_{m}\ominus\hat{y}_{m}\right)\right).\label{eq:probability_y}
-\end{align}
-
-\end_inset
-
 We don't want to associate every measurement to the model, only the measurements
  with a high probability.
  This is done by using a gating technique as follows.
@@ -2617,7 +2612,7 @@ We don't want to associate every measurement to the model, only the measurements
  (we drop the superscripts) is defined as 
 \begin_inset Formula 
 \[
-z_{m}=\left(S^{s}\right)^{-\frac{1}{2}}y_{m}\ominus\hat{y}_{m}.
+z_{m}=\left(S_{m}^{s}\right)^{-\frac{1}{2}}y_{m}\ominus\hat{y}_{m}.
 \]
 
 \end_inset
@@ -2629,7 +2624,7 @@ z_{m}=\left(S^{s}\right)^{-\frac{1}{2}}y_{m}\ominus\hat{y}_{m}.
  be a metric defined as 
 \begin_inset Formula 
 \begin{align}
-d_{V}\left(y_{m},\hat{y}_{m}\right) & =\left(y_{m}\ominus\hat{y}_{m}\right)^{\top}\left(S^{s}\right)^{-1}\left(y_{m}\ominus\hat{y}_{m}\right)\label{eq:validation_region_metric}\\
+d_{V}\left(y_{m},\hat{y}_{m}\right) & =\left(y_{m}\ominus\hat{y}_{m}\right)^{\top}\left(S_{m}^{s}\right)^{-1}\left(y_{m}\ominus\hat{y}_{m}\right)\label{eq:validation_region_metric}\\
  & =z_{m}^{\top}z_{m}.\nonumber 
 \end{align}
 
@@ -2655,7 +2650,7 @@ Note that the metric
 The validation region is the set 
 \begin_inset Formula 
 \[
-\nu\left(\hat{y}_{m},\gamma\right)=\left\{ y_{m}\in Y_{m}\,:\,d\left(y_{m},\hat{y}_{m}\right)\leq\gamma\right\} ,
+\text{val}\left(\hat{y}_{m},\gamma\right)=\left\{ y_{m}\in Y_{m}\,:\,d\left(y_{m},\hat{y}_{m}\right)\leq\gamma\right\} ,
 \]
 
 \end_inset
@@ -2705,14 +2700,18 @@ where
 \end_layout
 
 \begin_layout Standard
-The volume of the validation region, 
-\begin_inset Formula $V_{vol}^{s}$
+The volume of the validation region of source 
+\begin_inset Formula $s$
 \end_inset
 
-, is defined as 
+ at time 
+\begin_inset Formula $m$
+\end_inset
+
+ is defined as 
 \begin_inset Formula 
 \begin{equation}
-V_{vol}^{s}=c_{n}\gamma^{n/2}\left|S^{s}\right|^{1/2},\label{eq:volume_validation_region}
+V_{m,vol}^{s}=c_{n}\gamma^{n/2}\left|S_{m}^{s}\right|^{1/2},\label{eq:volume_validation_region}
 \end{equation}
 
 \end_inset
@@ -2738,10 +2737,9 @@ and
 \end_inset
 
  is the gamma function.
- Since the validation region depends on the measurement noise covariance,
- there will be a different validation region for each measurement source.
- Also, the number of expected measurements in the validation region is 
-\begin_inset Formula $\lambda^{k}V_{vol}^{k}$
+ Also, the number of expected noisy measurements in the validation region
+ is 
+\begin_inset Formula $\lambda^{s}V_{m,vol}^{s}$
 \end_inset
 
  for each source.
@@ -2944,7 +2942,7 @@ noprefix "false"
  is the innovation covariance defined in 
 \begin_inset CommandInset ref
 LatexCommand eqref
-reference "eq:innovation_cov"
+reference "eq:innovation_covariance"
 plural "false"
 caps "false"
 noprefix "false"
@@ -3872,568 +3870,64 @@ where
 \end_layout
 
 \begin_layout Standard
-In order to solve the optimization problem, we need to invert the system
- model defined in 
+Using lemma, 
 \begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:system-model"
+LatexCommand ref
+reference "lem:meas_inverse_prob"
 plural "false"
 caps "false"
 noprefix "false"
 
 \end_inset
 
- so that we can estimate a previous state 
-\begin_inset Formula $x_{m}$
-\end_inset
-
- given the current state 
-\begin_inset Formula $x_{k}$
-\end_inset
-
-.
- Ignoring the noise terms, we can propagate the pose of the system 
-\begin_inset Formula $g_{m}$
-\end_inset
-
- to 
-\begin_inset Formula $g_{k}$
-\end_inset
-
- by 
-\begin_inset Formula 
-\[
-g_{k}=g_{m}\exp\left(\delta_{m:k}u\right).
-\]
-
-\end_inset
-
-Solving for 
-\begin_inset Formula $g_{m}$
-\end_inset
-
- yields 
-\begin_inset Formula 
-\begin{align*}
-g_{m} & =\exp^{-1}\left(\delta_{m:k}u\right)g_{k}\\
- & =\exp\left(-\delta_{m:k}u\right)g_{k}\\
- & =\exp\left(\delta_{k:m}u\right)g_{k}.
-\end{align*}
-
-\end_inset
-
-Thus, the inverse of the system model 
-\begin_inset Formula $f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right)$
-\end_inset
-
- is defined as 
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{subequations}
-\end_layout
-
-\end_inset
-
-
-\begin_inset CommandInset label
-LatexCommand label
-name "eq:model_inverse"
-
-\end_inset
-
- 
-\begin_inset Formula 
-\begin{align}
-g_{m} & =g_{k}\oplus\left(\delta_{k:m}u_{k}+\delta_{k:m}w_{k}^{g}+\frac{\delta_{k:m}^{2}}{2}w_{k}^{u}\right)\\
-u_{m} & =u_{k}+\delta_{k:m}w_{k}^{u}.
-\end{align}
-
-\end_inset
-
-
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{subequations}
-\end_layout
-
-\end_inset
-
- and the estimated output at time 
-\begin_inset Formula $m$
+, the Gaussian approximation of 
+\begin_inset Formula $p\left(y_{m}\mid x_{k}\right)$
 \end_inset
 
  is 
 \begin_inset Formula 
-\begin{equation}
-\hat{y}_{m}=h\left(f^{-1},v_{m}\right),\label{eq:inverse_estimated_meas}
-\end{equation}
+\begin{align*}
+p\left(y_{m}^{j}\mid x_{k}\right) & \approx\eta\exp\left(-L_{m}^{j}\right),
+\end{align*}
 
 \end_inset
 
-where 
-\begin_inset Formula $f^{-1}$
+where
+\begin_inset Formula 
+\begin{align*}
+L_{m}^{j}\left(x_{k}\right) & =\frac{1}{2}y_{m}\ominus h\left(\hat{x}_{m},0\right)^{\top}\\
+ & S_{k:m}^{-1}y_{m}\ominus h\left(\hat{x},0\right),
+\end{align*}
+
 \end_inset
 
- denotes 
-\begin_inset Formula $f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right)$
-\end_inset
-
-.
  
-\end_layout
-
-\begin_layout Standard
-Now that we can invert the model, we can calculate the probability 
-\begin_inset Formula $p\left(y_{m}\mid x_{k}\right),$
-\end_inset
-
- which is, according to the total probability theorm,
 \begin_inset Formula 
 \[
-p\left(y_{m}\mid x_{k}\right)=\int_{\delta x_{m}}p\left(y_{m}\mid x_{m}\right)p\left(x_{m}\mid x_{k}\right)d_{\delta x_{m}}.
+\hat{x}_{m}=f^{-1}\left(x_{k},0,\delta_{k:m}\right)
 \]
 
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-We approximate this integral by linearizing 
-\begin_inset Formula $p\left(y_{m}\mid x_{m}\right)$
 \end_inset
 
  and 
-\begin_inset Formula $p\left(x_{m}\mid x_{k}\right)$
+\begin_inset Formula $S_{k:m}$
 \end_inset
 
- using a first order Taylor series;
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{align*}
-p\left(x_{m}\mid x_{k}\right) & \approx\eta\exp\left(-\frac{1}{2}\left(\hat{x}_{m}\ominus f_{0}^{-1}+F_{k:m}^{-1}\delta x_{m}\right)^{\top}\right.\\
- & \left.\bar{Q}_{k:m}^{-1}\left(x_{m}\ominus f^{-1}+F_{k:m}^{-1}\delta x_{m}\right)\right)
-\end{align*}
-
-\end_inset
-
-
-\begin_inset Formula 
-\begin{align*}
-p\left(y_{m}^{j}\mid x_{m}\right) & \approx\eta\exp\left(-\frac{1}{2}\left(y_{m}\ominus h\left(\hat{x}_{m},0\right)+H_{m}\delta x_{m}\right)^{\top}\right.\\
- & \left.\bar{R}_{m}^{-1}\left(y_{m}\ominus h\left(\hat{x}_{m},0\right)+H_{m}\delta x_{m}\right)\right)
-\end{align*}
-
-\end_inset
-
-where 
-\begin_inset Formula $f_{0}^{-1}=f^{-1}\left(x_{k},0,\delta_{k:m}\right)$
-\end_inset
-
-,
-\begin_inset Formula 
-\[
-F_{k:m}^{-1}=\left.\frac{\partial x_{m}\ominus f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right)}{\partial x_{m}}\right|_{\begin{array}{c}
-x_{m}=\hat{x}_{m}\\
-w_{k}=0
-\end{array}},
-\]
-
-\end_inset
-
-
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{subequations}
-\end_layout
-
-\end_inset
-
-
-\begin_inset CommandInset label
-LatexCommand label
-name "eq:InverseTransitionFunctionJacobianNoise"
-
-\end_inset
-
-
-\begin_inset Formula 
-\begin{align*}
-G_{k:m} & =\left.\frac{\partial x_{m}\ominus f^{-1}\left(x_{k},w_{m},\delta_{k:m}\right)}{\partial w_{m}}\right|_{\begin{array}{c}
-x_{m}=\hat{x}_{m}\\
-w_{k}=0
-\end{array}}\\
- & =\left.\frac{\partial\log\left(e\right)}{\partial e}\frac{\partial e}{\partial\left(f^{-1}\right)^{-1}}\frac{\partial\left(f^{-1}\right)^{-1}}{\partial f^{-1}}\frac{\partial f^{-1}}{\partial w_{m}}\right|_{\begin{array}{c}
-x_{m}=\hat{x}_{m}\\
-w_{k}=0
-\end{array}}\\
- & =\left.J_{r}^{-1}\left(e\right)\text{Ad}\left(x_{m}\right)\left(-\text{Ad}\left(f^{-1}\right)\right)\frac{\partial f^{-1}}{\partial w_{m}}\right|_{\begin{array}{c}
-x_{m}=\hat{x}_{m}\\
-w_{k}=0
-\end{array}}\\
- & =\left.\frac{\partial f^{-1}}{\partial w_{m}}\right|_{x_{m}=\hat{x}_{m},w_{m}=0}\\
- & =\begin{bmatrix}J_{r}\left(\delta_{k:m}u_{k}\right)\delta_{k:m} & J_{r}\left(\delta_{k:m}u_{k}\right)\frac{\delta_{k:m}^{2}}{2}\\
-0 & I\delta_{k:m}
-\end{bmatrix},
-\end{align*}
-
-\end_inset
-
-
-\begin_inset Formula 
-\begin{align}
-e & =x_{m}\ominus f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),\nonumber \\
-\bar{Q}_{k:m} & =G_{k:m}QG_{k:m}^{\top},\label{eq:inverse_prop_cov}\\
-\bar{R}_{m} & =V_{m}RV_{m}^{\top},\label{eq:meas_cov}
-\end{align}
-
-\end_inset
-
-
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{subequations}
-\end_layout
-
-\end_inset
-
-
-\begin_inset Formula $V_{m}$
-\end_inset
-
- is defined in 
+ is the innovation covariance defined in equation 
 \begin_inset CommandInset ref
 LatexCommand eqref
-reference "eq:ObservationJacobianNoise"
+reference "eq:inverse_innovation_cov"
 plural "false"
 caps "false"
 noprefix "false"
 
 \end_inset
 
-, 
-\begin_inset Formula $H_{m}$
-\end_inset
-
- is defined in 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:ObservationJacobianState"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
- and 
-\begin_inset Formula $\eta$
-\end_inset
-
- is a normalizing coefficient which we overload.
- Note that we have left off the superscripts on 
-\begin_inset Formula $V_{m}$
-\end_inset
-
-, 
-\begin_inset Formula $H_{m}$
-\end_inset
-
-, and 
-\begin_inset Formula $\bar{R}_{m}$
-\end_inset
-
- indicating which measurement source they correspond to.
- 
-\end_layout
-
-\begin_layout Standard
-The above linearization serves two purposes: first, it keeps the integral
- a Gaussian distribution and it exposes the random variable 
-\begin_inset Formula $\delta x_{m}$
-\end_inset
-
- which we wish to integrate over.
-\end_layout
-
-\begin_layout Standard
-We can choose 
-\begin_inset Formula $\hat{x}_{m}$
-\end_inset
-
- to be 
-\begin_inset Formula $f^{-1}\left(x_{k},0,\delta_{k:m}\right)$
-\end_inset
-
-, since 
-\begin_inset Formula $f^{-1}\left(x_{k},0,\delta_{k:m}\right)$
-\end_inset
-
- is the mean of the linearized probability 
-\begin_inset Formula $p\left(x_{m}\mid x_{k}\right)$
-\end_inset
-
- and thus the most likely value.
- This allows us to simplify the linearized probability 
-\begin_inset Formula $p\left(x_{m}\mid x_{k}\right)$
-\end_inset
-
- to 
-\begin_inset Formula 
-\[
-p\left(x_{m}\mid x_{k}\right)\approx\eta\exp\left(-\frac{1}{2}\delta x_{m}^{\top}\left(G_{k:m}QG_{k:m}^{\top}\right)^{-1}\delta x_{m}\right)
-\]
-
-\end_inset
-
-since 
-\begin_inset Formula $\hat{x}_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)=0$
-\end_inset
-
- and 
-\begin_inset Formula $F_{k:m}^{-1}=I$
-\end_inset
-
 .
- 
 \end_layout
 
 \begin_layout Standard
-Multiplying the two linearized probabilities together yields 
-\begin_inset Formula 
-\begin{align*}
-p\left(y_{m}\mid x_{m}\right)p\left(x_{m}\mid x_{k}\right)\approx & \eta\int_{\delta x_{m}}\exp\left(-L_{m}\right)d\delta x_{m}
-\end{align*}
-
-\end_inset
-
-with 
-\begin_inset Formula 
-\begin{align*}
-L_{m} & =\frac{1}{2}\delta x_{m}^{\top}\bar{Q}_{k:m}^{-1}\delta x_{m}+\frac{1}{2}\left(y_{m}\ominus h\left(\hat{x}_{m},0\right)+H_{m}\delta x_{m}\right)^{\top}\\
- & \bar{R}_{m}^{-1}\left(y_{m}\ominus h\left(\hat{x}_{m},0\right)+H_{m}\delta x_{m}\right).
-\end{align*}
-
-\end_inset
-
-In order to solve the integral, we decompose 
-\begin_inset Formula $L_{m}$
-\end_inset
-
- into two functions 
-\begin_inset Formula $L_{m}\left(x_{k},\delta x_{m}\right)+L_{m}\left(x_{k}\right)$
-\end_inset
-
- where the first function depends on 
-\begin_inset Formula $x_{k}$
-\end_inset
-
- and 
-\begin_inset Formula $\delta x_{m}$
-\end_inset
-
- and the latter function only depends on 
-\begin_inset Formula $x_{k}$
-\end_inset
-
-.
- This will allow us to move the latter function out of the integral so that
- we have 
-\begin_inset Formula 
-\begin{align*}
-\int_{\delta x_{m}}\exp\left(-L_{m}\right)d\delta x_{m} & =\eta\exp\left(-L_{m}\left(x_{k}\right)\right)\\
- & \int\exp\left(-L_{m}\left(x_{k},\delta x_{m}\right)\right)d\delta x_{m}
-\end{align*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-By constructing 
-\begin_inset Formula $L_{m}\left(x_{k},\delta x_{m}\right)$
-\end_inset
-
- to be quadratic in 
-\begin_inset Formula $\delta x_{m}$
-\end_inset
-
- so that 
-\begin_inset Formula $\exp\left(-L_{m}\left(x_{k},\delta x_{m}\right)\right)$
-\end_inset
-
- is a Gaussian distribution, the integral would be a constant, 
-\begin_inset Formula $c$
-\end_inset
-
-,
-\begin_inset Formula 
-\[
-\int\exp\left(-L_{m}\left(x_{k},\delta x_{m}\right)\right)d\delta x_{m}=c,
-\]
-
-\end_inset
-
-regardles of 
-\begin_inset Formula $\delta x_{m}$
-\end_inset
-
-.
- This allows us to absorb the constant integral into 
-\begin_inset Formula $\eta$
-\end_inset
-
- such that 
-\begin_inset Formula 
-\[
-p\left(y_{m}\mid x_{m}\right)p\left(x_{m}\mid x_{k}\right)\approx\eta\exp\left(-L_{m}\left(x_{k}\right)\right).
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-To construct 
-\begin_inset Formula $L_{m}\left(x_{k},\delta x_{m}\right)$
-\end_inset
-
-, we take the first and second derivative of 
-\begin_inset Formula $L_{m}$
-\end_inset
-
- w.r.t.
- 
-\begin_inset Formula $\delta x_{m}$
-\end_inset
-
- to get
-\begin_inset Formula 
-\begin{align*}
-\frac{\partial L_{m}}{\delta x_{m}} & =\delta x_{m}^{\top}\bar{Q}_{k:m}^{-1}\\
- & +y_{m}\ominus h\left(\hat{x}_{m},0\right)^{\top}\bar{R}_{m}^{-1}H_{m}+\delta x_{m}^{\top}H_{m}^{\top}\bar{R}^{-1}H_{m}\\
-\frac{\partial^{2}L_{m}}{\delta x_{m}^{2}} & =H_{m}^{\top}\bar{R}_{m}^{-1}H_{m}+\bar{Q}_{k:m}^{-1}\\
- & =\Psi^{-1}
-\end{align*}
-
-\end_inset
-
-Setting the first derivative to zero and solving for 
-\begin_inset Formula $\delta x_{m}$
-\end_inset
-
- gives us
-\begin_inset Formula 
-\begin{align*}
-\delta x_{m}^{\top}\Psi^{-1} & =-y_{m}\ominus h\left(\hat{x}_{m},0\right)^{\top}\bar{R}_{m}^{-1}H_{m}\\
-\delta x_{m} & =-\Psi\left(H_{m}^{\top}\bar{R}_{m}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right).
-\end{align*}
-
-\end_inset
-
-We can now define the quadratic function 
-\begin_inset Formula $L_{m}\left(x_{k},\delta x_{m}\right)$
-\end_inset
-
- as 
-\begin_inset Formula 
-\begin{align*}
-L_{m}\left(x_{k},\delta x_{m}\right) & =\frac{1}{2}\left(\delta x_{m}+\Psi\left(H_{m}^{\top}\bar{R}_{m}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right)\right)^{\top}\\
- & \Psi^{-1}\left(\delta x_{m}+\Psi\left(H_{m}^{\top}\bar{R}_{m}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right)\right)
-\end{align*}
-
-\end_inset
-
-and solve for 
-\begin_inset Formula $L_{m}\left(x_{k}\right)=L_{m}-L_{m}\left(x_{k},x_{m}\right)$
-\end_inset
-
-
-\begin_inset Formula 
-\begin{align*}
-L_{m}\left(x_{k}\right) & =\frac{1}{2}\delta x_{m}^{\top}\bar{Q}^{-1}\delta x_{m}\\
- & +\frac{1}{2}\left(y_{m}\ominus h\left(\hat{x}_{m},0\right)+H_{m}\delta x_{m}\right)^{\top}\\
- & \bar{R}_{m}^{-1}\left(y_{m}\ominus h\left(\hat{x}_{m},0\right)+H_{m}\delta x_{m}\right)\\
- & -\frac{1}{2}\left(\delta x_{m}+\Psi\left(H_{m}^{\top}\bar{R}_{m}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right)\right)^{\top}\\
- & \Psi^{-1}\left(\delta x_{m}+\Psi\left(H_{m}^{\top}\bar{R}_{m}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right)\right).
-\end{align*}
-
-\end_inset
-
-With algebraic manipulation, using the Inversion Lemma in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Thrun2006"
-literal "false"
-
-\end_inset
-
- and substituting in 
-\begin_inset Formula $f_{0}^{-1}$
-\end_inset
-
- for 
-\begin_inset Formula $\hat{x}_{m}$
-\end_inset
-
- we get
-\begin_inset Formula 
-\begin{align*}
-L_{m}\left(x_{k}\right) & =\frac{1}{2}y_{m}\ominus h\left(f_{0}^{-1},0\right)^{\top}\\
- & S_{k:m}^{-1}y_{m}\ominus h\left(f_{0}^{-1},0\right),
-\end{align*}
-
-\end_inset
-
-where 
-\begin_inset Formula 
-\begin{equation}
-S_{k:m}=\bar{R}_{m}+H_{m}\bar{Q}_{k:m}H_{m}^{\top}.\label{eq:inverse_innov_cov}
-\end{equation}
-
-\end_inset
-
-Since 
-\begin_inset Formula $L_{m}$
-\end_inset
-
- is independent of 
-\begin_inset Formula $\delta x_{m}$
-\end_inset
-
-, 
-\begin_inset Formula 
-\begin{align*}
-p\left(y_{m}^{j}\mid x_{k}\right) & =\int_{x_{m}}p\left(y_{m}\mid x_{m}\right)p\left(x_{m}\mid x_{k}\right)d_{x_{m}}\\
- & \approx\eta\exp\left(-L_{m}\left(x_{k}\right)\right).
-\end{align*}
-
-\end_inset
-
-and the approximated LMLE is 
+Using the Gaussian approximation, the approximate LMLE is
 \begin_inset Formula 
 \[
 \underset{x_{k}}{\text{min}}\sum_{m=0}^{k}\sum_{j=1}^{N_{m}}L_{m}^{j}\left(x_{k}\right),
@@ -4529,7 +4023,7 @@ Let
  defined in 
 \begin_inset CommandInset ref
 LatexCommand eqref
-reference "eq:inverse_innov_cov"
+reference "eq:inverse_innovation_cov"
 plural "false"
 caps "false"
 noprefix "false"
@@ -4564,7 +4058,7 @@ where
  is the estimated measurement defined in 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "eq:inverse_estimated_meas"
+reference "eq:observation_inverse_f"
 plural "false"
 caps "false"
 noprefix "false"
@@ -4885,7 +4379,7 @@ Another possible simplification for any approach is by setting
  defined in 
 \begin_inset CommandInset ref
 LatexCommand eqref
-reference "eq:inverse_innov_cov"
+reference "eq:inverse_innovation_cov"
 plural "false"
 caps "false"
 noprefix "false"
@@ -5008,22 +4502,7 @@ y_{k} & =g_{k}+v_{k},
 
 \end_inset
 
-
-\begin_inset Formula 
-\begin{align*}
-G_{k:m} & =\left.\frac{\partial x_{m}\ominus f^{-1}\left(x_{k},w_{m},\delta_{k:m}\right)}{\partial w_{m}}\right|_{x_{m}=\hat{x}_{m},w_{m}=0}\\
- & =\left.\frac{\partial\log\left(e\right)}{\partial e}\frac{\partial e}{\partial\left(f^{-1}\right)^{-1}}\frac{\partial\left(f^{-1}\right)^{-1}}{\partial f^{-1}}\frac{\partial f^{-1}}{\partial w_{m}}\right|_{x_{m}=\hat{x}_{m},w_{m}=0}\\
- & =\left.J_{r}^{-1}\left(e\right)\text{Ad}\left(x_{m}\right)\left(-\text{Ad}\left(f^{-1}\right)\right)\frac{\partial f^{-1}}{\partial w_{m}}\right|_{x_{m}=\hat{x}_{m},w_{m}=0}\\
- & =\left.I\frac{\partial f^{-1}}{\partial w_{m}}\right|_{x_{m}=\hat{x}_{m},w_{m}=0},\\
-\frac{\partial f^{-1}}{\partial w_{m}} & =\begin{bmatrix}J_{r}\left(\delta_{k:m}u_{k}\right)\delta_{k:m} & J_{r}\left(\delta_{k:m}u_{k}\right)\frac{\delta_{k:m}^{2}}{2}\\
-0 & I\delta_{k:m}
-\end{bmatrix},\\
-e & =x_{m}\ominus f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),
-\end{align*}
-
-\end_inset
-
-We can write this in the familiar matrix notation as 
+which can be written in familiar matrix notation as 
 \begin_inset Formula 
 \begin{align*}
 x_{k} & =A_{k}x_{k^{-}}+B_{k}w_{k}\\
@@ -5099,7 +4578,7 @@ Constrained Problem for
 \begin_inset Formula $SE\left(2\right)$
 \end_inset
 
-: Tracking in the Image Plane 
+: Tracking in the Normalized Virtual Image Plane 
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:tracking_image_plane"
@@ -5110,27 +4589,35 @@ name "subsec:tracking_image_plane"
 \end_layout
 
 \begin_layout Standard
-NOTE: THIS WOULD BE BETTER IF TRACKING WAS DONE IN THE VIRTUAL IMAGE PLANE
- SINCE THE VIP IS PARALLEL TO THE GROUND, THUS THE MOTION WOULD REALLY BE
- SE2
+Suppose we have a camera fixed on a UAV tracking a moving target that is
+ restricted to a planar surface.
+ Tracking is done in the normalized virtual camera frame because it is invariant
+ to pitch and yaw of the UAV and invariant to the camera's intrinsic parameters.
+ If the tracking were done in the normalized camera frame, then when the
+ UAV pitches or rolls, the motion of the target my no longer fit a constant
+ velocity model because the trajectory could be an ellipse in the new frame
+ instead of a circle.
+ For this purpose, we perform tracking on the normalized virtual image plane
+ (NVIP); hence, the global frame is the NVIP, 
+\begin_inset Formula $\mathcal{F}^{n}$
+\end_inset
+
+, and the local frame is the camera frame 
+\begin_inset Formula $\mathcal{F}^{c}$
+\end_inset
+
+.
+ 
 \end_layout
 
 \begin_layout Standard
-Suppose we have a camera mounted on a UAV tracking a moving target that
- is restricted to a planar surface.
- The global frame is the current image frame, and the measurements are point
- measurements, i.e.
- pixels.
- In this case, the LSR and the GSR are the same.
- The volume of the LSR is the total number of pixels.
+The volume of the surveillance region is the area of the normalized virtual
+ image plane.
  Since the UAV is moving, the global frame is also moving.
- This means that we must provide a transformation 
-\begin_inset Formula $T$
-\end_inset
-
- so that we can transform all measurements, state estimates and error covariance
-s to the current global frame.
- We do this using the Homography 
+ This means that we must provide a transformation so that we can transform
+ all measurements and models to the current global frame.
+ We do this using the Homography as described in appendix ...
+ 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Ma"
@@ -5150,28 +4637,16 @@ literal "true"
 \end_layout
 
 \begin_layout Standard
-The Lie group configuration of a target moving in the image plane is 
+The configuration manifold of the target is 
 \begin_inset Formula $SE\left(2\right)$
 \end_inset
 
-, see appendix 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:SE2"
-
-\end_inset
-
- for the system function and important Jacobians.
- Let 
-\begin_inset Formula $g_{k}\in SE\left(2\right)$
-\end_inset
-
- and 
-\begin_inset Formula $u_{k}\in\mathfrak{se}\left(2\right)$
-\end_inset
-
 .
- They can be written as 
+ And the target's state 
+\begin_inset Formula $x_{k}=\left(g_{k},u_{k}\right)\in SE\left(2\right)\times\mathfrak{se}\left(2\right)^{\vee}$
+\end_inset
+
+ can be decomposed into
 \begin_inset Formula 
 \begin{align*}
 g_{k} & =\begin{bmatrix}R_{k} & t_{k}\\
@@ -5197,12 +4672,23 @@ where
 \end_inset
 
 .
- The observation model is 
+ The state transition function and important Jacobians for 
+\begin_inset Formula $SE\left(2\right)$
+\end_inset
+
+ can be found in appendix 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:SE2"
+
+\end_inset
+
+.
+ The observation function is 
 \begin_inset Formula 
-\begin{align*}
-y_{k} & =h\left(x_{k},v_{k}\right)\\
- & =t_{k}+v_{k},
-\end{align*}
+\[
+y_{k}=h\left(x_{k},v_{k}\right),
+\]
 
 \end_inset
 
@@ -5211,7 +4697,87 @@ where
 \end_inset
 
 .
- The inverse observation model is 
+ Using point measurements, we proceed to find under what conditions is the
+ system observable.
+ To do this, we need to construct the observability matrix by computing
+ the Jacobian 
+\begin_inset Formula 
+\[
+\frac{\partial y_{m}\ominus h\left(f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),v_{k}\right)}{\partial x_{k}}=H_{m}F_{k:m}
+\]
+
+\end_inset
+
+ where 
+\begin_inset Formula $H_{m}$
+\end_inset
+
+ is defined in lemma 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "lem:observation_func_jacobians"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, and 
+\begin_inset Formula $F_{k:m}$
+\end_inset
+
+ can be composed from the Jacobians in lemma 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "lem:transition_func_jacobians"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Using 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "lem:observation_func_jacobians"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, we get that 
+\begin_inset Formula 
+\begin{align*}
+H_{m} & =\left.J_{l}^{-1}\left(y_{m}\ominus h\left(x_{m},v_{k}\right)\right)\frac{\partial h\left(x_{m},v_{k}\right)}{\partial x_{m}}\right|_{\begin{array}{c}
+x_{m}=\hat{x}_{m}\\
+v_{k}=0
+\end{array}}\\
+ & =\begin{bmatrix}R_{k}\exp\left(\delta_{k:m}\omega_{k}\right) & 0_{2\times4}\end{bmatrix}
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $\hat{x}_{m}=f^{-1}\left(x_{k},0,\delta_{k:m}\right)$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+To do this, we decompose the 
+\end_layout
+
+\begin_layout Standard
+Using the state decomposition, we can simplify the observation function
+ as The observation model for a measurement at time 
+\begin_inset Formula $y$
+\end_inset
+
+ 
 \begin_inset Formula 
 \begin{align*}
 y_{m} & =h\left(f^{-1}\left(x_{k},\delta_{k:m},w_{k}\right),v_{k}\right)\\
@@ -7485,11 +7051,982 @@ P_{k}=\bar{P}_{k}-\sum_{i}\beta_{i}K_{k,i}S_{k,i}K_{k,i}^{\top}+\sum_{i}\left(\b
 
 \end_inset
 
+
+\end_layout
+
+\begin_layout Standard
 where 
 \begin_inset Formula 
 \[
 \nu=\sum_{i}\beta_{i}\nu_{i}
 \]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Probability Lemmas
+\end_layout
+
+\begin_layout Standard
+In this section we present several lemmas used to calculate the probability
+ distribution of random variables used in this paper.
+\end_layout
+
+\begin_layout Lemma
+\begin_inset CommandInset label
+LatexCommand label
+name "lem:a_posterior"
+
+\end_inset
+
+Let 
+\begin_inset Formula $z\in N$
+\end_inset
+
+, 
+\begin_inset Formula $x\in G$
+\end_inset
+
+, 
+\begin_inset Formula $c\in E$
+\end_inset
+
+ and 
+\begin_inset Formula $j:G\times E\to N$
+\end_inset
+
+ be an arbitrary function.
+ Also, let 
+\begin_inset Formula $x$
+\end_inset
+
+ be a Gaussian random variable with mean 
+\begin_inset Formula $\hat{x}$
+\end_inset
+
+ and covariance 
+\begin_inset Formula $P$
+\end_inset
+
+, and 
+\begin_inset Formula $c$
+\end_inset
+
+ be a Gaussian random variable with mean 
+\begin_inset Formula $0$
+\end_inset
+
+ and covariance 
+\begin_inset Formula $M$
+\end_inset
+
+.
+ Note that the lie Groups 
+\begin_inset Formula $N$
+\end_inset
+
+ and 
+\begin_inset Formula $G$
+\end_inset
+
+ can be the same groups.
+ Lastly, let the probability of 
+\begin_inset Formula $z$
+\end_inset
+
+ be defined as 
+\begin_inset Formula 
+\[
+p\left(z\right)=\int_{\delta x}p\left(z\mid x\right)p\left(x\right)d\delta x,
+\]
+
+\end_inset
+
+then the Gaussian approximation of 
+\begin_inset Formula $p\left(z\right)$
+\end_inset
+
+ linearized about 
+\begin_inset Formula $x=\hat{x}$
+\end_inset
+
+ and 
+\begin_inset Formula $c=0$
+\end_inset
+
+ is 
+\begin_inset Formula 
+\begin{align*}
+p\left(z\right) & \approx\eta\exp\left(-\frac{1}{2}\left(z\ominus j\left(\hat{x},0\right)\right)^{\top}\right.\\
+ & \left.\Psi^{-1}\left(z\ominus j\left(\hat{x},0\right)\right)\right),
+\end{align*}
+
+\end_inset
+
+with 
+\begin_inset Formula 
+\begin{align*}
+\Psi & =\left(JPJ^{\top}+CMC^{\top}\right)\\
+J & =\left.\frac{\partial z\ominus j\left(x,c\right)}{\partial x}\right|_{\begin{array}{c}
+x=\hat{x}\\
+c=0
+\end{array}}\\
+C & =\left.\frac{\partial z\ominus j\left(x,c\right)}{\partial c}\right|_{\begin{array}{c}
+x=\hat{x}\\
+c=0
+\end{array}}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Proof
+We first recall that the probability of a Lie group element is defined in
+ the Lie algebra, thus 
+\begin_inset Formula 
+\begin{align*}
+p\left(x\right) & =\eta\exp\left(-\frac{1}{2}\left(x\ominus\hat{x}\right)^{\top}P^{-1}\left(x\ominus\hat{x}\right)\right)\\
+ & =\eta\exp\left(-\frac{1}{2}\delta x^{\top}P^{-1}\delta x\right),
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $\delta x=x\ominus\hat{x}$
+\end_inset
+
+ is a random variable.
+ The probability 
+\begin_inset Formula $p\left(z\right)$
+\end_inset
+
+ might not necessarily be Gaussian depending on the function 
+\begin_inset Formula $j$
+\end_inset
+
+.
+ If 
+\begin_inset Formula $j$
+\end_inset
+
+ is nonlinear in 
+\begin_inset Formula $x$
+\end_inset
+
+ or 
+\begin_inset Formula $c$
+\end_inset
+
+, then 
+\begin_inset Formula $p\left(z\right)$
+\end_inset
+
+ is not Gaussian.
+ However, we can approximate 
+\begin_inset Formula $p\left(z\right)$
+\end_inset
+
+ as Gaussian by linearizing 
+\begin_inset Formula $p\left(z\mid x\right)$
+\end_inset
+
+ w.r.t.
+ 
+\begin_inset Formula $x$
+\end_inset
+
+ and 
+\begin_inset Formula $c$
+\end_inset
+
+ evaluated at 
+\begin_inset Formula $x=\hat{x}$
+\end_inset
+
+ and 
+\begin_inset Formula $c=0$
+\end_inset
+
+.
+ Using the first order Taylor series yields 
+\begin_inset Formula 
+\[
+z\ominus h\left(x,c\right)\approx z\ominus h\left(\hat{x},0\right)-J\delta x+Cc.
+\]
+
+\end_inset
+
+Note that 
+\begin_inset Formula $\delta x$
+\end_inset
+
+ is not a random variable in this case since we are looking at 
+\begin_inset Formula $p\left(z\mid x\right)$
+\end_inset
+
+.
+ Calculating the first and second moments of the above equation gives
+\begin_inset Formula 
+\begin{align*}
+\text{E}\left[z\ominus h\left(\hat{x},0\right)+J\delta x+Cc\right] & =z\ominus h\left(\hat{x},0\right)-J\delta x\\
+\text{cov}\left[z\ominus h\left(\hat{x},0\right)+J\delta x+Cc\right] & =CMC^{\top};
+\end{align*}
+
+\end_inset
+
+thus, the Gaussian approximation of 
+\begin_inset Formula $p\left(z\mid x\right)$
+\end_inset
+
+ is 
+\begin_inset Formula 
+\[
+\eta\exp\left(-\frac{1}{2}\left(\hat{e}-J\delta x\right)^{\top}\bar{M}^{-1}\left(\hat{e}-J\delta x\right)\right),
+\]
+
+\end_inset
+
+with 
+\begin_inset Formula $\hat{e}=z\ominus j\left(\hat{x},0\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $\bar{M}=CMC^{\top}$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Proof
+Using the Gaussian approximation for 
+\begin_inset Formula $p\left(z\mid x\right)$
+\end_inset
+
+, expanding out the expression for 
+\begin_inset Formula $p\left(z\right)$
+\end_inset
+
+ yields,
+\begin_inset Formula 
+\begin{align*}
+p\left(z\right) & \approx\eta\int_{\delta x}\exp\left(-\frac{1}{2}\left(\hat{e}-J\delta x\right)^{\top}\bar{M}^{-1}\left(\hat{e}-J\delta x\right)\right)\\
+ & \exp\left(-\frac{1}{2}\delta x^{\top}P^{-1}\delta x\right).
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Proof
+Combining the exponents gives 
+\begin_inset Formula 
+\[
+p\left(z\right)\approx\eta\int_{\delta x}\exp\left(-L\right)\delta x,
+\]
+
+\end_inset
+
+with 
+\begin_inset Formula 
+\[
+L=\frac{1}{2}\left(\hat{e}-J\delta x\right)^{\top}\bar{M}^{-1}\left(\hat{e}-J\delta x\right)+\frac{1}{2}\delta x^{\top}P^{-1}\delta x.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Proof
+Our next objective is to split the term 
+\begin_inset Formula $L$
+\end_inset
+
+ into two terms 
+\begin_inset Formula $L\left(z\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $L\left(z,\delta x\right)$
+\end_inset
+
+ where 
+\begin_inset Formula $L\left(z\right)$
+\end_inset
+
+ is quadratic in 
+\begin_inset Formula $z$
+\end_inset
+
+ and not dependent on 
+\begin_inset Formula $\delta x$
+\end_inset
+
+ and 
+\begin_inset Formula $L\left(z,\delta x\right)$
+\end_inset
+
+ is quadratic in 
+\begin_inset Formula $\delta x$
+\end_inset
+
+.
+ This will allow us to pull 
+\begin_inset Formula $L\left(z\right)$
+\end_inset
+
+ out of the integral leaving 
+\begin_inset Formula $L\left(z,\delta x\right)$
+\end_inset
+
+ inside the integral resembling a Gaussian distribution which would integrate
+ to a constant that we can absorb into 
+\begin_inset Formula $\eta$
+\end_inset
+
+.
+ In other words, we will end up with 
+\begin_inset Formula 
+\[
+p\left(z\right)\approx\eta\exp\left(-L\left(z\right)\right).
+\]
+
+\end_inset
+
+In order to split 
+\begin_inset Formula $L$
+\end_inset
+
+ into 
+\begin_inset Formula $L\left(z\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $L\left(z,\delta x\right)$
+\end_inset
+
+ we take the first and second derivatives of 
+\begin_inset Formula $L$
+\end_inset
+
+ w.r.t.
+ to 
+\begin_inset Formula $\delta x$
+\end_inset
+
+ and compose 
+\begin_inset Formula $L\left(z,\delta x\right)$
+\end_inset
+
+.
+ Taking the first derivative, setting it to zero and solving for 
+\begin_inset Formula $\delta x$
+\end_inset
+
+ will give us the mean of 
+\begin_inset Formula $L\left(z,\delta x\right)$
+\end_inset
+
+, and the second derivative will provide the covariance for 
+\begin_inset Formula $L\left(z,\delta x\right)$
+\end_inset
+
+.
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial L}{\partial\delta x} & =-\left(\hat{e}-J\delta x\right)^{\top}\bar{M}^{-1}J\\
+ & +\delta x^{\top}P^{-1},
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{\partial^{2}L}{\partial\delta x^{2}}=J^{\top}\bar{M}^{-1}J+P^{-1}=\Psi^{-1}.
+\]
+
+\end_inset
+
+Setting the first derivative to zero and solving for 
+\begin_inset Formula $\delta x$
+\end_inset
+
+ yields 
+\begin_inset Formula 
+\[
+\delta x=\Psi J^{\top}\bar{M}^{-1}\hat{e}
+\]
+
+\end_inset
+
+which we use to construct 
+\begin_inset Formula $L\left(z,\delta x\right)$
+\end_inset
+
+ and get 
+\begin_inset Formula 
+\begin{align*}
+L\left(z,\delta x\right) & =\frac{1}{2}\left(\delta x-\Psi J^{\top}\bar{M}^{-1}\hat{e}\right)^{\top}\\
+ & \Psi^{-1}\left(\delta x-\Psi J^{\top}\bar{M}^{-1}\hat{e}\right).
+\end{align*}
+
+\end_inset
+
+Next we calculate 
+\begin_inset Formula $L\left(z\right)=L-L\left(z,\delta x\right)$
+\end_inset
+
+ and get 
+\begin_inset Formula 
+\begin{align*}
+L\left(z\right) & =\frac{1}{2}\left(\hat{e}^{\top}\bar{M}^{-1}\hat{e}-2\delta x^{\top}J^{\top}\bar{M}^{-1}\hat{e}+\delta x^{\top}\Psi^{-1}\delta x\right)\\
+ & -\frac{1}{2}\left(\delta x^{\top}\Psi^{-1}\delta x+\hat{e}^{\top}\bar{M}^{-1}J\Psi J^{\top}\bar{M}^{\top}\hat{e}-2\delta x^{\top}J^{\top}\bar{M}^{-1}\hat{e}\right)\\
+ & =\frac{1}{2}\left(\hat{e}^{\top}\left(\bar{M}^{-1}-\bar{M}^{-1}J\Psi J^{\top}\bar{M}^{\top}\right)\hat{e}\right)
+\end{align*}
+
+\end_inset
+
+Applying the inversion lemma presented in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Thrun2006"
+literal "false"
+
+\end_inset
+
+ to L
+\begin_inset Formula $\left(z\right)$
+\end_inset
+
+ gives 
+\begin_inset Formula 
+\[
+L\left(z\right)=\frac{1}{2}\hat{e}^{\top}\left(JPJ^{\top}+CMC^{\top}\right)^{-1}\hat{e}.
+\]
+
+\end_inset
+
+Therefore, 
+\begin_inset Formula $p\left(z\right)$
+\end_inset
+
+ can be approximated as a Gaussian distribution with mean 
+\begin_inset Formula $j\left(\hat{x},0\right)$
+\end_inset
+
+ and covariance 
+\begin_inset Formula $\left(JPJ^{\top}+CMC^{\top}\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Lemma
+\begin_inset CommandInset label
+LatexCommand label
+name "lem:meas_inverse_prob"
+
+\end_inset
+
+Let 
+\begin_inset Formula $y_{m}\in N$
+\end_inset
+
+ denote a measurement at time 
+\begin_inset Formula $m$
+\end_inset
+
+ and 
+\begin_inset Formula $x_{k}$
+\end_inset
+
+ denote a state at time 
+\begin_inset Formula $k$
+\end_inset
+
+ with model inverse defined in 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:model_inverse"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ and 
+\begin_inset Formula $m<k$
+\end_inset
+
+.
+ Given 
+\begin_inset Formula $p\left(y_{m}\mid x_{m}\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $p\left(x_{m}\mid x_{k}\right)$
+\end_inset
+
+, the probability 
+\begin_inset Formula $p\left(y_{m}\mid x_{k}\right)$
+\end_inset
+
+ is defined as 
+\begin_inset Formula 
+\[
+p\left(y_{m}\mid x_{k}\right)=\int_{\delta x_{m}}p\left(y_{m}\mid x_{m}\right)p\left(x_{m}\mid x_{k}\right)d_{\delta x_{m}}
+\]
+
+\end_inset
+
+which can be approximated as Gaussian 
+\begin_inset Formula 
+\[
+p\left(y_{m}\mid x_{k}\right)\approx\eta\exp\left(-\frac{1}{2}\hat{e}^{\top}S_{k:m}^{-1}\hat{e}\right),
+\]
+
+\end_inset
+
+with 
+\begin_inset Formula 
+\begin{align}
+\hat{x}_{m} & =f^{-1}\left(\hat{x}_{k},0,\delta_{k:m}\right),\nonumber \\
+\hat{e} & =y_{m}\ominus h\left(\hat{x}_{m},0\right),\nonumber \\
+S_{k:m} & =V_{m}RV_{m}^{\top}+H_{m}G_{k:m}QG_{k:m}^{\top}H_{m}^{\top},\label{eq:inverse_innovation_cov}
+\end{align}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+G_{k:m} & =\begin{bmatrix}J_{r}\left(\delta_{k:m}u_{k}\right)\delta_{k:m} & J_{r}\left(\delta_{k:m}u_{k}\right)\frac{\delta_{k:m}^{2}}{2}\\
+0 & I\delta_{k:m}
+\end{bmatrix},\\
+H_{m} & =J_{l}^{-1}\left(y_{m}\ominus h\left(x_{m},v_{m}\right)\right)\left.\frac{\partial h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{\begin{array}{c}
+x_{m}=\hat{x}_{m},\\
+v=0
+\end{array}},\\
+V_{m} & =J_{l}^{-1}\left(y_{m}\ominus h\left(x_{m},v_{m}\right)\right)\left.\frac{\partial h\left(x_{m},v_{m}\right)}{\partial v}\right|_{\begin{array}{c}
+x_{m}=\hat{x}_{m},\\
+v=0
+\end{array}}.
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Proof
+We use a similar technique that's used in lemma 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "lem:a_posterior"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ We begin with the Gaussian approximation of 
+\begin_inset Formula $p\left(y_{m}\mid x_{m}\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $p\left(x_{m}\mid x_{k}\right)$
+\end_inset
+
+ that are linearized about 
+\begin_inset Formula $x_{m}=\hat{x}_{m}$
+\end_inset
+
+, 
+\begin_inset Formula $v_{m}=0$
+\end_inset
+
+, and 
+\begin_inset Formula $w_{m}=0$
+\end_inset
+
+.
+ These approximations are 
+\begin_inset Formula 
+\begin{align*}
+p\left(x_{m}\mid x_{k}\right) & \approx\eta\exp\left(-\frac{1}{2}\left(\hat{x}_{m}\ominus f_{0}^{-1}-F_{k:m}^{-1}\delta x_{m}\right)^{\top}\right.\\
+ & \left.\bar{Q}_{k:m}^{-1}\left(x_{m}\ominus f^{-1}-F_{k:m}^{-1}\delta x_{m}\right)\right)
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+p\left(y_{m}^{j}\mid x_{m}\right) & \approx\eta\exp\left(-\frac{1}{2}\left(y_{m}\ominus h\left(\hat{x}_{m},0\right)-H_{m}\delta x_{m}\right)^{\top}\right.\\
+ & \left.\bar{R}_{m}^{-1}\left(y_{m}\ominus h\left(\hat{x}_{m},0\right)-H_{m}\delta x_{m}\right)\right)
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $f_{0}^{-1}=f^{-1}\left(x_{k},0,\delta_{k:m}\right)$
+\end_inset
+
+,
+\begin_inset Formula 
+\[
+F_{k:m}=\left.\frac{\partial x_{m}\ominus f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right)}{\partial x_{m}}\right|_{\begin{array}{c}
+x_{m}=\hat{x}_{m}\\
+w_{k}=0
+\end{array}},
+\]
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{subequations}
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "eq:InverseTransitionFunctionJacobianNoise"
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+G_{k:m} & =\begin{bmatrix}J_{r}\left(\delta_{k:m}u_{k}\right)\delta_{k:m} & J_{r}\left(\delta_{k:m}u_{k}\right)\frac{\delta_{k:m}^{2}}{2}\\
+0 & I\delta_{k:m}
+\end{bmatrix}
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align}
+e & =x_{m}\ominus f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),\nonumber \\
+\bar{Q}_{k:m} & =G_{k:m}QG_{k:m}^{\top},\label{eq:inverse_prop_cov}\\
+\bar{R}_{m} & =V_{m}RV_{m}^{\top},\label{eq:meas_cov}
+\end{align}
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{subequations}
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $V_{m}$
+\end_inset
+
+ and 
+\begin_inset Formula $H_{m}$
+\end_inset
+
+ are defined in lemma 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "lem:observation_func_jacobians"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, and 
+\begin_inset Formula $G_{k:m}$
+\end_inset
+
+ can be composed out of the Jacobians defined in lemma 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "lem:transition_func_jacobians"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ The above linearization serves two purposes: first, it keeps the integral
+ a Gaussian distribution and it exposes the random variable 
+\begin_inset Formula $\delta x_{m}$
+\end_inset
+
+ which we wish to integrate over.We can choose 
+\begin_inset Formula $\hat{x}_{m}$
+\end_inset
+
+ to be 
+\begin_inset Formula $f^{-1}\left(x_{k},0,\delta_{k:m}\right)$
+\end_inset
+
+, since 
+\begin_inset Formula $f^{-1}\left(x_{k},0,\delta_{k:m}\right)$
+\end_inset
+
+ is the mean of the linearized probability 
+\begin_inset Formula $p\left(x_{m}\mid x_{k}\right)$
+\end_inset
+
+ and thus the most likely value.
+ This allows us to simplify the linearized probability 
+\begin_inset Formula $p\left(x_{m}\mid x_{k}\right)$
+\end_inset
+
+ to 
+\begin_inset Formula 
+\[
+p\left(x_{m}\mid x_{k}\right)\approx\eta\exp\left(-\frac{1}{2}\delta x_{m}^{\top}\left(G_{k:m}QG_{k:m}^{\top}\right)^{-1}\delta x_{m}\right)
+\]
+
+\end_inset
+
+since 
+\begin_inset Formula $\hat{x}_{m}\ominus f^{-1}\left(x_{k},0,\delta_{k:m}\right)=0$
+\end_inset
+
+ and 
+\begin_inset Formula $F_{k:m}=I$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Proof
+Multiplying the two linearized probabilities together yields 
+\begin_inset Formula 
+\begin{align*}
+p\left(y_{m}\mid x_{m}\right)p\left(x_{m}\mid x_{k}\right)\approx & \eta\int_{\delta x_{m}}\exp\left(-L_{m}\right)d\delta x_{m}
+\end{align*}
+
+\end_inset
+
+with 
+\begin_inset Formula 
+\begin{align*}
+L_{m} & =\frac{1}{2}\delta x_{m}^{\top}\bar{Q}_{k:m}^{-1}\delta x_{m}+\frac{1}{2}\left(y_{m}\ominus h\left(\hat{x}_{m},0\right)+H_{m}\delta x_{m}\right)^{\top}\\
+ & \bar{R}_{m}^{-1}\left(y_{m}\ominus h\left(\hat{x}_{m},0\right)+H_{m}\delta x_{m}\right).
+\end{align*}
+
+\end_inset
+
+In order to solve the integral, we decompose 
+\begin_inset Formula $L_{m}$
+\end_inset
+
+ into two functions 
+\begin_inset Formula $L_{m}\left(x_{k},\delta x_{m}\right)+L_{m}\left(x_{k}\right)$
+\end_inset
+
+ where the first function depends on 
+\begin_inset Formula $x_{k}$
+\end_inset
+
+ and 
+\begin_inset Formula $\delta x_{m}$
+\end_inset
+
+ and the latter function only depends on 
+\begin_inset Formula $x_{k}$
+\end_inset
+
+.
+ This will allow us to move the latter function out of the integral so that
+ we have 
+\begin_inset Formula 
+\begin{align*}
+\int_{\delta x_{m}}\exp\left(-L_{m}\right)d\delta x_{m} & =\eta\exp\left(-L_{m}\left(x_{k}\right)\right)\\
+ & \int\exp\left(-L_{m}\left(x_{k},\delta x_{m}\right)\right)d\delta x_{m}
+\end{align*}
+
+\end_inset
+
+By constructing 
+\begin_inset Formula $L_{m}\left(x_{k},\delta x_{m}\right)$
+\end_inset
+
+ to be quadratic in 
+\begin_inset Formula $\delta x_{m}$
+\end_inset
+
+ so that 
+\begin_inset Formula $\exp\left(-L_{m}\left(x_{k},\delta x_{m}\right)\right)$
+\end_inset
+
+ is a Gaussian distribution, the integral would be a constant, 
+\begin_inset Formula $c$
+\end_inset
+
+,
+\begin_inset Formula 
+\[
+\int\exp\left(-L_{m}\left(x_{k},\delta x_{m}\right)\right)d\delta x_{m}=c,
+\]
+
+\end_inset
+
+regardles of 
+\begin_inset Formula $\delta x_{m}$
+\end_inset
+
+.
+ This allows us to absorb the constant integral into 
+\begin_inset Formula $\eta$
+\end_inset
+
+ such that 
+\begin_inset Formula 
+\[
+P\left(y_{m}\mid x_{k}\right)\approx\eta\exp\left(-L_{m}\left(x_{k}\right)\right).
+\]
+
+\end_inset
+
+To construct 
+\begin_inset Formula $L_{m}\left(x_{k},\delta x_{m}\right)$
+\end_inset
+
+, we take the first and second derivative of 
+\begin_inset Formula $L_{m}$
+\end_inset
+
+ w.r.t.
+ 
+\begin_inset Formula $\delta x_{m}$
+\end_inset
+
+ to get
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial L_{m}}{\delta x_{m}} & =\delta x_{m}^{\top}\bar{Q}_{k:m}^{-1}\\
+ & +y_{m}\ominus h\left(\hat{x}_{m},0\right)^{\top}\bar{R}_{m}^{-1}H_{m}+\delta x_{m}^{\top}H_{m}^{\top}\bar{R}^{-1}H_{m}\\
+\frac{\partial^{2}L_{m}}{\delta x_{m}^{2}} & =H_{m}^{\top}\bar{R}_{m}^{-1}H_{m}+\bar{Q}_{k:m}^{-1}\\
+ & =\Psi^{-1}
+\end{align*}
+
+\end_inset
+
+Setting the first derivative to zero and solving for 
+\begin_inset Formula $\delta x_{m}$
+\end_inset
+
+ gives us
+\begin_inset Formula 
+\begin{align*}
+\delta x_{m}^{\top}\Psi^{-1} & =-y_{m}\ominus h\left(\hat{x}_{m},0\right)^{\top}\bar{R}_{m}^{-1}H_{m}\\
+\delta x_{m} & =-\Psi\left(H_{m}^{\top}\bar{R}_{m}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right).
+\end{align*}
+
+\end_inset
+
+We can now define the quadratic function 
+\begin_inset Formula $L_{m}\left(x_{k},\delta x_{m}\right)$
+\end_inset
+
+ as 
+\begin_inset Formula 
+\begin{align*}
+L_{m}\left(x_{k},\delta x_{m}\right) & =\frac{1}{2}\left(\delta x_{m}+\Psi\left(H_{m}^{\top}\bar{R}_{m}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right)\right)^{\top}\\
+ & \Psi^{-1}\left(\delta x_{m}+\Psi\left(H_{m}^{\top}\bar{R}_{m}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right)\right)
+\end{align*}
+
+\end_inset
+
+and solve for 
+\begin_inset Formula $L_{m}\left(x_{k}\right)=L_{m}-L_{m}\left(x_{k},x_{m}\right)$
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+L_{m}\left(x_{k}\right) & =\frac{1}{2}\delta x_{m}^{\top}\bar{Q}^{-1}\delta x_{m}\\
+ & +\frac{1}{2}\left(y_{m}\ominus h\left(\hat{x}_{m},0\right)+H_{m}\delta x_{m}\right)^{\top}\\
+ & \bar{R}_{m}^{-1}\left(y_{m}\ominus h\left(\hat{x}_{m},0\right)+H_{m}\delta x_{m}\right)\\
+ & -\frac{1}{2}\left(\delta x_{m}+\Psi\left(H_{m}^{\top}\bar{R}_{m}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right)\right)^{\top}\\
+ & \Psi^{-1}\left(\delta x_{m}+\Psi\left(H_{m}^{\top}\bar{R}_{m}^{-1}y_{m}\ominus h\left(\hat{x}_{m},0\right)\right)\right).
+\end{align*}
+
+\end_inset
+
+With algebraic manipulation, using the Inversion Lemma in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Thrun2006"
+literal "false"
+
+\end_inset
+
+ and substituting in 
+\begin_inset Formula $f_{0}^{-1}$
+\end_inset
+
+ for 
+\begin_inset Formula $\hat{x}_{m}$
+\end_inset
+
+ we get
+\begin_inset Formula 
+\begin{align*}
+L_{m}\left(x_{k}\right) & =\frac{1}{2}y_{m}\ominus h\left(f_{0}^{-1},0\right)^{\top}\\
+ & S_{k:m}^{-1}y_{m}\ominus h\left(f_{0}^{-1},0\right),
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula 
+\[
+S_{k:m}=\bar{R}_{m}+H_{m}\bar{Q}_{k:m}H_{m}^{\top}.
+\]
+
+\end_inset
+
+Since 
+\begin_inset Formula $L_{m}$
+\end_inset
+
+ is independent of 
+\begin_inset Formula $\delta x_{m}$
+\end_inset
+
+, 
+\begin_inset Formula 
+\begin{align*}
+p\left(y_{m}^{j}\mid x_{k}\right) & =\int_{x_{m}}p\left(y_{m}\mid x_{m}\right)p\left(x_{m}\mid x_{k}\right)d_{x_{m}}\\
+ & \approx\eta\exp\left(-L_{m}\left(x_{k}\right)\right).
+\end{align*}
 
 \end_inset
 
@@ -7514,14 +8051,139 @@ literal "false"
 \end_layout
 
 \begin_layout Lemma
-Let 
-\begin_inset Formula $f$
+\begin_inset CommandInset label
+LatexCommand label
+name "lem:transition_func_jacobians"
+
 \end_inset
 
- be the state transition function defined in 
+ Let 
+\begin_inset Formula $g_{m^{1}},g_{m^{2}}\in G$
+\end_inset
+
+ where 
+\begin_inset Formula $m^{1}\neq m^{2}$
+\end_inset
+
+ and 
+\begin_inset Formula $G$
+\end_inset
+
+ is 
+\begin_inset Formula $n$
+\end_inset
+
+ dimensional, 
+\begin_inset Formula $w_{m^{1}}^{g},u_{m^{1}}\in E$
+\end_inset
+
+, 
+\begin_inset Formula $w_{m^{1}}^{u}\in E$
+\end_inset
+
+ and 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{subequations}
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "eq:general_system"
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+g_{m^{2}} & =g_{m^{1}}\text{Exp}\left(U\right)\\
+u_{m^{2}} & =u_{m^{1}}+\Delta w_{m^{1}}^{u},
+\end{align*}
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{subequations}
+\end_layout
+
+\end_inset
+
+ where 
+\begin_inset Formula $\Delta=\delta_{m^{1}:m^{2}}$
+\end_inset
+
+ and 
+\begin_inset Formula $U=\Delta\left(u_{m^{1}}+w_{m^{1}}^{g}+\frac{\Delta}{2}w_{m^{1}}^{u}\right)$
+\end_inset
+
+, then 
+\begin_inset Formula 
+\begin{align}
+\frac{\partial g_{m^{2}}\ominus\left(g_{m^{1}}\text{Exp}\left(U\right)\right)}{\partial g_{m^{1}}} & =-\mathbf{Ad}_{\exp\left(-\Delta\hat{u}_{m^{1}}\right)}\label{eq:partial_gm2_om_gm2_gm1}\\
+\frac{\partial g_{m^{2}}\ominus\left(g_{m^{1}}\text{Exp}\left(U\right)\right)}{\partial u_{m^{1}}} & =-J_{r}\left(-\Delta\hat{u}_{m^{1}}\right)\label{eq:partial_gm2_om_gm1_um1}\\
+\frac{\partial\left(u_{m^{2}}-u_{m^{1}}-\Delta w_{m^{1}}\right)}{\partial g_{m^{1}}} & =0_{n\times n}\label{eq:partial_um2_om_um1_gm1}\\
+\frac{\partial\left(u_{m^{2}}-u_{m^{1}}-\Delta w_{m^{1}}\right)}{\partial u_{m^{1}}} & =-I_{n\times n}\label{eq:partial_um2_om_um1_um1}
+\end{align}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align}
+\frac{\partial g_{m^{2}}\ominus\left(g_{m^{1}}\text{Exp}\left(U\right)\right)}{\partial w_{m^{1}}^{g}} & =-J_{r}\left(\Delta\hat{u}_{m^{1}}\right)\Delta\label{eq:partial_gm2_om_gm1_wgm1}\\
+\frac{\partial g_{m^{2}}\ominus\left(g_{m^{1}}\text{Exp}\left(U\right)\right)}{\partial w_{m^{1}}^{u}} & =-J_{r}\left(\Delta\hat{u}_{m^{1}}\right)\frac{\Delta^{2}}{2}\label{eq:partial_gm2_om_gm1_wum1}\\
+\frac{\partial\left(u_{m^{2}}-u_{m^{1}}-\Delta w_{m^{1}}\right)}{\partial w_{m^{1}}^{g}} & =0_{n\times n}\label{eq:partial_um2_om_um1_wgm1}\\
+\frac{\partial\left(u_{m^{2}}-u_{m^{1}}-\Delta w_{m^{1}}\right)}{\partial w_{m^{1}}^{u}} & =-I_{n\times n}\Delta\label{eq:partial_um2_om_um1_wum1}
+\end{align}
+
+\end_inset
+
+where the derivatives are evaluated at 
+\begin_inset Formula $g_{m^{1}}=\hat{g}_{m^{1}}$
+\end_inset
+
+, 
+\begin_inset Formula $u_{m^{1}}=\hat{u}_{m^{1}}$
+\end_inset
+
+, 
+\begin_inset Formula $w_{m^{1}}^{g}=w_{m^{1}}^{u}=0$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Proof
+The derivations of equations 
 \begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:system-model"
+LatexCommand ref
+reference "eq:partial_um2_om_um1_gm1"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+,
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:partial_um2_om_um1_um1"
 plural "false"
 caps "false"
 noprefix "false"
@@ -7529,25 +8191,9 @@ noprefix "false"
 \end_inset
 
 , 
-\begin_inset Formula $x_{k}$
-\end_inset
-
- and 
-\begin_inset Formula $x_{m}$
-\end_inset
-
- be states at two different times with 
-\begin_inset Formula $m<k$
-\end_inset
-
-, 
-\begin_inset Formula $w_{k}$
-\end_inset
-
- be process noise described in section 
 \begin_inset CommandInset ref
-LatexCommand eqref
-reference "sec:Problem-Description"
+LatexCommand ref
+reference "eq:partial_um2_om_um1_wgm1"
 plural "false"
 caps "false"
 noprefix "false"
@@ -7555,69 +8201,235 @@ noprefix "false"
 \end_inset
 
 , and 
-\begin_inset Formula $\delta_{m:k}=k-m$
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:partial_um2_om_um1_wum1"
+plural "false"
+caps "false"
+noprefix "false"
+
 \end_inset
 
-, then the partial derivative of 
-\begin_inset Formula $f$
+ are trivial and we will not prove them.
+ For the other derivations, we will use the following properties where 
+\begin_inset Formula $A,B\in G$
 \end_inset
 
- w.r.t.
+, and 
+\begin_inset Formula $a,b\in E$
+\end_inset
+
+:
+\begin_inset Formula 
+\begin{align*}
+\left(AB\right)^{-1} & =B^{-1}A^{-1}\\
+\text{Exp}\left(a\right)^{-1} & =\text{\text{Exp}\left(-a\right)}
+\end{align*}
+
+\end_inset
+
+Also, let 
+\begin_inset Formula $g_{m^{2}}\ominus\left(g_{m^{1}}\text{Exp}\left(U\right)\right)=\delta g_{m^{1}}=0$
+\end_inset
+
+ according to 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:general_system"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
  
-\begin_inset Formula $x_{m}$
+\end_layout
+
+\begin_layout Proof
+We begin with proving equation 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:partial_gm2_om_gm2_gm1"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ which is equal to
+\begin_inset Formula 
+\begin{align*}
+ & \lim_{\alpha\to0}\frac{g_{m^{2}}\ominus g_{m^{1}}\text{Exp\left(\alpha\right)}\text{Exp}\left(U\right)-\delta g_{m^{1}}}{\alpha}\\
+ & =\lim_{\alpha\to0}\frac{\text{Log}\left(\text{Exp\left(-U\right)\text{Exp}\left(-\alpha\right)}g_{m^{1}}^{-1}g_{m^{2}}\right)}{\alpha}\\
+ & =\lim_{\alpha\to0}\frac{\text{Log}\left(\text{Exp\left(-U\right)\text{Exp}\left(-\alpha\right)}g_{m^{1}}^{-1}g_{m^{2}}\right)}{\alpha}\\
+ & =\lim_{\alpha\to0}\frac{\text{Log}\left(\text{Exp}\left(-\mathbf{Ad}_{\text{Exp}\left(-U\right)}\alpha\right)\text{Exp\left(-U\right)}g_{m^{1}}^{-1}g_{m^{2}}\right)}{\alpha}\\
+ & =\lim_{\alpha\to0}\frac{\text{Log}\left(\text{Exp}\left(-\mathbf{Ad}_{\text{Exp}\left(-U\right)}\alpha\right)\right)}{\alpha}\\
+ & =\lim_{\alpha\to0}\frac{-\mathbf{Ad}_{\text{Exp}\left(-U\right)}\alpha}{\alpha}\\
+ & =-\mathbf{Ad}_{\text{Exp}\left(-\Delta\hat{u}_{m^{1}}\right)}\quad\text{Once evaluated}.
+\end{align*}
+
+\end_inset
+
+where we used a property of the adjoint, discussed in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Lie-Theory-Review"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+Next we prove equation 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:partial_gm2_om_gm1_um1"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ which is equal to 
+\begin_inset Formula 
+\begin{align*}
+ & \lim_{\alpha\to0}\frac{g_{m^{2}}\ominus g_{m^{1}}\text{Exp}\left(U+\Delta\alpha\right)-\delta g_{m^{1}}}{\alpha}\\
+ & =\lim_{\alpha\to0}\frac{\text{Log}\left(\text{Exp\left(-U-\Delta\alpha\right)}g_{m^{1}}^{-1}g_{m^{2}}\right)}{\alpha}\\
+ & =\lim_{\alpha\to0}\frac{\text{Log}\left(\text{Exp}\left(-J_{l}\left(-\Delta U\right)\Delta\alpha\right)\text{Exp\left(-\Delta U\right)}g_{m^{1}}^{-1}g_{m^{2}}\right)}{\alpha}\\
+ & =\lim_{\alpha\to0}\frac{\text{Log}\left(\text{Exp}\left(-J_{r}\left(\Delta U\right)\Delta\alpha\right)\right)}{\alpha}\\
+ & =-J_{r}\left(\Delta\hat{u}_{m^{1}}\right)\quad\text{Once evaluated}.
+\end{align*}
+
+\end_inset
+
+where we used the property of the left and right Jacobians, 
+\begin_inset Formula $J_{l}\left(-\Delta U\right)=J_{r}\left(\Delta U\right)$
+\end_inset
+
+, as discussed in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Lie-Theory-Review"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+,
+\end_layout
+
+\begin_layout Proof
+The proofs for equations 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:partial_um2_om_um1_wgm1"
+plural "false"
+caps "false"
+noprefix "false"
+
 \end_inset
 
  and 
-\begin_inset Formula $w_{k}$
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:partial_um2_om_um1_wum1"
+plural "false"
+caps "false"
+noprefix "false"
+
 \end_inset
 
- evaluated at 
-\begin_inset Formula $x_{m}=\hat{x}_{m}$
+ are similar to the proof for equation 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:partial_gm2_om_gm1_um1"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Lemma
+\begin_inset CommandInset label
+LatexCommand label
+name "lem:observation_func_jacobians"
+
+\end_inset
+
+Let 
+\begin_inset Formula $y\in N$
+\end_inset
+
+, 
+\begin_inset Formula $x\in G$
+\end_inset
+
+, 
+\begin_inset Formula $v\in E$
+\end_inset
+
+ , and 
+\begin_inset Formula $h:G\times E\to N$
+\end_inset
+
+ be an observation function defined in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Problem-Description"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Letting 
+\begin_inset Formula $z=h\left(x,v\right)$
 \end_inset
 
  and 
-\begin_inset Formula $w_{k}=0$
+\begin_inset Formula $e=z^{-1}y$
 \end_inset
 
- is
-\begin_inset Formula 
-\[
-\left.\frac{\partial x_{k}\ominus f\left(x_{m},w_{k},\delta_{m:k}\right)}{\partial x_{m}}\right|_{\begin{array}{c}
-x_{m}=\hat{x}_{m}\\
-w_{k}=0
-\end{array}}=F_{m:k}
-\]
+, we define the Jacobians 
+\end_layout
 
-\end_inset
-
-and 
+\begin_layout Standard
 \begin_inset Formula 
-\[
-\left.\frac{\partial x_{k}\ominus f\left(x_{m},w_{k},\delta_{m:k}\right)}{\partial w_{m}}\right|_{\begin{array}{c}
-x_{m}=\hat{x}_{m}\\
-w_{k}=0
-\end{array}}=G_{m:k}
-\]
+\begin{align*}
+H & =-\left.\frac{\partial y\ominus z}{\partial x}\right|_{\begin{array}{c}
+x=\hat{x},\\
+v=0
+\end{array}}\\
+ & =J_{l}^{-1}\left(e\right)\left.\frac{\partial h\left(x,v\right)}{\partial x}\right|_{\begin{array}{c}
+x=\hat{x},\\
+v=0
+\end{array}}
+\end{align*}
 
 \end_inset
 
-where 
-\begin_inset Formula 
-\[
-F_{m:k}=\begin{bmatrix}\mathbf{Ad}_{\text{Exp}\left(\delta_{m:k}\hat{u}_{m}\right)^{-1}} & J_{r}\left(\delta_{m:k}\hat{u}_{m}\right)\delta_{m:k}\\
-0 & I
-\end{bmatrix}
-\]
 
-\end_inset
-
-and 
 \begin_inset Formula 
-\[
-G_{m:k}=\begin{bmatrix}J_{r}\left(\delta_{m:k}\hat{u}_{m}\right)\delta_{m:k} & J_{r}\left(\delta_{m:k}\hat{u}_{m}\right)\frac{\delta_{m:k}^{2}}{2}\\
-0 & I\delta_{m:k}
-\end{bmatrix}
-\]
+\begin{align*}
+V & =-\left.\frac{\partial y\ominus z}{\partial v}\right|_{\begin{array}{c}
+x=\hat{x},\\
+v=0
+\end{array}}\\
+ & =J_{l}^{-1}\left(e\right)\left.\frac{\partial h\left(x,v\right)}{\partial v}\right|_{\begin{array}{c}
+x=\hat{x},\\
+v=0
+\end{array}}.
+\end{align*}
 
 \end_inset
 
@@ -7625,57 +8437,81 @@ G_{m:k}=\begin{bmatrix}J_{r}\left(\delta_{m:k}\hat{u}_{m}\right)\delta_{m:k} & J
 \end_layout
 
 \begin_layout Proof
-We will first prove the statement regarding 
-\begin_inset Formula $F_{m:k}$
+With no loss in generality, we prove only the statement regarding 
+\begin_inset Formula $H$
 \end_inset
 
- and then prove the statement regarding 
-\begin_inset Formula $G_{m:k}$
+ using the chain rule we get
+\begin_inset Formula 
+\[
+\frac{\partial y\ominus z}{\partial x}=\frac{\partial\text{Log}\left(e\right)}{\partial e}\frac{\partial e}{\partial z}\frac{\partial z}{\partial x}.
+\]
+
 \end_inset
 
-.
- Expanding out the expression 
-\begin_inset Formula $x_{k}\ominus f\left(x_{m},w_{k},\delta_{m:k}\right)$
-\end_inset
-
- using equation 
+From section 
 \begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:system-model"
+LatexCommand ref
+reference "sec:Lie-Theory-Review"
 plural "false"
 caps "false"
 noprefix "false"
 
 \end_inset
 
- gives 
+, we get 
+\begin_inset Formula 
+\[
+\frac{\partial\text{Log}\left(e\right)}{\partial e}=J_{r}^{-1}\left(e\right).
+\]
+
+\end_inset
+
+The derivative 
+\begin_inset Formula $\frac{\partial e}{\partial z}$
+\end_inset
+
+ is defined as letting 
+\begin_inset Formula $z=h\left(x,v\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $e=z^{-1}y$
+\end_inset
+
+.
+ According to the chain rule
 \begin_inset Formula 
 \begin{align*}
-g_{k}\ominus\left(g_{m}\exp\left(\delta_{m:k}\left(u_{m}+w_{m}^{g}+\delta_{m:k}w_{m}^{u}\right)\right)\right)\\
-w_{k}-w_{m}-\delta_{m:k}w_{m}^{u}
+ & \lim_{\alpha\to0}\frac{\left(\left(z\text{Exp}\left(\alpha\right)\right)^{-1}y\right)\ominus\left(z^{-1}y\right)}{\alpha}\\
+ & =\lim_{\alpha\to0}\frac{\text{Log}\left(y^{-1}z\text{Exp}\left(-\alpha\right)z^{-1}y\right)}{\alpha}\\
+ & =\lim_{\alpha\to0}\frac{\text{Log}\left(\text{Exp}\left(-\mathbf{Ad}_{y^{-1}z}\alpha\right)\right)}{\alpha}\\
+ & =-\mathbf{Ad}_{y^{-1}z}
 \end{align*}
 
 \end_inset
 
-The derivative of the first term w.r.t.
+Putting the derivatives together gives
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial\text{Log}\left(e\right)}{\partial e}\frac{\partial e}{\partial z}\frac{\partial z}{\partial x} & =-J_{r}^{-1}\left(e\right)\mathbf{Ad}_{e}\frac{\partial z}{\partial x}\\
+ & =-J_{l}^{-1}\left(e\right)\frac{\partial z}{\partial x}.
+\end{align*}
+
+\end_inset
+
+After evaluating it, we get 
+\begin_inset Formula 
+\[
+H=J_{l}^{-1}\left(e\right)\left.\frac{\partial h\left(x,v\right)}{\partial x}\right|_{\begin{array}{c}
+x=\hat{x},\\
+v=0
+\end{array}}
+\]
+
+\end_inset
+
  
-\begin_inset Formula $g_{m}$
-\end_inset
-
- is 
-\begin_inset Formula 
-\begin{align*}
-\lim_{\alpha\to0}\frac{g_{k}\ominus\left(g_{m}\exp\left(\alpha\right)\exp\left(U\right)\right)-g_{k}\ominus\left(g_{m}\exp\left(U\right)\right)}{\alpha}\\
-=\lim_{\alpha\to0}\frac{\log\left(\exp\left(-U\right)\exp\left(-\alpha\right)g_{m}^{-1}g_{k}\right)-0}{\alpha}\\
-=\lim_{\alpha\to0}\frac{\log\left(\exp\left(-\mathbf{Ad}_{\exp\left(-U\right)}\alpha\right)\exp\left(-U\right)g_{m}^{-1}g_{k}\right)}{\alpha}\\
-=\lim_{\alpha\to0}\frac{\log\left(\exp\left(-\mathbf{Ad}_{\exp\left(-U\right)}\alpha\right)\right)}{\alpha}\\
-=\lim_{\alpha\to0}\frac{-\mathbf{Ad}_{\exp\left(-U\right)}\alpha}{\alpha}\\
-=-\mathbf{Ad}_{\exp\left(-U\right)}
-\end{align*}
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
