@@ -10,7 +10,12 @@ t = rand(2,1);
 p = rand(2,1);
 delta = 1;
 
-expm(ssm(delta*dt))
+
+
+u = [p;w];
+
+getH(R,w)*getF(delta,u)
+
 
 % (R*expm(ssm(delta*dt))*myV(w)*p - R*myV(w)*p)/dt
 % (R*myV(w)*(p+[1;0]*dt) - R*myV(w)*p)/dt
@@ -22,49 +27,59 @@ d1 = 0.1;
 d2 = 0.2;
 d3 = 0.3;
 
-h = H(R,w,p);
-w = w*0
+h = H(R,w,p)
+% w = w*0
+% 
+% O = [H(R,d1*w,d1*p); H(R,d2*w,d2*p); H(R,d3*w,d3*p)]
+% 
+% 
+% 
+% rank(O(1:6,1:6))
+% rank(O([1:4,6],[1:4,6]))
 
-O = [H(R,d1*w,d1*p); H(R,d2*w,d2*p); H(R,d3*w,d3*p)]
 
-
-
-rank(O(1:6,1:6))
-rank(O([1:4,6],[1:4,6]))
-
-%%
-x = 0.1;
-th = 0.2;
-
--x*cos(-th)
--x*sin(-th)
 
 %%
-v = [1;2;0.2];
-jl = Jl(v);
-wl = Wl(v(3));
-dl = Dl(v(3));
-jr = Jr(v);
-
-vee(wedge(v));
-
-jl_inv = Jl_inv(v)
-Jr_inv(-v)
-jr_inv = Jr_inv(v);
-
-dt = 1e-4;
-e1 = [1;0;0];
-e2 = [0;1;0];
-e3 = [0;0;1];
-tmp1 = inv(myExp(v))*expm(wedge(e1*dt));
-tmp2 = inv(myExp(v))*myExp(e2*dt);
-tmp3 = inv(myExp(v))*myExp(e3*dt);
+% v = [1;2;0.2];
+% jl = Jl(v);
+% wl = Wl(v(3));
+% dl = Dl(v(3));
+% jr = Jr(v);
+% 
+% vee(wedge(v));
+% 
+% jl_inv = Jl_inv(v)
+% Jr_inv(-v)
+% jr_inv = Jr_inv(v);
+% 
+% dt = 1e-4;
+% e1 = [1;0;0];
+% e2 = [0;1;0];
+% e3 = [0;0;1];
+% tmp1 = inv(myExp(v))*expm(wedge(e1*dt));
+% tmp2 = inv(myExp(v))*myExp(e2*dt);
+% tmp3 = inv(myExp(v))*myExp(e3*dt);
 
 % ( vee(logm(myExp(v)*myExp(e1*dt))) - v)/dt
 % 
 % ( vee(logm(myExp(v)*myExp(e2*dt))) - v)/dt
 % 
 % ( vee(logm(myExp(v)*myExp(e3*dt))) - v)/dt
+
+function h = getH(R,w)
+W = [0 -w; w 0];
+    h = [R*expm(W) zeros(2,4)];
+end
+
+function F = getF(delta,  u) 
+w = [0 -1; 1 0];
+
+U = expm(wedge(-delta*u));
+Ad = [U(1:2,1:2), w*U(1:2,3); zeros(1,2) 1];
+
+F = [ Ad Jr(delta*u)*delta; zeros(3,3) eye(3)];
+
+end
 
 function W = wedge(u)
 
@@ -158,7 +173,7 @@ end
 
 function h = H(R,w,p)
 
-h = [eye(2) R*ssm(1)*myV(w)*p R*myV(w) R*pV(w)*p];
+h = [R R*ssm(1)*myV(w)*p R*myV(w) R*pV(w)*p];
 
 end
 
