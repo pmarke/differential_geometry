@@ -6618,7 +6618,7 @@ We assume directly that the target evolves on the configuration manifold
 \begin{align*}
 \hat{t}^{n} & =g\left(H,\hat{t}^{n^{-}}\right),\\
 \dot{\hat{t}}^{n} & =G\left(H,\hat{t}^{n^{-}}\right)\dot{t}^{n^{-}},\\
-P^{n} & =C\left(H,\hat{x}^{n^{-}}\right)P^{n^{-}}C^{\top}\left(H,\hat{x}^{n^{-}}\right)
+P^{n} & =T\left(H,\hat{x}^{n^{-}}\right)P^{n^{-}}T^{\top}\left(H,\hat{x}^{n^{-}}\right)
 \end{align*}
 
 \end_inset
@@ -6628,7 +6628,7 @@ where
 \begin{align}
 g\left(H,\hat{t}^{n^{-}}\right) & =\frac{H_{1}\hat{t}^{n^{-}}+h_{2}}{h_{3}^{\top}\hat{t}^{n^{-}}+h_{4}},\label{eq:homography_r2_pos}\\
 G\left(H,\hat{t}^{n^{-}}\right) & =\frac{1}{\hat{\eta}}\left(\hat{\eta}H_{1}-\left(H_{1}\hat{t}^{n^{-}}+h_{2}\right)h_{3}^{\top}\right),\label{eq:homography_r2_vel}\\
-C\left(H,\hat{x}^{n^{-}}\right) & =\begin{bmatrix}G\left(H,\hat{t}^{n^{-}}\right) & 0\\
+T\left(H,\hat{x}^{n^{-}}\right) & =\begin{bmatrix}G\left(H,\hat{t}^{n^{-}}\right) & 0\\
 M\left(H,\hat{x}^{n^{-}}\right) & G\left(H,\hat{t}^{n^{-}}\right)
 \end{bmatrix},\nonumber \\
 M\left(H,\hat{x}^{n^{-}}\right) & =\frac{2\left(H_{1}\hat{t}^{n^{-}}+h_{2}\right)h_{3}^{\top}\hat{\dot{t}}^{n^{-}}h_{3}^{\top}}{\hat{\eta}^{3}}\label{eq:homography_r2_cov}\\
@@ -6720,7 +6720,7 @@ Since the state of the model is a Gaussian random variable with mean
  Let 
 \begin_inset Formula 
 \[
-T\left(H,x^{n^{-}}\right)=\begin{bmatrix}g\left(H,t^{n^{-}}\right)\\
+f\left(H,x^{n^{-}}\right)=\begin{bmatrix}g\left(H,t^{n^{-}}\right)\\
 G\left(H,t^{n^{-}}\right)\dot{t}^{n^{-}}
 \end{bmatrix},
 \]
@@ -6734,13 +6734,13 @@ be the state transformation, then its linearization about
  is 
 \begin_inset Formula 
 \begin{equation}
-T\left(H,\hat{x}^{n^{-}}\right)+C\left(H,\hat{x}^{n^{-}}\right)\delta x^{n^{-}},\label{eq:homography_r2_linearized}
+f\left(H,\hat{x}^{n^{-}}\right)+T\left(H,\hat{x}^{n^{-}}\right)\delta x^{n^{-}},\label{eq:homography_r2_linearized}
 \end{equation}
 
 \end_inset
 
 where 
-\begin_inset Formula $C\left(H,\hat{x}^{n^{-}}\right)$
+\begin_inset Formula $T\left(H,\hat{x}^{n^{-}}\right)$
 \end_inset
 
  is defined in 
@@ -6780,8 +6780,8 @@ noprefix "false"
 ;
 \begin_inset Formula 
 \begin{align*}
-\text{E}\left[x^{n}\right] & =T\left(H,\hat{x}^{n^{-}}\right)\\
-\text{cov}\left[x^{n}\right] & =C\left(H,\hat{x}^{n^{-}}\right)P^{n^{-}}C^{\top}\left(H,\hat{x}^{n^{-}}\right).
+\text{E}\left[x^{n}\right] & =f\left(H,\hat{x}^{n^{-}}\right)\\
+\text{cov}\left[x^{n}\right] & =T\left(H,\hat{x}^{n^{-}}\right)P^{n^{-}}T^{\top}\left(H,\hat{x}^{n^{-}}\right).
 \end{align*}
 
 \end_inset
@@ -6858,7 +6858,7 @@ where
 \hat{t}^{n} & =g\left(H,\hat{t}^{n^{-}}\right),\\
 \hat{\rho}^{n} & =\frac{\hat{\rho}^{n^{-}}}{h_{4}},\\
 \hat{\omega}^{n} & =\hat{\omega}^{n^{-}},\\
-P^{n} & =CP^{n^{-}}C^{\top},
+P^{n} & =TP^{n^{-}}T^{\top},
 \end{align*}
 
 \end_inset
@@ -6867,7 +6867,7 @@ where
 \begin_inset Formula 
 \begin{align*}
 g\left(H,\hat{t}^{n^{-}}\right) & =\frac{H_{1}\hat{t}^{n^{-}}+h_{2}}{h_{4}},\\
-C & =\text{diag}\left(\frac{1}{h_{4}},\frac{1}{h_{4}},1,\frac{1}{h_{4}},1\right).
+T & =\text{diag}\left(\frac{1}{h_{4}},\frac{1}{h_{4}},1,\frac{1}{h_{4}},1\right).
 \end{align*}
 
 \end_inset
@@ -6956,8 +6956,8 @@ noprefix "false"
 , but under the assumptions we can simplify the transformations to 
 \begin_inset Formula 
 \begin{align*}
-g\left(H,t^{n^{-}}\right) & =\frac{H_{1}t^{n^{-}}+h_{2}}{h_{4}},\\
-G\left(H,t^{n^{-}}\right) & =\frac{H_{1}}{h^{4}}.
+g\left(H,\hat{t}^{n^{-}}\right) & =\frac{H_{1}\hat{t}^{n^{-}}+h_{2}}{h_{4}},\\
+G\left(H,\hat{t}^{n^{-}}\right) & =\frac{H_{1}}{h^{4}}.
 \end{align*}
 
 \end_inset
@@ -6969,11 +6969,11 @@ By the definition of the rotation matrix
 , we get 
 \begin_inset Formula 
 \begin{align*}
-\hat{R}^{n} & =\frac{1}{\left\Vert \dot{t}^{n}\right\Vert }\begin{bmatrix}e_{1}\left(\dot{t}^{n}\right) & e_{2}\left(-\dot{t}^{n}\right)\\
-e_{2}\left(\dot{t}^{n}\right) & e_{1}\left(\dot{t}^{n}\right)
+\hat{R}^{n} & =\frac{1}{\left\Vert \dot{\hat{t}}^{n}\right\Vert }\begin{bmatrix}e_{1}\left(\dot{\hat{t}}^{n}\right) & e_{2}\left(-\dot{\hat{t}}^{n}\right)\\
+e_{2}\left(\dot{\hat{t}}^{n}\right) & e_{1}\left(\dot{\hat{t}}^{n}\right)
 \end{bmatrix}\\
- & =\frac{1}{\left\Vert G\dot{t}^{n}\right\Vert }\begin{bmatrix}e_{1}\left(G\dot{t}^{n}\right) & -e_{2}\left(G\dot{t}^{n}\right)\\
-e_{2}\left(G\dot{t}^{n}\right) & e_{1}\left(G\dot{t}^{n}\right)
+ & =\frac{1}{\left\Vert G\dot{\hat{t}}^{n}\right\Vert }\begin{bmatrix}e_{1}\left(G\dot{\hat{t}}^{n}\right) & -e_{2}\left(G\dot{\hat{t}}^{n}\right)\\
+e_{2}\left(G\dot{\hat{t}}^{n}\right) & e_{1}\left(G\dot{\hat{t}}^{n}\right)
 \end{bmatrix}\\
  & =H_{1}\hat{R}^{n^{-}}.
 \end{align*}
@@ -7011,54 +7011,12 @@ Since a rotation and translation doesn't affect the angular velocity in
 \end_layout
 
 \begin_layout Proof
-The state 
+We a 
 \begin_inset Formula $x^{n^{-}}$
 \end_inset
 
- is a Gaussian random variable with mean 
-\begin_inset Formula $\hat{x}^{n^{-}}$
-\end_inset
-
- and covariance 
-\begin_inset Formula $P^{n^{-}}$
-\end_inset
-
-.
- We approximate 
-\begin_inset Formula $p\left(x^{n}\right)$
-\end_inset
-
- as a Gaussian random variable by linearizing the transformation about 
-\begin_inset Formula $\hat{x}^{n^{-}}$
-\end_inset
-
- and calculating the expected value and covariance.
+ is a Gaussian random variable.
  
-\begin_inset Formula 
-\[
-x^{n}\approx T\left(H,\hat{x}^{n^{-}}\right)+C\delta x^{n^{-}},
-\]
-
-\end_inset
-
-Where 
-\begin_inset Formula $T$
-\end_inset
-
- is the transformation of the state evaluated at the state estimate and
- 
-\begin_inset Formula $C$
-\end_inset
-
- is defined as 
-\begin_inset Formula 
-\[
-C=\frac{\partial T\left(H,x^{n^{-}}\right)}{\partial x^{n^{-}}}
-\]
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Subsection
@@ -7074,7 +7032,7 @@ When working with a camera and tracking a target whose manifold configuration
 , tracking is done in the normalized virtual image frame (NVIF).
  In other words, the normalized virtual image plane is parallel to the ground
  and the virtual optical axis is pointing down to the Earth's core.
- Tracking has to be done in the NVIF, because when the UAS pitches or rolls,
+ Tracking has to be done in the NVIF, becuase when the UAS pitches or rolls,
  the circular trajectory of the target becomes an ellipse which doesn't
  follow the constraint that the target has constant velocity.
  

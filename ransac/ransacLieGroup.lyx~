@@ -4686,9 +4686,10 @@ reference "sec:SE2"
 .
  The observation function is 
 \begin_inset Formula 
-\[
-y_{k}=h\left(x_{k},v_{k}\right),
-\]
+\begin{align*}
+y_{k} & =h\left(x_{k},v_{k}\right)\\
+ & =t_{k}+v_{k},
+\end{align*}
 
 \end_inset
 
@@ -4699,22 +4700,63 @@ where
 .
  Using point measurements, we proceed to find under what conditions is the
  system observable.
- To do this, we need to construct the observability matrix by computing
- the Jacobian 
+ To do this, we linearize the observation error at different time steps
+ about an estimated current state 
+\begin_inset Formula $\hat{x}_{k}$
+\end_inset
+
+.
+ The error at time 
+\begin_inset Formula $m$
+\end_inset
+
+ is 
 \begin_inset Formula 
 \[
-\frac{\partial y_{m}\ominus h\left(f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),v_{k}\right)}{\partial x_{k}}=H_{m}F_{k:m}
+y_{m}\ominus h\left(f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),v_{k}\right),
 \]
 
 \end_inset
 
- where 
+and the linearized error at time 
+\begin_inset Formula $m$
+\end_inset
+
+ is 
+\begin_inset Formula 
+\[
+\hat{e}_{k:m}-H_{m}F_{k:m}\delta x_{k},
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula 
+\[
+\hat{e}_{k:m}=y_{m}\ominus h\left(f^{-1}\left(\hat{x}_{k},0,\delta_{k:m}\right),0\right),
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\left.\frac{\partial y_{m}\ominus h\left(f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),v_{k}\right)}{\partial x_{k}}\right|_{\begin{array}{c}
+x_{k}=\hat{x}_{k}\\
+v_{k}=0\\
+w_{k}=0
+\end{array}}=H_{m}F_{k:m},
+\]
+
+\end_inset
+
+where 
 \begin_inset Formula $H_{m}$
 \end_inset
 
  is defined in lemma 
 \begin_inset CommandInset ref
-LatexCommand eqref
+LatexCommand ref
 reference "lem:observation_func_jacobians"
 plural "false"
 caps "false"
@@ -4728,7 +4770,7 @@ noprefix "false"
 
  can be composed from the Jacobians in lemma 
 \begin_inset CommandInset ref
-LatexCommand eqref
+LatexCommand ref
 reference "lem:transition_func_jacobians"
 plural "false"
 caps "false"
@@ -4737,9 +4779,9 @@ noprefix "false"
 \end_inset
 
 .
- Using 
+ Using lemma 
 \begin_inset CommandInset ref
-LatexCommand eqref
+LatexCommand ref
 reference "lem:observation_func_jacobians"
 plural "false"
 caps "false"
@@ -4754,7 +4796,7 @@ H_{m} & =\left.J_{l}^{-1}\left(y_{m}\ominus h\left(x_{m},v_{k}\right)\right)\fra
 x_{m}=\hat{x}_{m}\\
 v_{k}=0
 \end{array}}\\
- & =\begin{bmatrix}R_{k}\exp\left(\delta_{k:m}\omega_{k}\right) & 0_{2\times4}\end{bmatrix}
+ & =\begin{bmatrix}R_{k}\exp\left(\delta_{k:m}\omega_{k}\right) & 0_{2\times4}\end{bmatrix}.
 \end{align*}
 
 \end_inset
@@ -4764,140 +4806,37 @@ where
 \end_inset
 
 .
- 
-\end_layout
-
-\begin_layout Standard
-To do this, we decompose the 
-\end_layout
-
-\begin_layout Standard
-Using the state decomposition, we can simplify the observation function
- as The observation model for a measurement at time 
-\begin_inset Formula $y$
-\end_inset
-
- 
-\begin_inset Formula 
-\begin{align*}
-y_{m} & =h\left(f^{-1}\left(x_{k},\delta_{k:m},w_{k}\right),v_{k}\right)\\
- & =R_{k}J_{l}\left(\delta_{k:m}\left(\omega_{k}+w_{k}^{R}\right)+\frac{\delta_{k:m}^{2}w_{k}^{\omega}}{2}\right)\left(\delta_{k:m}\left(\rho_{k}+w_{k}^{\rho}\right)\right)\\
- & +t_{k}+w_{k}^{t}+v_{m},
-\end{align*}
-
-\end_inset
-
-where 
-\begin_inset Formula $w_{k}=\left[\left(w_{k}^{t}\right)^{\top},\left(w_{k}^{R}\right)^{\top},\left(w_{k}^{\rho}\right)^{\top},\left(w_{k}^{u}\right)^{\top}\right]^{\top}$
-\end_inset
-
- and 
-\begin_inset Formula $J_{l}$
-\end_inset
-
- is the left Jacobian of 
-\begin_inset Formula $SO\left(2\right)$
-\end_inset
-
- defined in equation 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:se2_v"
-
-\end_inset
-
-.
- Based on the observation model, we have three Jacobians to compute: 
-\begin_inset Formula $G_{k:m}$
-\end_inset
-
-, 
-\begin_inset Formula $H_{k:m}$
-\end_inset
-
- and 
-\begin_inset Formula $V_{m}$
-\end_inset
-
-.
- 
-\begin_inset Formula 
-\begin{align*}
-H_{k:m}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial x} & =\begin{bmatrix}H_{k:m}^{t} & H_{k:m}^{R} & H_{k:m}^{\rho} & H_{k:m}^{\omega}\end{bmatrix},
-\end{align*}
-
-\end_inset
-
-where
-\begin_inset Formula 
-\begin{align*}
-H_{k:m}^{t}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial t_{k}} & =R_{k}\\
-H_{k:m}^{R}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial R} & =\delta_{k:m}R_{k}\left[1\right]_{\times}J_{l}\left(\delta_{k:m}\omega\right)\rho\\
-H_{k:m}^{\rho}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\rho} & =\delta_{k:m}^{2}R_{k}J_{l}\left(\delta_{k:m}\omega\right)\\
-H_{k:m}^{\omega}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\omega} & =\delta_{k:m}^{2}R_{k}J_{l}^{'}\left(\delta_{k:m}\omega\right)\rho
-\end{align*}
-
-\end_inset
-
-and 
+ Usine errors from different time steps we get 
 \begin_inset Formula 
 \[
-J_{l}^{'}\left(\omega\right)=\frac{\cos\left(\theta\right)\theta-\sin\left(\theta\right)}{\theta^{2}}I+\frac{\sin\left(\theta\right)\theta-\left(1-\cos\left(\theta\right)\right)}{\theta^{2}}\left[1\right]_{\times}.
-\]
-
-\end_inset
-
-We quickly note that 
-\begin_inset Formula 
-\[
-H_{k}=H_{k:k}=\begin{bmatrix}I & 0_{2\times4}\end{bmatrix}.
-\]
-
-\end_inset
-
-
-\begin_inset Formula 
-\[
-G_{k:m}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}}=\begin{bmatrix}G_{k:m}^{t} & G_{k:m}^{R} & G_{k:m}^{\rho} & G_{k:m}^{\omega}\end{bmatrix},
+\begin{bmatrix}\hat{e}_{k:m^{1}}\\
+\hat{e}_{k:m^{2}}\\
+\vdots\\
+\hat{e}_{k:m^{n}}
+\end{bmatrix}=\underbrace{\begin{bmatrix}H_{m}F_{k:m^{1}}\\
+H_{m}F_{k:m^{2}}\\
+\vdots\\
+H_{m}F_{k:m^{n}}
+\end{bmatrix}}_{\mathcal{O}}\delta x_{k},
 \]
 
 \end_inset
 
 where 
-\begin_inset Formula 
-\begin{align*}
-G_{k:m}^{t} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{t}}=I\\
-G_{k:m}^{R} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{R}}=\delta_{k:m}^{2}R_{k}V^{'}\left(\delta_{k:m}\omega\right)\rho\\
-G_{k:m}^{\rho} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{\rho}}=\delta_{k:m}^{2}R_{k}V\left(\delta_{k:m}\omega\right)\\
-G_{k:m}^{\omega} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{\omega}}=\frac{\delta_{k:m}^{3}}{2}R_{k}V^{'}\left(\delta_{k:m}\omega\right)\rho.
-\end{align*}
-
+\begin_inset Formula $\mathcal{O}$
 \end_inset
 
-Lastly 
-\begin_inset Formula $V_{m}=I$
+ is the observability matrix.
+ If 
+\begin_inset Formula $\mathcal{O}$
 \end_inset
 
-.
+ is full rank, then the system is locally observable.
+ 
 \end_layout
 
 \begin_layout Standard
-Now that we have the Jacobians computed, we need to ensure that the system
- is observable.
- Since the system is nonlinear, the best we can do is ensure local observability.
- Given measurements from three different time steps, the observability matrix
- is 
-\begin_inset Formula 
-\[
-\mathcal{O}=\begin{bmatrix}H_{k:m_{1}}\\
-H_{k:m_{2}}\\
-H_{k:m_{3}}
-\end{bmatrix}.
-\]
-
-\end_inset
-
-The observability matrix is not full rank.
+Unfortuneately, the observability matrix is not full rank.
  However, since we are interested in tracking the target we only need to
  be able to estimate the position of the target.
  To do this, we consider two configurations for a constant velocity system.
@@ -4928,7 +4867,7 @@ ion except that
  We can identify which configuration the target is in by looking at three
  different measurements from different times.
  If the three measurement do not form a line, then the system has first
- constrains; otherwise, the latter.
+ constraints; otherwise, the latter.
 \end_layout
 
 \begin_layout Standard
@@ -5021,7 +4960,7 @@ and that
 Note that 
 \begin_inset Formula 
 \[
-\dot{t}_{m}=R_{k}\exp\left(\delta_{k:m}\dot{\theta}_{k}\right)\rho_{k},
+\dot{t}_{m}=R_{k}\text{Exp}\left(\delta_{k:m}\dot{\theta}_{k}\right)\rho_{k},
 \]
 
 \end_inset
@@ -6160,120 +6099,6 @@ J_{l}^{-1}\left(u\right) & =\begin{bmatrix}J_{l}^{-1}\left(\omega\right) & -J_{l
 \end_layout
 
 \begin_layout Section
-Lemma
-\end_layout
-
-\begin_layout Lemma
-\begin_inset CommandInset label
-LatexCommand label
-name "lem:dJl"
-
-\end_inset
-
-Let 
-\begin_inset Formula $J_{l}\left(\omega\right)$
-\end_inset
-
- denote the left Jacobian of 
-\begin_inset Formula $SO\left(3\right)$
-\end_inset
-
- and 
-\begin_inset Formula $\rho\in\mathbb{R}^{3}$
-\end_inset
-
-.
- The derivative of 
-\begin_inset Formula $J_{l}\left(\omega\right)p$
-\end_inset
-
- with respect to 
-\begin_inset Formula $\omega$
-\end_inset
-
-, denote 
-\begin_inset Formula $\partial J_{l}\left(\omega,\rho\right)$
-\end_inset
-
-, is 
-\begin_inset Formula 
-\begin{align*}
-\partial J_{l}\left(\omega,\rho\right) & =\left(\frac{1-\cos\left(\theta\right)}{\theta^{2}}\right)\left[-\rho\right]_{\times}\\
- & +\left(\frac{\theta-\sin\left(\theta\right)}{\theta^{3}}\right)\left(-2\omega\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\omega_{\times}\right)\\
- & +\left(\frac{\sin\left(\theta\right)\theta+2\left(\cos\left(\theta\right)-1\right)}{\theta^{4}}\right)\omega\rho\left(\omega^{\vee}\right)^{\top}\\
- & +\left(\frac{3\sin\left(\theta\right)-\cos\left(\theta\right)\theta-2\theta}{\theta^{5}}\right)\omega^{2}\rho\left(\omega^{\vee}\right)^{\top}.
-\end{align*}
-
-\end_inset
-
-where 
-\begin_inset Formula $\omega\in\mathfrak{s0}\left(3\right)$
-\end_inset
-
-, and 
-\begin_inset Formula $\theta=\sqrt{\left(\omega^{\vee}\right)^{\top}\omega^{\vee}}$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Proof
- 
-\begin_inset Formula $J_{l}\left(\omega\right)$
-\end_inset
-
- is defined in equation 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:V_se3"
-
-\end_inset
-
-.
- It follows directly that 
-\begin_inset Formula 
-\[
-\frac{\partial J_{l}\left(\omega\right)\rho}{\partial\omega}=\frac{\partial}{\partial\omega}\left(I+\frac{1-\cos\left(\theta\right)}{\theta^{2}}\omega+\frac{\theta-\sin\left(\theta\right)}{\theta^{3}}\omega^{2}\right)\rho.
-\]
-
-\end_inset
-
-Using the product rule, we can break up the derivation into parts: 
-\begin_inset Formula 
-\[
-\frac{\partial}{\partial\omega}\frac{1-\cos\left(\theta\right)}{\theta^{2}}=\frac{\sin\left(\theta\right)\theta+2\left(\cos\left(\theta\right)+1\right)}{\theta^{3}}\left(\omega^{\vee}\right)^{\top}
-\]
-
-\end_inset
-
-
-\begin_inset Formula 
-\[
-\frac{\partial}{\partial\omega}\frac{\theta-\sin\left(\theta\right)}{\theta^{3}}=\frac{3\sin\left(\theta\right)-\cos\left(\theta\right)\theta-2\theta}{\theta^{5}}
-\]
-
-\end_inset
-
-
-\begin_inset Formula 
-\[
-\frac{\partial}{\partial\omega}\omega\rho=\left[-\rho\right]_{\times}
-\]
-
-\end_inset
-
-and 
-\begin_inset Formula 
-\[
-\frac{\partial}{\partial\omega}\omega^{2}\rho=-2\omega\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\omega_{\times}.
-\]
-
-\end_inset
-
-Putting the pieces together, we get solution stated in the lemma.
-\end_layout
-
-\begin_layout Section
 Terminology and Parameters
 \end_layout
 
@@ -6667,220 +6492,548 @@ Homography
 \end_layout
 
 \begin_layout Standard
+When tracking targets in the normalized virtual image plane (NVIP) we use
+ the homography 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Ma"
+literal "false"
+
+\end_inset
+
+ to transform the measurements and models from the previous global frame
+ 
+\begin_inset Formula $\mathcal{F}^{n-}$
+\end_inset
+
+, normalized virtual camera frame (NVCF), to the current global frame 
+\begin_inset Formula $\mathcal{F}^{n}$
+\end_inset
+
+.
+ To transform a model, we transform transform both the state extimate 
+\begin_inset Formula $\hat{x}^{n^{-}}$
+\end_inset
+
+ and the covariance 
+\begin_inset Formula $P^{n^{-}}$
+\end_inset
+
+ from 
+\begin_inset Formula $\mathcal{F}^{n^{-}}$
+\end_inset
+
+ to 
+\begin_inset Formula $\mathcal{F}^{n}$
+\end_inset
+
+.
+ In addition to transforming the models, we use the homography to transform
+ the measurements; however, they are transformed exactly how the state estimate
+ is transformed.
+ Thus, showing how to transform the models will be sufficient.
+ 
+\end_layout
+
+\begin_layout Standard
+Before presenting the lemmas, we introduce notation with a little review.
+ Let 
+\begin_inset Formula $P_{t/n}^{c}$
+\end_inset
+
+ denote the position of the target with respect to the NVIP and expressed
+ in the camera frame, 
+\begin_inset Formula $R_{c}^{n}$
+\end_inset
+
+ denote the rotation from the camera frame to the NVCF, 
+\begin_inset Formula $K$
+\end_inset
+
+ be a matrix containing the camera's intrinsic parameters and 
+\begin_inset Formula $\lambda$
+\end_inset
+
+ a normalizing coefficient, then the target's pixel location in the NVIP
+ is 
+\begin_inset Formula 
+\[
+\lambda\begin{bmatrix}u\\
+v\\
+1
+\end{bmatrix}=R_{c}^{n}KP_{t/n}^{c}.
+\]
+
+\end_inset
+
 Let 
+\begin_inset Formula $H$
+\end_inset
+
+ denote the homography that maps pixels from 
+\begin_inset Formula $\mathcal{F}^{n^{-}}$
+\end_inset
+
+ to 
+\begin_inset Formula $\mathcal{F}^{n}$
+\end_inset
+
+.
+ It can be decomposed to 
 \begin_inset Formula 
 \[
 H=\begin{bmatrix}H_{1} & h_{2}\\
 h_{3}^{\top} & h_{4}
-\end{bmatrix},
-\]
-
-\end_inset
-
-and 
-\begin_inset Formula $\rho^{a}\in\mathbb{R}^{2}$
-\end_inset
-
- denote a pixel location.
- Then
-\begin_inset Formula 
-\begin{eqnarray*}
-\rho^{b} & = & g\left(H,\rho^{a}\right)
-\end{eqnarray*}
-
-\end_inset
-
-where 
-\begin_inset Formula 
-\[
-g\left(H,\rho^{a}\right)=\frac{H_{1}\rho^{a}+h_{2}}{h_{3}^{\top}\rho^{a}+h_{4}}.
-\]
-
-\end_inset
-
-
-\begin_inset Formula 
-\[
-G\left(H,\rho^{a}\right)=\frac{\left(h_{3}^{\top}\rho^{a}+h_{4}\right)H_{1}-\left(H_{1}\rho^{a}+h_{2}\right)h_{3}^{\top}}{\left(h_{3}^{\top}\rho^{a}+h_{4}\right)^{2}}
-\]
-
-\end_inset
-
-
-\begin_inset Formula 
-\begin{align*}
-\frac{\partial g}{\partial\rho} & =G\left(H,\rho\right)\\
-\frac{\partial g}{\partial\dot{\rho}} & =0
-\end{align*}
-
-\end_inset
-
-
-\begin_inset Formula 
-\begin{align*}
-M=\frac{\partial G\left(H,\rho^{a}\right)\dot{\rho}^{a}}{\partial\rho^{a}} & =\frac{-H_{1}\dot{\rho}^{a}h_{3}^{\top}}{\left(h_{3}^{\top}\rho^{a}+h_{4}\right)^{2}}-\frac{H_{1}h_{3}^{\top}\dot{\rho}^{a}}{\left(h_{3}^{\top}\rho^{a}+h_{4}\right)^{2}}+\frac{2\left(H_{1}\rho^{a}+h_{2}\right)h_{3}^{\top}\dot{\rho}^{a}h_{3}^{\top}}{\left(h_{3}^{\top}\rho^{a}+h_{4}\right)^{3}}\\
- & =\frac{2\left(H_{1}\rho^{a}+h_{2}\right)h_{3}^{\top}\dot{\rho}^{a}h_{3}^{\top}-H_{1}\dot{\rho}^{a}h_{3}^{\top}\eta-H_{1}h_{3}^{\top}\dot{\rho}^{a}\eta}{\eta^{3}}
-\end{align*}
-
-\end_inset
-
-which can be simplified to 
-\begin_inset Formula 
-\[
-M=-\frac{G\left(\dot{\rho}^{a}h_{3}^{\top}+Ih_{3}^{\top}\dot{\rho}^{a}\right)}{\eta}
-\]
-
-\end_inset
-
-
-\begin_inset Formula 
-\[
-f\left(\rho^{a},\dot{\rho}^{a}\right)=\begin{bmatrix}g\left(H,\rho^{a}\right)\\
-G\left(H,\rho^{a}\right)\dot{\rho}^{a}
-\end{bmatrix}
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\[
-\eta=\left(h_{3}^{\top}\rho^{a}+h_{4}\right)
-\]
-
-\end_inset
-
-Covariance is transformed as 
-\begin_inset Formula 
-\begin{align*}
-T & =\begin{bmatrix}G & 0\\
-M & G
-\end{bmatrix}\\
- & TCT^{\top}
-\end{align*}
-
-\end_inset
-
-This has been tested
-\end_layout
-
-\begin_layout Standard
-For 
-\begin_inset Formula $SE\left(2\right)$
-\end_inset
-
- the rotation matrix can be constructed as 
-\begin_inset Formula 
-\[
-R^{a}=\frac{1}{\left\Vert \dot{\rho}^{a}\right\Vert }\begin{bmatrix}\dot{\rho}^{a}\cdot e_{1} & -\dot{\rho}^{a}\cdot e_{2}\\
-\dot{\rho}^{a}\cdot e_{2} & \dot{\rho}^{a}\cdot e_{1}
 \end{bmatrix}.
 \]
 
 \end_inset
 
-To transform it using the Homography we get 
-\begin_inset Formula 
-\[
-R_{t}=\frac{1}{\left\Vert G\dot{\rho}^{a}\right\Vert }\begin{bmatrix}e_{1}^{\top}G\dot{\rho}^{a} & -e_{2}^{\top}G\dot{\rho}^{a}\\
-e_{2}^{\top}G\dot{\rho}^{a} & e_{1}^{\top}G\dot{\rho}^{a}
-\end{bmatrix}
-\]
-
-\end_inset
-
 
 \end_layout
 
-\begin_layout Standard
-Since we assume that the UAV has constant velocity in the body frame, the
- acceleration in the inertial frame is due to angular rotation, that is,
+\begin_layout Lemma
+\begin_inset CommandInset label
+LatexCommand label
+name "lem:homography_r2"
+
+\end_inset
+
+We assume directly that the target evolves on the configuration manifold
  
+\begin_inset Formula $\mathbb{R}^{n}$
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $\hat{x}^{n^{-}}=\left[\hat{t}^{n^{-}},\dot{\hat{t}}^{n^{-}}\right]$
+\end_inset
+
+ denote the estimated state of the target in the previous frame, and 
+\begin_inset Formula $P^{n^{-}}$
+\end_inset
+
+ denote the error covariance, then 
 \begin_inset Formula 
 \begin{align*}
-\ddot{\rho}^{i} & =\left[\omega^{i}\right]_{\times}\dot{\rho}^{i}\\
-\ddot{\rho}^{i} & =R_{b}^{i}\left[\omega^{b}\right]_{\times}\left(R_{b}^{i}\right)^{\top}\dot{\rho}^{i}\\
- & =R_{b}^{i}\left[\omega^{b}\right]_{\times}\left(R_{b}^{i}\right)^{\top}R_{b}^{i}\dot{\rho}^{b}\\
- & =R_{b}^{i}\left[\omega^{b}\right]_{\times}\dot{\rho}^{b}
+\hat{t}^{n} & =g\left(H,\hat{t}^{n^{-}}\right),\\
+\dot{\hat{t}}^{n} & =G\left(H,\hat{t}^{n^{-}}\right)\dot{t}^{n^{-}},\\
+P^{n} & =T\left(H,\hat{x}^{n^{-}}\right)P^{n^{-}}T^{\top}\left(H,\hat{x}^{n^{-}}\right)
 \end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula 
+\begin{align}
+g\left(H,\hat{t}^{n^{-}}\right) & =\frac{H_{1}\hat{t}^{n^{-}}+h_{2}}{h_{3}^{\top}\hat{t}^{n^{-}}+h_{4}},\label{eq:homography_r2_pos}\\
+G\left(H,\hat{t}^{n^{-}}\right) & =\frac{1}{\hat{\eta}}\left(\hat{\eta}H_{1}-\left(H_{1}\hat{t}^{n^{-}}+h_{2}\right)h_{3}^{\top}\right),\label{eq:homography_r2_vel}\\
+T\left(H,\hat{x}^{n^{-}}\right) & =\begin{bmatrix}G\left(H,\hat{t}^{n^{-}}\right) & 0\\
+M\left(H,\hat{x}^{n^{-}}\right) & G\left(H,\hat{t}^{n^{-}}\right)
+\end{bmatrix},\nonumber \\
+M\left(H,\hat{x}^{n^{-}}\right) & =\frac{2\left(H_{1}\hat{t}^{n^{-}}+h_{2}\right)h_{3}^{\top}\hat{\dot{t}}^{n^{-}}h_{3}^{\top}}{\hat{\eta}^{3}}\label{eq:homography_r2_cov}\\
+ & -\frac{H_{1}\hat{\dot{t}}^{n^{-}}h_{3}^{\top}\hat{\eta}-H_{1}h_{3}^{\top}\hat{\dot{t}}^{n^{-}}\hat{\eta}}{\hat{\eta}^{3}},\\
+\hat{\eta} & =\left(h_{3}^{\top}\hat{t}^{n^{-}}+h_{4}\right)^{2}.\nonumber 
+\end{align}
 
 \end_inset
 
 
 \end_layout
 
-\begin_layout Standard
-Recall that 
+\begin_layout Proof
+The homography satisfies the constraint
 \begin_inset Formula 
 \[
-\dot{\rho}^{n}=G\left(H,\rho^{c}\right)\dot{\rho}^{c},
+\lambda^{n}\begin{bmatrix}t^{n}\\
+1
+\end{bmatrix}=\lambda^{n^{-}}H\begin{bmatrix}t^{n^{-}}\\
+1
+\end{bmatrix}.
 \]
 
 \end_inset
 
-taking the derivative w.r.t.
- to time, holding 
-\begin_inset Formula $H$
-\end_inset
-
- constant and assuming constant velocity in the body frame we get that 
-\begin_inset Formula 
-\begin{align*}
-\ddot{\rho}^{n} & =\left(\frac{\partial}{\partial\rho^{c}}G\left(H,\rho^{c}\right)\dot{\rho}^{c}\right)\frac{\partial\rho^{c}}{\partial t}+\frac{\partial}{\partial\dot{\rho}^{c}}\left(G\left(H,\rho^{c}\right)\dot{\rho}^{c}\right)\frac{\partial\dot{\rho}^{c}}{\partial t}\\
-\left[\omega^{n}\right]_{\times}\dot{\rho}^{n} & =M\dot{\rho}^{c}+G\left(H,\rho^{c}\right)\left[\omega^{c}\right]_{\times}\dot{\rho}^{c}\\
-\left[\omega^{n}\right]_{\times}G\left(H,\rho^{c}\right)\dot{\rho}^{c} & =\left(M+G\left(H,\rho^{c}\right)\left[\omega^{c}\right]_{\times}\right)\dot{\rho}^{c}\\
-\theta^{n}\left[1\right]_{\times}G\left(H,\rho^{c}\right)\dot{\rho}^{c} & =\left(M+G\left(H,\rho^{c}\right)\left[\omega^{c}\right]_{\times}\right)\dot{\rho}^{c}\\
-\\
-\left(\dot{\rho}^{c}\right)^{\top}\left[\omega^{n}\right]_{\times}G\left(H,\rho^{c}\right)\dot{\rho}^{c} & =\left(\dot{\rho}^{c}\right)^{\top}\left(M+G\left(H,\rho^{c}\right)\left[\omega^{c}\right]_{\times}\right)\dot{\rho}^{c}\\
-\left(\dot{\rho}^{c}\right)^{\top}\left[\omega^{n}\right]_{\times} & =\theta^{n}\left(\dot{\rho}^{c}\right)^{\top}\left[1\right]_{\times}\\
-\theta^{n} & =\frac{\left(\dot{\rho}^{c}\right)^{\top}\left(M+G\left(H,\rho^{c}\right)\left[\omega^{c}\right]_{\times}\right)\dot{\rho}^{c}}{\left(\dot{\rho}^{c}\right)^{\top}\left[1\right]_{\times}G\left(H,\rho^{c}\right)\dot{\rho}^{c}}\\
-\left(\left[\omega^{n}\right]_{\times}G\left(H,\rho^{c}\right)-\left(M+G\left(H,\rho^{c}\right)\left[\omega^{c}\right]_{\times}\right)\right)\dot{\rho}^{c} & =0_{2\times2}
-\end{align*}
-
-\end_inset
-
-implies that 
+Expanding it out gives us 
 \begin_inset Formula 
 \[
-\left[\omega^{n}\right]_{\times}=\left(M+G\left(H,\rho^{c}\right)\left[\omega^{c}\right]_{\times}\right)G\left(H,\rho^{c}\right)^{-1}
+\begin{bmatrix}\lambda^{n}t^{n}\\
+\lambda^{n}
+\end{bmatrix}=\lambda^{n^{-}}\begin{bmatrix}H_{1}t^{n^{-}}+h_{2}\\
+h_{3}^{\top}t^{n^{-}}+h_{4}
+\end{bmatrix},
 \]
 
 \end_inset
 
+which indicates that 
+\begin_inset Formula $\lambda^{n}=\lambda^{n^{-}}\left(h_{3}^{\top}t^{n^{-}}+h_{4}\right)$
+\end_inset
 
-\end_layout
+.
+ We can now substitute in 
+\begin_inset Formula $\lambda^{n^{-}}\left(h_{3}^{\top}t^{n^{-}}+h_{4}\right)$
+\end_inset
 
-\begin_layout Standard
-Note that this is only valid in the virtual image frame.
- In other words 
+ for 
+\begin_inset Formula $\lambda^{n}$
+\end_inset
+
+ and solve for 
+\begin_inset Formula $t^{n}$
+\end_inset
+
+ which gives 
 \begin_inset Formula 
 \[
-H=R-\frac{tn^{\top}}{d}
+t^{n}=\frac{1}{\eta}\left(H_{1}t^{n^{-}}+h_{2}\right)
 \]
 
 \end_inset
 
 where 
-\begin_inset Formula $R=R\left(\psi\right)$
-\end_inset
-
- and 
-\begin_inset Formula $n^{\top}=\left[0,0,1\right]$
+\begin_inset Formula $\eta=h_{3}^{\top}t^{n^{-}}+h_{4}$
 \end_inset
 
 .
- Note that this transformation can be simplified to 
+ Taking the above equation w.r.t.
+ time gives us 
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial g\left(H,t^{n^{-}}\right)}{\partial t} & =\frac{H_{1}}{\eta}-\frac{\left(H_{1}t^{n^{-}}+h_{2}\right)h_{3}^{\top}}{\eta^{2}}\\
+ & =\frac{1}{\eta}\left(\eta H_{1}-\left(H_{1}t^{n^{-}}+h_{2}\right)h_{3}^{\top}\right).
+\end{align*}
+
+\end_inset
+
+Since the state of the model is a Gaussian random variable with mean 
+\begin_inset Formula $\hat{x}^{n^{-}}$
+\end_inset
+
+ and covariance 
+\begin_inset Formula $P^{n^{-}}$
+\end_inset
+
+, we wish to keep the transformed state and error covariance a Gaussian
+ random variable.
+ We do this by linearization.
+ Let 
 \begin_inset Formula 
 \[
-\left[\omega^{n}\right]_{\times}=\left[\omega^{c}\right]_{\times}
+f\left(H,x^{n^{-}}\right)=\begin{bmatrix}g\left(H,t^{n^{-}}\right)\\
+G\left(H,t^{n^{-}}\right)\dot{t}^{n^{-}}
+\end{bmatrix},
+\]
+
+\end_inset
+
+be the state transformation, then its linearization about 
+\begin_inset Formula $\hat{x}^{n^{-}}$
+\end_inset
+
+ is 
+\begin_inset Formula 
+\begin{equation}
+f\left(H,\hat{x}^{n^{-}}\right)+T\left(H,\hat{x}^{n^{-}}\right)\delta x^{n^{-}},\label{eq:homography_r2_linearized}
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $T\left(H,\hat{x}^{n^{-}}\right)$
+\end_inset
+
+ is defined in 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:homography_r2_cov"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ and 
+\begin_inset Formula 
+\begin{align*}
+M\left(H,\hat{x}^{n^{-}}\right) & =\left.\frac{\partial G\left(H,t^{n^{-}}\right)\dot{t}^{n^{-}}}{\partial t^{n^{-}}}\right|_{x^{n^{-}}=\hat{x}^{n^{-}}}\\
+ & =\frac{-H_{1}\dot{\hat{t}}^{n^{-}}h_{3}^{\top}}{\hat{\eta}^{2}}-\frac{H_{1}h_{3}^{\top}\dot{\hat{t}}^{n^{-}}}{\hat{\eta}^{2}}\\
+ & +\frac{2\left(H_{1}\hat{t}^{n^{-}}+h_{2}\right)h_{3}^{\top}\dot{\hat{t}}^{n^{-}}h_{3}^{\top}}{\hat{\eta}^{3}}
+\end{align*}
+
+\end_inset
+
+Thus the mean and covariance of 
+\begin_inset Formula $x^{n}$
+\end_inset
+
+ are calculated using it's linearized form shown in equation 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:homography_r2_linearized"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+;
+\begin_inset Formula 
+\begin{align*}
+\text{E}\left[x^{n}\right] & =f\left(H,\hat{x}^{n^{-}}\right)\\
+\text{cov}\left[x^{n}\right] & =T\left(H,\hat{x}^{n^{-}}\right)P^{n^{-}}T^{\top}\left(H,\hat{x}^{n^{-}}\right).
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Proof
+This proof can be trivially extended to transforming a model expressed in
+ the image plane.
+\end_layout
+
+\begin_layout Lemma
+We suppose directly that the target's configuration manifold is 
+\begin_inset Formula $SE\left(2\right)$
+\end_inset
+
+, it's heading is aligned with it's velocity, the velocity in the body frame
+ perpendicular to the heading is zero, and that the normal vector of the
+ plane the target moves on points to Earth's core.
+ These constraints are necessary in order to ensure observability as discussed
+ in subsection 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:tracking_image_plane"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, and to ensure we can properly transform the model.
+ We also suppose directly that the state estimate of the system in the previous
+ NVCF is 
+\begin_inset Formula $\hat{x}^{n^{-}}=\left(\hat{g}^{n^{-}},\hat{u}^{n^{-}}\right)$
+\end_inset
+
+ where 
+\begin_inset Formula 
+\begin{align*}
+\hat{g}^{n^{-}} & =\begin{bmatrix}\hat{R}^{n^{-}} & \hat{t}^{n^{-}}\\
+0 & 1
+\end{bmatrix}\\
+\hat{u}^{n^{-}} & =\begin{bmatrix}\hat{\rho}^{n^{-}}\\
+\hat{\omega}^{n^{-}}
+\end{bmatrix}\\
+\hat{R}^{n^{-}} & =\frac{1}{\left\Vert \dot{\hat{t}}^{n^{-}}\right\Vert }\begin{bmatrix}e_{1}\left(\dot{\hat{t}}^{n^{-}}\right) & e_{2}\left(-\dot{\hat{t}}^{n^{-}}\right)\\
+e_{2}\left(\dot{\hat{t}}^{n^{-}}\right) & e_{1}\left(\dot{\hat{t}}^{n^{-}}\right)
+\end{bmatrix},
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $t$
+\end_inset
+
+ is the pixel location in the NVCF, 
+\begin_inset Formula $\rho$
+\end_inset
+
+ is the velocity in the body frame, and 
+\begin_inset Formula $e_{i}$
+\end_inset
+
+ is a function that extracts the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ component of a tuple, then the model transformation is 
+\begin_inset Formula 
+\begin{align*}
+\hat{R}^{n} & =H_{1}\hat{R}^{n^{-}},\\
+\hat{t}^{n} & =g\left(H,\hat{t}^{n^{-}}\right),\\
+\hat{\rho}^{n} & =\frac{\hat{\rho}^{n^{-}}}{h_{4}},\\
+\hat{\omega}^{n} & =\hat{\omega}^{n^{-}},\\
+P^{n} & =TP^{n^{-}}T^{\top},
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula 
+\begin{align*}
+g\left(H,\hat{t}^{n^{-}}\right) & =\frac{H_{1}\hat{t}^{n^{-}}+h_{2}}{h_{4}},\\
+T & =\text{diag}\left(\frac{1}{h_{4}},\frac{1}{h_{4}},1,\frac{1}{h_{4}},1\right).
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Proof
+Under the assumptions, we can drastically simply the homography to
+\begin_inset Formula 
+\[
+H=\begin{bmatrix}R\left(\psi\right) & -\pi_{e_{3}}\left(\frac{pn^{\top}}{d}\right)\\
+0 & 1-e_{3}\left(\frac{pn^{\top}}{d}\right)
+\end{bmatrix},
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $n$
+\end_inset
+
+ is the normalized vector that points to Earth's core, 
+\begin_inset Formula $R\left(\psi\right)\in SO\left(2\right)$
+\end_inset
+
+ is the rotation from 
+\begin_inset Formula $\mathcal{F}^{n^{-}}$
+\end_inset
+
+ to 
+\begin_inset Formula $\mathcal{F}^{n}$
+\end_inset
+
+ and is a rotation about 
+\begin_inset Formula $n$
+\end_inset
+
+, 
+\begin_inset Formula $d$
+\end_inset
+
+ is the distance from the camera to the target plane, 
+\begin_inset Formula $p$
+\end_inset
+
+ is the translation from 
+\begin_inset Formula $\mathcal{F}^{n^{-}}$
+\end_inset
+
+ to 
+\begin_inset Formula $\mathcal{F}^{n}$
+\end_inset
+
+ and 
+\begin_inset Formula $\pi_{e_{3}}$
+\end_inset
+
+ extracts the first two components of it's argument.
+ Thus 
+\begin_inset Formula 
+\begin{align*}
+H_{1} & =R\left(\psi\right),\\
+h_{2} & =-\pi_{e_{3}}\left(d/n\right),\\
+h_{3}^{\top} & =0,\\
+h_{4} & =1-e_{3}\left(d/n\right).
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Proof
+The position and velocity expressed in the NVCF are transformed according
+ to lemma 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "lem:homography_r2"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, but under the assumptions we can simplify the transformations to 
+\begin_inset Formula 
+\begin{align*}
+g\left(H,t^{n^{-}}\right) & =\frac{H_{1}t^{n^{-}}+h_{2}}{h_{4}},\\
+G\left(H,t^{n^{-}}\right) & =\frac{H_{1}}{h^{4}}.
+\end{align*}
+
+\end_inset
+
+By the definition of the rotation matrix 
+\begin_inset Formula $\hat{R}^{n}$
+\end_inset
+
+, we get 
+\begin_inset Formula 
+\begin{align*}
+\hat{R}^{n} & =\frac{1}{\left\Vert \dot{t}^{n}\right\Vert }\begin{bmatrix}e_{1}\left(\dot{t}^{n}\right) & e_{2}\left(-\dot{t}^{n}\right)\\
+e_{2}\left(\dot{t}^{n}\right) & e_{1}\left(\dot{t}^{n}\right)
+\end{bmatrix}\\
+ & =\frac{1}{\left\Vert G\dot{t}^{n}\right\Vert }\begin{bmatrix}e_{1}\left(G\dot{t}^{n}\right) & -e_{2}\left(G\dot{t}^{n}\right)\\
+e_{2}\left(G\dot{t}^{n}\right) & e_{1}\left(G\dot{t}^{n}\right)
+\end{bmatrix}\\
+ & =H_{1}\hat{R}^{n^{-}}.
+\end{align*}
+
+\end_inset
+
+The velocity in the body frame is 
+\begin_inset Formula 
+\begin{align*}
+\rho^{n} & =\left(\hat{R}^{n}\right)^{-1}G\hat{R}^{n^{-}}\rho^{n^{-}}\\
+ & =\left(\hat{R}^{n}\right)^{-1}H_{1}^{-1}\frac{H_{1}}{h^{4}}\rho^{n^{-}}\\
+ & =\frac{\rho^{n^{-}}}{h^{4}}.
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Proof
+Since a rotation and translation doesn't affect the angular velocity in
+ 
+\begin_inset Formula $SE\left(2\right)$
+\end_inset
+
+, we get 
+\begin_inset Formula 
+\[
+\omega^{n}=\omega^{n^{-}}.
 \]
 
 \end_inset
 
 
+\end_layout
+
+\begin_layout Proof
+The state 
+\begin_inset Formula $x^{n^{-}}$
+\end_inset
+
+ is a Gaussian random variable with mean 
+\begin_inset Formula $\hat{x}^{n^{-}}$
+\end_inset
+
+ and covariance 
+\begin_inset Formula $P^{n^{-}}$
+\end_inset
+
+.
+ We approximate 
+\begin_inset Formula $p\left(x^{n}\right)$
+\end_inset
+
+ as a Gaussian random variable by linearizing the transformation about 
+\begin_inset Formula $\hat{x}^{n^{-}}$
+\end_inset
+
+ and calculating the expected value and covariance.
+ 
 \end_layout
 
 \begin_layout Subsection
@@ -6980,7 +7133,7 @@ where
  is the covariance and 
 \begin_inset Formula 
 \[
-T=\text{diag}\left(\frac{1}{h_{4}},\frac{1}{h_{4}},1,\frac{1}{h_{4}},\frac{1}{h_{4}},1\right).
+T=\text{diag}\left(\frac{1}{h_{4}},\frac{1}{h_{4}},1,\frac{1}{h_{4}},1\right).
 \]
 
 \end_inset
