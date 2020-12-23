@@ -66,6 +66,116 @@ h = H(R,w,p)
 % 
 % ( vee(logm(myExp(v)*myExp(e3*dt))) - v)/dt
 
+
+%%
+
+rng('default');
+
+u = rand(1);
+U = [0 -u; u 0];
+t = rand(2,1);
+G = [expm(U), t; 0 0 1]
+G0 = G;
+v = (rand(3,1)-0.5)*20;
+v(2) = 0;
+v(3) = 0.1;
+dt = 0.1;
+% P = diag([1,1,0.2,1,1,0.1]);
+P = diag([1,1,0.4]);
+iter = 20;
+for i = 1:iter
+    
+    F = getF(dt, v);
+    F = F(1:3,1:3);
+    P = F*P*F';
+    G = G*myExp(dt*v);
+    
+end
+% P
+
+% v = -v;
+
+% for i = 1:iter
+%     
+% %     w = [0 -1; 1 0];
+% % 
+% %     W = expm(wedge(-dt*v));
+% %     Ad = [W(1:2,1:2), w*W(1:2,3); zeros(1,2) 1];
+%    
+%     F = getF(dt, v);
+%     P = F*P*F';
+%     G = G*myExp(dt*v);
+%     
+% end
+% P
+figure(1), clf;
+hold on;
+
+
+L = chol(P)';
+% L = sqrt(P);
+% L = diag([5,0,0.2,1,1,0.1]);
+for s = 1:5000
+   
+    sample = L(1:3, 1:3)*randn(3,1);
+%     sample(2) = 0;
+    Sample = wedge(sample);
+    tmp = G*expm(Sample);
+    plot(tmp(1,3), tmp(2,3), 'g*')
+    
+end
+plot(G(1,3), G(2,3), 'ko');
+
+%% ominus derivative
+rng('default');
+v = (rand(3,1)-0.5)*4;
+u = (rand(3,1)-0.5)*4;
+g1 = expm(wedge(v));
+d1 = [1;0;0];
+d2 = [0;1;0];
+d3 = [0;0;1];
+dt = 1e-2;
+
+g2 = g1*expm(wedge(u));
+g2d1 = g1*expm(wedge(d1*dt))*expm(wedge(u));
+g2d2 = g1*expm(wedge(d2*dt))*expm(wedge(u));
+g2d3 = g1*expm(wedge(d3*dt))*expm(wedge(u));
+
+[ev1, eu1] = ominus(g2,u,g2d1,u);
+ev1 = ev1/dt;
+eu1 = eu1/dt;
+
+[ev2, eu2] = ominus(g2,u,g2d2,u);
+ev2 = ev2/dt;
+eu2 = eu2/dt;
+
+[ev3, eu3] = ominus(g2,u,g2d3,u);
+ev3 = ev3/dt;
+eu3 = eu3/dt;
+
+M = [eu1,eu2,eu3]
+
+T = adjoint(expm(wedge(u)))
+q = T(1:3,1);
+Q = [zeros(2,2) [-q(2);q(1)]; zeros(1,3)]
+
+
+function [v,u] = ominus(g1,u1,g2,u2) 
+
+v = vee(logm(inv(g2)*g1))
+Jl_inv(v)
+Jr_inv(v)
+
+u = -Jl_inv(v)*u2 + Jr_inv(v)*u1;
+
+
+end
+
+function Ad = adjoint(g) 
+w = [0 -1; 1 0];
+Ad = [g(1:2,1:2), -w*g(1:2,3); zeros(1,2) 1];
+end
+
 function h = getH(R,w)
 W = [0 -w; w 0];
     h = [R*expm(W) zeros(2,4)];
@@ -74,8 +184,8 @@ end
 function F = getF(delta,  u) 
 w = [0 -1; 1 0];
 
-U = expm(wedge(-delta*u));
-Ad = [U(1:2,1:2), w*U(1:2,3); zeros(1,2) 1];
+U = inv(expm(wedge(delta*u)));
+Ad = [U(1:2,1:2), -w*U(1:2,3); zeros(1,2) 1];
 
 F = [ Ad Jr(delta*u)*delta; zeros(3,3) eye(3)];
 
@@ -145,7 +255,7 @@ function V = myV(u)
 
 th = u;
 
-if abs(th) < 0.000001
+if abs(th) < 1e-7
     V = eye(2);
 else
    V =  sin(th)*eye(2)/th + (1-cos(th))/th*ssm(1);

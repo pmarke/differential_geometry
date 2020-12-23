@@ -91,7 +91,7 @@
 \begin_body
 
 \begin_layout Title
-R-RANSAC with Lie Groups
+Multiple Target Tracking on Lie Groups Using Recursive-RANSAC
 \end_layout
 
 \begin_layout Section
@@ -99,13 +99,56 @@ Introduction
 \end_layout
 
 \begin_layout Standard
-Optimal algorithms for the multiple target tracking (MTT) problem are not
- feasible in real time due to their computational complexities; therefore,
- many suboptimal approaches have been developed which can be implemented
- in real time.
- Some of these common algorithms are the global nearest neighbor (GNN),
- the joint probabilistic data association filter (JPDAF), the multiple hypothesi
-s tracking (MHT), and the probabilistic multi-hypothesis tracker (PHMT).
+Target tracking is challenging field of research since it deals with tracking
+ a target whose internal forces are unknown.
+ Some other challenges to target tracking are computational complexities,
+ fitting a system model to the target, identifying the number of targets
+ in a surveillance region, initializing tracks (target models) of targets,
+ and determining if a track represents an actual target.
+ The latter challenges are often removed, depending on the type of tracking
+ algorithm, by assuming that the target type is known and thus the system
+ model is known, the number of targets are known, and tracks are initialized.
+ 
+\end_layout
+
+\begin_layout Standard
+There exists optimal algorithms for multiple target tracking (MTT) such
+ as the multiple hypothesis tracking (MHT) .The MHT algorithm is a batch
+ tracker that uses a hard data association technique.
+ It is an optimal algorithm since it considers all possible measurement
+ associations in order to create the hypotheses tree.
+ While MHT is an optimal algorithm, it is not feasible unless appropriate
+ techniques are used to limit the number of generated hypotheses: pruning,
+ merging, sliding window, etc.
+ When these techniques are used, the algorithm is suboptimal.
+ Lastly, the algorithm is capable of initializing and pruning tracks.
+ There are two variants of MHT: measurement-oriented (MO-MHT) 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Reid1979"
+literal "true"
+
+\end_inset
+
+ and track-oriented (TO-MHT) 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Kurien1990"
+literal "true"
+
+\end_inset
+
+.
+ The TO-MHT is capable of real time tracking for moderately simple tracking
+ scenarios.
+ Because of these limitations, we rely on suboptimal tracking algorithms.
+\end_layout
+
+\begin_layout Standard
+Some of these common suboptimal algorithms are the global nearest neighbor
+ (GNN), the joint probabilistic data association filter (JPDAF), the probabilist
+ic multi-hypothesis tracker (PHMT) and the probability hypothesis density
+ (PHD).
  Each of these algorithms have variants that trade optimality for computational
  feasibility.
  There are also many other MTT algorithms which we will not discussed here
@@ -120,7 +163,7 @@ literal "true"
  for a survey of the more common algorithms.
  We briefly present some of these common algorithms in order to compare
  and contrast them.
- (Add something about PHD filter)
+ 
 \end_layout
 
 \begin_layout Standard
@@ -174,36 +217,6 @@ literal "true"
 \end_layout
 
 \begin_layout Standard
-The MHT algorithm is a batch tracker that uses a hard data association technique.
- It is an optimal algorithm since it considers all possible measurement
- associations in order to create the hypotheses tree.
- There are two different versions of MHT: measurement-oriented (MO-MHT)
- 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Reid1979"
-literal "true"
-
-\end_inset
-
- and track-oriented (TO-MHT) 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Kurien1990"
-literal "true"
-
-\end_inset
-
-.
- While MHT is an optimal algorithm, it is not feasible unless appropriate
- techniques are used to limit the number of generated hypotheses: pruning,
- merging, sliding window, etc.
- When these techniques are used, the algorithm is suboptimal.
- Lastly, the algorithm is capable of initializing and pruning tracks.
- 
-\end_layout
-
-\begin_layout Standard
 The PHMT is a soft data association algorithm that relaxes the criteria
  that a track can only produce at most one measurement per time step.
  It does this by using a combination of the maximum likelihood and expectation
@@ -240,22 +253,25 @@ literal "true"
 .
  A variant of the PHMT operates on a windowed batch of data, and can be
  used as a single-scan tracker.
+ Regardless of the variant of the PHMT, this method requires an additional
+ scheme to prune and merge tracks.
  
 \end_layout
 
 \begin_layout Standard
-Recursive random sample consensus (R-RANSAC) is a recently new MTT algorithm
- with a modular paradigm.
- Unlike the MTT algorithms previously discussed that rely on additional
- initialization scheme or a computationally extensive hypotheses tree to
- initialize tracks, R-RANSAC uses RANSAC over a windowed batch of data to
- initialize tracks.
- Once tracks are initialized, it uses any single-scan tracker (GNN, JPDAF,
- PDAF, PHMT, ect) to update the tracks.
- In addition, it manages the tracks by pruning and merging them.
+The PHD ...
+ Talk about it with references.
+ 
+\end_layout
+
+\begin_layout Standard
+A recently new MTT algorithm is Recursive Random Sample Consensus (R-RANSAC).
+ It has a modular paradigm that can be easily implemented in real time,
+ and is capable of track initialization, pruning, and merging.
  Another novelty of the algorithm is that the surveillance region doesn't
- need to be fixed, but can be moved provided that a transformation is available
- to transform measurements and tracks.
+ need to be fixed, but can change provided that a transformation is available
+ to transform measurements and tracks from the previous surveillance to
+ the current one.
 \end_layout
 
 \begin_layout Standard
@@ -295,65 +311,19 @@ literal "true"
 
 \end_inset
 
-, which resulted in many different versions of R-RANSAC.
+, which resulted in many different variants of R-RANSAC.
  This paper aims at aggregating the best contributions while adding some
  of our own improvements.
  Our specific contributions include removing the constraint that measurements
- come at a fixed time interval, improving the criteria for a good track
- using a probabilistic frame work, allowing the measurement and process
+ come at a fixed time interval, improving the criteria for determining if
+ a track represents an actual target, allowing the measurement and process
  noise covariance to change at every time step, extending the theory of
  R-RANSAC to any Lie group, modifying the model merging method and give
  several example implementation.
 \end_layout
 
 \begin_layout Standard
-The rest of the paper is outlined as follows.
- In section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:Lie-Theory-Review"
-
-\end_inset
-
- we give a brief review of Lie theory to establish important notation, in
- section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:Problem-Description"
-
-\end_inset
-
- we present a more detailed description of the problem with assumptions,
- in section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:Modular-Paradigm"
-
-\end_inset
-
- we present the modular paradigm.
- Sections 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:Lie-Group-Probability"
-
-\end_inset
-
-- 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:LMLE-Simplification"
-
-\end_inset
-
- go into more detail on specific parts of R-RANSAC, and in section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:Examples"
-
-\end_inset
-
- we present examples.
+The rest of the paper is outlined as follows...
 \end_layout
 
 \begin_layout Standard
@@ -375,9 +345,8 @@ name "sec:Lie-Theory-Review"
 \end_layout
 
 \begin_layout Standard
-The objective of this section is to provide a review of the pertinent concepts
- of Lie theory to establish notation.
- We assume that the reader is familiar with Lie group and Lie algebra theory.
+Lie theory is an extensive topic which we cannot cover in this paper; thus,
+ we required the reader to be familiar with Lie theory.
  For those unfamiliar with this material, we refer the interested reader
  primarily to 
 \begin_inset CommandInset citation
@@ -418,6 +387,11 @@ literal "true"
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Standard
+The objective of this section is to provide a brief review and establish
+ notation of the pertinent concepts of Lie theory.
  In this document we will focus on targets with a discrete system model
  and constant velocity, this is merely to simplify the presentation of the
  material.
@@ -680,7 +654,7 @@ The adjoint of
 \begin_inset Formula $\mathfrak{g}$
 \end_inset
 
-, and is denoted and generically defined as 
+ and is denoted and generically defined as 
 \begin_inset Formula 
 \begin{align*}
 Ad_{g}:\mathfrak{g} & \to\mathfrak{g};\quad\left(u\right)\mapsto gug^{-1}
@@ -895,7 +869,7 @@ literal "false"
 
 \begin_layout Standard
 An infinitesimal generator corresponding to 
-\begin_inset Formula $u\in\mathfrak{g}$
+\begin_inset Formula $v\in\mathfrak{g}$
 \end_inset
 
  is a smooth vector field on 
@@ -905,7 +879,7 @@ An infinitesimal generator corresponding to
  defined as 
 \begin_inset Formula 
 \[
-\xi_{u}\left(g\right)=\left.\frac{d}{dt}\right|_{t=0}g\boxplus\left(tu\right)
+\xi_{u}\left(g\right)=\left.\frac{d}{dt}\right|_{t=0}g\boxplus\left(tv\right)
 \]
 
 \end_inset
@@ -919,6 +893,79 @@ This is a very simplified definition that serves our purpose in deriving
  For a more formal and encompassing definition of an infinitesimal generator,
  we refer the reader to the authors already mentioned.
  
+\end_layout
+
+\begin_layout Standard
+The targets will be modeled using a constant velocity system.
+ The state is a new group formed from the semidirect product of the Lie
+ group and the corresponding Euclidean space denoted 
+\begin_inset Formula $x=\left(g,v\right)\in G\ltimes E$
+\end_inset
+
+.
+ It's group operator and inverse are defined as 
+\begin_inset Formula 
+\begin{align*}
+x_{1}\bullet x_{2} & =\left(g_{1}g_{2},\mathbf{Ad}_{g_{2}^{-1}}v_{1}+v_{2}\right),\\
+x_{1}^{-1} & =\left(g_{1}^{-1},-\mathbf{Ad}_{g_{1}}v_{1}\right).
+\end{align*}
+
+\end_inset
+
+The purpose of the adjoints in the group operator is to transform the velocity
+ to the proper tangent space so that they can be added together.
+ 
+\end_layout
+
+\begin_layout Standard
+The Lie algebra and the corresponding Euclidean space of 
+\begin_inset Formula $G\ltimes E$
+\end_inset
+
+ are 
+\begin_inset Formula $\mathfrak{g}\ltimes E$
+\end_inset
+
+ and 
+\begin_inset Formula $E\ltimes E$
+\end_inset
+
+.
+ The exponential and logarithmic maps are defined as 
+\begin_inset Formula 
+\begin{align*}
+\text{Exp}\left(\left(a,b\right)\right) & =\left(\text{Exp}\left(a\right),J_{r}\left(a\right)b\right)\\
+\text{Log}\left(\left(g,v\right)\right) & =\left(\text{Log}\left(g\right),J_{r}^{-1}\left(\text{Log}\left(g\right)\right)v\right),
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $\left(a,b\right)\in E\ltimes E$
+\end_inset
+
+ and 
+\begin_inset Formula $\left(g,v\right)\in G\ltimes E$
+\end_inset
+
+.
+ Lastly, the ominus operator is 
+\begin_inset Formula 
+\[
+\left(g_{1},v_{1}\right)\ominus\left(g_{2},v_{2}\right)=\left(e,-J_{\ell}^{-1}\left(e\right)v_{2}+J_{r}^{-1}\left(e\right)v_{1}\right),
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula 
+\[
+e=\text{Log}\left(g_{2}^{-1}g_{1}\right).
+\]
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
@@ -6931,9 +6978,9 @@ where
 \begin_inset Formula 
 \begin{align*}
 H_{1} & =R\left(\psi\right),\\
-h_{2} & =-\pi_{e_{3}}\left(d/n\right),\\
+h_{2} & =-\pi_{e_{3}}\left(\frac{pn^{\top}}{d}\right),\\
 h_{3}^{\top} & =0,\\
-h_{4} & =1-e_{3}\left(d/n\right).
+h_{4} & =1-e_{3}\left(\frac{pn^{\top}}{d}\right).
 \end{align*}
 
 \end_inset
@@ -6953,7 +7000,8 @@ noprefix "false"
 
 \end_inset
 
-, but under the assumptions we can simplify the transformations to 
+, but under the specified assumptions we can simplify the transformations
+ to 
 \begin_inset Formula 
 \begin{align*}
 g\left(H,t^{n^{-}}\right) & =\frac{H_{1}t^{n^{-}}+h_{2}}{h_{4}},\\
@@ -7036,129 +7084,91 @@ The state
  
 \begin_inset Formula 
 \[
-x^{n}\approx T\left(H,\hat{x}^{n^{-}}\right)+C\delta x^{n^{-}},
+x^{n}\ominus T\left(H,x^{n^{-}}\right)\approx x^{n}\ominus T\left(H,\hat{x}^{n^{-}}\right)-C\delta x^{n^{-}},
 \]
 
 \end_inset
 
 Where 
-\begin_inset Formula $T$
-\end_inset
-
- is the transformation of the state evaluated at the state estimate and
- 
 \begin_inset Formula $C$
 \end_inset
 
  is defined as 
 \begin_inset Formula 
 \[
-C=\frac{\partial T\left(H,x^{n^{-}}\right)}{\partial x^{n^{-}}}
+C=-\left.\frac{\partial x^{n}\ominus T\left(H,x^{n^{-}}\right)}{\partial x^{n^{-}}}\right|_{x^{n^{-}}=\hat{x}^{n^{-}}}.
 \]
 
 \end_inset
 
-
-\end_layout
-
-\begin_layout Subsection
-Homography NVIP SE2
-\end_layout
-
-\begin_layout Standard
-When working with a camera and tracking a target whose manifold configuration
- is 
-\begin_inset Formula $SE\left(2\right)$
+To calculate 
+\begin_inset Formula $C$
 \end_inset
 
-, tracking is done in the normalized virtual image frame (NVIF).
- In other words, the normalized virtual image plane is parallel to the ground
- and the virtual optical axis is pointing down to the Earth's core.
- Tracking has to be done in the NVIF, because when the UAS pitches or rolls,
- the circular trajectory of the target becomes an ellipse which doesn't
- follow the constraint that the target has constant velocity.
- 
-\end_layout
-
-\begin_layout Standard
-Tracking targets in the NVIF simplifies the homography to 
+ we can decompose it into blocks
 \begin_inset Formula 
 \[
-H=\begin{bmatrix}R\left(\psi\right) & -\pi_{e_{3}}P/d\\
-0 & 1-e_{3}^{\top}P/d
-\end{bmatrix}
+C=\begin{bmatrix}C_{11} & C_{12}\\
+C_{21} & C_{22}
+\end{bmatrix}.
 \]
 
 \end_inset
 
-where 
-\begin_inset Formula $R\left(\psi\right)$
-\end_inset
-
- is the rotation of the UAS due to yaw, 
-\begin_inset Formula $P$
-\end_inset
-
- is the translation of the UAS, 
-\begin_inset Formula $d$
-\end_inset
-
- is the distance the UAS is from the tracking plane and 
-\begin_inset Formula $\pi_{e_{3}}$
-\end_inset
-
- is the projection onto the plane orthogonal to 
-\begin_inset Formula $e_{3}$
-\end_inset
-
-.
- Using the decomposition of the homography
-\begin_inset Formula 
-\[
-H=\begin{bmatrix}H_{1} & h_{2}\\
-h_{3}^{\top} & h_{4}
-\end{bmatrix},
-\]
-
-\end_inset
-
-the position, rotation and velocity transformation is 
-\begin_inset Formula 
-\[
-g\left(H,\rho^{c}\right)=\frac{H_{1}\rho^{c}+h_{2}}{h_{4}}
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
+The first block is 
 \begin_inset Formula 
 \begin{align*}
-R & ^{n}=H_{1}R^{c}\\
-\dot{\rho}^{n} & =\frac{\rho^{c}}{h_{4}}\\
-\omega^{n} & =\omega^{c}.
+C_{11} & =-\left.\frac{\partial g^{n}\ominus T_{1}\left(H,g^{n^{-}}\right)}{\partial g^{n^{-1}}}\right|_{x^{n^{-}}=\hat{x}^{n^{-}}}\\
+ & =\underbrace{J_{1}\left(g^{n}\ominus T_{1}\left(H,g^{n^{-}}\right)\right)}_{I}\left.\frac{\partial T_{1}\left(H,g^{n^{-}}\right)}{g^{n^{-}}}\right|_{x^{n^{-}}=\hat{x}^{n^{-}}}\\
+ & =\left.\frac{\partial T_{1}\left(H,g^{n^{-}}\right)}{g^{n^{-}}}\right|_{x^{n^{-}}=\hat{x}^{n^{-}}}\\
+ & =\text{diag}\left(\frac{1}{h_{4}},\frac{1}{h_{4}},1\right),
 \end{align*}
 
 \end_inset
 
-The covariance transformation is 
+where 
+\begin_inset Formula $T_{1}$
+\end_inset
+
+ is the part of the transformation 
+\begin_inset Formula $T$
+\end_inset
+
+ pertaining to transforming the pose.
+ 
+\end_layout
+
+\begin_layout Proof
+The off diagonal blocks are both zero matrices, and the last block is 
 \begin_inset Formula 
-\[
-C^{n}=TC^{c}T^{\top}
-\]
+\begin{align*}
+C_{22} & =-\left.\frac{\partial u^{n}\ominus T_{2}\left(H,u^{n^{-}}\right)}{\partial u^{n^{-}}}\right|_{x^{n^{-}}=\hat{x}^{n^{-}}}\\
+ & =J_{l}\left(u^{n}\ominus T_{2}\left(H,u^{n^{-}}\right)\right)\left.\frac{\partial T_{2}\left(H,u^{n^{-}}\right)}{\partial u^{n^{-}}}\right|_{x^{n^{-}}=\hat{x}^{n^{-}}}\\
+ & =\left.\frac{\partial T_{2}\left(H,u^{n^{-}}\right)}{\partial u^{n^{-}}}\right|_{x^{n^{-}}=\hat{x}^{n^{-}}}\\
+ & =\text{diag}\left(\frac{1}{h_{4}},\frac{1}{h^{4}},1\right),
+\end{align*}
 
 \end_inset
 
 where 
-\begin_inset Formula $C$
+\begin_inset Formula $T_{2}$
 \end_inset
 
- is the covariance and 
+ is the part of the transformation 
+\begin_inset Formula $T$
+\end_inset
+
+ pertaining to transforming the veclocity.
+ The second diagonal term in 
+\begin_inset Formula $C_{22}$
+\end_inset
+
+ pertains to the velocity that is perpendicular to the heading which we
+ contrain it to be zero; thus, it is not part of the covariance and can
+ be dropped to get 
 \begin_inset Formula 
 \[
-T=\text{diag}\left(\frac{1}{h_{4}},\frac{1}{h_{4}},1,\frac{1}{h_{4}},1\right).
+C_{22}=\text{diag}\left(\frac{1}{h_{4}},1\right).
 \]
 
 \end_inset
@@ -7166,10 +7176,16 @@ T=\text{diag}\left(\frac{1}{h_{4}},\frac{1}{h_{4}},1,\frac{1}{h_{4}},1\right).
 
 \end_layout
 
-\begin_layout Standard
-The 5th entry is really zero since we assume that the body velocity in the
- left and right direction is zero.
- 
+\begin_layout Proof
+Putting all of the blocks together yields 
+\begin_inset Formula 
+\[
+C=\text{diag}\left(\frac{1}{h_{4}},\frac{1}{h_{4}},1,\frac{1}{h_{4}},1\right).
+\]
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
