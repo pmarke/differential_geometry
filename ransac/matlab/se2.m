@@ -155,7 +155,7 @@ dt = 1e-2;
 % 
 % M = [eu1,eu2,eu3];
 % 
-% T = Adjoint(expm(wedge(-u)));
+T = Adjoint(expm(wedge(-u)));
 
 % 
 ssm(1)*u(3)*T(1:2,1:2)
@@ -180,7 +180,9 @@ eu3 = eu3/dt;
 
 M = [eu1,eu2,eu3]
 
--adjoint(u)*Jl_inv(-u)
+adjoint(u)*Jr(u) - eye(3)
+
+adjoint(Jr(u)*v)*v
 
 function [v,u] = ominus(g1,u1,g2,u2) 
 

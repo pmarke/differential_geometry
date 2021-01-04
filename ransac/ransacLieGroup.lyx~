@@ -8582,9 +8582,12 @@ where
 
  are the bernouli numbers, and 
 \begin_inset Formula 
-\[
-v=-\mathbf{Ad}_{\text{Exp}\left(-U\right)}.
-\]
+\begin{align*}
+v & =g_{m^{1}}\ominus g_{m^{2}}\\
+ & =\text{Log}\left(\text{Exp}\left(-U\right)\text{Exp\left(-\alpha\right)}g_{m^{1}}^{-1}g_{m^{1}}\text{Exp}\left(U\right)\right)\\
+ & =\text{Log}\left(\text{Exp}\left(-\mathbf{Ad}_{\text{Exp}\left(-U\right)}\alpha\right)\right)\\
+ & =-\mathbf{Ad}_{\text{Exp}\left(-U\right)}\alpha.
+\end{align*}
 
 \end_inset
 
