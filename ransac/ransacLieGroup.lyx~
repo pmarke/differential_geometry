@@ -8252,30 +8252,22 @@ name "lem:transition_func_jacobians"
 \end_inset
 
  Let 
-\begin_inset Formula $g_{m^{1}},g_{m^{2}}\in G$
+\begin_inset Formula $x_{m_{1}},x_{m_{2}}\in G\times E$
 \end_inset
 
- where 
-\begin_inset Formula $m^{1}\neq m^{2}$
+ be 
+\begin_inset Formula $2n$
 \end_inset
 
- and 
-\begin_inset Formula $G$
+ dimensional states where 
+\begin_inset Formula $m_{1}\neq m_{2}$
 \end_inset
 
- is 
-\begin_inset Formula $n$
-\end_inset
-
- dimensional, 
-\begin_inset Formula $w_{m^{1}}^{g},u_{m^{1}}\in E$
+, and have the relation, 
+\begin_inset Formula $f$
 \end_inset
 
 , 
-\begin_inset Formula $w_{m^{1}}^{u}\in E$
-\end_inset
-
- and 
 \begin_inset ERT
 status open
 
@@ -8298,8 +8290,8 @@ name "eq:general_system"
 
 \begin_inset Formula 
 \begin{align*}
-g_{m^{2}} & =g_{m^{1}}\text{Exp}\left(U\right)\\
-u_{m^{2}} & =u_{m^{1}}+\Delta w_{m^{1}}^{u},
+g_{m_{2}} & =g_{m_{1}}\text{Exp}\left(U\right)\\
+u_{m_{2}} & =u_{m_{1}}+\Delta w_{m_{1}}^{u},
 \end{align*}
 
 \end_inset
@@ -8321,91 +8313,144 @@ end{subequations}
 \begin_inset Formula $\Delta=\delta_{m^{1}:m^{2}}$
 \end_inset
 
- and 
+, 
 \begin_inset Formula $U=\Delta\left(u_{m^{1}}+w_{m^{1}}^{g}+\frac{\Delta}{2}w_{m^{1}}^{u}\right)$
 \end_inset
 
-, then 
-\begin_inset Formula 
-\begin{align}
-\frac{\partial g_{m^{2}}\ominus\left(g_{m^{1}}\text{Exp}\left(U\right)\right)}{\partial g_{m^{1}}} & =-\mathbf{Ad}_{\exp\left(-\Delta\hat{u}_{m^{1}}\right)}\label{eq:partial_gm2_om_gm2_gm1}\\
-\frac{\partial g_{m^{2}}\ominus\left(g_{m^{1}}\text{Exp}\left(U\right)\right)}{\partial u_{m^{1}}} & =-J_{r}\left(-\Delta\hat{u}_{m^{1}}\right)\label{eq:partial_gm2_om_gm1_um1}\\
-\frac{\partial\left(u_{m^{2}}-u_{m^{1}}-\Delta w_{m^{1}}\right)}{\partial g_{m^{1}}} & =\mathbf{ad}_{\Delta\hat{u}_{m^{1}}}\mathbf{Ad}_{\text{Exp}\left(-\Delta\hat{u}_{m^{1}}\right)}\label{eq:partial_um2_om_um1_gm1}\\
-\frac{\partial\left(u_{m^{2}}-u_{m^{1}}-\Delta w_{m^{1}}\right)}{\partial u_{m^{1}}} & =-I_{n\times n}\label{eq:partial_um2_om_um1_um1}
-\end{align}
-
-\end_inset
-
-
-\begin_inset Formula 
-\begin{align}
-\frac{\partial g_{m^{2}}\ominus\left(g_{m^{1}}\text{Exp}\left(U\right)\right)}{\partial w_{m^{1}}^{g}} & =-J_{r}\left(\Delta\hat{u}_{m^{1}}\right)\Delta\label{eq:partial_gm2_om_gm1_wgm1}\\
-\frac{\partial g_{m^{2}}\ominus\left(g_{m^{1}}\text{Exp}\left(U\right)\right)}{\partial w_{m^{1}}^{u}} & =-J_{r}\left(\Delta\hat{u}_{m^{1}}\right)\frac{\Delta^{2}}{2}\label{eq:partial_gm2_om_gm1_wum1}\\
-\frac{\partial\left(u_{m^{2}}-u_{m^{1}}-\Delta w_{m^{1}}\right)}{\partial w_{m^{1}}^{g}} & =0_{n\times n}\label{eq:partial_um2_om_um1_wgm1}\\
-\frac{\partial\left(u_{m^{2}}-u_{m^{1}}-\Delta w_{m^{1}}\right)}{\partial w_{m^{1}}^{u}} & =-I_{n\times n}\Delta\label{eq:partial_um2_om_um1_wum1}
-\end{align}
-
-\end_inset
-
-where the derivatives are evaluated at 
-\begin_inset Formula $g_{m^{1}}=\hat{g}_{m^{1}}$
-\end_inset
-
-, 
-\begin_inset Formula $u_{m^{1}}=\hat{u}_{m^{1}}$
-\end_inset
-
-, 
-\begin_inset Formula $w_{m^{1}}^{g}=w_{m^{1}}^{u}=0$
+ and , 
+\begin_inset Formula $w_{m_{1}}^{g},w_{m_{1}}^{u}\in E$
 \end_inset
 
 .
- 
+ Let 
+\begin_inset Formula $F_{\Delta}$
+\end_inset
+
+ and 
+\begin_inset Formula $G_{\Delta}$
+\end_inset
+
+ denote the matrix Jacobians 
+\begin_inset Formula 
+\[
+F_{\Delta}=-\left.\frac{\partial x_{m_{2}}\ominus x_{m_{1}}}{\partial x_{m_{1}}}\right|_{\begin{array}{c}
+x_{m_{1}}=\hat{x}_{m_{1}}\\
+w_{m_{1}}=0
+\end{array}}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+G_{\Delta}=-\left.\frac{\partial x_{m_{2}}\ominus x_{m_{1}}}{\partial w_{m_{1}}}\right|_{\begin{array}{c}
+x_{m_{1}}=\hat{x}_{m_{1}}\\
+w_{m_{1}}=0
+\end{array}},
+\]
+
+\end_inset
+
+with 
+\begin_inset Formula $\hat{x}_{m_{1}}\in G\times E$
+\end_inset
+
+ and 
+\begin_inset Formula $w_{m_{1}}=\left(w_{m_{1}}^{g},w_{m_{1}}^{u}\right)$
+\end_inset
+
+.
+ In block form, the matrix Jacobians are
+\begin_inset Formula 
+\begin{align*}
+F_{\Delta} & =\begin{bmatrix}F_{11} & F_{12}\\
+F_{21} & F_{22}
+\end{bmatrix}\\
+G_{\Delta} & =\begin{bmatrix}G_{11} & G_{12}\\
+G_{21} & G_{22}
+\end{bmatrix}
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula 
+\begin{align*}
+F_{11} & \triangleq-\left.\frac{\partial g_{m_{2}}\ominus\left(g_{m_{1}}\text{Exp}\left(U\right)\right)}{\partial g_{m_{1}}}\right|_{\begin{array}{c}
+x_{m_{1}}=\hat{x}_{m_{1}}\\
+w_{m_{1}}=0
+\end{array}}\\
+F_{12} & \triangleq-\left.\frac{\partial g_{m_{2}}\ominus\left(g_{m_{1}}\text{Exp}\left(U\right)\right)}{\partial u_{m_{1}}}\right|_{\begin{array}{c}
+x_{m_{1}}=\hat{x}_{m_{1}}\\
+w_{m_{1}}=0
+\end{array}}\\
+F_{21} & \triangleq-\left.\frac{\partial\left(-J_{\ell}^{-1}\left(e\right)+J_{r}^{-1}\left(e\right)\right)U}{\partial g_{m_{1}}}\right|_{\begin{array}{c}
+x_{m_{1}}=\hat{x}_{m_{1}}\\
+w_{m_{1}}=0
+\end{array}}\\
+F_{22} & \triangleq-\left.\frac{\partial\left(-J_{\ell}^{-1}\left(e\right)+J_{r}^{-1}\left(e\right)\right)U}{\partial u_{m_{1}}}\right|_{\begin{array}{c}
+x_{m_{1}}=\hat{x}_{m_{1}}\\
+w_{m_{1}}=0
+\end{array}}
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+G_{11} & \triangleq-\left.\frac{\partial g_{m_{2}}\ominus\left(g_{m_{1}}\text{Exp}\left(U\right)\right)}{\partial w_{m_{1}}^{g}}\right|_{\begin{array}{c}
+x_{m_{1}}=\hat{x}_{m_{1}}\\
+w_{m_{1}}=0
+\end{array}}\\
+G_{12} & \triangleq-\left.\frac{\partial g_{m_{2}}\ominus\left(g_{m_{1}}\text{Exp}\left(U\right)\right)}{\partial w_{m_{1}}^{u}}\right|_{\begin{array}{c}
+x_{m_{1}}=\hat{x}_{m_{1}}\\
+w_{m_{1}}=0
+\end{array}}\\
+G_{21} & \triangleq-\left.\frac{\partial\left(-J_{\ell}^{-1}\left(e\right)+J_{r}^{-1}\left(e\right)\right)U}{\partial w_{m_{1}}^{g}}\right|_{\begin{array}{c}
+x_{m_{1}}=\hat{x}_{m_{1}}\\
+w_{m_{1}}=0
+\end{array}}\\
+G_{22} & \triangleq-\left.\frac{\partial\left(-J_{\ell}^{-1}\left(e\right)+J_{r}^{-1}\left(e\right)\right)U}{\partial w_{m_{2}}^{u}}\right|_{\begin{array}{c}
+x_{m_{1}}=\hat{x}_{m_{1}}\\
+w_{m_{1}}=0
+\end{array}}
+\end{align*}
+
+\end_inset
+
+with 
+\begin_inset Formula $e=\text{Log}\left(g_{m_{1}}^{-1}g_{m_{2}}\right)$
+\end_inset
+
+, then the block matrices are
+\begin_inset Formula 
+\begin{align}
+F_{11} & =\mathbf{Ad}_{\exp\left(-\Delta\hat{u}_{m_{1}}\right)}\label{eq:partial_gm2_om_gm2_gm1}\\
+F_{12} & =\Delta J_{r}\left(\Delta\hat{u}_{m_{1}}\right)\label{eq:partial_gm2_om_gm1_um1}\\
+F_{21} & =-\mathbf{ad}_{\Delta\hat{u}_{m_{1}}}\mathbf{Ad}_{\text{Exp}\left(-\Delta\hat{u}_{m_{1}}\right)}\label{eq:partial_um2_om_um1_gm1}\\
+F_{22} & =-\Delta\mathbf{ad}_{\Delta\hat{u}_{m^{1}}}J_{r}\left(\Delta\hat{u}_{m^{1}}\right)+\Delta I_{n\times n}\label{eq:partial_um2_om_um1_um1}
+\end{align}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align}
+G_{11} & =\Delta J_{r}\left(\Delta\hat{u}_{m_{1}}\right)\label{eq:partial_gm2_om_gm1_wgm1}\\
+G_{12} & =\frac{\Delta^{2}}{2}J_{r}\left(\Delta\hat{u}_{m_{1}}\right)\label{eq:partial_gm2_om_gm1_wum1}\\
+G_{21} & =-\frac{\Delta}{2}\mathbf{ad}_{\Delta\hat{u}_{m^{1}}}J_{r}\left(\Delta\hat{u}_{m^{1}}\right)+\frac{\Delta}{2}I_{n\times n}\label{eq:partial_um2_om_um1_wgm1}\\
+G_{22} & =-\Delta\mathbf{ad}_{\Delta\hat{u}_{m^{1}}}J_{r}\left(\Delta\hat{u}_{m^{1}}\right)+\Delta I_{n\times n}\label{eq:partial_um2_om_um1_wum1}
+\end{align}
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Proof
-The derivations of equations 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:partial_um2_om_um1_gm1"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-,
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:partial_um2_om_um1_um1"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-, 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:partial_um2_om_um1_wgm1"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-, and 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:partial_um2_om_um1_wum1"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
- are trivial and we will not prove them.
- For the other derivations, we will use the following properties where 
+We begin by first recalling the following properties where 
 \begin_inset Formula $A,B\in G$
 \end_inset
 
@@ -8423,7 +8468,7 @@ noprefix "false"
 \end_inset
 
 Also, let 
-\begin_inset Formula $g_{m^{2}}\ominus\left(g_{m^{1}}\text{Exp}\left(U\right)\right)=\delta g_{m^{1}}=0$
+\begin_inset Formula $g_{m_{2}}\ominus\left(g_{m_{2}}\text{Exp}\left(U\right)\right)=\delta g_{m_{1}}=0$
 \end_inset
 
  according to 
@@ -8441,26 +8486,19 @@ noprefix "false"
 \end_layout
 
 \begin_layout Proof
-We begin with proving equation 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:partial_gm2_om_gm2_gm1"
-plural "false"
-caps "false"
-noprefix "false"
-
+The block matrix 
+\begin_inset Formula $F_{11}$
 \end_inset
 
- which is equal to
+ is
 \begin_inset Formula 
 \begin{align*}
- & \lim_{\alpha\to0}\frac{g_{m^{2}}\ominus g_{m^{1}}\text{Exp\left(\alpha\right)}\text{Exp}\left(U\right)-\delta g_{m^{1}}}{\alpha}\\
- & =\lim_{\alpha\to0}\frac{\text{Log}\left(\text{Exp\left(-U\right)\text{Exp}\left(-\alpha\right)}g_{m^{1}}^{-1}g_{m^{2}}\right)}{\alpha}\\
- & =\lim_{\alpha\to0}\frac{\text{Log}\left(\text{Exp\left(-U\right)\text{Exp}\left(-\alpha\right)}g_{m^{1}}^{-1}g_{m^{2}}\right)}{\alpha}\\
- & =\lim_{\alpha\to0}\frac{\text{Log}\left(\text{Exp}\left(-\mathbf{Ad}_{\text{Exp}\left(-U\right)}\alpha\right)\text{Exp\left(-U\right)}g_{m^{1}}^{-1}g_{m^{2}}\right)}{\alpha}\\
- & =\lim_{\alpha\to0}\frac{\text{Log}\left(\text{Exp}\left(-\mathbf{Ad}_{\text{Exp}\left(-U\right)}\alpha\right)\right)}{\alpha}\\
- & =\lim_{\alpha\to0}\frac{-\mathbf{Ad}_{\text{Exp}\left(-U\right)}\alpha}{\alpha}\\
- & =-\mathbf{Ad}_{\text{Exp}\left(-\Delta\hat{u}_{m^{1}}\right)}\quad\text{Once evaluated}.
+ & -\lim_{\alpha\to0}\frac{g_{m_{2}}\ominus g_{m_{1}}\text{Exp\left(\alpha\right)}\text{Exp}\left(U\right)-\delta g_{m_{1}}}{\alpha}\\
+ & =-\lim_{\alpha\to0}\frac{\text{Log}\left(\text{Exp\left(-U\right)\text{Exp}\left(-\alpha\right)}g_{m_{1}}^{-1}g_{m_{2}}\right)}{\alpha}\\
+ & =-\lim_{\alpha\to0}\frac{\text{Log}\left(\text{Exp}\left(-\mathbf{Ad}_{\text{Exp}\left(-U\right)}\alpha\right)\text{Exp\left(-U\right)}g_{m_{1}}^{-1}g_{m_{2}}\right)}{\alpha}\\
+ & =-\lim_{\alpha\to0}\frac{\text{Log}\left(\text{Exp}\left(-\mathbf{Ad}_{\text{Exp}\left(-U\right)}\alpha\right)\right)}{\alpha}\\
+ & =\lim_{\alpha\to0}\frac{\mathbf{Ad}_{\text{Exp}\left(-U\right)}\alpha}{\alpha}\\
+ & =\mathbf{Ad}_{\text{Exp}\left(-\Delta\hat{u}_{m_{1}}\right)}\quad\text{Once evaluated}.
 \end{align*}
 
 \end_inset
@@ -8479,30 +8517,24 @@ noprefix "false"
 \end_layout
 
 \begin_layout Proof
-Next we prove equation 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:partial_gm2_om_gm1_um1"
-plural "false"
-caps "false"
-noprefix "false"
-
+The block matrix 
+\begin_inset Formula $F_{12}$
 \end_inset
 
- which is equal to 
+ is equal to
 \begin_inset Formula 
 \begin{align*}
- & \lim_{\alpha\to0}\frac{g_{m^{2}}\ominus g_{m^{1}}\text{Exp}\left(U+\Delta\alpha\right)-\delta g_{m^{1}}}{\alpha}\\
- & =\lim_{\alpha\to0}\frac{\text{Log}\left(\text{Exp\left(-U-\Delta\alpha\right)}g_{m^{1}}^{-1}g_{m^{2}}\right)}{\alpha}\\
- & =\lim_{\alpha\to0}\frac{\text{Log}\left(\text{Exp}\left(-J_{l}\left(-\Delta U\right)\Delta\alpha\right)\text{Exp\left(-\Delta U\right)}g_{m^{1}}^{-1}g_{m^{2}}\right)}{\alpha}\\
- & =\lim_{\alpha\to0}\frac{\text{Log}\left(\text{Exp}\left(-J_{r}\left(\Delta U\right)\Delta\alpha\right)\right)}{\alpha}\\
- & =-J_{r}\left(\Delta\hat{u}_{m^{1}}\right)\quad\text{Once evaluated}.
+ & -\lim_{\alpha\to0}\frac{g_{m_{2}}\ominus g_{m_{1}}\text{Exp}\left(U+\Delta\alpha\right)-\delta g_{m_{1}}}{\alpha}\\
+ & =-\lim_{\alpha\to0}\frac{\text{Log}\left(\text{Exp\left(-U-\Delta\alpha\right)}g_{m_{1}}^{-1}g_{m_{2}}\right)}{\alpha}\\
+ & =-\lim_{\alpha\to0}\frac{\text{Log}\left(\text{Exp}\left(-J_{l}\left(-U\right)\Delta\alpha\right)\text{Exp\left(-U\right)}g_{m_{1}}^{-1}g_{m_{2}}\right)}{\alpha}\\
+ & =-\lim_{\alpha\to0}\frac{\text{Log}\left(\text{Exp}\left(-J_{r}\left(\Delta U\right)\Delta\alpha\right)\right)}{\alpha}\\
+ & =\Delta J_{r}\left(\Delta\hat{u}_{m_{1}}\right)\quad\text{Once evaluated}.
 \end{align*}
 
 \end_inset
 
 where we used the property of the left and right Jacobians, 
-\begin_inset Formula $J_{l}\left(-\Delta U\right)=J_{r}\left(\Delta U\right)$
+\begin_inset Formula $J_{l}\left(-U\right)=J_{r}\left(U\right)$
 \end_inset
 
 , as discussed in section 
@@ -8515,63 +8547,52 @@ noprefix "false"
 
 \end_inset
 
-,
-\end_layout
-
-\begin_layout Proof
-The proofs for equations 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:partial_um2_om_um1_wgm1"
-plural "false"
-caps "false"
-noprefix "false"
-
+.
+ The proofs for 
+\begin_inset Formula $G_{11}$
 \end_inset
 
  and 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:partial_um2_om_um1_wum1"
-plural "false"
-caps "false"
-noprefix "false"
-
+\begin_inset Formula $G_{12}$
 \end_inset
 
- are similar to the proof for equation 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:partial_gm2_om_gm1_um1"
-plural "false"
-caps "false"
-noprefix "false"
-
+ are similar to the proof for 
+\begin_inset Formula $F_{12}$
 \end_inset
 
 .
 \end_layout
 
 \begin_layout Proof
-Next we prove equation 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:partial_um2_om_um1_gm1"
-plural "false"
-caps "false"
-noprefix "false"
+Let 
+\begin_inset Formula $\alpha\in E$
+\end_inset
+
+, and
+\begin_inset Formula 
+\begin{align*}
+v & =g_{m_{2}}\ominus\left(g_{m_{1}}\text{Exp}\left(\alpha\right)\text{Exp}\left(U\right)\right)\\
+ & =\text{Log}\left(\text{Exp}\left(-U\right)\text{Exp\left(-\alpha\right)}g_{m_{1}}^{-1}g_{m_{2}}\right)\\
+ & =\text{Log}\left(\text{Exp}\left(-\mathbf{Ad}_{\text{Exp}\left(-U\right)}\alpha\right)\right)\\
+ & =-\mathbf{Ad}_{\text{Exp}\left(-U\right)}\alpha,
+\end{align*}
 
 \end_inset
 
- which is equal to 
+then 
+\begin_inset Formula $F_{21}$
+\end_inset
+
+ is equal to 
 \begin_inset Formula 
 \begin{align*}
- & \lim_{\alpha\to0}\frac{\left(J_{r}^{-1}\left(v\right)-J_{\ell}^{-1}\left(v\right)\right)U-\delta g_{m^{1}}}{\alpha}\\
- & =\lim_{\alpha\to0}\frac{\left(\sum_{n=0}^{\infty}\frac{\beta_{n}}{n!}\left(-\mathbf{ad}_{\left(-\mathbf{Ad}_{\text{Exp\left(-U\right)}}\alpha\right)}\right)^{n}\right.}{\alpha}\\
- & +\frac{\left.\sum_{n=0}^{\infty}\frac{\beta_{n}}{n!}\left(\mathbf{ad}_{\left(\mathbf{-Ad}_{\text{Exp\left(-U\right)}}\alpha\right)}\right)^{n}\right)U}{\alpha}\\
- & =\lim_{\alpha\to0}\frac{-2\left(\sum_{n=0}^{\infty}\frac{\beta_{2n+1}}{2n+1!}\left(\mathbf{ad}_{\left(\mathbf{-Ad}_{\text{Exp\left(-U\right)}}\alpha\right)}\right)^{2n+1}\right)U}{\alpha}\\
- & =\lim_{\alpha\to0}\frac{\mathbf{ad}_{\left(\mathbf{-Ad}_{\text{Exp\left(-U\right)}}\alpha\right)}U}{\alpha}\\
- & =\mathbf{ad}_{U}\mathbf{Ad}_{\text{Exp\left(-U\right)}}
+ & -\lim_{\alpha\to0}\frac{\left(J_{r}^{-1}\left(v\right)-J_{l}^{-1}\left(v\right)\right)U-\delta g_{m_{1}}}{\alpha}\\
+ & =-\lim_{\alpha\to0}\left(\frac{\sum_{n=0}^{\infty}\frac{\beta_{n}}{n!}\left(-\mathbf{ad}_{v}\right)^{n}}{\alpha}\right.\\
+ & +\left.\frac{\sum_{n=0}^{\infty}\frac{\beta_{n}}{n!}\left(\mathbf{ad}_{v}\right)^{n}}{\alpha}\right)U\\
+ & =-\lim_{\alpha\to0}\frac{-2\left(\sum_{n=0}^{\infty}\frac{\beta_{2n+1}}{2n+1!}\left(\mathbf{ad}_{v}\right)^{2n+1}\right)U}{\alpha}\\
+ & =-\lim_{\alpha\to0}\frac{\mathbf{ad}_{v}U}{\alpha}\\
+ & =-\lim_{\alpha\to0}\frac{\mathbf{ad}_{U}\mathbf{Ad}_{\text{Exp\left(-U\right)}}\alpha}{\alpha}\\
+ & =-\mathbf{ad}_{\Delta\hat{u}_{m_{1}}}\mathbf{Ad}_{\text{Exp\left(-\Delta\hat{u}_{m_{1}}\right)}}\quad\text{Once evaluated}
 \end{align*}
 
 \end_inset
@@ -8580,18 +8601,57 @@ where
 \begin_inset Formula $\beta_{n}$
 \end_inset
 
- are the bernouli numbers, and 
+ are the bernouli numbers.
+ 
+\end_layout
+
+\begin_layout Proof
+Let 
+\begin_inset Formula $\alpha\in E$
+\end_inset
+
+, and 
 \begin_inset Formula 
 \begin{align*}
-v & =g_{m^{1}}\ominus g_{m^{2}}\\
- & =\text{Log}\left(\text{Exp}\left(-U\right)\text{Exp\left(-\alpha\right)}g_{m^{1}}^{-1}g_{m^{1}}\text{Exp}\left(U\right)\right)\\
- & =\text{Log}\left(\text{Exp}\left(-\mathbf{Ad}_{\text{Exp}\left(-U\right)}\alpha\right)\right)\\
- & =-\mathbf{Ad}_{\text{Exp}\left(-U\right)}\alpha.
+b & =g_{m_{2}}\ominus\left(g_{m_{1}}\text{Exp}\left(U+\Delta\alpha\right)\right)\\
+ & =\text{Log}\left(\text{Exp}\left(-U-\Delta\alpha\right)g_{m_{1}}^{-1}g_{m_{2}}\right)\\
+ & \approx-J_{l}\left(-U\right)\Delta\alpha\\
+ & =-\Delta J_{r}\left(U\right)\alpha,
 \end{align*}
 
 \end_inset
 
+then 
+\begin_inset Formula $F_{22}$
+\end_inset
 
+ is equal to 
+\begin_inset Formula 
+\begin{align*}
+ & -\lim_{\alpha\to0}\frac{-J_{l}^{-1}\left(b\right)\left(U+\Delta\alpha\right)+J_{r}^{-1}\left(b\right)U-\delta g_{m^{1}}}{\alpha}\\
+ & =-\lim_{\alpha\to0}\frac{\mathbf{ad}_{b}U-J_{l}^{-1}\left(b\right)\Delta\alpha}{\alpha}\\
+ & -\lim_{\alpha\to0}\frac{-\mathbf{ad}_{U}b-J_{l}^{-1}\left(b\right)\Delta\alpha}{\alpha}\\
+ & =-\Delta\mathbf{ad}_{U}J_{r}\left(U\right)+\Delta\lim_{\alpha\to0}\sum_{n=0}^{\infty}\frac{\beta_{n}}{n!}\left(\mathbf{ad}_{b}\right)^{n}\\
+ & =-\Delta\mathbf{ad}_{U}J_{r}\left(U\right)+\Delta I_{n\times n}\\
+ & =-\Delta\mathbf{ad}_{\Delta\hat{u}_{m_{1}}}J_{r}\left(\mathbf{ad}_{\Delta\hat{u}_{m_{1}}}\right)+\Delta I_{n\times n}\quad\text{Once evaluated}.
+\end{align*}
+
+\end_inset
+
+The proofs for 
+\begin_inset Formula $G_{21}$
+\end_inset
+
+ and 
+\begin_inset Formula $G_{22}$
+\end_inset
+
+ are similar to the proof for 
+\begin_inset Formula $F_{22}$
+\end_inset
+
+.
+ 
 \end_layout
 
 \begin_layout Lemma
