@@ -74,19 +74,26 @@ rng('default');
 u = rand(1);
 U = [0 -u; u 0];
 t = rand(2,1);
-G = [expm(U), t; 0 0 1]
+G = [expm(U), t; 0 0 1];
 G0 = G;
 v = (rand(3,1)-0.5)*20;
 v(2) = 0;
 v(3) = 0.1;
-dt = 0.1;
-% P = diag([1,1,0.2,1,1,0.1]);
-P = diag([1,1,0.4]);
-iter = 20;
+dt = 1.1;
+P = diag([1,1,0.2,1,1,1]);
+% P = diag([1,1,0.4]);
+
+
+
+iter = 30;
 for i = 1:iter
     
-    F = getF(dt, v);
-    F = F(1:3,1:3);
+    F = [eye(3), Jr(dt*v);
+        zeros(3,3), adjoint(dt*v)*Jr(dt*v) - eye(3)];
+        
+    
+%     F = getF(dt, v);
+%     F = F(1:3,1:3);
     P = F*P*F';
     G = G*myExp(dt*v);
     
@@ -97,14 +104,11 @@ end
 
 % for i = 1:iter
 %     
-% %     w = [0 -1; 1 0];
-% % 
-% %     W = expm(wedge(-dt*v));
-% %     Ad = [W(1:2,1:2), w*W(1:2,3); zeros(1,2) 1];
+% 
 %    
-%     F = getF(dt, v);
+%     F = getF(dt, -v);
 %     P = F*P*F';
-%     G = G*myExp(dt*v);
+%     G = G*myExp(-dt*v);
 %     
 % end
 % P
@@ -115,7 +119,7 @@ hold on;
 L = chol(P)';
 % L = sqrt(P);
 % L = diag([5,0,0.2,1,1,0.1]);
-for s = 1:5000
+for s = 1:500
    
     sample = L(1:3, 1:3)*randn(3,1);
 %     sample(2) = 0;
@@ -134,33 +138,44 @@ g1 = expm(wedge(v));
 d1 = [1;0;0];
 d2 = [0;1;0];
 d3 = [0;0;1];
-dt = 1e-2;
+dt = 1e-5;
 
 delta = 0.5;
 U = delta*u;
 
 g2 = g1*expm(wedge(U));
-g2d1 = g1*expm(wedge(d1*dt))*expm(wedge(U));
-g2d2 = g1*expm(wedge(d2*dt))*expm(wedge(U));
-g2d3 = g1*expm(wedge(d3*dt))*expm(wedge(U));
+U2 = Adjoint(expm(-wedge(U)))*u;
+g2d1 = g1*expm(wedge(d1*dt))*expm(wedge(Adjoint(expm(-wedge(d1*dt)))*U));
+g2d2 = g1*expm(wedge(d2*dt))*expm(wedge(Adjoint(expm(-wedge(d2*dt)))*U));
+g2d3 = g1*expm(wedge(d3*dt))*expm(wedge(Adjoint(expm(-wedge(d3*dt)))*U));
 
-[ev1, eu1] = ominus(g2,U,g2d1,U);
+U2d1 = Adjoint(expm(-wedge(d1*dt)))*Adjoint(expm(-wedge(U)))*u
+U2d2 = Adjoint(expm(-wedge(d2*dt)))*Adjoint(expm(-wedge(U)))*u
+U2d3 = Adjoint(expm(-wedge(d3*dt)))*Adjoint(expm(-wedge(U)))*u
+
+% U2d1 = Adjoint(expm(-wedge(Adjoint(expm(-wedge(d1*dt)))*U)))*Adjoint(expm(-wedge(d1*dt)))*u;
+% U2d2 = Adjoint(expm(-wedge(Adjoint(expm(-wedge(d2*dt)))*U)))*Adjoint(expm(-wedge(d2*dt)))*u;
+% U2d3 = Adjoint(expm(-wedge(Adjoint(expm(-wedge(d3*dt)))*U)))*Adjoint(expm(-wedge(d3*dt)))*u;
+
+[ev1, eu1] = ominus(g2,U2,g2d1,U2d1);
 ev1 = ev1/dt;
 eu1 = eu1/dt;
 
-[ev2, eu2] = ominus(g2,U,g2d2,U);
+[ev2, eu2] = ominus(g2,U2,g2d2,U2d2);
 ev2 = ev2/dt;
 eu2 = eu2/dt;
 
-[ev3, eu3] = ominus(g2,U,g2d3,U);
+[ev3, eu3] = ominus(g2,U2,g2d3,U2d3);
 ev3 = ev3/dt;
 eu3 = eu3/dt;
-
+N = [ev1, ev2, ev3]
 M = [eu1,eu2,eu3]
 
 T = Adjoint(expm(wedge(-U)));
-adjoint(U)*T
-% 
+
+delta*Jr(U)
+% adjoint(U)*T
+%% 
 delta = 0.5;
 U = delta*u;
 dt = 1e-5;
@@ -181,7 +196,10 @@ eu2 = eu2/dt;
 ev3 = ev3/dt;
 eu3 = eu3/dt;
 
+N = [ev1, ev2, ev3]
 M = [eu1,eu2,eu3]
+
+Jr(U)*delta
 
 adjoint(U)*Jr(U)*delta - eye(3)*delta
 

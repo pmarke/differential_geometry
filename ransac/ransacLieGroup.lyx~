@@ -8421,7 +8421,7 @@ end{subequations}
  denote the matrix Jacobians 
 \begin_inset Formula 
 \[
-F_{\Delta}=-\frac{\partial x_{m_{2}}\ominus x_{m_{1}}}{\partial x_{m_{1}}}
+F=-\frac{\partial x_{m_{2}}\ominus x_{m_{1}}}{\partial x_{m_{1}}}
 \]
 
 \end_inset
@@ -8429,90 +8429,35 @@ F_{\Delta}=-\frac{\partial x_{m_{2}}\ominus x_{m_{1}}}{\partial x_{m_{1}}}
 
 \begin_inset Formula 
 \[
-G_{\Delta}=\frac{\partial x_{m_{2}}\ominus x_{m_{1}}}{\partial w_{m_{1}}},
+G=\frac{\partial x_{m_{2}}\ominus x_{m_{1}}}{\partial w_{m_{1}}},
 \]
 
 \end_inset
 
 with 
-\begin_inset Formula $\hat{x}_{m_{1}}\in G\times E$
-\end_inset
-
- and 
 \begin_inset Formula $w_{m_{1}}=\left(w_{m_{1}}^{g},w_{m_{1}}^{u}\right)$
 \end_inset
 
-.
- In block form, the matrix Jacobians are
+ which can be represented in block form
 \begin_inset Formula 
 \begin{align*}
-F_{\Delta} & =\begin{bmatrix}F_{11} & F_{12}\\
+F & =\begin{bmatrix}F_{11} & F_{12}\\
 F_{21} & F_{22}
 \end{bmatrix}\\
-G_{\Delta} & =\begin{bmatrix}G_{11} & G_{12}\\
+G & =\begin{bmatrix}G_{11} & G_{12}\\
 G_{21} & G_{22}
-\end{bmatrix}
+\end{bmatrix},
 \end{align*}
 
 \end_inset
 
-where 
-\begin_inset Formula 
-\begin{align*}
-F_{11} & \triangleq-\left.\frac{\partial g_{m_{2}}\ominus\left(g_{m_{1}}\text{Exp}\left(U\right)\right)}{\partial g_{m_{1}}}\right|_{\begin{array}{c}
-x_{m_{1}}=\hat{x}_{m_{1}}\\
-w_{m_{1}}=0
-\end{array}}\\
-F_{12} & \triangleq-\left.\frac{\partial g_{m_{2}}\ominus\left(g_{m_{1}}\text{Exp}\left(U\right)\right)}{\partial u_{m_{1}}}\right|_{\begin{array}{c}
-x_{m_{1}}=\hat{x}_{m_{1}}\\
-w_{m_{1}}=0
-\end{array}}\\
-F_{21} & \triangleq-\left.\frac{\partial\left(-J_{\ell}^{-1}\left(e\right)+J_{r}^{-1}\left(e\right)\right)U}{\partial g_{m_{1}}}\right|_{\begin{array}{c}
-x_{m_{1}}=\hat{x}_{m_{1}}\\
-w_{m_{1}}=0
-\end{array}}\\
-F_{22} & \triangleq-\left.\frac{\partial\left(-J_{\ell}^{-1}\left(e\right)+J_{r}^{-1}\left(e\right)\right)U}{\partial u_{m_{1}}}\right|_{\begin{array}{c}
-x_{m_{1}}=\hat{x}_{m_{1}}\\
-w_{m_{1}}=0
-\end{array}}
-\end{align*}
-
-\end_inset
-
-
-\begin_inset Formula 
-\begin{align*}
-G_{11} & \triangleq-\left.\frac{\partial g_{m_{2}}\ominus\left(g_{m_{1}}\text{Exp}\left(U\right)\right)}{\partial w_{m_{1}}^{g}}\right|_{\begin{array}{c}
-x_{m_{1}}=\hat{x}_{m_{1}}\\
-w_{m_{1}}=0
-\end{array}}\\
-G_{12} & \triangleq-\left.\frac{\partial g_{m_{2}}\ominus\left(g_{m_{1}}\text{Exp}\left(U\right)\right)}{\partial w_{m_{1}}^{u}}\right|_{\begin{array}{c}
-x_{m_{1}}=\hat{x}_{m_{1}}\\
-w_{m_{1}}=0
-\end{array}}\\
-G_{21} & \triangleq-\left.\frac{\partial\left(-J_{\ell}^{-1}\left(e\right)+J_{r}^{-1}\left(e\right)\right)U}{\partial w_{m_{1}}^{g}}\right|_{\begin{array}{c}
-x_{m_{1}}=\hat{x}_{m_{1}}\\
-w_{m_{1}}=0
-\end{array}}\\
-G_{22} & \triangleq-\left.\frac{\partial\left(-J_{\ell}^{-1}\left(e\right)+J_{r}^{-1}\left(e\right)\right)U}{\partial w_{m_{2}}^{u}}\right|_{\begin{array}{c}
-x_{m_{1}}=\hat{x}_{m_{1}}\\
-w_{m_{1}}=0
-\end{array}}
-\end{align*}
-
-\end_inset
-
-with 
-\begin_inset Formula $e=\text{Log}\left(g_{m_{1}}^{-1}g_{m_{2}}\right)$
-\end_inset
-
-, then the block matrices are
+then the block matrices are
 \begin_inset Formula 
 \begin{align}
-F_{11} & =\mathbf{Ad}_{\exp\left(-\Delta\hat{u}_{m_{1}}\right)}\label{eq:partial_gm2_om_gm2_gm1}\\
-F_{12} & =\Delta J_{r}\left(\Delta\hat{u}_{m_{1}}\right)\label{eq:partial_gm2_om_gm1_um1}\\
-F_{21} & =-\mathbf{ad}_{\Delta\hat{u}_{m_{1}}}\mathbf{Ad}_{\text{Exp}\left(-\Delta\hat{u}_{m_{1}}\right)}\label{eq:partial_um2_om_um1_gm1}\\
-F_{22} & =-\Delta\mathbf{ad}_{\Delta\hat{u}_{m_{1}}}J_{r}\left(\Delta\hat{u}_{m_{1}}\right)+\Delta I_{n\times n}\label{eq:partial_um2_om_um1_um1}
+F_{11} & =\mathbf{Ad}_{\exp\left(-U\right)}\label{eq:partial_gm2_om_gm2_gm1}\\
+F_{12} & =\Delta J_{r}\left(\Delta U\right)\label{eq:partial_gm2_om_gm1_um1}\\
+F_{21} & =-\mathbf{ad}_{U}\mathbf{Ad}_{\text{Exp}\left(-U\right)}\label{eq:partial_um2_om_um1_gm1}\\
+F_{22} & =-\Delta\mathbf{ad}_{U}J_{r}\left(U\right)+\Delta I_{n\times n}\label{eq:partial_um2_om_um1_um1}
 \end{align}
 
 \end_inset
@@ -8520,15 +8465,49 @@ F_{22} & =-\Delta\mathbf{ad}_{\Delta\hat{u}_{m_{1}}}J_{r}\left(\Delta\hat{u}_{m_
 
 \begin_inset Formula 
 \begin{align}
-G_{11} & =\Delta J_{r}\left(\Delta\hat{u}_{m_{1}}\right)\label{eq:partial_gm2_om_gm1_wgm1}\\
-G_{12} & =\frac{\Delta^{2}}{2}J_{r}\left(\Delta\hat{u}_{m_{1}}\right)\label{eq:partial_gm2_om_gm1_wum1}\\
-G_{21} & =-\frac{\Delta}{2}\mathbf{ad}_{\Delta\hat{u}_{m_{1}}}J_{r}\left(\Delta\hat{u}_{m_{1}}\right)+\frac{\Delta}{2}I_{n\times n}\label{eq:partial_um2_om_um1_wgm1}\\
-G_{22} & =-\Delta\mathbf{ad}_{\Delta\hat{u}_{m_{1}}}J_{r}\left(\Delta\hat{u}_{m_{1}}\right)+\Delta I_{n\times n}\label{eq:partial_um2_om_um1_wum1}
+G_{11} & =\Delta J_{r}\left(U\right)\label{eq:partial_gm2_om_gm1_wgm1}\\
+G_{12} & =\frac{\Delta^{2}}{2}J_{r}\left(U\right)\label{eq:partial_gm2_om_gm1_wum1}\\
+G_{21} & =-\frac{\Delta}{2}\mathbf{ad}_{U}J_{r}\left(U\right)+\frac{\Delta}{2}I_{n\times n}\label{eq:partial_um2_om_um1_wgm1}\\
+G_{22} & =-\Delta\mathbf{ad}_{U}J_{r}\left(U\right)+\Delta I_{n\times n}\label{eq:partial_um2_om_um1_wum1}
 \end{align}
 
 \end_inset
 
 
+\end_layout
+
+\begin_layout Proof
+We being by proving the Jacobian 
+\begin_inset Formula $F$
+\end_inset
+
+.
+ We suppose directly that 
+\begin_inset Formula $y=g_{m_{1}}\text{Exp}\left(U\right)$
+\end_inset
+
+, then according to the chain rule,
+\begin_inset Formula 
+\begin{align*}
+F & =-\frac{\partial x_{m_{2}}\ominus y}{\partial x_{m_{1}}}=-\frac{\partial x_{m_{2}}\ominus y}{\partial y}\frac{\partial y}{\partial x_{m_{1}}}\\
+ & =J_{l}\left(x_{m_{2}}\ominus y\right)\frac{\partial y}{\partial x_{m_{1}}},
+\end{align*}
+
+\end_inset
+
+where the fact 
+\begin_inset Formula $-\frac{\partial x_{m_{2}}\ominus y}{\partial y}=J_{l}\left(x_{m_{2}}\ominus y\right)$
+\end_inset
+
+ comes from 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Sola2018"
+literal "false"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Proof

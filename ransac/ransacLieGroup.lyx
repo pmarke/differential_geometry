@@ -897,44 +897,42 @@ This is a very simplified definition that serves our purpose in deriving
 
 \begin_layout Standard
 The targets will be modeled using a constant velocity system.
- The state is a new group formed from the semidirect product of the Lie
- group and the corresponding Euclidean space denoted 
-\begin_inset Formula $x=\left(g,v\right)\in G\ltimes E$
+ The state is a new group formed from the direct product of the Lie group
+ and the corresponding Euclidean space denoted 
+\begin_inset Formula $x=\left(g,v\right)\in G\times E$
 \end_inset
 
 .
  It's group operator and inverse are defined as 
 \begin_inset Formula 
 \begin{align*}
-x_{1}\bullet x_{2} & =\left(g_{1}g_{2},\mathbf{Ad}_{g_{2}^{-1}}v_{1}+v_{2}\right),\\
-x_{1}^{-1} & =\left(g_{1}^{-1},-\mathbf{Ad}_{g_{1}}v_{1}\right).
+x_{1}\bullet x_{2} & =\left(g_{1}g_{2},v_{1}+v_{2}\right),\\
+x_{1}^{-1} & =\left(g_{1}^{-1},-v_{1}\right).
 \end{align*}
 
 \end_inset
 
-The purpose of the adjoints in the group operator is to transform the velocity
- to the proper tangent space so that they can be added together.
- 
+
 \end_layout
 
 \begin_layout Standard
 The Lie algebra and the corresponding Euclidean space of 
-\begin_inset Formula $G\ltimes E$
+\begin_inset Formula $G\times E$
 \end_inset
 
  are 
-\begin_inset Formula $\mathfrak{g}\ltimes E$
+\begin_inset Formula $\mathfrak{g}\times E$
 \end_inset
 
  and 
-\begin_inset Formula $E\ltimes E$
+\begin_inset Formula $E\times E$
 \end_inset
 
 .
  The exponential and logarithmic maps are defined as 
 \begin_inset Formula 
 \begin{align*}
-\text{Exp}\left(\left(a,b\right)\right) & =\left(\text{Exp}\left(a\right),J_{r}\left(a\right)b\right)\\
+\text{Exp}\left(\left(a,b\right)\right) & =\left(\text{Exp}\left(a\right),b\right)\\
 \text{Log}\left(\left(g,v\right)\right) & =\left(\text{Log}\left(g\right),J_{r}^{-1}\left(\text{Log}\left(g\right)\right)v\right),
 \end{align*}
 
