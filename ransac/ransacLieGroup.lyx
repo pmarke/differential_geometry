@@ -949,10 +949,83 @@ where
 \end_inset
 
 .
- Lastly, the ominus operator is 
+ 
+\end_layout
+
+\begin_layout Standard
+The adjoint of 
+\begin_inset Formula $G\ltimes E$
+\end_inset
+
+ is defined as 
 \begin_inset Formula 
 \[
-\left(g_{1},v_{1}\right)\ominus\left(g_{2},v_{2}\right)=\left(e,-J_{\ell}^{-1}\left(e\right)v_{2}+J_{r}^{-1}\left(e\right)v_{1}\right),
+Ad_{(g,v)}\left(a,b\right)=\left(\mathbf{Ad}_{g}a,\mathbf{Ad}_{g}\left(\mathbf{ad}_{v}a+b\right)\right),
+\]
+
+\end_inset
+
+and the matrix form is 
+\begin_inset Formula 
+\[
+\mathbf{Ad}_{\left(g,v\right)}=\begin{bmatrix}\mathbf{Ad}_{g} & 0\\
+\mathbf{Ad}_{g}\mathbf{ad}_{v} & \mathbf{Ad}_{g}
+\end{bmatrix}.
+\]
+
+\end_inset
+
+Let 
+\begin_inset Formula $\left(c,d\right)\in E\ltimes E$
+\end_inset
+
+, the adjoint of 
+\begin_inset Formula $E\ltimes E$
+\end_inset
+
+ is defined as 
+\begin_inset Formula 
+\[
+ad_{\left(a,b\right)}\left(c,d\right)=\left(\mathbf{ad}_{a}c,\mathbf{ad}_{b}c+\mathbf{ad}_{a}d\right),
+\]
+
+\end_inset
+
+and the matrix form is 
+\begin_inset Formula 
+\[
+\mathbf{ad}_{\left(a,c\right)}=\begin{bmatrix}\mathbf{ad}_{a} & 0\\
+\mathbf{ad}_{b} & \mathbf{ad}_{a}
+\end{bmatrix}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The right and left inverse Jacobians in matrix notation are 
+\begin_inset Formula 
+\begin{align*}
+J_{r}^{-1}\left(a,c\right) & =\sum_{j=0}^{\infty}\frac{\beta_{j}}{j!}\left(-\mathbf{ad}_{\left(a,c\right)}\right)^{j}\\
+J_{l}^{-1}\left(a,c\right) & =\sum_{j=0}^{\infty}\frac{\beta_{j}}{j!}\left(\mathbf{ad}_{\left(a,c\right)}\right)^{j}.
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Lastly, let 
+\begin_inset Formula $\left(g_{1},v_{1}\right),\left(g_{2},v_{2}\right)\in G\ltimes E$
+\end_inset
+
+, the ominus operator is 
+\begin_inset Formula 
+\[
+\left(g_{1},v_{1}\right)\ominus\left(g_{2},v_{2}\right)=\left(e,-J_{l}^{-1}\left(e\right)v_{2}+J_{r}^{-1}\left(e\right)v_{1}\right),
 \]
 
 \end_inset
@@ -966,6 +1039,21 @@ e=\text{Log}\left(g_{2}^{-1}g_{1}\right).
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+For more information about the semi direct product group see 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Engo2003"
+literal "false"
+
+\end_inset
+
+.
+ Also note that we have overloaded the functions believing that the context
+ will make it clear which function we are using.
+ 
 \end_layout
 
 \begin_layout Section
@@ -8252,7 +8340,7 @@ name "lem:transition_func_jacobians"
 \end_inset
 
  Let 
-\begin_inset Formula $x_{m_{1}},x_{m_{2}}\in G\times E$
+\begin_inset Formula $x_{m_{1}},x_{m_{2}}\in G\ltimes E$
 \end_inset
 
  be 
@@ -8323,20 +8411,17 @@ end{subequations}
 
 .
  Let 
-\begin_inset Formula $F_{\Delta}$
+\begin_inset Formula $F$
 \end_inset
 
  and 
-\begin_inset Formula $G_{\Delta}$
+\begin_inset Formula $G$
 \end_inset
 
  denote the matrix Jacobians 
 \begin_inset Formula 
 \[
-F_{\Delta}=-\left.\frac{\partial x_{m_{2}}\ominus x_{m_{1}}}{\partial x_{m_{1}}}\right|_{\begin{array}{c}
-x_{m_{1}}=\hat{x}_{m_{1}}\\
-w_{m_{1}}=0
-\end{array}}
+F=-\frac{\partial x_{m_{2}}\ominus x_{m_{1}}}{\partial x_{m_{1}}}
 \]
 
 \end_inset
@@ -8344,93 +8429,35 @@ w_{m_{1}}=0
 
 \begin_inset Formula 
 \[
-G_{\Delta}=-\left.\frac{\partial x_{m_{2}}\ominus x_{m_{1}}}{\partial w_{m_{1}}}\right|_{\begin{array}{c}
-x_{m_{1}}=\hat{x}_{m_{1}}\\
-w_{m_{1}}=0
-\end{array}},
+G=\frac{\partial x_{m_{2}}\ominus x_{m_{1}}}{\partial w_{m_{1}}},
 \]
 
 \end_inset
 
 with 
-\begin_inset Formula $\hat{x}_{m_{1}}\in G\times E$
-\end_inset
-
- and 
 \begin_inset Formula $w_{m_{1}}=\left(w_{m_{1}}^{g},w_{m_{1}}^{u}\right)$
 \end_inset
 
-.
- In block form, the matrix Jacobians are
+ which can be represented in block form
 \begin_inset Formula 
 \begin{align*}
-F_{\Delta} & =\begin{bmatrix}F_{11} & F_{12}\\
+F & =\begin{bmatrix}F_{11} & F_{12}\\
 F_{21} & F_{22}
 \end{bmatrix}\\
-G_{\Delta} & =\begin{bmatrix}G_{11} & G_{12}\\
+G & =\begin{bmatrix}G_{11} & G_{12}\\
 G_{21} & G_{22}
-\end{bmatrix}
+\end{bmatrix},
 \end{align*}
 
 \end_inset
 
-where 
-\begin_inset Formula 
-\begin{align*}
-F_{11} & \triangleq-\left.\frac{\partial g_{m_{2}}\ominus\left(g_{m_{1}}\text{Exp}\left(U\right)\right)}{\partial g_{m_{1}}}\right|_{\begin{array}{c}
-x_{m_{1}}=\hat{x}_{m_{1}}\\
-w_{m_{1}}=0
-\end{array}}\\
-F_{12} & \triangleq-\left.\frac{\partial g_{m_{2}}\ominus\left(g_{m_{1}}\text{Exp}\left(U\right)\right)}{\partial u_{m_{1}}}\right|_{\begin{array}{c}
-x_{m_{1}}=\hat{x}_{m_{1}}\\
-w_{m_{1}}=0
-\end{array}}\\
-F_{21} & \triangleq-\left.\frac{\partial\left(-J_{\ell}^{-1}\left(e\right)+J_{r}^{-1}\left(e\right)\right)U}{\partial g_{m_{1}}}\right|_{\begin{array}{c}
-x_{m_{1}}=\hat{x}_{m_{1}}\\
-w_{m_{1}}=0
-\end{array}}\\
-F_{22} & \triangleq-\left.\frac{\partial\left(-J_{\ell}^{-1}\left(e\right)+J_{r}^{-1}\left(e\right)\right)U}{\partial u_{m_{1}}}\right|_{\begin{array}{c}
-x_{m_{1}}=\hat{x}_{m_{1}}\\
-w_{m_{1}}=0
-\end{array}}
-\end{align*}
-
-\end_inset
-
-
-\begin_inset Formula 
-\begin{align*}
-G_{11} & \triangleq-\left.\frac{\partial g_{m_{2}}\ominus\left(g_{m_{1}}\text{Exp}\left(U\right)\right)}{\partial w_{m_{1}}^{g}}\right|_{\begin{array}{c}
-x_{m_{1}}=\hat{x}_{m_{1}}\\
-w_{m_{1}}=0
-\end{array}}\\
-G_{12} & \triangleq-\left.\frac{\partial g_{m_{2}}\ominus\left(g_{m_{1}}\text{Exp}\left(U\right)\right)}{\partial w_{m_{1}}^{u}}\right|_{\begin{array}{c}
-x_{m_{1}}=\hat{x}_{m_{1}}\\
-w_{m_{1}}=0
-\end{array}}\\
-G_{21} & \triangleq-\left.\frac{\partial\left(-J_{\ell}^{-1}\left(e\right)+J_{r}^{-1}\left(e\right)\right)U}{\partial w_{m_{1}}^{g}}\right|_{\begin{array}{c}
-x_{m_{1}}=\hat{x}_{m_{1}}\\
-w_{m_{1}}=0
-\end{array}}\\
-G_{22} & \triangleq-\left.\frac{\partial\left(-J_{\ell}^{-1}\left(e\right)+J_{r}^{-1}\left(e\right)\right)U}{\partial w_{m_{2}}^{u}}\right|_{\begin{array}{c}
-x_{m_{1}}=\hat{x}_{m_{1}}\\
-w_{m_{1}}=0
-\end{array}}
-\end{align*}
-
-\end_inset
-
-with 
-\begin_inset Formula $e=\text{Log}\left(g_{m_{1}}^{-1}g_{m_{2}}\right)$
-\end_inset
-
-, then the block matrices are
+then the block matrices are
 \begin_inset Formula 
 \begin{align}
-F_{11} & =\mathbf{Ad}_{\exp\left(-\Delta\hat{u}_{m_{1}}\right)}\label{eq:partial_gm2_om_gm2_gm1}\\
-F_{12} & =\Delta J_{r}\left(\Delta\hat{u}_{m_{1}}\right)\label{eq:partial_gm2_om_gm1_um1}\\
-F_{21} & =-\mathbf{ad}_{\Delta\hat{u}_{m_{1}}}\mathbf{Ad}_{\text{Exp}\left(-\Delta\hat{u}_{m_{1}}\right)}\label{eq:partial_um2_om_um1_gm1}\\
-F_{22} & =-\Delta\mathbf{ad}_{\Delta\hat{u}_{m_{1}}}J_{r}\left(\Delta\hat{u}_{m_{1}}\right)+\Delta I_{n\times n}\label{eq:partial_um2_om_um1_um1}
+F_{11} & =\mathbf{Ad}_{\exp\left(-U\right)}\label{eq:partial_gm2_om_gm2_gm1}\\
+F_{12} & =\Delta J_{r}\left(\Delta U\right)\label{eq:partial_gm2_om_gm1_um1}\\
+F_{21} & =-\mathbf{ad}_{U}\mathbf{Ad}_{\text{Exp}\left(-U\right)}\label{eq:partial_um2_om_um1_gm1}\\
+F_{22} & =-\Delta\mathbf{ad}_{U}J_{r}\left(U\right)+\Delta I_{n\times n}\label{eq:partial_um2_om_um1_um1}
 \end{align}
 
 \end_inset
@@ -8438,15 +8465,49 @@ F_{22} & =-\Delta\mathbf{ad}_{\Delta\hat{u}_{m_{1}}}J_{r}\left(\Delta\hat{u}_{m_
 
 \begin_inset Formula 
 \begin{align}
-G_{11} & =\Delta J_{r}\left(\Delta\hat{u}_{m_{1}}\right)\label{eq:partial_gm2_om_gm1_wgm1}\\
-G_{12} & =\frac{\Delta^{2}}{2}J_{r}\left(\Delta\hat{u}_{m_{1}}\right)\label{eq:partial_gm2_om_gm1_wum1}\\
-G_{21} & =-\frac{\Delta}{2}\mathbf{ad}_{\Delta\hat{u}_{m_{1}}}J_{r}\left(\Delta\hat{u}_{m_{1}}\right)+\frac{\Delta}{2}I_{n\times n}\label{eq:partial_um2_om_um1_wgm1}\\
-G_{22} & =-\Delta\mathbf{ad}_{\Delta\hat{u}_{m_{1}}}J_{r}\left(\Delta\hat{u}_{m_{1}}\right)+\Delta I_{n\times n}\label{eq:partial_um2_om_um1_wum1}
+G_{11} & =\Delta J_{r}\left(U\right)\label{eq:partial_gm2_om_gm1_wgm1}\\
+G_{12} & =\frac{\Delta^{2}}{2}J_{r}\left(U\right)\label{eq:partial_gm2_om_gm1_wum1}\\
+G_{21} & =-\frac{\Delta}{2}\mathbf{ad}_{U}J_{r}\left(U\right)+\frac{\Delta}{2}I_{n\times n}\label{eq:partial_um2_om_um1_wgm1}\\
+G_{22} & =-\Delta\mathbf{ad}_{U}J_{r}\left(U\right)+\Delta I_{n\times n}\label{eq:partial_um2_om_um1_wum1}
 \end{align}
 
 \end_inset
 
 
+\end_layout
+
+\begin_layout Proof
+We being by proving the Jacobian 
+\begin_inset Formula $F$
+\end_inset
+
+.
+ We suppose directly that 
+\begin_inset Formula $y=g_{m_{1}}\text{Exp}\left(U\right)$
+\end_inset
+
+, then according to the chain rule,
+\begin_inset Formula 
+\begin{align*}
+F & =-\frac{\partial x_{m_{2}}\ominus y}{\partial x_{m_{1}}}=-\frac{\partial x_{m_{2}}\ominus y}{\partial y}\frac{\partial y}{\partial x_{m_{1}}}\\
+ & =J_{l}\left(x_{m_{2}}\ominus y\right)\frac{\partial y}{\partial x_{m_{1}}},
+\end{align*}
+
+\end_inset
+
+where the fact 
+\begin_inset Formula $-\frac{\partial x_{m_{2}}\ominus y}{\partial y}=J_{l}\left(x_{m_{2}}\ominus y\right)$
+\end_inset
+
+ comes from 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Sola2018"
+literal "false"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Proof

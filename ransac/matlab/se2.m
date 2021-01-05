@@ -186,6 +186,16 @@ M = [eu1,eu2,eu3]
 adjoint(U)*Jr(U)*delta - eye(3)*delta
 
 
+%%
+u = rand(3,1);
+v = rand(3,1);
+z = rand(3,1);
+% adjoint(u)
+% adjoint(v)
+% adjoint(u)*adjoint(v) + adjoint(v)*adjoint(u)
+adjoint(u)*adjoint(u)
+% adjoint(u)*adjoint(v)*z
+% adjoint(v)*adjoint(u)*z
 
 function [v,u] = ominus(g1,u1,g2,u2) 
 
