@@ -868,37 +868,8 @@ literal "false"
 \end_layout
 
 \begin_layout Standard
-An infinitesimal generator corresponding to 
-\begin_inset Formula $v\in\mathfrak{g}$
-\end_inset
-
- is a smooth vector field on 
-\begin_inset Formula $G$
-\end_inset
-
- defined as 
-\begin_inset Formula 
-\[
-\xi_{u}\left(g\right)=\left.\frac{d}{dt}\right|_{t=0}g\boxplus\left(tv\right)
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-This is a very simplified definition that serves our purpose in deriving
- the discrete system model.
- For a more formal and encompassing definition of an infinitesimal generator,
- we refer the reader to the authors already mentioned.
- 
-\end_layout
-
-\begin_layout Standard
-The targets will be modeled using a constant velocity system.
- The state is a new group formed from the direct product of the Lie group
- and the corresponding Euclidean space denoted 
+We can from a new group from the direct product of the Lie group and the
+ corresponding Euclidean space denoted 
 \begin_inset Formula $x=\left(g,v\right)\in G\times E$
 \end_inset
 
@@ -939,11 +910,11 @@ The Lie algebra and the corresponding Euclidean space of
 \end_inset
 
 where 
-\begin_inset Formula $\left(a,b\right)\in E\ltimes E$
+\begin_inset Formula $\left(a,b\right)\in E\times E$
 \end_inset
 
  and 
-\begin_inset Formula $\left(g,v\right)\in G\ltimes E$
+\begin_inset Formula $\left(g,v\right)\in G\times E$
 \end_inset
 
 .
@@ -952,7 +923,7 @@ where
 
 \begin_layout Standard
 The adjoint of 
-\begin_inset Formula $G\ltimes E$
+\begin_inset Formula $G\times E$
 \end_inset
 
  is defined as 
@@ -974,11 +945,11 @@ and the matrix form is
 \end_inset
 
 Let 
-\begin_inset Formula $\left(c,d\right)\in E\ltimes E$
+\begin_inset Formula $\left(c,d\right)\in E\times E$
 \end_inset
 
 , the adjoint of 
-\begin_inset Formula $E\ltimes E$
+\begin_inset Formula $E\times E$
 \end_inset
 
  is defined as 
@@ -1021,7 +992,7 @@ J_{l}^{-1}\left(a,c\right) & =\begin{bmatrix}J_{r}^{-1}\left(a\right) & 0\\
 
 \begin_layout Standard
 Lastly, let 
-\begin_inset Formula $\left(g_{1},v_{1}\right),\left(g_{2},v_{2}\right)\in G\ltimes E$
+\begin_inset Formula $\left(g_{1},v_{1}\right),\left(g_{2},v_{2}\right)\in G\times E$
 \end_inset
 
 , the ominus operator is 
@@ -1070,134 +1041,228 @@ name "sec:Problem-Description"
 \end_layout
 
 \begin_layout Standard
-The objective is to track multiple dynamic targets by estimating their states
- given a set of measurements from multiple sensors without prior information
- about the number of targets.
- 
+R-RANSAC is designed to track multiple dynamic targets moving in a global
+ surveillance region (GSR).
+ Targets are observed via sensors.
+ Each sensor perceives a subset of the surveillance region called a local
+ surveillance region (LSR) which has a local frame that the data is expressed
+ in and a volume 
+\begin_inset Formula $S_{vol}^{s}$
+\end_inset
+
+; the superscript 
+\begin_inset Formula $s$
+\end_inset
+
+ is used to refer to the 
+\begin_inset Formula $s^{th}$
+\end_inset
+
+ source.
+ Measurements are extracted from the data using algorithms.
+ We call the unique sensor and algorithm pair a measurement source or source
+ for short.
+ In the case that multiple sources have the same sensor, it is possible
+ for duplication of information which, when incorporated into a state estimate
+ of a target, would lead to overconfidence of the state estimate.
+ We do not have a way to account for this except to assume it is minimal.
+ Since the measurements come from a local surveillance region, they must
+ be transformed into the global frame in which R-RANSAC tracks targets.
 \end_layout
 
 \begin_layout Standard
-The following notation is used throughout.
- We denote the current time using a subscript 
-\begin_inset Formula $k$
+A sensor scan occurs when a source produces new measurements.
+ Measurements from a source can be either false or true measurements.
+ We assume that false measurements are uniformly distributed in the LSR,
+ and that the number of false measurements from a source per sensor scan
+ can be modeled using a Poisson distribution with parameter 
+\begin_inset Formula $\Lambda$
 \end_inset
 
-, the next previous time using a subscript 
-\begin_inset Formula $k^{-}$
-\end_inset
-
-, and an arbitrary previous time using the subscript 
-\begin_inset Formula $m$
-\end_inset
-
- such that 
-\begin_inset Formula $m\leq k$
+ being the expected value.
+ The expected number of false measurements per unit volume is called the
+ spacial density and is denoted 
+\begin_inset Formula $\lambda^{s}=\frac{\Lambda^{s}}{S_{vol}^{s}}$
 \end_inset
 
 .
- We use 
-\begin_inset Formula $\delta_{k}$
+ We also assume that a measurement source provides at most one true measurement
+ per target every sensor scan with probability 
+\begin_inset Formula $P_{D}^{s}$
 \end_inset
 
- to denote the time elapsed from 
-\begin_inset Formula $k^{-}$
-\end_inset
-
- to 
-\begin_inset Formula $k$
-\end_inset
-
-, and 
-\begin_inset Formula $\delta_{m:k}$
-\end_inset
-
- to denote the time elapsed from 
-\begin_inset Formula $m$
-\end_inset
-
- to 
-\begin_inset Formula $k$
-\end_inset
-
- such that 
-\begin_inset Formula $\delta_{m:k},\delta_{k^{-}}\geq0$
-\end_inset
-
- and 
-\begin_inset Formula $\delta_{k:m}=-\delta_{m:k}$
-\end_inset
-
-.
- Lastly, a subscript of 
-\begin_inset Formula $0$
-\end_inset
-
- is used to denote the the time at the beginning of the time window, e.g,
- 
-\begin_inset Formula $\delta_{0:k}=\delta_{k-T_{W}:k}$
-\end_inset
-
-.
- 
+, i.e.
+ the probability of detection.
 \end_layout
 
 \begin_layout Standard
-Let the state of the system at time 
-\begin_inset Formula $k$
-\end_inset
+As measurements are received, they are associated to either an existing
+ track or a cluster which is a set of neighboring measurements that are
+ not associated to a track as described in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Yang2017"
+literal "false"
 
- be given by 
-\begin_inset Formula $x_{k}=\left(g_{k},u_{k}\right)\in G\times E$
-\end_inset
-
- where 
-\begin_inset Formula $g_{k}\in G$
-\end_inset
-
- and 
-\begin_inset Formula $u_{k}\in E$
 \end_inset
 
 .
- We assume the state transition model to be continuous, near constant velocity,
- and time invariant which we define as
+ A track is a tuple containing the state estimate of the target, 
+\begin_inset Formula $\hat{x}$
+\end_inset
+
+, corresponding error covariance, 
+\begin_inset Formula $P$
+\end_inset
+
+, consensus set, 
+\begin_inset Formula $\mathcal{CS}$
+\end_inset
+
+, model likelihood, 
+\begin_inset Formula $ML$
+\end_inset
+
+, and label, 
+\begin_inset Formula $L$
+\end_inset
+
+.
+ In other words, a track is the tuple 
+\begin_inset Formula $\mathcal{T}=\left(\hat{x},P,\mathcal{CS},ML,L\right)$
+\end_inset
+
+.
+ A consensus set is the set of associated measurements to the track, the
+ model likelihood is an indicator of how good the track represents a target;
+ discussed more in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Track-Likelihood"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, and the label is a unique numerical number used to identify tracks.
+\end_layout
+
+\begin_layout Standard
+We assume that the target's configuration manifold is a Lie group and can
+ be modeled using a discrete, dynamic, near constant velocity, time-invariant
+ model of the form
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{subequations}
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "eq:system"
+
+\end_inset
+
+ 
 \begin_inset Formula 
-\begin{align*}
-\dot{g}_{k} & =\xi_{u_{k}}\left(g_{k}\right)\\
-\dot{u}_{k} & =w_{k}^{u},
-\end{align*}
+\begin{align}
+x_{m_{2}} & =f\left(x_{m_{1}},w_{m_{2}},\delta_{m_{1}:m_{2}}\right)\\
+y_{m_{2}}^{s} & =h^{s}\left(x_{m_{2}},v_{m_{2}}\right),
+\end{align}
 
 \end_inset
 
-where 
-\begin_inset Formula $\xi_{u_{k}}\left(g_{k}\right)$
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{subequations}
+\end_layout
+
 \end_inset
 
- is an infinitesimal generator constructed from 
-\begin_inset Formula $u_{k}$
+ where the subscripts 
+\begin_inset Formula $m_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $m_{2}$
+\end_inset
+
+ denote different times, 
+\begin_inset Formula $\delta_{m_{2}:m_{1}}\in\mathbb{R}$
+\end_inset
+
+ is time inteval from 
+\begin_inset Formula $m_{1}$
+\end_inset
+
+ to 
+\begin_inset Formula $m_{2}$
 \end_inset
 
 , 
-\begin_inset Formula $w_{k}=\begin{bmatrix}w_{k}^{g}\\
-w_{k}^{u}
-\end{bmatrix}$
+\begin_inset Formula $x=\left(g,u\right)\in G\times E$
 \end_inset
 
- is process noise sampled from a zero-mean, white-noise, Gaussian distribution
- with covariance 
-\begin_inset Formula $Q$
+ is the state of the target, 
+\begin_inset Formula $y^{s}\in N$
 \end_inset
 
-.
- Under the assumption that 
-\begin_inset Formula $w_{k}$
+ is an observation from the 
+\begin_inset Formula $s^{th}$
 \end_inset
 
- stays constant over a time period 
-\begin_inset Formula $\delta_{k}$
+ source and 
+\begin_inset Formula $N$
 \end_inset
 
- we can discretize the model to get 
+ is a lie group, 
+\begin_inset Formula $w=\left(w^{g},w^{u}\right)\in E\times E$
+\end_inset
+
+ is process noise 
+\begin_inset Formula $\mathcal{N}\left(0,Q\right)$
+\end_inset
+
+, 
+\begin_inset Formula $v$
+\end_inset
+
+ is measurement noise 
+\begin_inset Formula $\mathcal{N}\left(0,R\right)$
+\end_inset
+
+ and is an element of the Euclidean space corresponding to the Lie algebra
+ of 
+\begin_inset Formula $N$
+\end_inset
+
+, 
+\begin_inset Formula $h^{s}:G\times E\to N$
+\end_inset
+
+ is an observation function corresponding to the 
+\begin_inset Formula $s^{th}$
+\end_inset
+
+ source and 
+\begin_inset Formula $f:G\times E\to G\times E$
+\end_inset
+
+ is the state transition function defined as 
 \begin_inset ERT
 status open
 
@@ -1220,8 +1285,9 @@ name "eq:system-model"
 
 \begin_inset Formula 
 \begin{align}
-g_{k} & =g_{k^{-}}\oplus\left(\delta_{k}u_{k^{-}}+\delta_{k}w_{k}^{g}+\frac{\delta_{k}^{2}}{2}w_{k}^{u}\right)\\
-u_{k} & =u_{k^{-}}+\delta_{k}w_{k}^{u}.
+ & f\left(x_{m_{1}},w_{m_{2}},\delta_{m_{1}:m_{2}}\right)=x_{m_{1}}\oplus\\
+ & \left(\delta_{m_{1}:m_{2}}\left(u_{m_{1}}+w_{m_{1}}^{g}+\frac{\delta_{m_{1}:m_{2}}}{2}w_{m_{2}}^{u}\right)\right.\\
+ & \left.,u_{m_{1}}+\delta_{m_{1}:m_{2}}w_{m_{2}}^{u}\right).
 \end{align}
 
 \end_inset
@@ -1249,281 +1315,42 @@ literal "true"
 
  and is an exact solution provided that the Lie group is commutative.
  If the Lie group is not commutative, the exact solution is cumbersome if
- not impossible to derive, in which case we use the system model as an approxima
-te numerical solution.
+ not impossible to derive, in which case we approxiate the solution.
+ Note that by how we defined the model, the model works for forwards and
+ backwards propagation, i.e.
+ 
+\begin_inset Formula $m_{1}$
+\end_inset
+
+ can refer to a time before or after 
+\begin_inset Formula $m_{2}$
+\end_inset
+
+.
+ 
 \end_layout
 
 \begin_layout Standard
-The complete discrete system is defined as
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{subequations}
-\end_layout
-
-\end_inset
-
-
-\begin_inset CommandInset label
-LatexCommand label
-name "eq:system"
-
-\end_inset
-
- 
-\begin_inset Formula 
-\begin{align}
-x_{k} & =f\left(x_{k^{-}},w_{k},\delta_{k}\right)\\
-y_{k} & =h\left(x_{k},v_{k}\right),
-\end{align}
-
-\end_inset
-
-
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{subequations}
-\end_layout
-
-\end_inset
-
- where 
-\begin_inset Formula $f$
-\end_inset
-
- is the state transition function defined in 
+R-RANSAC initializes tracks by trying to fit measurements in a cluster to
+ the model.
+ If there are sufficient measurements that support the model, then the track
+ is initialized from the measurements.
+ This process is detailed in section 
 \begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:system-model"
+LatexCommand ref
+reference "sec:RANSAC"
+plural "false"
+caps "false"
+noprefix "false"
 
-\end_inset
-
-, 
-\begin_inset Formula $y_{k}\in N$
-\end_inset
-
- is a measurement and 
-\begin_inset Formula $N$
-\end_inset
-
- is a Lie group, 
-\begin_inset Formula $h:G\to N$
-\end_inset
-
- is the observation model, and 
-\begin_inset Formula $v_{k}$
-\end_inset
-
- is measurement noise sampled from a zero-mean, white-noise, Gaussian distributi
-on with covariance 
-\begin_inset Formula $R$
 \end_inset
 
 .
-\end_layout
-
-\begin_layout Standard
-The state 
-\begin_inset Formula $x$
-\end_inset
-
- is a Lie group generated from the Cartesian product of 
-\begin_inset Formula $G$
-\end_inset
-
- and 
-\begin_inset Formula $E$
-\end_inset
-
-.
- The Lie algebra of 
-\begin_inset Formula $G\times E$
-\end_inset
-
- is simply 
-\begin_inset Formula $\mathfrak{g}\times E$
-\end_inset
-
- which is isomorphic to 
-\begin_inset Formula $\mathbb{R}^{2n}$
-\end_inset
-
- with 
-\begin_inset Formula $n$
-\end_inset
-
- being the dimension of 
-\begin_inset Formula $G$
-\end_inset
-
-.
- We will denote this space as 
-\begin_inset Formula $E^{*}$
-\end_inset
-
-.
- All of the operations previously defined are simply inherited.
- For example, let 
-\begin_inset Formula $x\in G\times\mathfrak{g}$
-\end_inset
-
- and 
-\begin_inset Formula $v=\left(a,b\right)^{\vee}\in E^{*}$
-\end_inset
-
-, then 
-\begin_inset Formula 
-\begin{align*}
-x\oplus v & =\left(g,u\right)\oplus v\\
- & =\left(g,u\right)\boxplus\left(a,b\right)\\
- & =\left(g\exp\left(a\right),u+b\right),
-\end{align*}
-
-\end_inset
-
-where 
-\begin_inset Formula $g\in G$
-\end_inset
-
-, 
-\begin_inset Formula $a\in\mathfrak{g}$
-\end_inset
-
-, and 
-\begin_inset Formula $u,b\in E$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-The inverse state transition function, denoted as 
-\begin_inset Formula $f^{-1}$
-\end_inset
-
-, is defined as 
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{subequations}
-\end_layout
-
-\end_inset
-
-
-\begin_inset CommandInset label
-LatexCommand label
-name "eq:model_inverse"
-
-\end_inset
-
- 
-\begin_inset Formula 
-\begin{align}
-g_{m} & =g_{k}\oplus\left(\delta_{k:m}u_{k}+\delta_{k:m}w_{k}^{g}+\frac{\delta_{k:m}^{2}}{2}w_{k}^{u}\right)\\
-u_{m} & =u_{k}+\delta_{k:m}w_{k}^{u}.
-\end{align}
-
-\end_inset
-
-
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{subequations}
-\end_layout
-
-\end_inset
-
- and the output at time 
-\begin_inset Formula $m$
-\end_inset
-
- is 
-\begin_inset Formula 
-\begin{equation}
-y_{m}=h\left(f^{-1}\left(x_{k},w_{k}\right),v_{m}\right).\label{eq:observation_inverse_f}
-\end{equation}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Targets are observed via sensors.
- Each sensor perceives a subset of the measurement space called a local
- surveillance region (LSR) which has a local frame that the data is expressed
- in and a volume denoted 
-\begin_inset Formula $S_{vol}$
-\end_inset
-
-.
- The union of all LSRs is called the global surveillance region (GSR).
- Measurements are extracted from the data using algorithms.
- We call the unique sensor and algorithm pair a measurement source or source
- for short.
- In the case that multiple sources have the same sensor, it is possible
- for duplication of information which, when incorporated into a state estimate
- of a target, would lead to overconfidence of the state estimate.
- We do not have a way to account for this except to assume it is minimal.
-\end_layout
-
-\begin_layout Standard
-A sensor scan occurs when a source produces new measurements.
- Measurements from a source can be either false or true measurements.
- We assume that false measurements are uniformly distributed in the LSR,
- and that the number of false measurements from a source per sensor scan
- can be modeled using a Poisson distribution with parameter 
-\begin_inset Formula $\Lambda$
-\end_inset
-
- being the expected value.
- The expected number of false measurements per unit volume is called the
- spacial density and is 
-\begin_inset Formula $\lambda=\frac{\Lambda}{S_{vol}}$
-\end_inset
-
-.
- We also assume that a measurement source provides at most one true measurement
- per target every sensor scan with probability 
-\begin_inset Formula $P_{D}$
-\end_inset
-
-, i.e.
- the probability of detection.
  
 \end_layout
 
 \begin_layout Standard
-R-RANSAC works in a single frame requiring all of the measurements to be
- transformed and expressed in a single global frame before being given to
- R-RANSAC.
- In the case that the global frame changes, a transformation 
-\begin_inset Formula $T$
-\end_inset
-
- must be provided to R-RANSAC that contains the information necessary to
- transform all the past measurements and models stored in R-RANSAC into
- the new global frame.
- 
+Add model management, propagation, update, and transformation.
 \end_layout
 
 \begin_layout Standard
@@ -2177,7 +2004,7 @@ name "alg:rransac"
 Probabilistic Data Association Filter 
 \begin_inset CommandInset label
 LatexCommand label
-name "sec:Lie-Group-Probability"
+name "sec:Probabilistic-Data-Association"
 
 \end_inset
 
