@@ -1,0 +1,1343 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Section
+Constrained Problem for SE
+\begin_inset Formula $\left(3\right)$
+\end_inset
+
+: Tracking UAVs with Radar
+\end_layout
+
+\begin_layout Standard
+In this example the objective is to track multiple fixed wing aircrafts
+ (FWAs) that are in the GSR and whose configuration manifold is 
+\begin_inset Formula $SE$
+\end_inset
+
+
+\begin_inset Formula $\left(3\right)$
+\end_inset
+
+.
+ The FWA are observed via multiple fixed radar sensors with overlapping
+ LSR which produce point measurements.
+ See appendix 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:SE3"
+
+\end_inset
+
+ for the FWAs' system function and important Jacobians.
+ 
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $g_{k}\in SE\left(3\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $u_{k}\in\mathfrak{se}\left(3\right)$
+\end_inset
+
+.
+ These elements can be written as 
+\begin_inset Formula 
+\begin{align*}
+g_{k} & =\begin{bmatrix}R_{k} & t_{k}\\
+0_{1\times2} & 1
+\end{bmatrix}\\
+u_{k} & =\begin{bmatrix}\omega_{k} & \rho_{k}\\
+0_{1\times2} & 1
+\end{bmatrix},
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $R_{k}\in SO\left(3\right)$
+\end_inset
+
+, 
+\begin_inset Formula $\omega_{k}\in\mathfrak{so}\left(3\right)$
+\end_inset
+
+, and 
+\begin_inset Formula $t_{k},\rho_{k}\in\mathbb{R}^{3}$
+\end_inset
+
+.
+ The observation model is 
+\begin_inset Formula 
+\begin{align*}
+y_{k} & =h\left(x_{k},v_{k}\right)\\
+ & =t_{k}+v_{k},
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $y_{k}\in\mathbb{R}^{3}$
+\end_inset
+
+.
+ The inverse observation model is 
+\begin_inset Formula 
+\begin{align*}
+y_{m} & =h\left(f^{-1}\left(x_{k},\delta_{k:m},w_{k}\right),v_{k}\right)\\
+ & =R_{k}J_{l}\left(\delta_{k:m}\left(\omega_{k}+w_{k}^{R}\right)+\frac{\delta_{k:m}^{2}w_{k}^{\omega}}{2}\right)\left(\delta_{k:m}\rho_{k}+\delta_{k:m}w_{k}^{\rho}\right)\\
+ & +t_{k}+w_{k}^{t}+v_{m},
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where 
+\begin_inset Formula $w_{k}=\left[\left(w_{k}^{t}\right)^{\top},\left(w_{k}^{R}\right)^{\top},\left(w_{k}^{\rho}\right)^{\top},\left(w_{k}^{u}\right)^{\top}\right]^{\top}$
+\end_inset
+
+ and 
+\begin_inset Formula $J_{l}$
+\end_inset
+
+ is defined in equation 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:V_se3"
+
+\end_inset
+
+.
+ Based on the observation model, we have three Jacobians to compute: 
+\begin_inset Formula $G_{k:m}$
+\end_inset
+
+, 
+\begin_inset Formula $H_{k:m}$
+\end_inset
+
+ and 
+\begin_inset Formula $V_{m}$
+\end_inset
+
+.
+ 
+\begin_inset Formula 
+\begin{align*}
+H_{k:m}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial x} & =\begin{bmatrix}H_{k:m}^{t} & H_{k:m}^{R} & H_{k:m}^{\rho} & H_{k:m}^{\omega}\end{bmatrix},
+\end{align*}
+
+\end_inset
+
+where
+\begin_inset Formula 
+\begin{align*}
+H_{k:m}^{t}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial t_{k}} & =R_{k}\\
+H_{k:m}^{R}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial R} & =\delta_{k:m}R_{k}\left[-J_{l}\left(\delta_{k:m}\omega\right)\rho\right]_{\times}\\
+H_{k:m}^{\rho}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\rho} & =\delta_{k:m}^{2}R_{k}J_{l}\left(\delta_{k:m}\omega\right)\\
+H_{k:m}^{\omega}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\omega} & =\delta_{k:m}^{2}R_{k}\partial J_{l}\left(\delta_{k:m}\omega,\delta_{k:m}\rho\right),
+\end{align*}
+
+\end_inset
+
+and
+\begin_inset Formula $\partial J_{l}\left(\delta_{k:m}\omega,\delta_{k:m}\rho\right)$
+\end_inset
+
+ is defined in Lemma 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "lem:dJl"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+G_{k:m}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}}=\begin{bmatrix}G_{k:m}^{t} & G_{k:m}^{R} & G_{k:m}^{\rho} & G_{k:m}^{\omega}\end{bmatrix},
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula 
+\begin{align*}
+G_{k:m}^{t} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{t}}=I\\
+G_{k:m}^{R} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{R}}=\delta_{k:m}^{2}R_{k}\partial J_{l}\left(\delta_{k:m}\omega,\delta_{k:m}\rho\right)\\
+G_{k:m}^{\rho} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{\rho}}=\delta_{k:m}^{2}R_{k}J_{l}\left(\delta_{k:m}\omega\right)\\
+G_{k:m}^{\omega} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{\omega}}=\frac{\delta_{k:m}^{3}}{2}R_{k}\partial J_{l}\left(\delta_{k:m}\omega,\delta_{k:m}\rho\right).
+\end{align*}
+
+\end_inset
+
+Lastly 
+\begin_inset Formula $V_{m}=I$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Now that we have the Jacobians computed, we need to ensure that the system
+ is observable.
+ Since the system is nonlinear, the best we can do is ensure local observability.
+ Given measurements from four different time steps, the observability matrix
+ is 
+\begin_inset Formula 
+\[
+\mathcal{O}=\begin{bmatrix}H_{k:m_{1}}\\
+H_{k:m_{2}}\\
+H_{k:m_{3}}\\
+H_{k:m_{4}}
+\end{bmatrix}.
+\]
+
+\end_inset
+
+The observability matrix is not full rank.
+ However, under certain constraints, the system is observable.
+ Since we are interested in tracking the target we only need to be able
+ to estimate the position of the target.
+ To do this, we consider two configurations for a constant velocity system.
+ In the first configuration the target has a circular or spiral trajectory.
+ In this case we add the constraints that the target's heading is oriented
+ along the body frame velocity, that 
+\begin_inset Formula $\rho=\left[\rho_{x},0\right]^{\top}$
+\end_inset
+
+, 
+\begin_inset Formula $\rho_{x}>0$
+\end_inset
+
+ and 
+\begin_inset Formula $\omega\neq0$
+\end_inset
+
+.
+ Using these constraints, the system is observable.
+ In the second configuration the target is moving in a straight line.
+ In this configuration we impose the same constraints as in the first configurat
+ion except that 
+\begin_inset Formula $\omega=0$
+\end_inset
+
+ and the roll in attitude (using roll, pitch, yaw) is zero.
+ Under these constraints the system is observable.
+ We can identify which configuration the target is in by looking at three
+ different measurements from different times.
+ If the three measurement do not form a line, then the system is in the
+ first configuration; otherwise, the latter.
+\end_layout
+
+\begin_layout Standard
+Since the system is nonlinear, the LMLE can take a while to converge.
+ We can speed up the LMLE by seeding it.
+ To do this, we will use the Euler angles (roll 
+\begin_inset Formula $\phi$
+\end_inset
+
+, pitch 
+\begin_inset Formula $\theta$
+\end_inset
+
+, yaw 
+\begin_inset Formula $\psi$
+\end_inset
+
+) as local coordinates and align the pitch and yaw angles with the translational
+ velocities.
+ The map from Euler angles configured in an NED frame to 
+\begin_inset Formula $SO\left(3\right)$
+\end_inset
+
+ is defined as 
+\begin_inset Formula 
+\begin{equation}
+\mathcal{R}\left(\phi,\theta,\psi\right)=\begin{bmatrix}c_{\theta}c_{\psi} & s_{\phi}s_{\theta}c_{\psi}-c_{\phi}s_{\psi} & c_{\phi}s_{\theta}c_{\psi}+s_{\phi}s_{\psi}\\
+c_{\theta}s_{\psi} & s_{\phi}s_{\theta}s_{\psi}+c_{\phi}c_{\psi} & c_{\phi}s_{\theta}s_{\psi}-s_{\phi}c_{\psi}\\
+-s_{\theta} & s_{\phi}c_{\theta} & c_{\phi}c_{\theta}
+\end{bmatrix}.\label{eq:euler_to_so3}
+\end{equation}
+
+\end_inset
+
+Let 
+\begin_inset Formula $t_{k},t_{m},t_{n}$
+\end_inset
+
+ denote measured positions at times 
+\begin_inset Formula $n,m,k$
+\end_inset
+
+ with 
+\begin_inset Formula $k$
+\end_inset
+
+ being the current time and 
+\begin_inset Formula $n<m<k$
+\end_inset
+
+.
+ The derivative of the position vector 
+\begin_inset Formula $t$
+\end_inset
+
+ is related to 
+\begin_inset Formula $\rho$
+\end_inset
+
+ through the rotation matrix 
+\begin_inset Formula $R$
+\end_inset
+
+.
+ This allows us to write the constraint
+\begin_inset Formula 
+\begin{align*}
+\dot{t} & =R\rho\\
+ & =\mathcal{R}\left(\phi,\theta,\psi\right)\rho.
+\end{align*}
+
+\end_inset
+
+Letting 
+\begin_inset Formula $\dot{t}_{k}=\left[\dot{t}_{k_{x}},\dot{t}_{k_{y}},\dot{t}_{k_{z}}\right]^{\top}$
+\end_inset
+
+, we get 
+\begin_inset Formula 
+\[
+\begin{bmatrix}\dot{t}_{x}\\
+\dot{t}_{y}\\
+\dot{t}_{z}
+\end{bmatrix}=\underbrace{\begin{bmatrix}c_{\theta}c_{\psi}\\
+c_{\theta}s_{\psi}\\
+-s_{\theta}
+\end{bmatrix}}_{R_{k_{x}}}\rho_{x}.
+\]
+
+\end_inset
+
+Since we receive position measurements, we can numerically estimate the
+ positional derivatives 
+\begin_inset Formula $\dot{t}_{k}=\frac{t_{m}-t_{k}}{\delta_{k:m}}$
+\end_inset
+
+ and 
+\begin_inset Formula $\dot{t}_{m}=\frac{t_{n}-t_{m}}{\delta_{m:n}}$
+\end_inset
+
+.
+ Using 
+\begin_inset Formula $\dot{t}_{k}$
+\end_inset
+
+ we can estimate 
+\begin_inset Formula $R_{k}$
+\end_inset
+
+ by solving for 
+\begin_inset Formula $\phi_{k}$
+\end_inset
+
+,
+\begin_inset Formula $\theta_{k}$
+\end_inset
+
+, 
+\begin_inset Formula $\psi_{k}$
+\end_inset
+
+, and 
+\begin_inset Formula $\rho_{k_{x}}$
+\end_inset
+
+ using the equations 
+\begin_inset Formula 
+\begin{align*}
+\psi_{k} & =\text{atan2}\left(\dot{t}_{k_{y}},\left|\dot{t}_{k_{x}}\right|\right)\\
+\theta_{k} & =\arctan\left(\frac{-\cos\left(\psi_{k}\right)\dot{t}_{k_{z}}}{\dot{t}_{k_{x}}}\right)\\
+\phi_{k} & =0\\
+\rho_{k_{x}} & =\left\Vert \dot{t}_{k}\right\Vert 
+\end{align*}
+
+\end_inset
+
+We have set 
+\begin_inset Formula $\phi_{k}=0$
+\end_inset
+
+ since we cannot easily estimate it unless we assume the FWA is making a
+ coordinated turn as described in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Beard2008"
+literal "true"
+
+\end_inset
+
+.
+ In the absence of sideslip, a coordinated turn has the constraint
+\begin_inset Formula 
+\[
+\dot{\psi}=\frac{g}{\left\Vert \dot{t}\right\Vert }\tan\left(\phi\right),
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $g$
+\end_inset
+
+ is the gravitational constant.
+ Since we can estimate 
+\begin_inset Formula $\psi$
+\end_inset
+
+ at two different time periods, we can numerically estimate its derivative
+ 
+\begin_inset Formula $\dot{\psi}$
+\end_inset
+
+.
+ Solving for 
+\begin_inset Formula $\phi$
+\end_inset
+
+ we get 
+\begin_inset Formula 
+\[
+\phi_{k}=\arctan\left(\frac{\frac{\psi_{k}-\psi_{m}}{\delta_{k:m}}\left\Vert \dot{t}_{k}\right\Vert }{g}\right).
+\]
+
+\end_inset
+
+From the estimated Euler angles 
+\begin_inset Formula $\phi_{k}$
+\end_inset
+
+, 
+\begin_inset Formula $\theta_{k}$
+\end_inset
+
+ and 
+\begin_inset Formula $\psi_{k}$
+\end_inset
+
+ we can construct the estimated rotation 
+\begin_inset Formula $R_{k}$
+\end_inset
+
+ using equation 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:euler_to_so3"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Lastly we estimate 
+\begin_inset Formula $\omega_{k}$
+\end_inset
+
+ using the constraint 
+\begin_inset Formula 
+\[
+\dot{t}_{m}=R_{k}\exp\left(\delta_{k:m}\omega_{k}\right)\rho.
+\]
+
+\end_inset
+
+Using a first order Taylor series approximation for the matrix exponential,
+ we get 
+\begin_inset Formula 
+\[
+\frac{R_{k}^{\top}\dot{t}_{m}}{\rho_{k_{x}}}=\begin{bmatrix}1\\
+0\\
+0
+\end{bmatrix}+\begin{bmatrix}0\\
+\omega_{k_{z}}\\
+-\omega_{k_{y}}
+\end{bmatrix}\delta_{k:m},
+\]
+
+\end_inset
+
+From which we can estimate the angular rates 
+\begin_inset Formula $\omega_{k_{z}}$
+\end_inset
+
+ and 
+\begin_inset Formula $\omega_{k_{y}}$
+\end_inset
+
+, and we simply set 
+\begin_inset Formula $\omega_{k_{x}}=0$
+\end_inset
+
+.
+ These approximations are then used to seed the LMLE optimization problem.
+\end_layout
+
+\begin_layout Section
+SE
+\begin_inset Formula $\left(3\right)$
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:SE3"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The special Euclidean group of three dimensions is a matrix Lie group and
+ is the set 
+\begin_inset Formula 
+\[
+SE\left(3\right)=\left\{ \left.\begin{bmatrix}R & t\\
+0_{1\times2} & 1_{1\times1}
+\end{bmatrix}\,\right|\,R\in SO\left(3\right)\text{ and }t\in\mathbb{R}^{3}\right\} 
+\]
+
+\end_inset
+
+equipped with matrix multiplication.
+ The Lie algebra is 
+\begin_inset Formula 
+\[
+\mathfrak{se}\left(3\right)=\left\{ \left.\begin{bmatrix}\omega & \rho\\
+0 & 0
+\end{bmatrix}\,\right|\,\omega\in\mathfrak{s0}\left(3\right)\text{ and }\rho\in\mathbb{R}^{3}\right\} ,
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\omega=\left[\theta\right]_{\times}$
+\end_inset
+
+, 
+\begin_inset Formula $\theta=\left[\theta_{1},\theta_{2},\theta_{3}\right]^{\top}\in\mathbb{R}^{3}$
+\end_inset
+
+ and 
+\begin_inset Formula $\left[\cdot\right]_{\times}$
+\end_inset
+
+ is the skew symmetric operator defined as 
+\begin_inset Formula 
+\[
+\left[\theta\right]_{\times}=\begin{bmatrix}0 & -\theta_{3} & \theta_{2}\\
+\theta_{3} & 0 & -\theta_{1}\\
+-\theta_{2} & \theta_{1} & 0
+\end{bmatrix},
+\]
+
+\end_inset
+
+and 
+\begin_inset Formula 
+\[
+\begin{bmatrix}\rho\\
+\theta
+\end{bmatrix}\in\mathbb{R}^{6}
+\]
+
+\end_inset
+
+which is the Cartesian vector space.
+ 
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $g\in SE\left(3\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $u\in\mathfrak{se}\left(3\right)$
+\end_inset
+
+.
+ Using an element of the Lie algebra, we can define the infinitesimal generator
+ 
+\begin_inset Formula $\xi_{u}:G\to TG$
+\end_inset
+
+ as 
+\begin_inset Formula 
+\begin{align*}
+\xi_{u}\left(g\right) & =gu\\
+ & =\dot{g}.
+\end{align*}
+
+\end_inset
+
+The discretized state transition function 
+\begin_inset Formula $f:SE\left(3\right)\times\mathbb{R}^{3}\to SE\left(3\right)\times\mathbb{R}^{3}$
+\end_inset
+
+ is 
+\begin_inset Formula 
+\begin{align*}
+g_{k} & =\exp\left(\delta_{k}\left(u_{k^{-}}+w_{k}^{g}\right)+\frac{\delta_{k}^{2}}{2}w_{k}^{u}\right)\\
+u_{k} & =u_{k^{-}}+\delta_{k}w_{k}^{u}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Group Operations
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $g_{1},g_{2}\in SE\left(3\right)$
+\end_inset
+
+.
+ The inversion and group multiplication is matrix inversion and matrix multiplic
+ation as follows
+\begin_inset Formula 
+\begin{align*}
+g_{1}^{-1} & =\begin{bmatrix}R_{1}^{\top} & -R_{1}^{\top}t_{1}\\
+0 & 1
+\end{bmatrix}\\
+g_{1}g_{2} & =\begin{bmatrix}R_{1}R_{2} & R_{1}t_{2}+t_{1}\\
+0 & 1
+\end{bmatrix}.
+\end{align*}
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Subsection
+Exponential Map
+\end_layout
+
+\begin_layout Standard
+The exponential map is the matrix exponential and it's inverse is the matrix
+ logarithm.
+ The matrix exponential is a surjective function; however, by restricting
+ the domain to 
+\begin_inset Formula 
+\[
+U=\left\{ u\in\mathfrak{se}\left(3\right)\,\mid\,\left\Vert u\right\Vert <\pi\right\} ,
+\]
+
+\end_inset
+
+it becomes a bijection.
+ In this case, the exponential map and its inverse have a simplified form
+ 
+\begin_inset Formula 
+\begin{align*}
+\exp\left(u\right) & =\begin{bmatrix}\exp\left(\omega\right) & J_{l}\left(\omega\right)\rho\\
+0 & 1
+\end{bmatrix}\\
+\text{\log}\left(g\right) & =\begin{bmatrix}J_{l}^{-1}\left(\omega\right)t\\
+\log\left(R\right)
+\end{bmatrix}
+\end{align*}
+
+\end_inset
+
+with 
+\begin_inset Formula $g=\exp\left(u\right)$
+\end_inset
+
+,
+\begin_inset Formula 
+\begin{align}
+\phi & =\sqrt{\omega^{\top}\omega}\\
+\exp\left(\omega\right) & =I+\frac{\sin\left(\phi\right)}{\phi}\omega+\frac{1-\cos\left(\phi\right)}{\phi^{2}}\omega^{2}\\
+\phi & =\arccos\left(\frac{\text{trace}\left(R\right)-1}{2}\right)\\
+\log\left(R\right) & =\begin{cases}
+0_{2\times2} & \text{if }\phi=0\\
+\frac{\phi}{2\sin\left(\phi\right)}\left(R-R^{\top}\right) & \text{else}
+\end{cases}\\
+J_{l}\left(\omega\right) & =\begin{cases}
+I & \text{if }\phi=0\\
+I+\frac{1-\cos\left(\phi\right)}{\phi^{2}}\omega+\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\omega^{2} & \text{else}
+\end{cases}\label{eq:V_se3}\\
+J_{l}^{-1}\left(\omega\right) & =\begin{cases}
+I & \text{if }\theta=0\\
+I-\frac{\omega}{2}+\left(\frac{1}{\phi^{2}}-\frac{\phi\sin\left(\phi\right)}{2\phi^{2}\left(1-\cos\left(\phi\right)\right)}\right)\omega^{2} & \text{else}
+\end{cases}
+\end{align}
+
+\end_inset
+
+where 
+\begin_inset Formula $J_{l}$
+\end_inset
+
+ is the left Jacobian of 
+\begin_inset Formula $SO\left(3\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Jacobians
+\end_layout
+
+\begin_layout Subsubsection
+Adjoint
+\end_layout
+
+\begin_layout Standard
+The group adjoint representation is
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\mathbf{Ad}_{g}=\begin{bmatrix}R & \left[t\right]_{\times}R\\
+0_{3\times3} & R
+\end{bmatrix}
+\]
+
+\end_inset
+
+with inverse 
+\begin_inset Formula 
+\[
+\mathbf{Ad}_{g}^{-1}=\begin{bmatrix}R^{\top} & -R^{\top}\left[t\right]_{\times}\\
+0_{3\times3} & R^{\top}
+\end{bmatrix}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The Lie algebra representation is 
+\begin_inset Formula 
+\[
+\mathbf{ad}_{u}=\begin{bmatrix}\omega & \left[\rho\right]_{\times}\\
+0_{3\times3} & \omega
+\end{bmatrix}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Left and Right Jacobians
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $u=\begin{bmatrix}\omega & \rho\\
+0 & 0
+\end{bmatrix}\in\mathfrak{se}\left(3\right)$
+\end_inset
+
+ and 
+\begin_inset Formula 
+\begin{align*}
+\phi & =\sqrt{\omega^{\top}\omega}\\
+a_{\phi} & =\frac{\cos\left(\phi\right)-1}{\phi^{2}}\\
+b_{\phi} & =\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\\
+c_{\phi} & =-\frac{1}{\phi^{3}}\sin\left(\phi\right)+2\left(\frac{1-\cos\left(\phi\right)}{\phi^{4}}\right)\\
+d_{\phi} & =-\frac{2}{\phi^{4}}+\frac{3}{\phi^{5}}\sin\left(\phi\right)-\frac{1}{\phi^{4}}\cos\left(\phi\right)\\
+q_{r}\left(\omega\right) & =\left(\left(\omega^{\vee}\right)^{\top}\rho\right)\left(d_{\phi}\omega^{2}+c_{\phi}\omega\right)\\
+q_{l}\left(\omega\right) & =\left(\left(\omega^{\vee}\right)^{\top}\rho\right)\left(d_{\phi}\omega^{2}-c_{\phi}\omega\right)\\
+B_{r}\left(u\right) & =q_{r}\left(\omega\right)+a_{\phi}\left[\rho\right]_{\times}+b_{\phi}\left(\omega\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\omega\right)\\
+B_{l}\left(u\right) & =q_{l}\left(\omega\right)-a_{\phi}\left[\rho\right]_{\times}+b_{\phi}\left(\omega\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\omega\right)\\
+J_{r}\left(\omega\right) & =I+\frac{\cos\left(\phi\right)-1}{\phi^{2}}\omega+\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\omega^{2}\\
+J_{r}^{-1}\left(\omega\right) & =I+\frac{1}{2}\omega-\frac{\phi\cot\left(\frac{\phi}{2}\right)-2}{2\phi^{2}}\omega^{2}
+\end{align*}
+
+\end_inset
+
+then 
+\begin_inset Formula 
+\begin{align*}
+J_{r}\left(u\right) & =\begin{bmatrix}J_{r}\left(\omega\right) & B_{r}\left(u\right)\\
+0 & J_{r}\left(\omega\right)
+\end{bmatrix}\\
+J_{l}\left(u\right) & =\begin{bmatrix}J_{l}\left(\omega\right) & B_{l}\left(u\right)\\
+0 & J_{l}\left(\omega\right)
+\end{bmatrix}\\
+J_{r}^{-1}\left(u\right) & =\begin{bmatrix}J_{r}^{-1}\left(\omega\right) & -J_{r}^{-1}\left(\omega\right)B_{r}\left(u\right)J_{r}^{-1}\left(\omega\right)\\
+0 & J_{r}^{-1}\left(\omega\right)
+\end{bmatrix}\\
+J_{l}^{-1}\left(u\right) & =\begin{bmatrix}J_{l}^{-1}\left(\omega\right) & -J_{l}^{-1}\left(\omega\right)B_{l}\left(u\right)J_{l}^{-1}\left(\omega\right)\\
+0 & J_{l}^{-1}\left(\omega\right)
+\end{bmatrix}.
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+PDAF with varying noise covariances
+\end_layout
+
+\begin_layout Standard
+State update
+\begin_inset Formula 
+\[
+x_{k}=x_{k^{-}}+\sum_{i}K_{k,i}\beta_{i}\nu_{i}
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\nu_{i}$
+\end_inset
+
+ is the innovation term associated with the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ measurement and 
+\begin_inset Formula 
+\[
+K_{k,i}=\bar{P}_{k}H_{k}^{\top}S_{k,i}^{-1}
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula 
+\[
+S_{k,i}=\left(H_{k}\bar{P}_{k}H_{k}^{\top}+V_{k}R_{k,i}V_{k}^{\top}\right)
+\]
+
+\end_inset
+
+and 
+\begin_inset Formula $R_{k,i}$
+\end_inset
+
+ is the measurement noise associated with the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ measurement.
+\end_layout
+
+\begin_layout Standard
+The covariance update is 
+\begin_inset Formula 
+\[
+P_{k}=\bar{P}_{k}-\sum_{i}\beta_{i}K_{k,i}S_{k,i}K_{k,i}^{\top}+\sum_{i}\left(\beta_{i}K_{k,i}\nu_{i}\nu_{i}^{\top}-\nu\nu^{\top}K_{k,i}^{\top}\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\nu=\sum_{i}\beta_{i}\nu_{i}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Terminology and Parameters
+\end_layout
+
+\begin_layout Standard
+The terminology, parameters, and notation used is previous version of R-RANSAC
+ have varied which has created confusion and inconsistencies.
+ In this section, we hope to solidify certain terminology, parameters and
+ notation that are suitable for expanding R-RANSAC to work with Lie Groups,
+ and incorporating other improvements we have made to the general algorithm.
+\end_layout
+
+\begin_layout Subsection
+Terminology
+\end_layout
+
+\begin_layout Standard
+R-RANSAC has very specific terminology that we that will facilitate the
+ discussion.
+ 
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Phenomenon
+\series default
+: Something that produces an observable signal.
+ In the case of target tracking, the phenomenon is referred to as a 
+\series bold
+target
+\series default
+, which is an object that exists in physical space.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Measurement Source
+\series default
+: A sensor equipped with an algorithm that captures information from the
+ environment and produces meaningful measurements used to observe the target.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Surveillance Region
+\series default
+: The portion of the environment that is observable by the measurement sources.
+ There is a local surveillance region (LSR) for each measurement source
+ and a global surveillance region (GSR) that is a union of all the local
+ surveillance regions.
+ 
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Frame of reference
+\series default
+: Consists of an abstract coordinate system and the set of physical reference
+ points that uniquely fix (locate and orient) the coordinate system and
+ standardize measurements within that frame.
+ We will often refer to a frame of reference as just 
+\series bold
+frame
+\series default
+.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Local Frame
+\series default
+: The frame that coincides with a local surveillance region.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Global Frame
+\series default
+: The frame that coincides with the global surveillance region.
+ It is possible that the global frame is the same as a local frame.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Sensor Scan
+\series default
+: When a sensor observes its surveillance region and extracts meaningful
+ data.
+ For example, the sensor scan of a camera occurs when the camera produces
+ a new image of its surveillance region.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+False Measurement
+\series default
+: A measurement extracted from a sensor scan that does not correspond to
+ a phenomenon of interest.
+ For example, motion in a camera can generate false measurements due to
+ parallax depending on the algorithm.
+ Another example is just noisy sensors.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+True Measurement
+\series default
+: A measurement extracted from a sensor scan that corresponds to a phenomenon
+ of interest.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Model
+\series default
+: This is simply a model of the phenomenon.
+ In regards to target tracking, a model is referred to as a 
+\series bold
+track
+\series default
+.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Model Hypothesis
+\series default
+: This is a hypothetical model of the phenomenon (i.e.
+ a possible model) created by the RANSAC algorithm.
+ A model hypothesis that meets certain criteria becomes a model.
+ In regards to target tracking, a model hypothesis is referred to as a 
+\series bold
+track
+\series default
+ 
+\series bold
+hypothesis
+\series default
+.
+ We will often abbreviate the term and mention only 
+\series bold
+hypothesis
+\series default
+.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Model Likelihood
+\series default
+: The probability that a model represents an actual target.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Good
+\series default
+ 
+\series bold
+Model
+\series default
+: A model that is deemed very likely to correctly describe a phenomenon,
+ based on predefined criteria, becomes a good model.
+ In regards to target tracking, a good model is referred to as a 
+\series bold
+good
+\series default
+ 
+\series bold
+track
+\series default
+.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Poor
+\series default
+ 
+\series bold
+Model
+\series default
+: A model that is not a good model.
+ In regards to target tracking, a poor model is referred to as a 
+\series bold
+poor
+\series default
+ 
+\series bold
+track
+\series default
+.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Time Window
+\series default
+: An interval of time extending into the past from the current time.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Expired
+\series default
+ 
+\series bold
+Measurement
+\series default
+: A measurement that was observed in the past outside the time window.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Measurement
+\series default
+ 
+\series bold
+Source
+\series default
+: An algorithm that takes sensor data and produces a measurement.
+ We will often refer to a measurement source as just a source.
+\end_layout
+
+\begin_layout Subsection
+Parameters
+\end_layout
+
+\begin_layout Standard
+There are various parameters used throughout R-RANSAC.
+ A parameter can either be a scalar or a tuple.
+ In case the context doesn't make it clear, we will specify which one is
+ a scalar and a tuple.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+noindent
+\end_layout
+
+\end_inset
+
+ RANSAC parameters
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\ell$
+\end_inset
+
+ - max iterations
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\tau_{E}$
+\end_inset
+
+ - If the size of a consensus set is greater than 
+\begin_inset Formula $\tau_{E}$
+\end_inset
+
+, than RANSAC will terminate early.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\tau_{I}$
+\end_inset
+
+ - RANSAC inlier threshold
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\tau_{RM}$
+\end_inset
+
+ - The minimum size of a track hypothesis's consensus set in order for the
+ hypothesis to become a track
+\end_layout
+
+\begin_layout Standard
+Cluster parameters
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\tau_{CD}$
+\end_inset
+
+ - neighborhood distance threshold
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\tau_{CM}$
+\end_inset
+
+ - cluster minimum cardinality threshold
+\end_layout
+
+\begin_layout Standard
+Model Management Parameters
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\tau_{S}$
+\end_inset
+
+ - Similarity merge threshold
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\tau_{\rho}$
+\end_inset
+
+ - Good track threshold
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\tau_{\alpha}$
+\end_inset
+
+- Missed detection threshold
+\end_layout
+
+\begin_layout Standard
+PDAF
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $P_{D}$
+\end_inset
+
+ - Probability of detection
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $P_{G}$
+\end_inset
+
+ - Probability of being in the validation region
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\lambda$
+\end_inset
+
+ - The spacial density of false measurements in a local surveillance region
+ per sensor scan
+\end_layout
+
+\begin_layout Standard
+Other
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $T_{W}$
+\end_inset
+
+ - Time window
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $M$
+\end_inset
+
+ - The number of models
+\end_layout
+
+\end_body
+\end_document

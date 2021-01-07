@@ -1030,7 +1030,7 @@ literal "false"
 \end_layout
 
 \begin_layout Section
-Problem Description 
+R-RANSAC Overview 
 \begin_inset CommandInset label
 LatexCommand label
 name "sec:Problem-Description"
@@ -1066,8 +1066,7 @@ R-RANSAC is designed to track multiple dynamic targets moving in a global
  for duplication of information which, when incorporated into a state estimate
  of a target, would lead to overconfidence of the state estimate.
  We do not have a way to account for this except to assume it is minimal.
- Since the measurements come from a local surveillance region, they must
- be transformed into the global frame in which R-RANSAC tracks targets.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -1093,20 +1092,94 @@ A sensor scan occurs when a source produces new measurements.
 
 , i.e.
  the probability of detection.
+ Since the measurements come from a local surveillance region, they must
+ be transformed into the global frame, in which R-RANSAC tracks targets,
+ before being given to R-RANSAC.
 \end_layout
 
 \begin_layout Standard
-As measurements are received, they are associated to either an existing
- track or a cluster which is a set of neighboring measurements that are
- not associated to a track as described in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Yang2017"
-literal "false"
+R-RANSAC process the measurements in order to follow targets.
+ The paradigm for R-RANSAC is designed to be very modular; however, our
+ presentation will use specific components to properly protray our contributions.
+ We have organized R-RANSAC into three main phase: data management, track
+ initialization, and track management.
+ The architecture of R-RANSAC is protrayed in figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:overview"
+plural "false"
+caps "false"
+noprefix "false"
 
 \end_inset
 
+, and in the following subsections we go into more detail about each phase.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/Overview.pdf
+	width 90col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:overview"
+
+\end_inset
+
+This figure provides an overview of R-RANSAC
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Data Management
+\end_layout
+
+\begin_layout Standard
+Data management occurs after new measurements and a new transformation 
+\begin_inset Formula $T$
+\end_inset
+
+ are received.
+ First, expired measurements are removed from the clusters and tracks are
+ propagated forward in time.
+ An expired measurement is a measurement that was received at a time before
+ the current time window 
+\begin_inset Formula $T_{W}$
+\end_inset
+
 .
+ This is to prevent a large storage of measurements.
  A track is a tuple containing the state estimate of the target, 
 \begin_inset Formula $\hat{x}$
 \end_inset
@@ -1119,7 +1192,7 @@ literal "false"
 \begin_inset Formula $\mathcal{CS}$
 \end_inset
 
-, model likelihood, 
+, track likelihood, 
 \begin_inset Formula $ML$
 \end_inset
 
@@ -1129,23 +1202,124 @@ literal "false"
 
 .
  In other words, a track is the tuple 
-\begin_inset Formula $\mathcal{T}=\left(\hat{x},P,\mathcal{CS},ML,L\right)$
+\begin_inset Formula $\mathcal{T}=\left(\hat{x},P,\mathcal{CS},TL,L\right)$
 \end_inset
 
 .
- A consensus set is the set of associated measurements to the track, the
- model likelihood is an indicator of how good the track represents a target;
- discussed more in section 
+ A consensus set is the set of measurements associated to the track, the
+ model likelihood is an indicator of how good the track represents a target,
+ and the label is a unique numerical number used to identify good tracks.
+\end_layout
+
+\begin_layout Standard
+If a transformation was provided, all of the measurements (not including
+ the new measurements since they should already be expressed in the current
+ global frame) and tracks are transformed to the current global frame, i.e.
+ their state estimate and error covariance are transformed to the current
+ global frame.
+ The new measurements are then associated to either an existing track or
+ a cluster.
+ A cluster is a set of neighboring measurements that are not associated
+ to a track as described in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Yang2017"
+literal "false"
+
+\end_inset
+
+.
+ This phase is dicussed in more detail in section 
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+add reference
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Track Initialization
+\end_layout
+
+\begin_layout Standard
+The track initialization phase performs RANSAC on each cluster that has
+ at least has at least 
+\begin_inset Formula $\tau_{CM}$
+\end_inset
+
+ measurements to try to generate new track.
+ RANSAC tries to fit measurements from a cluster to the target's model.
+ If enough measurements fit the model, then a new track is initialized.
+ The measurements used to initialize tracks are removed from the respective
+ cluster.
+ This phase is discussed in more detail in section 
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+add reference
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Track Management
+\end_layout
+
+\begin_layout Standard
+The last phase of R-RANSAC is track management which consists of merging
+ and pruning tracks, promoting and demoting tracks, and assigning new good
+ tracks a unique label.
+ Some tracks will begin to coalesce as they are propagated and updated.
+ If these tracks are deemed similar, they are merged together using the
+ track-to-track fusion method.
+ Since R-RANSAC stores up to 
+\begin_inset Formula $M$
+\end_inset
+
+ Tracks, if there are more than 
+\begin_inset Formula $M$
+\end_inset
+
+ tracks we remove the tracks with the lowest track likelihood.
+ If a track's likelihood is above the threshold 
+\begin_inset Formula $\tau_{\rho}$
+\end_inset
+
+ then it is promoted to a good track; otherwise, it is a poor track.
+ Good tracks receive a unique numerical label to identify it , 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Ingersoll2015a"
+literal "true"
+
+\end_inset
+
+.
+ At the end of this phase, a list of good tracks is published to the user.
+ This phase is discussed in more detail in section 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sec:Track-Likelihood"
+reference "sec:Track-Management"
 plural "false"
 caps "false"
 noprefix "false"
 
 \end_inset
 
-, and the label is a unique numerical number used to identify tracks.
+.
+\end_layout
+
+\begin_layout Subsection
+Target Model
 \end_layout
 
 \begin_layout Standard
@@ -1330,54 +1504,30 @@ literal "true"
  
 \end_layout
 
-\begin_layout Standard
-R-RANSAC initializes tracks by trying to fit measurements in a cluster to
- the model.
- If there are sufficient measurements that support the model, then the track
- is initialized from the measurements.
- This process is detailed in section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:RANSAC"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-.
- 
+\begin_layout Subsection
+Summary of Assumptions
 \end_layout
 
 \begin_layout Standard
-R-RANSAC uses the new measurements along with all the previous measurements
- from the time window 
-\begin_inset Formula $T_{W}$
-\end_inset
-
- to track targets.
- As time progresses, old measurements fall outside the time window and are
- removed.
- These measurements are called expired measurements.
- Below is a summary of our assumptions.
+Below is a summary of our assumptions.
 \end_layout
 
 \begin_layout Enumerate
-We assume that the system is observable.
+The system is observable.
 \end_layout
 
 \begin_layout Enumerate
-We assume that the process and measurement noises are represented by a white-noi
-se, zero-mean, Gaussian distribution and that their covariances are known.
+The process and measurement noises are represented by a white-noise, zero-mean,
+ Gaussian distribution and that their covariances are known.
 \end_layout
 
 \begin_layout Enumerate
-We assume that all measurements are independent.
+All measurements are independent.
 \end_layout
 
 \begin_layout Enumerate
-We assume that the expected number of false measurements from each measurement
- source per sensor scan is modeled using a Poisson distribution with spatial
+The expected number of false measurements from each measurement source per
+ sensor scan is modeled using a Poisson distribution with spatial density
  parameter 
 \begin_inset Formula $\lambda$
 \end_inset
@@ -1386,635 +1536,28 @@ We assume that the expected number of false measurements from each measurement
 \end_layout
 
 \begin_layout Enumerate
-We assume that every measurement given to R-RANSAC is expressed in the current
- global frame.
+Every measurement given to R-RANSAC is expressed in the current global frame.
  
 \end_layout
 
 \begin_layout Enumerate
 If the global frame moves, a transformation is provided to R-RANSAC in order
- to transform the measurements and models to the current global frame.
+ to transform the measurements and tracks to the current global frame.
 \end_layout
 
 \begin_layout Section
-Modular Paradigm
-\begin_inset CommandInset label
-LatexCommand label
-name "sec:Modular-Paradigm"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-The paradigm for R-RANSAC is designed to be very modular.
- In this section we will present the data structures used and modular framework.
- R-RANSAC can be broken down into three main parts: data management, track
- initialization, and track management.
-\end_layout
-
-\begin_layout Subsection
-Data Structures
-\end_layout
-
-\begin_layout Standard
-In R-RANSAC, we use three different data structures: the data tree, clusters,
- and consensus sets.
- The structure of the data tree and clusters is a list of R*-Trees 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Daszykowski2009"
-literal "true"
-
-\end_inset
-
-.
- Each R*-Tree contains measurements obtained at a unique time.
- This allows us to easily remove and add measurements that have the same
- time stamp while being able to search the data structures quickly.
- The data tree contains all of the measurements within the time window that
- are not in a cluster or a consensus set.
- A cluster, 
-\begin_inset Formula $\mathcal{C}$
-\end_inset
-
-, contains neighboring measurements as described in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Yang2017"
-literal "true"
-
-\end_inset
-
-.
- Let 
-\begin_inset Formula $d_{C}:N\times N\to\mathbb{R}$
-\end_inset
-
- be a metric 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Moon2000"
-literal "true"
-
-\end_inset
-
- on the measurement space.
- A measurement 
-\begin_inset Formula $y_{j}$
-\end_inset
-
- is a neighboring measurement of 
-\begin_inset Formula $y_{k}$
-\end_inset
-
- if 
-\begin_inset Formula $d_{C}\left(y_{j},y_{k}\right)<\tau_{CD}$
-\end_inset
-
- with 
-\begin_inset Formula $\tau_{CD}$
-\end_inset
-
- being a user defined parameter.
- A consensus set, 
-\begin_inset Formula $\mathcal{CS}^{i}$
-\end_inset
-
-, is a list that contains all of the measurements within the time window
- that were associated with the 
-\begin_inset Formula $i^{th}$
-\end_inset
-
- track.
- A track, 
-\begin_inset Formula $\mathcal{T}$
-\end_inset
-
-, is a model of a target consisting of the state estimate 
-\begin_inset Formula $\hat{x}$
-\end_inset
-
-; error covariance 
-\begin_inset Formula $P$
-\end_inset
-
-; consensus set 
-\begin_inset Formula $\mathcal{CS}$
-\end_inset
-
-; track likelihood, 
-\begin_inset Formula $TL$
-\end_inset
-
-; and label, 
-\begin_inset Formula $L$
-\end_inset
-
- , i.e.
- the tuple 
-\begin_inset Formula $\mathcal{T}=\left(\hat{x},P,\mathcal{CS},TL,L\right)$
-\end_inset
-
-.
- The track likelihood is a measurement of how 
-\begin_inset Quotes eld
-\end_inset
-
-good
-\begin_inset Quotes erd
-\end_inset
-
- a track is.
- Previously, this was based on the inlier ratio and track lifetime, see
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Niedfeldt2017"
-literal "true"
-
-\end_inset
-
-; however, we will present a more probabilistic approach in section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:Track-Likelihood"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Subsection
 Data Management
 \end_layout
 
 \begin_layout Standard
-Data management occurs after a sensor scan provides new measurements 
-\begin_inset Formula $\Psi_{k}$
-\end_inset
-
- and a new transformation 
-\begin_inset Formula $T$
-\end_inset
-
-.
- First, expired measurements are removed from the data structures and models
- are propagated forward in time.
- If a transformation was provided, all of the measurements (not including
- the new measurements since they should already be expressed in the current
- global frame) and tracks are transformed to the current global frame, i.e.
- their state estimate and error covariance are transformed to the current
- global frame.
- 
-\end_layout
-
-\begin_layout Standard
-The new measurements are checked to see if they should be associated to
- a track and used to update the track's state estimate and likelihood.
- The data association and track update could be implemented using any single
- scan tracker.
- Our data association method is described in subsection 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:Data-Association"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-.
- Unassociated new measurements are then checked to see if they belong to
- an existing cluster using the metric 
-\begin_inset Formula $d_{C}$
-\end_inset
-
-.
- Those that don't belong to a cluster are then used to seed possible new
- clusters.
-\end_layout
-
-\begin_layout Standard
-New clusters are created by taking an unassociated new measurement and finding
- neighboring measurements from either the list of unassociated new measurements
- or the data tree.
- For every measurement added to the cluster, the process is repeated by
- finding neighboring measurements to the measurement just added to the cluster.
-\end_layout
-
-\begin_layout Standard
-If the possible cluster has at least 
-\begin_inset Formula $\tau_{CM}$
-\end_inset
-
- measurements, then the cluster is kept, and the associated measurements
- are removed from the data tree.
- The remaining unassociated measurements are placed on the data tree creating
- a new element in the list.
-\end_layout
-
-\begin_layout Subsection
-Track Initialization and Track Management
-\end_layout
-
-\begin_layout Standard
-Track initialization and track management occurs at times specified by the
- user.
- The track initialization phase performs RANSAC, see section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:RANSAC"
-
-\end_inset
-
-, on each cluster to try to generate new tracks.
- If RANSAC generates a new track, the new track's state estimate 
-\begin_inset Formula $\hat{x}$
-\end_inset
-
- is filtered and the track's likelihood is initialized using the measurements
- in the consensus set.
- The measurements in the consensus set are removed from the respective cluster.
- Since measurements are taken from a cluster in order to create a new track,
- we must verify that the remaining measurements in the cluster still form
- a valid cluster, i.e.
- the cluster has at least 
-\begin_inset Formula $\tau_{CM}$
-\end_inset
-
- measurements.
- If it does, the cluster is kept.
- If it doesn't, then we check the time stamp of the measurements.
- If the measurements are old (i.e.
- near being expired), then we remove them; otherwise, we place them back
- on the data tree.
- 
-\end_layout
-
-\begin_layout Standard
-The last phase of R-RANSAC is track management which consists of merging
- and pruning tracks, promoting and demoting tracks, and assigning new good
- tracks a unique label.
- Some tracks will begin to coalesce as they are propagated and updated.
- If these tracks are deemed similar, they are merged together using the
- track-to-track fusion method discussed in section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:Track-to-Track-fusion"
-
-\end_inset
-
-.
- Since R-RANSAC stores up to 
-\begin_inset Formula $M$
-\end_inset
-
- Tracks, if there are more than 
-\begin_inset Formula $M$
-\end_inset
-
- tracks we remove the tracks with the lowest likelihood.
- If a track's likelihood is above the threshold 
-\begin_inset Formula $\tau_{\rho}$
-\end_inset
-
- then it is promoted to a good track; otherwise, it is a poor track.
- Good tracks receive a unique numerical label to identify it , 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Ingersoll2015a"
-literal "true"
-
-\end_inset
-
-.
- At the end of these phases, a list of good tracks is published to the user.
- For a summary, see algorithm 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "alg:rransac"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float algorithm
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-begin{algorithmic}[1]
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-Require{Parameters $M$, $T_W$, $
-\backslash
-ell$, $
-\backslash
-tau_E$, $
-\backslash
-tau_I$, $
-\backslash
-tau_{CD}$, $
-\backslash
-tau_{CM}$, $
-\backslash
-tau_S$, $
-\backslash
-tau_{
-\backslash
-rho}$, $
-\backslash
-tau_{
-\backslash
-alpha}$, $P_D$ and $
-\backslash
-lambda$.}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-For{each sensor scan}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-State{Remove expired measurements}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-State{Propagate tracks}
-\end_layout
-
-\begin_layout Plain Layout
-
-	
-\backslash
-If{Transform $T$ provided}
-\end_layout
-
-\begin_layout Plain Layout
-
-	
-\backslash
-State{Transform measurements and tracks}
-\end_layout
-
-\begin_layout Plain Layout
-
-	
-\backslash
-EndIf
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-State{Associate new measurements to tracks}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-State
-\backslash
-multiline{Update track's state estimate and likelihood using associated
- measurements}
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-State
-\backslash
-multiline{Associate unassociated measurements to clusters using metric $d_C$}
-\end_layout
-
-\begin_layout Plain Layout
-
-	
-\backslash
-For{ $y
-\backslash
-in 
-\backslash
-{
-\backslash
-text{ unassociated measurements}
-\backslash
-}$ }
-\end_layout
-
-\begin_layout Plain Layout
-
-	
-\backslash
-State
-\backslash
-multiline{Try generating possible new clusters $C^p$ from $y$ using unassociated
- measurements and data tree}
-\end_layout
-
-\begin_layout Plain Layout
-
-		
-\backslash
-If{$
-\backslash
-mid C^p 
-\backslash
-mid 
-\backslash
-geq 
-\backslash
-tau_{CM}$}
-\end_layout
-
-\begin_layout Plain Layout
-
-		
-\backslash
-State{Let $C^p$ be a new cluster}
-\end_layout
-
-\begin_layout Plain Layout
-
-		
-\backslash
-State
-\backslash
-multiline{Remove measurements in $C^p$ from data tree}
-\end_layout
-
-\begin_layout Plain Layout
-
-		
-\backslash
-EndIf
-\end_layout
-
-\begin_layout Plain Layout
-
-	
-\backslash
-EndFor
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-State{Add remaining measurements to data tree}
-\end_layout
-
-\begin_layout Plain Layout
-
-	
-\backslash
-If{specified by user}
-\end_layout
-
-\begin_layout Plain Layout
-
-		
-\backslash
-State
-\backslash
-multiline{Perform RANSAC on each cluster}
-\end_layout
-
-\begin_layout Plain Layout
-
-		
-\backslash
-State{Manage clusters}
-\end_layout
-
-\begin_layout Plain Layout
-
-		
-\backslash
-State{Merge and prune tracks}
-\end_layout
-
-\begin_layout Plain Layout
-
-		
-\backslash
-State{Promote and demote tracks}
-\end_layout
-
-\begin_layout Plain Layout
-
-		
-\backslash
-State{Assign new good tracks a unique ID}
-\end_layout
-
-\begin_layout Plain Layout
-
-		
-\backslash
-State{Publish good tracks}
-\end_layout
-
-\begin_layout Plain Layout
-
-	
-\backslash
-EndIf
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-EndFor
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-end{algorithmic}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-R-RANSAC
-\end_layout
-
-\end_inset
-
-
-\begin_inset CommandInset label
-LatexCommand label
-name "alg:rransac"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Section
-Probabilistic Data Association Filter 
-\begin_inset CommandInset label
-LatexCommand label
-name "sec:Probabilistic-Data-Association"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-As mentioned in the introduction, there are a variety of ways to propagate
- the models, associate measurements, and update the models.
- For our implementation, we have chosen to use the Probabilistic Data Associatio
-n Filter (PDAF) even though we are tracking multiple targets.
- Because of the modular design of R-RANSAC we could implement it with a
- JPDAF, but we decided that the little increase in tracking accuracy is
- not worth the large increase in computation as discussed in 
+In the data management phase: expired measurements are removed, the tracks
+ are propagates, measurements and tracks are transformed, and tracks are
+ updated using measurements associated to the tracks.
+ As mentioned in the introduction, there are a variety of ways to propagate
+ the tracks, associate measurements, and update the tracks.
+ Due to the modularity of R-RANSAC, R-RANSAC could employ most of these
+ methods.
+ Some of these methods are compared in 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Ingersoll2015a"
@@ -2022,11 +1565,21 @@ literal "false"
 
 \end_inset
 
-.
- In this section we present the PDAF in a Lie group setting focusing only
- on the parts we believe need further discussion.
- For some additional background on presenting Lie groups in a probabilistic
- frame work we refer the reader to 
+ which concluded that the PDAF is a good balance between optimalitiy and
+ computation efficieny.
+ In addition, the PDAF has all of the components necessary to present R-RANSAC
+ in a Lie group setting.
+ Therefore, in this section we will show how the PDAF can be used to propagate
+ and update tracks and associate measurements in a Lie group setting focusing
+ only on the parts we believe need further discussion.
+ 
+\end_layout
+
+\begin_layout Standard
+The PDAF is a Baysian filter which requires modeling uncertainty on Lie
+ groups.
+ For some additional background on modeling uncertainty on Lie groups we
+ refer the reader to 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Bourmaud2014,Kim2017,Long2013,Bourmaud2013"
@@ -2035,8 +1588,8 @@ literal "true"
 \end_inset
 
 .
- We also follow some of the derivation, convention, notation and terminology
- from 
+ When presenting parts of the PDAF we will follow some of the derivation,
+ convention, notation and terminology from 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "Reid2001,Reid2001a,Thrun2006"
@@ -2049,8 +1602,8 @@ literal "true"
 \end_layout
 
 \begin_layout Standard
-We present the PDAF for one target, but it is trivially extended to the
- case of multiple targets.
+To keep notation clean, we will present the PDAF for a single target, but
+ it is trivially extended to the case of multiple targets.
  Also, the PDAF is orignally designed to work with a single measurement
  source, but we extend it to work with multiple measurement sources.
  To facilitate this, we establish additional notation.
@@ -2080,25 +1633,6 @@ We present the PDAF for one target, but it is trivially extended to the
 \end_inset
 
  if a source didn't produce any measurements.
- We assume that each source produces at most one measurement originated
- from a target with probability of detection 
-\begin_inset Formula $P_{D}^{s}$
-\end_inset
-
-.
- Also, the source produces clutter (noisy measurements) uniformly in the
- local surveillance region, where the number of clutter measurements per
- scan is modeled with a Poisson distribution with spatial density 
-\begin_inset Formula $\lambda^{s}$
-\end_inset
-
-.
- The spatial density 
-\begin_inset Formula $\lambda^{s}$
-\end_inset
-
- is the expected number of clutter measurements per sensor scan divided
- by the volume of the local surveillance region.
  Lastly, let 
 \begin_inset Formula $y_{m}^{s,j}\in Y_{m}^{s}$
 \end_inset
@@ -2124,16 +1658,10 @@ Propagation
 \end_layout
 
 \begin_layout Standard
-In this section we present the model propagation step used in the PDAF adapted
- to Lie groups.
- 
-\end_layout
-
-\begin_layout Standard
 In state estimation, it is common to use a Gaussian distribution to represent
  uncertainty.
  When using Lie groups, the uncertainty is modeled in the Lie algebra.
- For example, give a random variable 
+ For example, given a random variable 
 \begin_inset Formula $x=\left(g,u\right)$
 \end_inset
 
@@ -2154,16 +1682,16 @@ In state estimation, it is common to use a Gaussian distribution to represent
 \begin_inset Formula $\hat{x}$
 \end_inset
 
- is not a random variable and can be considered as the mean, and 
+ is not a random variable and can be considered as the mean of 
+\begin_inset Formula $x$
+\end_inset
+
+, and 
 \begin_inset Formula $\delta x$
 \end_inset
 
  is a random variable with Gausian distribution 
 \begin_inset Formula $\mathcal{N}\left(0,P\right)$
-\end_inset
-
- that is a perturbation around 
-\begin_inset Formula $\hat{x}$
 \end_inset
 
 .
@@ -2207,12 +1735,29 @@ where
 \end_layout
 
 \begin_layout Standard
-Assuming we know the probability of the state 
-\begin_inset Formula $x_{m^{-}}$
+Let 
+\begin_inset Formula $x_{k}$
+\end_inset
+
+ and 
+\begin_inset Formula $x_{m}$
+\end_inset
+
+ denote the states at time 
+\begin_inset Formula $k$
+\end_inset
+
+ and 
+\begin_inset Formula $m$
+\end_inset
+
+.
+ Assuming we know the probability of the state 
+\begin_inset Formula $x_{m}$
 \end_inset
 
 , we need to propagate the random variable in time to calculate 
-\begin_inset Formula $p\left(x_{m}\right)$
+\begin_inset Formula $p\left(x_{k}\right)$
 \end_inset
 
 .
@@ -2227,13 +1772,13 @@ literal "false"
 ,
 \begin_inset Formula 
 \[
-p\left(x_{m}\right)=\int_{\delta x_{m^{-}}}p\left(x_{m}\mid x_{m^{-}}\right)p\left(x_{m^{-}}\right)d\delta x_{m^{-}},
+p\left(x_{k}\right)=\int_{\delta x_{m}}p\left(x_{k}\mid x_{m}\right)p\left(x_{m}\right)d\delta x_{k},
 \]
 
 \end_inset
 
 where 
-\begin_inset Formula $p\left(x_{m}\mid x_{m^{-}}\right)$
+\begin_inset Formula $p\left(x_{k}\mid x_{m}\right)$
 \end_inset
 
  is the state transition probability.
@@ -2248,7 +1793,7 @@ noprefix "false"
 \end_inset
 
  in non linear in the state or noise terms, then 
-\begin_inset Formula $p\left(x_{m}\mid x_{m^{-}}\right)$
+\begin_inset Formula $p\left(x_{k}\mid x_{m}\right)$
 \end_inset
 
  is not Gaussian; therefore, 
@@ -2257,7 +1802,7 @@ noprefix "false"
 
  is not Gaussian.
  A common approach is to linearize 
-\begin_inset Formula $p\left(x_{m}\mid x_{m^{-}}\right)$
+\begin_inset Formula $p\left(x_{k}\mid x_{m}\right)$
 \end_inset
 
  using a first order Taylor series approximation to ensure that 
@@ -2276,13 +1821,13 @@ noprefix "false"
 \end_inset
 
 , the Gaussian linearization of 
-\begin_inset Formula $p\left(x_{m}\right)$
+\begin_inset Formula $p\left(x_{k}\right)$
 \end_inset
 
  is 
 \begin_inset Formula 
 \begin{align*}
-p\left(x_{m}\right) & \approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus f_{\hat{x}_{m^{-}}}\right)^{\top}P_{m}^{-1}\left(x_{m}\ominus f_{\hat{x}_{m^{-}}}\right)\right)
+p\left(x_{k}\right) & \approx\eta\exp\left(-\frac{1}{2}\delta x_{k}^{\top}P_{k}^{-1}\delta x_{k}\right)
 \end{align*}
 
 \end_inset
@@ -2290,8 +1835,8 @@ p\left(x_{m}\right) & \approx\eta\exp\left(-\frac{1}{2}\left(x_{m}\ominus f_{\ha
 with 
 \begin_inset Formula 
 \begin{align*}
-P_{m} & =F_{m}P_{m^{-}}F_{m}^{\top}+G_{m}QG_{m}^{\top}\\
-f_{\hat{x}_{m^{-}}} & =f\left(\hat{x}_{m^{-}},0,\delta_{m}\right)
+P_{k} & =F_{m:k}P_{m}F_{m:k}^{\top}+G_{m:k}QG_{m:k}^{\top}\\
+\delta x_{k}^{\top} & =x_{k}\ominus f\left(\hat{x}_{m},0,\delta_{m:k}\right)
 \end{align*}
 
 \end_inset
@@ -2299,7 +1844,7 @@ f_{\hat{x}_{m^{-}}} & =f\left(\hat{x}_{m^{-}},0,\delta_{m}\right)
 
 \begin_inset Formula 
 \begin{align*}
-F_{m} & =\begin{bmatrix}\mathbf{Ad}_{\text{Exp}\left(\delta_{m}\hat{u}_{m^{-}}\right)^{-1}} & J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)\delta_{m}\\
+F_{m:k} & =\begin{bmatrix}\mathbf{Ad}_{\text{Exp}\left(\delta_{m:k}\hat{u}_{m}\right)^{-1}} & J_{r}\left(\delta_{m:k}\hat{u}_{m}\right)\delta_{m:k}\\
 0 & I
 \end{bmatrix}
 \end{align*}
@@ -2309,19 +1854,19 @@ F_{m} & =\begin{bmatrix}\mathbf{Ad}_{\text{Exp}\left(\delta_{m}\hat{u}_{m^{-}}\r
 
 \begin_inset Formula 
 \begin{align*}
-G_{m} & =\begin{bmatrix}J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)\delta_{m} & J_{r}\left(\delta_{m}\hat{u}_{m^{-}}\right)\frac{\delta_{m}^{2}}{2}\\
-0 & I\delta_{m}
+G_{m:k} & =\begin{bmatrix}J_{r}\left(\delta_{m:k}\hat{u}_{m^{-}}\right)\delta_{m:k} & J_{r}\left(\delta_{m:k}\hat{u}_{m}\right)\frac{\delta_{m:k}^{2}}{2}\\
+0 & I\delta_{m:k}
 \end{bmatrix}
 \end{align*}
 
 \end_inset
 
 The derivations of 
-\begin_inset Formula $F_{m}$
+\begin_inset Formula $F_{m:k}$
 \end_inset
 
  and 
-\begin_inset Formula $G_{m}$
+\begin_inset Formula $G_{m:k}$
 \end_inset
 
  are done in lemma 
@@ -2361,8 +1906,8 @@ name "eq:JPDAF_propagation"
  
 \begin_inset Formula 
 \begin{align}
-\hat{x}_{m} & =f\left(\hat{x}_{m^{-}},0,\delta_{m}\right)\\
-P_{m} & =F_{m}P_{m^{-}}F_{m}^{\top}+G_{m}QG_{m}^{\top},
+\hat{x}_{k} & =f\left(\hat{x}_{m},0,\delta_{m:k}\right)\\
+P_{k} & =F_{m:k}P_{m}F_{m:k}^{\top}+G_{m:k}QG_{m:k}^{\top},
 \end{align}
 
 \end_inset
@@ -2381,14 +1926,36 @@ end{subequations}
 \end_inset
 
 .
+ Note that this propagation scheme can be used to propagate the track frowards
+ or backwards in time.
+\end_layout
+
+\begin_layout Subsection
+Transform Tracks and Measurements
 \end_layout
 
 \begin_layout Standard
-After propagating the model, it is transformed using the provided transformation
- from the user before associating new measurements.
- This is because new measurements are in the current global frame, and so
- the models must also be in the current global frame for proper data association.
- 
+After propagatin the track, all tracks and measurements not in the current
+ global frame are transformed into the current global frame using the data
+ provided in the transformation 
+\begin_inset Formula $T$
+\end_inset
+
+.
+ In order to transform a track, the state estimate and error covariance
+ need to be transformed.
+ Since the transformation is application dependent we cannot go into more
+ details except by providing an example in section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Examples"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsection
@@ -2404,10 +1971,10 @@ name "subsec:Data-Association"
 
 \begin_layout Standard
 The PDAF uses a validation region to indicate if a measurement should be
- associated with a model.
+ associated with a track.
  The validation region is a volume around a track's current state estimate.
  Measurements that are within the validation region are associated to the
- model and used to update the model.
+ track and used to update the track.
  We will use the validation region described in 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -2425,7 +1992,7 @@ The volume is determined by the probability of a measurement
 \begin_inset Formula $y_{m}^{s,j}$
 \end_inset
 
- which is 
+ from a target which is 
 \begin_inset Formula 
 \[
 p\left(y_{m}^{s,j}\right)=\int_{\delta x_{m}}p\left(y_{m}^{s,j}\mid x_{m}\right)p\left(x_{m}\right)d\delta x_{m}.
@@ -2454,56 +2021,49 @@ noprefix "false"
  is 
 \begin_inset Formula 
 \begin{align}
-p\left(y_{m}^{s,j}\right) & \approx\eta\exp\left(-\frac{1}{2}\left(y_{m}\ominus\hat{y}_{m}\right)^{\top}\right..\label{eq:probability_y}\\
- & \left.\left(S_{m}^{s}\right)^{-1}\left(y_{m}\ominus\hat{y}_{m}\right)\right)\nonumber 
+p\left(y_{m}^{s,j}\right) & \approx\eta\exp\left(-\frac{1}{2}\left(\delta y_{m}^{s,j}\right)^{\top}\left(S_{m}^{s}\right)^{-1}\delta y_{m}^{s,j}\right).\label{eq:probability_y}
 \end{align}
 
 \end_inset
 
 with 
 \begin_inset Formula 
-\begin{align}
-S_{m}^{s} & =V_{m}^{s}R^{s}\left(V_{m}^{s}\right)^{\top}+H_{m}^{s}P\left(H_{m}^{s}\right)^{\top},\label{eq:innovation_covariance}
-\end{align}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{align}
-H_{m}^{s} & =\frac{\partial y_{m}^{s,j}\ominus h\left(x_{m},v_{m}\right)}{\partial x_{m}}\label{eq:ObservationJacobianState}\\
- & =J_{l}^{-1}\left(e\right)\left.\frac{\partial h\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{\begin{array}{c}
-x_{m}=\hat{x}_{m},\\
-v_{m}=0
-\end{array}}
-\end{align}
-
-\end_inset
-
-
-\begin_inset Formula 
-\begin{align}
-V_{m}^{s} & =\frac{\partial y_{m}^{s,j}\ominus h\left(x_{m},v_{m}\right)}{\partial v_{m}}\label{eq:ObservationJacobianNoise}\\
- & =J_{l}^{-1}\left(e\right)\left.\frac{\partial h\left(x_{m},v_{m}\right)}{\partial v_{m}}\right|_{\begin{array}{c}
-x_{m}=\hat{x}_{m},\\
-v_{m}=0
-\end{array}}
-\end{align}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-and 
-\begin_inset Formula 
 \[
-e=h\left(x_{m},v_{m}\right)^{-1}y_{m}.
+\delta y_{m}^{s,j}=y_{m}^{s,j}\ominus h^{s}\left(\hat{x}_{m},0\right)
 \]
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align}
+S_{m}^{s} & =V_{m}^{s}R^{s}\left(V_{m}^{s}\right)^{\top}+H_{m}^{s}P_{m}\left(H_{m}^{s}\right)^{\top},\label{eq:innovation_covariance}
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align}
+H_{m}^{s} & =\left.\frac{\partial h^{s}\left(x_{m},v_{m}\right)}{\partial x_{m}}\right|_{\begin{array}{c}
+x_{m}=\hat{x}_{m},\\
+v_{m}=0
+\end{array}}\label{eq:ObservationJacobianState}
+\end{align}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align}
+V_{m}^{s} & =\left.\frac{\partial h^{s}\left(x_{m},v_{m}\right)}{\partial v_{m}}\right|_{\begin{array}{c}
+x_{m}=\hat{x}_{m}.\\
+v_{m}=0
+\end{array}}\label{eq:ObservationJacobianNoise}
+\end{align}
 
 \end_inset
 
@@ -2519,10 +2079,11 @@ The derivatives of
 \begin_inset Formula $V_{m}^{s}$
 \end_inset
 
- are derived from lemma 
+ are dependent on the source which is application dependent so we cannot
+ provide them here; however, we do give an example in section 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "lem:observation_func_jacobians"
+reference "sec:Examples"
 plural "false"
 caps "false"
 noprefix "false"
@@ -2530,50 +2091,12 @@ noprefix "false"
 \end_inset
 
 .
- The superscript on 
-\begin_inset Formula $H_{m}^{s}$
-\end_inset
-
-, 
-\begin_inset Formula $V_{m}^{s}$
-\end_inset
-
- and 
-\begin_inset Formula $R^{s}$
-\end_inset
-
- indicate that these terms are for the 
-\begin_inset Formula $s^{th}$
-\end_inset
-
- measurement source.
- 
 \end_layout
 
 \begin_layout Standard
-We don't want to associate every measurement to the model, only the measurements
- with a high probability.
- This is done by using a gating technique as follows.
- Let 
-\begin_inset Formula $p\left(z_{m}^{s,j}\right)$
-\end_inset
-
- be the standardized Gaussian probability of 
-\begin_inset Formula $p\left(y_{m}^{s,j}\right)$
-\end_inset
-
- where 
-\begin_inset Formula $z_{m}$
-\end_inset
-
- (we drop the superscripts) is defined as 
-\begin_inset Formula 
-\[
-z_{m}=\left(S_{m}^{s}\right)^{-\frac{1}{2}}y_{m}\ominus\hat{y}_{m}.
-\]
-
-\end_inset
-
+Using the probability that a measurement originated from a target, we associate
+ only the measurements with a high probability using a gating technique
+ as follows.
  Let 
 \begin_inset Formula $d_{V}:N\times N\to\mathbb{R}$
 \end_inset
@@ -2582,12 +2105,21 @@ z_{m}=\left(S_{m}^{s}\right)^{-\frac{1}{2}}y_{m}\ominus\hat{y}_{m}.
 \begin_inset Formula 
 \begin{align}
 d_{V}\left(y_{m},\hat{y}_{m}\right) & =\left(y_{m}\ominus\hat{y}_{m}\right)^{\top}\left(S_{m}^{s}\right)^{-1}\left(y_{m}\ominus\hat{y}_{m}\right)\label{eq:validation_region_metric}\\
- & =z_{m}^{\top}z_{m}.\nonumber 
+ & =z_{m}^{\top}z_{m},\nonumber 
 \end{align}
 
 \end_inset
 
-Note that the metric 
+where we have dropped the superscripts for readability and 
+\begin_inset Formula $p\left(z_{m}\right)$
+\end_inset
+
+ is the standard Gaussian probability of 
+\begin_inset Formula $p\left(y_{m}\right)$
+\end_inset
+
+.
+ The metric 
 \begin_inset Formula $d_{V}$
 \end_inset
 
@@ -2595,7 +2127,15 @@ Note that the metric
 \begin_inset Formula $n$
 \end_inset
 
- standard Gaussian distributions.
+ standard Gaussian distributions where 
+\begin_inset Formula $n$
+\end_inset
+
+ is the dimension of 
+\begin_inset Formula $y_{m}$
+\end_inset
+
+.
  Thus, the values of the metric 
 \begin_inset Formula $d_{V}$
 \end_inset
@@ -2607,7 +2147,7 @@ Note that the metric
 The validation region is the set 
 \begin_inset Formula 
 \[
-\text{val}\left(\hat{y}_{m},\gamma\right)=\left\{ y_{m}\in Y_{m}\,:\,d\left(y_{m},\hat{y}_{m}\right)\leq\gamma\right\} ,
+\text{val}\left(\hat{y}_{m},\gamma\right)=\left\{ y_{m}\in Y_{m}\,:\,d\left(y_{m},\hat{y}_{m}\right)\leq\tau_{G}\right\} ,
 \]
 
 \end_inset
@@ -2621,7 +2161,7 @@ where
 \end_inset
 
  and the parameter 
-\begin_inset Formula $\gamma$
+\begin_inset Formula $\tau_{G}$
 \end_inset
 
  is called the gate threshold.
@@ -2632,7 +2172,7 @@ where
  is the probability that a measurement produced by a target is within the
  validation region.
  This probability is defined as 
-\begin_inset Formula $p\left(d_{V}\left(y_{m},\hat{y}_{m}\right)\leq\gamma\right)$
+\begin_inset Formula $p\left(d_{V}\left(y_{m},\hat{y}_{m}\right)\leq\tau_{G}\right)$
 \end_inset
 
 , thus 
@@ -2641,31 +2181,45 @@ where
 
  is the value of the chi-square cumulative distribution function (CDF) with
  parameter 
-\begin_inset Formula $\gamma$
+\begin_inset Formula $\tau_{G}$
 \end_inset
 
 .
- We can thus calculate 
-\begin_inset Formula $\gamma$
+ Thus, given a specific 
+\begin_inset Formula $P_{G}$
 \end_inset
 
- for a specific 
-\begin_inset Formula $P_{G}$
+ we can calculate the corresponding 
+\begin_inset Formula $\tau_{G}$
 \end_inset
 
 .
 \end_layout
 
 \begin_layout Standard
-The volume of the validation region of source 
-\begin_inset Formula $s$
+All measurements withing the validation region of a track are associated
+ to the track and used to update it.
+ In the case of multiple tracks, each measurement is tested to see if it's
+ in the validation region of each track.
+ This allows a measurement to possibly be associated with more than one
+ track which is perfectly accounted for in the JPDAF but not the PDAF.
+ 
+\end_layout
+
+\begin_layout Standard
+The calculation of the track likelihood, which will be discussed in subsection
+ 
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+add rever
+\end_layout
+
 \end_inset
 
- at time 
-\begin_inset Formula $m$
-\end_inset
-
- is defined as 
+, requires knowing the volume of the validation region which is defined
+ as
 \begin_inset Formula 
 \begin{equation}
 V_{m,vol}^{s}=c_{n}\gamma^{n/2}\left|S_{m}^{s}\right|^{1/2},\label{eq:volume_validation_region}
@@ -2703,16 +2257,32 @@ and
 \end_layout
 
 \begin_layout Subsection
-Measurement Weight
+Track Update
 \end_layout
 
 \begin_layout Standard
-The PDAF assumes that a measurement source produces at most one measurement
+During the track update step, the state estimate, error covariance and track
+ likelihood are updated using the associated measurements.
+ The PDAF assumes that a measurement source produces at most one measurement
  originated from the target and that all other measurements are noise.
  Thus, the PDAF assigns a weight to each measurement indicating how likely
  the measurement originated from the target.
  These weights are calculated for each measurement source.
- Let 
+ Using the weights, the state estimate and error covariance are updated
+ using the PDAF update step with centralized measurement fusion to account
+ for the different sources.
+ This subsection is organized into four parts: calculating measurement weights,
+ update state and error covariance, centralized measurement fusion, and
+ update track likelihood.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+Calculating Measurement Weights
+\end_layout
+
+\begin_layout Standard
+Let 
 \begin_inset Formula $\beta^{s,j}$
 \end_inset
 
@@ -2756,7 +2326,7 @@ noprefix "false"
 \begin_inset Formula $\beta^{s,0}$
 \end_inset
 
- is the probability that none of the associated measurements from 
+ is the probability that none of the associated measurements in 
 \begin_inset Formula $Y_{m}^{s}$
 \end_inset
 
@@ -2775,11 +2345,11 @@ Note that
 .
 \end_layout
 
-\begin_layout Subsection
-Update
+\begin_layout Subsubsection
+Update State Estimate and Error Covariance
 \begin_inset CommandInset label
 LatexCommand label
-name "subsec:Single-Souorce-Update"
+name "subsec:Single-Source-Update"
 
 \end_inset
 
@@ -2790,17 +2360,7 @@ name "subsec:Single-Souorce-Update"
 The PDAF originally assumes only one measurement source.
  In the case of multiple measurement sources, we apply the update step for
  each source and fuse the results together using the centralized measurement
- fusion discussed in subsection 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:Centralized-Measurement-Fusion"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-.
+ fusion.
  For each 
 \begin_inset Formula $Y_{m}^{s}\neq\emptyset$
 \end_inset
@@ -2850,6 +2410,10 @@ Using the combined innovation term, the state update for the
 \end_inset
 
 where 
+\begin_inset Formula $\hat{\bar{x}}_{m}$
+\end_inset
+
+ is the state estimate before update and 
 \begin_inset Formula $W_{m}^{s}$
 \end_inset
 
@@ -2868,17 +2432,7 @@ W_{m}^{s}=\bar{P}_{m}\left(H_{m}^{s}\right)^{\top}\left(S_{m}^{s}\right)^{-1}.
 \begin_inset Formula $\bar{P}_{m}$
 \end_inset
 
- is the error covariance before update defined in 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:JPDAF_propagation"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-, 
+ is used to denote the error covariance before the update step, 
 \begin_inset Formula $H_{m}^{s}$
 \end_inset
 
@@ -2941,13 +2495,13 @@ and the spread of the innovations term
 \begin_layout Standard
 We now have several updated states and error covariance; one for each source
  that produced associated measurements.
- We show how to fuse them together in the next subsection.
- Also, once the measurements are used to update the model, they are added
- to the model's consensus set.
+ They are fused together using the centralized measurement fusion.
+ Also, once the measurements are used to update the track, they are added
+ to the track's consensus set.
  
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Subsubsection
 Centralized Measurement Fusion 
 \begin_inset CommandInset label
 LatexCommand label
@@ -2975,14 +2529,14 @@ literal "true"
 
 \end_inset
 
- to fuse together the updated states and error covariance.
+ to fuse together the updated states and error covariances.
  We briefly review this method here only to adapt it to the Lie group setting
- and for the specific case of the JPDAF.
+ and for the specific case of the PDAF.
  Let 
 \begin_inset Formula $\bar{\mathcal{S}}_{m}\subseteq\mathcal{S}_{m}$
 \end_inset
 
- be the indexinig set to sourced that produced associated measurements.
+ be the indexinig set of sources that produced associated measurements.
  Then covariance fusion is 
 \begin_inset Formula 
 \[
@@ -3031,8 +2585,8 @@ noprefix "false"
  
 \end_layout
 
-\begin_layout Section
-Track Likelihood
+\begin_layout Subsubsection
+Update Track Likelihood
 \begin_inset CommandInset label
 LatexCommand label
 name "sec:Track-Likelihood"
@@ -3367,14 +2921,534 @@ If a track is outside the local surveillance region (LSR) of the
 \end_layout
 
 \begin_layout Section
-Track to Track Fusion
+Track Initialization
+\end_layout
+
+\begin_layout Standard
+A target that is not initialized (not being tracked by R-RANSAC) is producing
+ measurements captured by the measurement sources.
+ Provided that the measurements of the un-initialized target are not in
+ the validation region of any initialized target, its measurements are not
+ associated with any existing initialized target; thus, they are associated
+ with a cluster 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Yang2017"
+literal "true"
+
+\end_inset
+
+.
+ After enough sensor scans, there will be enough measurements in the cluster
+ to observe the target and initialize a new track.
+ 
+\end_layout
+
+\begin_layout Standard
+This process is done using RANSAC.
+ RANSAC is a regression algorithm that estimates the parameters of a model
+ while mitigating the effect of gross outliers 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Fischler1981"
+literal "true"
+
+\end_inset
+
+.
+ There have been many developments and adaptations to the RANSAC algorithm
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Choi2009"
+literal "true"
+
+\end_inset
+
+.
+ RANSAC is used to initialize new targets.
+ 
+\end_layout
+
+\begin_layout Standard
+RANSAC uses the measurements in the cluster to try to initialize a new target
+ by first generating many track hypotheses; discussed in subsection 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Generating-Track-Hypotheses"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ A track hypothesis is a current hypothetical state 
+\begin_inset Formula $x_{k}^{h}$
+\end_inset
+
+, the subscript 
+\begin_inset Formula $k$
+\end_inset
+
+ denotes the current time, estimated from a random subset of measurements
+ from the cluster.
+ Each track hypothesis is scored using a method discussed in subsection
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Scoring"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ The track hypothesis that has the highest score, provided that the score
+ meets a minimum threshold, is initialized into a new track using a filtering
+ technique discribed in subsection 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Track-Filtering"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ In the case that there are multiple clusters, RANSAC is performed on each
+ cluster.
+ If a track is initialized, the measurements used to initialize the track
+ are removed from the cluster.
+ 
+\end_layout
+
+\begin_layout Subsection
+Generating Track Hypotheses
 \begin_inset CommandInset label
 LatexCommand label
-name "sec:Track-to-Track-fusion"
+name "subsec:Generating-Track-Hypotheses"
 
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+To create a track hypothesis 
+\begin_inset Formula $x_{k}^{h}$
+\end_inset
+
+, we take a minimum subset of measurements from the cluster, denoted 
+\begin_inset Formula $Y^{c}$
+\end_inset
+
+, where one measurement is from the current time step, and the other measurement
+s are randomly sampled such that the system is observable.
+ Using 
+\begin_inset Formula $Y^{c}$
+\end_inset
+
+ we seek to solve the optimizaiton problem 
+\begin_inset Formula 
+\[
+\underset{x_{k}}{\text{max}}p\left(Y^{c}\mid x_{k}^{h}\right),
+\]
+
+\end_inset
+
+which is a maximum likelihood estimation problem that seeks to maximize
+ the probability of the measurements 
+\begin_inset Formula $Y^{c}$
+\end_inset
+
+ conditioned on 
+\begin_inset Formula $x_{k}^{h}$
+\end_inset
+
+ by adjusting 
+\begin_inset Formula $x_{k}^{h}$
+\end_inset
+
+.
+ This optimization problem is equivalent to minimizing the log maximum likelihoo
+d estimation (LMLE) problem 
+\begin_inset Formula 
+\begin{equation}
+\underset{x_{k}}{\text{min}}-\log\left(p\left(Y^{c}\mid x_{k}\right)\right),\label{eq:OptimizationProblem}
+\end{equation}
+
+\end_inset
+
+where we dropped the superscript 
+\begin_inset Formula $h$
+\end_inset
+
+.
+ Under the assumption that measurements are independent, they are also condition
+aly independent which allows us to write the optimization problem 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:OptimizationProblem"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ as
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\underset{x_{k}}{\text{min}}-\sum_{m=0}^{k}\sum_{y_{m}\in Y_{m}^{c}}\log\left(p\left(y_{m}\mid x_{k}\right)\right),
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $Y_{m}^{c}\subseteq Y^{c}$
+\end_inset
+
+ is a subset of 
+\begin_inset Formula $Y^{c}$
+\end_inset
+
+ that only contians the measurements at time 
+\begin_inset Formula $m$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Using lemma, 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "lem:meas_inverse_prob"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, the Gaussian approximation of 
+\begin_inset Formula $p\left(y_{m}\mid x_{k}\right)$
+\end_inset
+
+ is 
+\begin_inset Formula 
+\begin{align*}
+p\left(y_{m}\mid x_{k}\right) & \approx\eta\exp\left(-L_{m}^{j}\left(x_{k}\right)\right),
+\end{align*}
+
+\end_inset
+
+where
+\begin_inset Formula 
+\begin{align*}
+L_{m}\left(x_{k}\right) & =\frac{1}{2}\left(\delta y_{k:m}^{j}\right)^{\top}S_{k:m}^{-1}\delta y_{k:m},
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\delta y_{m}=y_{m}\ominus h\left(f\left(x_{k},0,\delta_{k:m}\right),0\right)
+\]
+
+\end_inset
+
+ and 
+\begin_inset Formula $S_{k:m}$
+\end_inset
+
+ is the innovation covariance defined in equation 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:inverse_innovation_cov"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Using the Gaussian approximation, the approximate LMLE is
+\begin_inset Formula 
+\[
+\underset{x_{k}}{\text{min}}\sum_{m=0}^{k}\sum_{j=1}^{N_{m}}L_{m}^{j}\left(x_{k}\right),
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $N_{m}$
+\end_inset
+
+ is the number of measurements at time step 
+\begin_inset Formula $m$
+\end_inset
+
+, and 
+\begin_inset Formula $j$
+\end_inset
+
+ indicates the 
+\begin_inset Formula $j^{th}$
+\end_inset
+
+ measurement at time 
+\begin_inset Formula $m$
+\end_inset
+
+.
+ To calculate another track hypothesis 
+\begin_inset Formula $x_{k}^{h}$
+\end_inset
+
+, we would repeat the optimization scheme with a different random subset.
+ This process is repeated 
+\begin_inset Formula $\ell$
+\end_inset
+
+ times or until a hypothetica track reaches a score of 
+\begin_inset Formula $\tau_{RE}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+There are many methods that can be used to solve the optimization problem.
+ If the system is linear, the optimization problem reduces to the one described
+ in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Niedfeldt2014a"
+literal "true"
+
+\end_inset
+
+.
+ If the system is non-linear, the optimization problem can be solved using
+ the Gauss-newton method or some other optimization method.
+ 
+\end_layout
+
+\begin_layout Subsection
+Track Hypothesis Scoring
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Scoring"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Once a track hypothesis is generated, we score it according to its inliers.
+ Inliers are measurements that support the hypothetical track.
+ To determine if a measurement is an inlier, we use a very similar idea
+ as the validation region discussed in subsection 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Data-Association"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ The only difference is that we create the validation regions not only at
+ the current time step but at previous ones also.
+ We will ignore the derivation, since it is similar to subsection 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Data-Association"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, and present the definition.
+ 
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $S_{k:m}^{s}$
+\end_inset
+
+ be the innovation covariance of source 
+\begin_inset Formula $s$
+\end_inset
+
+ defined in 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:inverse_innovation_cov"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ We define a metric 
+\begin_inset Formula $d_{I}:N\times N\to\mathbb{R}$
+\end_inset
+
+ on the measurement space 
+\begin_inset Formula 
+\[
+d_{I}\left(y_{m},\hat{y}_{m}\right)=\left(y_{m}\ominus\hat{y}_{m}\right)^{\top}\left(S_{k:m}^{s}\right)^{-1}\left(y_{m}\ominus\hat{y}_{m}\right),
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $y_{m}\in Y_{m}^{c}$
+\end_inset
+
+, and 
+\begin_inset Formula $\hat{y}_{m}=h\left(f\left(x_{k},0,\delta_{k:m}\right),0\right)$
+\end_inset
+
+ is the estimated measurement.
+ The measurement 
+\begin_inset Formula $y_{m}$
+\end_inset
+
+ is an inlier if 
+\begin_inset Formula 
+\[
+d_{I}\left(y_{m}^{j},\hat{y}_{m}\right)<\tau_{I},
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\tau_{I}$
+\end_inset
+
+ is an inlier threshold similar in function to the gate threshold discussed
+ in subsection 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Data-Association"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ This similarity allows us to calcuated 
+\begin_inset Formula $\tau_{I}$
+\end_inset
+
+ based on a probability 
+\begin_inset Formula $P_{I}$
+\end_inset
+
+ which we call the probability of being an inlier.
+ The score of a track hypothesis is the number of times a measurement source
+ produced an inlier at a certain time step.
+ This means that if a source produced multiple inliers at time 
+\begin_inset Formula $m$
+\end_inset
+
+, the score would increase by 
+\begin_inset Formula $1$
+\end_inset
+
+ since we assume that at most only one of the measurements originated from
+ the target.
+\end_layout
+
+\begin_layout Subsection
+Track Filtering 
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Track-Filtering"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Othewise, RANSAC uses the best hypotetical track (provided that the hypothetical
+ track has a minimum score of 
+\begin_inset Formula $\tau_{RM}$
+\end_inset
+
+) to initialize a new track.
+ 
+\end_layout
+
+\begin_layout Standard
+To initialize a track, we propagate 
+\begin_inset Formula $x_{k}^{h}$
+\end_inset
+
+ back in time to the oldest time step of an inlier measurement denoted 
+\begin_inset Formula $x_{n}^{h}$
+\end_inset
+
+, and initialize the error covariance 
+\begin_inset Formula $P_{n}$
+\end_inset
+
+.
+ Using the PDAF, we propgate and update 
+\begin_inset Formula $x_{n}^{h}$
+\end_inset
+
+ using it's inliers to procude a current estimate 
+\begin_inset Formula $x_{k}$
+\end_inset
+
+ and error covariance 
+\begin_inset Formula $P_{k}$
+\end_inset
+
+.
+ This process is called filtering.
+ The inliers are also used to calculate the model likelihood.
+ Once the track is initialized, the inliers are added to the track's consensus
+ set.
+ 
+\end_layout
+
+\begin_layout Section
+Track Management 
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Track-Management"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Track management consists of merging, purning, ranking, and labeling tracks.
+\end_layout
+
+\begin_layout Subsection
+Merge Tracks
 \end_layout
 
 \begin_layout Standard
@@ -3417,7 +3491,7 @@ literal "true"
  
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Subsubsection
 Track Association
 \end_layout
 
@@ -3451,7 +3525,7 @@ Assuming that the two tracks are independent, the covariance of the estimation
  error is 
 \begin_inset Formula 
 \[
-T^{ij}=P^{i}+P^{j}.
+P^{ij}=P^{i}+P^{j}.
 \]
 
 \end_inset
@@ -3463,7 +3537,7 @@ We next define a metric
  to be
 \begin_inset Formula 
 \[
-d_{T}\left(\hat{x}^{i},\hat{x}^{j}\right)=\left(\Delta^{ij}\right)^{\top}\left(T^{ij}\right)^{-1}\Delta^{ij}.
+d_{T}\left(\hat{x}^{i},\hat{x}^{j}\right)=\left(\Delta^{ij}\right)^{\top}\left(P^{ij}\right)^{-1}\Delta^{ij}.
 \]
 
 \end_inset
@@ -3479,7 +3553,7 @@ If
 , then the two tracks are deemed to be the same and should be merged.
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Subsubsection
 Track Fusion
 \end_layout
 
@@ -3630,747 +3704,35 @@ In addition, when tracks are fused, we merge their consensus sets together,
  
 \end_layout
 
-\begin_layout Section
-RANSAC
-\begin_inset CommandInset label
-LatexCommand label
-name "sec:RANSAC"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-RANSAC is a regression algorithm that estimates the parameters of a model
- while mitigating the effect of gross outliers 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Fischler1981"
-literal "true"
-
-\end_inset
-
-.
- There have been many developments and adaptations to the RANSAC algorithm
- 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Choi2009"
-literal "true"
-
-\end_inset
-
-.
- RANSAC is used to initialize new targets.
- A target that is not initialized (not being tracked by R-RANSAC) is producing
- measurements captured by the measurement sources.
- Provided that the measurements of the un-initialized target are not in
- the validation region of any initialized target, its measurements are not
- associated with any existing initialized target; thus, they are given to
- the data tree.
- The measurements produced by the un-initialized target are neighboring
- and will eventually form a cluster 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Yang2017"
-literal "true"
-
-\end_inset
-
-.
- 
-\end_layout
-
-\begin_layout Standard
-RANSAC uses the measurements in the cluster to try to initialize a new target
- by first generating many track hypotheses.
- A track hypothesis is a current hypothetical state 
-\begin_inset Formula $x_{k}^{h}$
-\end_inset
-
- estimated from a random subset of measurements from the cluster.
- We discuss the generation of track hypotheses in subsection 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:Generating-Track-Hypotheses"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-.
- Each track hypothesis is scored as discussed in subsection 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:Scoring"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-.
- The track hypothesis that has the highest score provided that the score
- meets a minimum threshold is initialized into a new track as we will discuss
- in subsection 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:Track-Initialization"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-.
- In the case that there are multiple clusters, RANSAC is performed on each
- cluster.
- If a track is initialized, the measurements used to initialize the track
- are removed from the cluster.
-\end_layout
-
 \begin_layout Subsection
-Generating Track Hypotheses
-\begin_inset CommandInset label
-LatexCommand label
-name "subsec:Generating-Track-Hypotheses"
-
-\end_inset
-
-
+Prune, Rank and Label Tracks
 \end_layout
 
 \begin_layout Standard
-To create a track hypothesis 
-\begin_inset Formula $x_{k}^{h}$
+As stated previously, R-RANSAC stores up to 
+\begin_inset Formula $M$
 \end_inset
 
-, we take a minimum subset of measurements 
-\begin_inset Formula $Y^{c}$
+ tracks.
+ If there are more than 
+\begin_inset Formula $M$
 \end_inset
 
- from the cluster where one measurement is from the current time step, and
- the other measurements are randomly sampled such that the system is observable.
- Using 
-\begin_inset Formula $Y^{c}$
+ tracks after track initialization and track merging, the tracks with the
+ lowest track likelihood are removed until there are only 
+\begin_inset Formula $M$
 \end_inset
 
- we seek to solve the optimizaiton problem 
-\begin_inset Formula 
-\[
-\underset{x_{k}}{\text{max}}p\left(Y^{c}\mid x_{k}^{h}\right),
-\]
-
-\end_inset
-
-which is a maximum likelihood estimation problem that seeks to maximize
- the probability of the measurements 
-\begin_inset Formula $Y^{c}$
-\end_inset
-
- conditioned on 
-\begin_inset Formula $x_{k}^{h}$
-\end_inset
-
- by adjusting 
-\begin_inset Formula $x_{k}^{h}$
-\end_inset
-
-.
- This optimization problem is equivalent to minimizing the log maximum likelihoo
-d estimation (LMLE) problem 
-\begin_inset Formula 
-\begin{equation}
-\underset{x_{k}}{\text{min}}-\log\left(p\left(Y^{c}\mid x_{k}\right)\right),\label{eq:OptimizationProblem}
-\end{equation}
-
-\end_inset
-
-where we dropped the superscript 
-\begin_inset Formula $h$
-\end_inset
-
-.
- Under the assumption that measurements are independent, they are also condition
-aly independent which allows us to write the optimization problem 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:OptimizationProblem"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
- as
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\[
-\underset{x_{k}}{\text{min}}-\sum_{m=0}^{k}\sum_{y_{m}\in Y_{m}^{c}}\log\left(p\left(y_{m}\mid x_{k}\right)\right),
-\]
-
-\end_inset
-
-where 
-\begin_inset Formula $Y_{m}^{c}\subseteq Y^{c}$
-\end_inset
-
- contians the measurements observed at time 
-\begin_inset Formula $m$
-\end_inset
-
- that are being used in the optimization scheme.
-\end_layout
-
-\begin_layout Standard
-Using lemma, 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "lem:meas_inverse_prob"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-, the Gaussian approximation of 
-\begin_inset Formula $p\left(y_{m}\mid x_{k}\right)$
-\end_inset
-
- is 
-\begin_inset Formula 
-\begin{align*}
-p\left(y_{m}^{j}\mid x_{k}\right) & \approx\eta\exp\left(-L_{m}^{j}\right),
-\end{align*}
-
-\end_inset
-
-where
-\begin_inset Formula 
-\begin{align*}
-L_{m}^{j}\left(x_{k}\right) & =\frac{1}{2}y_{m}\ominus h\left(\hat{x}_{m},0\right)^{\top}\\
- & S_{k:m}^{-1}y_{m}\ominus h\left(\hat{x},0\right),
-\end{align*}
-
-\end_inset
-
- 
-\begin_inset Formula 
-\[
-\hat{x}_{m}=f^{-1}\left(x_{k},0,\delta_{k:m}\right)
-\]
-
-\end_inset
-
- and 
-\begin_inset Formula $S_{k:m}$
-\end_inset
-
- is the innovation covariance defined in equation 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:inverse_innovation_cov"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-Using the Gaussian approximation, the approximate LMLE is
-\begin_inset Formula 
-\[
-\underset{x_{k}}{\text{min}}\sum_{m=0}^{k}\sum_{j=1}^{N_{m}}L_{m}^{j}\left(x_{k}\right),
-\]
-
-\end_inset
-
-where 
-\begin_inset Formula $N_{m}$
-\end_inset
-
- is the number of measurements at time step 
-\begin_inset Formula $m$
-\end_inset
-
-.
- To calculate another track hypothesis 
-\begin_inset Formula $x_{k}^{h}$
-\end_inset
-
-, we would repeat the optimization scheme with a different random subset.
- 
-\end_layout
-
-\begin_layout Standard
-There are many methods that can be used to solve the optimization problem.
- If the system is linear, the optimization problem reduces to the one described
- in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Niedfeldt2014a"
-literal "true"
-
-\end_inset
-
-.
- If the system is non-linear, the optimization problem can be solved using
- the Gauss-newton method or some other optimization method.
- 
-\end_layout
-
-\begin_layout Subsection
-Track Hypothesis Scoring
-\begin_inset CommandInset label
-LatexCommand label
-name "subsec:Scoring"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Once a track hypothesis is generated, we score it according to its inliers.
- Inliers are measurements that support the hypothetical track.
- To determine if a measurement is an inlier, we use a very similar idea
- as the validation region discussed in subsection 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:Data-Association"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-.
- The only difference is that we create the validation regions not only at
- the current time step but at previous ones also.
- We will ignore the derivation, since it is similar to subsection 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:Data-Association"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-, and present the definition.
- 
-\end_layout
-
-\begin_layout Standard
-Let 
-\begin_inset Formula $S_{k:m}^{s}$
-\end_inset
-
- be the innovation covariance of source 
-\begin_inset Formula $s$
-\end_inset
-
- defined in 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:inverse_innovation_cov"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-.
- We defined a metric 
-\begin_inset Formula $d_{I}:N\times N\to\mathbb{R}$
-\end_inset
-
- on the measurement space 
-\begin_inset Formula 
-\[
-d_{I}\left(y_{m},\hat{y}_{m}\right)=\left(y_{m}\ominus\hat{y}_{m}\right)^{\top}\left(S_{k:m}^{s}\right)^{-1}\left(y_{m}\ominus\hat{y}_{m}\right),
-\]
-
-\end_inset
-
-where 
-\begin_inset Formula $y_{m}$
-\end_inset
-
- is a measurement, from time 
-\begin_inset Formula $m$
-\end_inset
-
-, in the cluster from which the hypothetical track was generated, and 
-\begin_inset Formula $\hat{y}_{m}$
-\end_inset
-
- is the estimated measurement defined in 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:observation_inverse_f"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-.
- The measurement 
-\begin_inset Formula $y_{m}$
-\end_inset
-
- is an inlier if 
-\begin_inset Formula 
-\[
-d_{I}\left(y_{m}^{j},\hat{y}_{m}\right)<\tau_{I},
-\]
-
-\end_inset
-
-where 
-\begin_inset Formula $\tau_{I}$
-\end_inset
-
- is an inlier threshold similar in function to the gate threshold discussed
- in subsection 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:Data-Association"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-.
- This similarity allows us to calcuated 
-\begin_inset Formula $\tau_{I}$
-\end_inset
-
- based on a probability 
-\begin_inset Formula $P_{I}$
-\end_inset
-
- which we call the probability of being an inlier.
- The score of a track hypothesis is the number of times a measurement source
- produced an inlier at a certain time step.
- This means that if a source produced multiple inliers at time 
-\begin_inset Formula $m$
-\end_inset
-
-, the score would only increase by 
-\begin_inset Formula $1$
+ tracks.
+ The remaining tracks are then ranked according to their track likelihood.
+ If the track likelihood is above the threshold 
+\begin_inset Formula $\tau_{\rho}$
 \end_inset
-
- since we assume that at most only one of the measurements originated from
- the target.
-\end_layout
-
-\begin_layout Subsection
-Track Initialization 
-\begin_inset CommandInset label
-LatexCommand label
-name "subsec:Track-Initialization"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-RANSAC generates up to 
-\begin_inset Formula $\ell$
-\end_inset
-
- hypothetical tracks.
- If the score of a hypothetical track reaches the threshold 
-\begin_inset Formula $\tau_{RE}$
-\end_inset
-
-, then RANSAC terminates generating hypothetical tracks and initializes
- a track with that hypothetical track.
- Othewise, RANSAC uses the best hypotetical track (provided that the hypothetica
-l track has a minimum score of 
-\begin_inset Formula $\tau_{RM}$
-\end_inset
-
-) to initialize a new track.
- 
-\end_layout
-
-\begin_layout Standard
-To initialize a track, we propagate 
-\begin_inset Formula $x_{k}^{h}$
-\end_inset
-
- back in time to the oldest time step of an inlier measurement denoted 
-\begin_inset Formula $x_{n}^{h}$
-\end_inset
-
-, and initialize the error covariance 
-\begin_inset Formula $P_{n}$
-\end_inset
-
-.
- Using the PDAF, we propgate and update 
-\begin_inset Formula $x_{n}^{h}$
-\end_inset
-
- using it's inliers to procude a current estimate 
-\begin_inset Formula $x_{k}$
-\end_inset
-
- and error covariance 
-\begin_inset Formula $P_{k}$
-\end_inset
-
-.
- This process is called filtering.
- The inliers are also used to calculate the model likelihood.
- Once the track is initialized, the inliers are added to the track's consensus
- set.
- 
-\end_layout
-
-\begin_layout Section
-LMLE Simplification 
-\begin_inset CommandInset label
-LatexCommand label
-name "sec:LMLE-Simplification"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-The optimization problem defined in 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:OptimizationProblem"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
- can be computationally expensive if the system is nonlinear.
- The purpose of the optimization problem is to generate a hypothetical track
- 
-\begin_inset Formula $x_{k}^{h}$
-\end_inset
-
- which is later refined using its inlieries via filtering.
- So the hypothetical track produced by the LMLE doesn't have to be super
- refined; therefore, we can simplify the optimization process in different
- ways.
- 
-\end_layout
-
-\begin_layout Standard
-Let's assume that the pose of the system is measurable.
- In other words, your observation model 
-\begin_inset Formula $h$
-\end_inset
-
- is defined as 
-\begin_inset Formula 
-\[
-h\left(x_{k},v_{k}\right)=g_{k}\exp\left(v_{k}\right),
-\]
-
-\end_inset
-
-thus
-\begin_inset Formula 
-\[
-y_{k}=g_{k}\exp\left(v_{k}\right).
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-When generating a track hypothesis, we always use a measurement from the
- current time.
- We can use this measurement as the estimated pose 
-\begin_inset Formula $g_{k}$
-\end_inset
-
-.
- All that remains is estimating the velocity term 
-\begin_inset Formula $u_{k}$
-\end_inset
-
- using one other measurement 
-\begin_inset Formula $y_{m}$
-\end_inset
-
- where 
-\begin_inset Formula $m<k$
-\end_inset
-
-.
- Under the assumption that 
-\begin_inset Formula $g_{k}$
-\end_inset
-
- is the true current state, the measurement 
-\begin_inset Formula $y_{m}$
-\end_inset
-
- is 
-\begin_inset Formula 
-\[
-y_{m}=g_{k}\exp\left(\delta_{k:m}u_{k}+\delta_{k:m}w_{k}^{g}+\frac{\delta_{k:m}^{2}}{2}w_{k}^{u}\right)\exp\left(v_{m}\right),
-\]
-
-\end_inset
-
-which can be approximated as 
-\begin_inset Formula 
-\[
-y_{m}\approx g_{k}\exp\left(\delta_{k:m}u_{k}+\delta_{k:m}w_{k}^{g}+\frac{\delta_{k:m}^{2}}{2}w_{k}^{u}+v_{m}\right)
-\]
-
-\end_inset
-
-By calculating the error between the measurement and the current state we
- get 
-\begin_inset Formula 
-\begin{align*}
-y_{m}\ominus g_{k} & =\log\left(g_{k}^{-1}y_{m}\right)\\
-e_{k:m} & \approx\delta_{k:m}u_{k}+\delta_{k:m}w_{k}^{g}+\frac{\delta_{k:m}^{2}}{2}w_{k}^{u}+v_{m}.
-\end{align*}
-
-\end_inset
-
-The expected value of 
-\begin_inset Formula $e_{k:m}$
-\end_inset
-
- is 
-\begin_inset Formula 
-\[
-\text{E}\left[e_{k:m}\right]=\delta_{k:m}u_{k},
-\]
-
-\end_inset
-
-and the covariance is 
-\begin_inset Formula 
-\begin{align*}
-\text{cov}\left[e_{k:m}\right] & \approx\delta_{k:m}^{2}Q^{g}+\frac{\delta_{k:m}^{4}}{4}Q^{u}+R\\
- & =S_{k:m}
-\end{align*}
-
-\end_inset
-
-where 
-\begin_inset Formula 
-\[
-Q=\begin{bmatrix}Q^{g} & 0\\
-0 & Q^{u}
-\end{bmatrix}.
-\]
-
-\end_inset
-
-We can simply estimate 
-\begin_inset Formula $u_{k}$
-\end_inset
-
- by letting 
-\begin_inset Formula $u_{k}=e_{k:m}/\delta_{k:m}$
-\end_inset
-
-.
- We can enhance the estimate using multiple measurements.
- Let 
-\begin_inset Formula $\chi$
-\end_inset
-
- be an index set such that 
-\begin_inset Formula $\cup_{m\in\chi}\left\{ y_{m}\right\} $
-\end_inset
-
- is the set of measurements we will use to estimate 
-\begin_inset Formula $u_{k}$
-\end_inset
-
-, then 
-\begin_inset Formula 
-\[
-u_{k}=\left(\sum_{j\in\Lambda}\delta_{k:j}S_{k:j}^{-1}\right)^{-1}\left(\sum_{j\in\Lambda}S_{k:j}^{-1}e_{k:j}\right).
-\]
-
-\end_inset
-
-We can simplify the estimation further by setting the covariance terms to
- identity which yields 
-\begin_inset Formula 
-\[
-u_{k}=\frac{1}{\left|\chi\right|}\sum_{j\in\Lambda}e_{k:j}.
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Another possible simplification for any approach is by setting 
-\begin_inset Formula $S_{k:m}^{s}$
-\end_inset
-
- defined in 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:inverse_innovation_cov"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
- to identity in the optimization problem 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:OptimizationProblem"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-We propose this simplification because computing the covariance 
-\begin_inset Formula $S_{k:m}^{s}$
-\end_inset
-
- can be computationally costly when it has to be done thousands of times
- whenever RANSAC is performed.
- 
-\end_layout
 
-\begin_layout Standard
-If you want the estimation to be as accurate as possible, we suggest you
- use the simplified approaches to seed the original optimization problem
- unless the system is linear since the original optimization problem is
- already simple.
+, then the track is considered a good model and is given a unique numerical
+ label; otherwise it is a poor model.
+ In the case that a good model is demoted to a poor model it still retains
+ its label in the case that it becomes good again.
  
 \end_layout
 
@@ -4948,101 +4310,25 @@ These estimates can then be used to seed the LMLE during the RANSAC step
  of the algorithm.
 \end_layout
 
-\begin_layout Standard
+\begin_layout Section
 
 \series bold
 Hardware Results
 \end_layout
 
-\begin_layout Subsection
-Constrained Problem for SE
-\begin_inset Formula $\left(3\right)$
-\end_inset
-
-: Tracking UAVs with Radar
+\begin_layout Standard
+blah
 \end_layout
 
-\begin_layout Standard
-In this example the objective is to track multiple fixed wing aircrafts
- (FWAs) that are in the GSR and whose configuration manifold is 
-\begin_inset Formula $SE$
-\end_inset
+\begin_layout Appendices
 
-
-\begin_inset Formula $\left(3\right)$
-\end_inset
-
-.
- The FWA are observed via multiple fixed radar sensors with overlapping
- LSR which produce point measurements.
- See appendix 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:SE3"
-
-\end_inset
-
- for the FWAs' system function and important Jacobians.
- 
 \end_layout
 
-\begin_layout Standard
-Let 
-\begin_inset Formula $g_{k}\in SE\left(3\right)$
-\end_inset
-
- and 
-\begin_inset Formula $u_{k}\in\mathfrak{se}\left(3\right)$
-\end_inset
-
-.
- These elements can be written as 
-\begin_inset Formula 
-\begin{align*}
-g_{k} & =\begin{bmatrix}R_{k} & t_{k}\\
-0_{1\times2} & 1
-\end{bmatrix}\\
-u_{k} & =\begin{bmatrix}\omega_{k} & \rho_{k}\\
-0_{1\times2} & 1
-\end{bmatrix},
-\end{align*}
-
-\end_inset
-
-where 
-\begin_inset Formula $R_{k}\in SO\left(3\right)$
-\end_inset
-
-, 
-\begin_inset Formula $\omega_{k}\in\mathfrak{so}\left(3\right)$
-\end_inset
-
-, and 
-\begin_inset Formula $t_{k},\rho_{k}\in\mathbb{R}^{3}$
-\end_inset
-
-.
- The observation model is 
-\begin_inset Formula 
-\begin{align*}
-y_{k} & =h\left(x_{k},v_{k}\right)\\
- & =t_{k}+v_{k},
-\end{align*}
-
-\end_inset
-
-where 
-\begin_inset Formula $y_{k}\in\mathbb{R}^{3}$
-\end_inset
-
-.
- The inverse observation model is 
-\begin_inset Formula 
-\begin{align*}
-y_{m} & =h\left(f^{-1}\left(x_{k},\delta_{k:m},w_{k}\right),v_{k}\right)\\
- & =R_{k}J_{l}\left(\delta_{k:m}\left(\omega_{k}+w_{k}^{R}\right)+\frac{\delta_{k:m}^{2}w_{k}^{\omega}}{2}\right)\left(\delta_{k:m}\rho_{k}+\delta_{k:m}w_{k}^{\rho}\right)\\
- & +t_{k}+w_{k}^{t}+v_{m},
-\end{align*}
+\begin_layout Section
+LMLE Simplification 
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:LMLE-Simplification"
 
 \end_inset
 
@@ -5050,350 +4336,204 @@ y_{m} & =h\left(f^{-1}\left(x_{k},\delta_{k:m},w_{k}\right),v_{k}\right)\\
 \end_layout
 
 \begin_layout Standard
-where 
-\begin_inset Formula $w_{k}=\left[\left(w_{k}^{t}\right)^{\top},\left(w_{k}^{R}\right)^{\top},\left(w_{k}^{\rho}\right)^{\top},\left(w_{k}^{u}\right)^{\top}\right]^{\top}$
-\end_inset
-
- and 
-\begin_inset Formula $J_{l}$
-\end_inset
-
- is defined in equation 
+The optimization problem defined in 
 \begin_inset CommandInset ref
 LatexCommand eqref
-reference "eq:V_se3"
+reference "eq:OptimizationProblem"
+plural "false"
+caps "false"
+noprefix "false"
 
 \end_inset
 
-.
- Based on the observation model, we have three Jacobians to compute: 
-\begin_inset Formula $G_{k:m}$
-\end_inset
-
-, 
-\begin_inset Formula $H_{k:m}$
-\end_inset
-
- and 
-\begin_inset Formula $V_{m}$
-\end_inset
-
-.
+ can be computationally expensive if the system is nonlinear.
+ The purpose of the optimization problem is to generate a hypothetical track
  
-\begin_inset Formula 
-\begin{align*}
-H_{k:m}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial x} & =\begin{bmatrix}H_{k:m}^{t} & H_{k:m}^{R} & H_{k:m}^{\rho} & H_{k:m}^{\omega}\end{bmatrix},
-\end{align*}
-
+\begin_inset Formula $x_{k}^{h}$
 \end_inset
 
-where
-\begin_inset Formula 
-\begin{align*}
-H_{k:m}^{t}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial t_{k}} & =R_{k}\\
-H_{k:m}^{R}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial R} & =\delta_{k:m}R_{k}\left[-J_{l}\left(\delta_{k:m}\omega\right)\rho\right]_{\times}\\
-H_{k:m}^{\rho}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\rho} & =\delta_{k:m}^{2}R_{k}J_{l}\left(\delta_{k:m}\omega\right)\\
-H_{k:m}^{\omega}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial\omega} & =\delta_{k:m}^{2}R_{k}\partial J_{l}\left(\delta_{k:m}\omega,\delta_{k:m}\rho\right),
-\end{align*}
-
-\end_inset
-
-and
-\begin_inset Formula $\partial J_{l}\left(\delta_{k:m}\omega,\delta_{k:m}\rho\right)$
-\end_inset
-
- is defined in Lemma 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "lem:dJl"
-
-\end_inset
-
-.
+ which is later refined using its inlieries via filtering.
+ So the hypothetical track produced by the LMLE doesn't have to be super
+ refined; therefore, we can simplify the optimization process in different
+ ways.
  
 \end_layout
 
 \begin_layout Standard
+Let's assume that the pose of the system is measurable.
+ In other words, your observation model 
+\begin_inset Formula $h$
+\end_inset
+
+ is defined as 
 \begin_inset Formula 
 \[
-G_{k:m}=\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}}=\begin{bmatrix}G_{k:m}^{t} & G_{k:m}^{R} & G_{k:m}^{\rho} & G_{k:m}^{\omega}\end{bmatrix},
+h\left(x_{k},v_{k}\right)=g_{k}\exp\left(v_{k}\right),
 \]
 
 \end_inset
 
-where 
+thus
+\begin_inset Formula 
+\[
+y_{k}=g_{k}\exp\left(v_{k}\right).
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+When generating a track hypothesis, we always use a measurement from the
+ current time.
+ We can use this measurement as the estimated pose 
+\begin_inset Formula $g_{k}$
+\end_inset
+
+.
+ All that remains is estimating the velocity term 
+\begin_inset Formula $u_{k}$
+\end_inset
+
+ using one other measurement 
+\begin_inset Formula $y_{m}$
+\end_inset
+
+ where 
+\begin_inset Formula $m<k$
+\end_inset
+
+.
+ Under the assumption that 
+\begin_inset Formula $g_{k}$
+\end_inset
+
+ is the true current state, the measurement 
+\begin_inset Formula $y_{m}$
+\end_inset
+
+ is 
+\begin_inset Formula 
+\[
+y_{m}=g_{k}\exp\left(\delta_{k:m}u_{k}+\delta_{k:m}w_{k}^{g}+\frac{\delta_{k:m}^{2}}{2}w_{k}^{u}\right)\exp\left(v_{m}\right),
+\]
+
+\end_inset
+
+which can be approximated as 
+\begin_inset Formula 
+\[
+y_{m}\approx g_{k}\exp\left(\delta_{k:m}u_{k}+\delta_{k:m}w_{k}^{g}+\frac{\delta_{k:m}^{2}}{2}w_{k}^{u}+v_{m}\right)
+\]
+
+\end_inset
+
+By calculating the error between the measurement and the current state we
+ get 
 \begin_inset Formula 
 \begin{align*}
-G_{k:m}^{t} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{t}}=I\\
-G_{k:m}^{R} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{R}}=\delta_{k:m}^{2}R_{k}\partial J_{l}\left(\delta_{k:m}\omega,\delta_{k:m}\rho\right)\\
-G_{k:m}^{\rho} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{\rho}}=\delta_{k:m}^{2}R_{k}J_{l}\left(\delta_{k:m}\omega\right)\\
-G_{k:m}^{\omega} & =\frac{\partial h\left(f^{-1},v_{k}\right)}{\partial w_{k}^{\omega}}=\frac{\delta_{k:m}^{3}}{2}R_{k}\partial J_{l}\left(\delta_{k:m}\omega,\delta_{k:m}\rho\right).
+y_{m}\ominus g_{k} & =\log\left(g_{k}^{-1}y_{m}\right)\\
+e_{k:m} & \approx\delta_{k:m}u_{k}+\delta_{k:m}w_{k}^{g}+\frac{\delta_{k:m}^{2}}{2}w_{k}^{u}+v_{m}.
 \end{align*}
 
 \end_inset
 
-Lastly 
-\begin_inset Formula $V_{m}=I$
+The expected value of 
+\begin_inset Formula $e_{k:m}$
 \end_inset
 
-.
-\end_layout
-
-\begin_layout Standard
-Now that we have the Jacobians computed, we need to ensure that the system
- is observable.
- Since the system is nonlinear, the best we can do is ensure local observability.
- Given measurements from four different time steps, the observability matrix
  is 
 \begin_inset Formula 
 \[
-\mathcal{O}=\begin{bmatrix}H_{k:m_{1}}\\
-H_{k:m_{2}}\\
-H_{k:m_{3}}\\
-H_{k:m_{4}}
+\text{E}\left[e_{k:m}\right]=\delta_{k:m}u_{k},
+\]
+
+\end_inset
+
+and the covariance is 
+\begin_inset Formula 
+\begin{align*}
+\text{cov}\left[e_{k:m}\right] & \approx\delta_{k:m}^{2}Q^{g}+\frac{\delta_{k:m}^{4}}{4}Q^{u}+R\\
+ & =S_{k:m}
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula 
+\[
+Q=\begin{bmatrix}Q^{g} & 0\\
+0 & Q^{u}
 \end{bmatrix}.
 \]
 
 \end_inset
 
-The observability matrix is not full rank.
- However, under certain constraints, the system is observable.
- Since we are interested in tracking the target we only need to be able
- to estimate the position of the target.
- To do this, we consider two configurations for a constant velocity system.
- In the first configuration the target has a circular or spiral trajectory.
- In this case we add the constraints that the target's heading is oriented
- along the body frame velocity, that 
-\begin_inset Formula $\rho=\left[\rho_{x},0\right]^{\top}$
+We can simply estimate 
+\begin_inset Formula $u_{k}$
 \end_inset
 
-, 
-\begin_inset Formula $\rho_{x}>0$
-\end_inset
-
- and 
-\begin_inset Formula $\omega\neq0$
+ by letting 
+\begin_inset Formula $u_{k}=e_{k:m}/\delta_{k:m}$
 \end_inset
 
 .
- Using these constraints, the system is observable.
- In the second configuration the target is moving in a straight line.
- In this configuration we impose the same constraints as in the first configurat
-ion except that 
-\begin_inset Formula $\omega=0$
+ We can enhance the estimate using multiple measurements.
+ Let 
+\begin_inset Formula $\chi$
 \end_inset
 
- and the roll in attitude (using roll, pitch, yaw) is zero.
- Under these constraints the system is observable.
- We can identify which configuration the target is in by looking at three
- different measurements from different times.
- If the three measurement do not form a line, then the system is in the
- first configuration; otherwise, the latter.
+ be an index set such that 
+\begin_inset Formula $\cup_{m\in\chi}\left\{ y_{m}\right\} $
+\end_inset
+
+ is the set of measurements we will use to estimate 
+\begin_inset Formula $u_{k}$
+\end_inset
+
+, then 
+\begin_inset Formula 
+\[
+u_{k}=\left(\sum_{j\in\Lambda}\delta_{k:j}S_{k:j}^{-1}\right)^{-1}\left(\sum_{j\in\Lambda}S_{k:j}^{-1}e_{k:j}\right).
+\]
+
+\end_inset
+
+We can simplify the estimation further by setting the covariance terms to
+ identity which yields 
+\begin_inset Formula 
+\[
+u_{k}=\frac{1}{\left|\chi\right|}\sum_{j\in\Lambda}e_{k:j}.
+\]
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
-Since the system is nonlinear, the LMLE can take a while to converge.
- We can speed up the LMLE by seeding it.
- To do this, we will use the Euler angles (roll 
-\begin_inset Formula $\phi$
+Another possible simplification for any approach is by setting 
+\begin_inset Formula $S_{k:m}^{s}$
 \end_inset
 
-, pitch 
-\begin_inset Formula $\theta$
-\end_inset
-
-, yaw 
-\begin_inset Formula $\psi$
-\end_inset
-
-) as local coordinates and align the pitch and yaw angles with the translational
- velocities.
- The map from Euler angles configured in an NED frame to 
-\begin_inset Formula $SO\left(3\right)$
-\end_inset
-
- is defined as 
-\begin_inset Formula 
-\begin{equation}
-\mathcal{R}\left(\phi,\theta,\psi\right)=\begin{bmatrix}c_{\theta}c_{\psi} & s_{\phi}s_{\theta}c_{\psi}-c_{\phi}s_{\psi} & c_{\phi}s_{\theta}c_{\psi}+s_{\phi}s_{\psi}\\
-c_{\theta}s_{\psi} & s_{\phi}s_{\theta}s_{\psi}+c_{\phi}c_{\psi} & c_{\phi}s_{\theta}s_{\psi}-s_{\phi}c_{\psi}\\
--s_{\theta} & s_{\phi}c_{\theta} & c_{\phi}c_{\theta}
-\end{bmatrix}.\label{eq:euler_to_so3}
-\end{equation}
-
-\end_inset
-
-Let 
-\begin_inset Formula $t_{k},t_{m},t_{n}$
-\end_inset
-
- denote measured positions at times 
-\begin_inset Formula $n,m,k$
-\end_inset
-
- with 
-\begin_inset Formula $k$
-\end_inset
-
- being the current time and 
-\begin_inset Formula $n<m<k$
-\end_inset
-
-.
- The derivative of the position vector 
-\begin_inset Formula $t$
-\end_inset
-
- is related to 
-\begin_inset Formula $\rho$
-\end_inset
-
- through the rotation matrix 
-\begin_inset Formula $R$
-\end_inset
-
-.
- This allows us to write the constraint
-\begin_inset Formula 
-\begin{align*}
-\dot{t} & =R\rho\\
- & =\mathcal{R}\left(\phi,\theta,\psi\right)\rho.
-\end{align*}
-
-\end_inset
-
-Letting 
-\begin_inset Formula $\dot{t}_{k}=\left[\dot{t}_{k_{x}},\dot{t}_{k_{y}},\dot{t}_{k_{z}}\right]^{\top}$
-\end_inset
-
-, we get 
-\begin_inset Formula 
-\[
-\begin{bmatrix}\dot{t}_{x}\\
-\dot{t}_{y}\\
-\dot{t}_{z}
-\end{bmatrix}=\underbrace{\begin{bmatrix}c_{\theta}c_{\psi}\\
-c_{\theta}s_{\psi}\\
--s_{\theta}
-\end{bmatrix}}_{R_{k_{x}}}\rho_{x}.
-\]
-
-\end_inset
-
-Since we receive position measurements, we can numerically estimate the
- positional derivatives 
-\begin_inset Formula $\dot{t}_{k}=\frac{t_{m}-t_{k}}{\delta_{k:m}}$
-\end_inset
-
- and 
-\begin_inset Formula $\dot{t}_{m}=\frac{t_{n}-t_{m}}{\delta_{m:n}}$
-\end_inset
-
-.
- Using 
-\begin_inset Formula $\dot{t}_{k}$
-\end_inset
-
- we can estimate 
-\begin_inset Formula $R_{k}$
-\end_inset
-
- by solving for 
-\begin_inset Formula $\phi_{k}$
-\end_inset
-
-,
-\begin_inset Formula $\theta_{k}$
-\end_inset
-
-, 
-\begin_inset Formula $\psi_{k}$
-\end_inset
-
-, and 
-\begin_inset Formula $\rho_{k_{x}}$
-\end_inset
-
- using the equations 
-\begin_inset Formula 
-\begin{align*}
-\psi_{k} & =\text{atan2}\left(\dot{t}_{k_{y}},\left|\dot{t}_{k_{x}}\right|\right)\\
-\theta_{k} & =\arctan\left(\frac{-\cos\left(\psi_{k}\right)\dot{t}_{k_{z}}}{\dot{t}_{k_{x}}}\right)\\
-\phi_{k} & =0\\
-\rho_{k_{x}} & =\left\Vert \dot{t}_{k}\right\Vert 
-\end{align*}
-
-\end_inset
-
-We have set 
-\begin_inset Formula $\phi_{k}=0$
-\end_inset
-
- since we cannot easily estimate it unless we assume the FWA is making a
- coordinated turn as described in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Beard2008"
-literal "true"
-
-\end_inset
-
-.
- In the absence of sideslip, a coordinated turn has the constraint
-\begin_inset Formula 
-\[
-\dot{\psi}=\frac{g}{\left\Vert \dot{t}\right\Vert }\tan\left(\phi\right),
-\]
-
-\end_inset
-
-where 
-\begin_inset Formula $g$
-\end_inset
-
- is the gravitational constant.
- Since we can estimate 
-\begin_inset Formula $\psi$
-\end_inset
-
- at two different time periods, we can numerically estimate its derivative
- 
-\begin_inset Formula $\dot{\psi}$
-\end_inset
-
-.
- Solving for 
-\begin_inset Formula $\phi$
-\end_inset
-
- we get 
-\begin_inset Formula 
-\[
-\phi_{k}=\arctan\left(\frac{\frac{\psi_{k}-\psi_{m}}{\delta_{k:m}}\left\Vert \dot{t}_{k}\right\Vert }{g}\right).
-\]
-
-\end_inset
-
-From the estimated Euler angles 
-\begin_inset Formula $\phi_{k}$
-\end_inset
-
-, 
-\begin_inset Formula $\theta_{k}$
-\end_inset
-
- and 
-\begin_inset Formula $\psi_{k}$
-\end_inset
-
- we can construct the estimated rotation 
-\begin_inset Formula $R_{k}$
-\end_inset
-
- using equation 
+ defined in 
 \begin_inset CommandInset ref
 LatexCommand eqref
-reference "eq:euler_to_so3"
+reference "eq:inverse_innovation_cov"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ to identity in the optimization problem 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:OptimizationProblem"
+plural "false"
+caps "false"
+noprefix "false"
 
 \end_inset
 
@@ -5401,57 +4541,21 @@ reference "eq:euler_to_so3"
 \end_layout
 
 \begin_layout Standard
-Lastly we estimate 
-\begin_inset Formula $\omega_{k}$
+We propose this simplification because computing the covariance 
+\begin_inset Formula $S_{k:m}^{s}$
 \end_inset
 
- using the constraint 
-\begin_inset Formula 
-\[
-\dot{t}_{m}=R_{k}\exp\left(\delta_{k:m}\omega_{k}\right)\rho.
-\]
-
-\end_inset
-
-Using a first order Taylor series approximation for the matrix exponential,
- we get 
-\begin_inset Formula 
-\[
-\frac{R_{k}^{\top}\dot{t}_{m}}{\rho_{k_{x}}}=\begin{bmatrix}1\\
-0\\
-0
-\end{bmatrix}+\begin{bmatrix}0\\
-\omega_{k_{z}}\\
--\omega_{k_{y}}
-\end{bmatrix}\delta_{k:m},
-\]
-
-\end_inset
-
-From which we can estimate the angular rates 
-\begin_inset Formula $\omega_{k_{z}}$
-\end_inset
-
- and 
-\begin_inset Formula $\omega_{k_{y}}$
-\end_inset
-
-, and we simply set 
-\begin_inset Formula $\omega_{k_{x}}=0$
-\end_inset
-
-.
- These approximations are then used to seed the LMLE optimization problem.
+ can be computationally costly when it has to be done thousands of times
+ whenever RANSAC is performed.
+ 
 \end_layout
 
 \begin_layout Standard
-
-\series bold
-Hardware Results
-\end_layout
-
-\begin_layout Appendices
-
+If you want the estimation to be as accurate as possible, we suggest you
+ use the simplified approaches to seed the original optimization problem
+ unless the system is linear since the original optimization problem is
+ already simple.
+ 
 \end_layout
 
 \begin_layout Section
@@ -5743,705 +4847,6 @@ If
 \end_inset
 
 , then the Jacobians and their inverses are the identity function.
-\end_layout
-
-\begin_layout Section
-SE
-\begin_inset Formula $\left(3\right)$
-\end_inset
-
-
-\begin_inset CommandInset label
-LatexCommand label
-name "sec:SE3"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-The special Euclidean group of three dimensions is a matrix Lie group and
- is the set 
-\begin_inset Formula 
-\[
-SE\left(3\right)=\left\{ \left.\begin{bmatrix}R & t\\
-0_{1\times2} & 1_{1\times1}
-\end{bmatrix}\,\right|\,R\in SO\left(3\right)\text{ and }t\in\mathbb{R}^{3}\right\} 
-\]
-
-\end_inset
-
-equipped with matrix multiplication.
- The Lie algebra is 
-\begin_inset Formula 
-\[
-\mathfrak{se}\left(3\right)=\left\{ \left.\begin{bmatrix}\omega & \rho\\
-0 & 0
-\end{bmatrix}\,\right|\,\omega\in\mathfrak{s0}\left(3\right)\text{ and }\rho\in\mathbb{R}^{3}\right\} ,
-\]
-
-\end_inset
-
-where 
-\begin_inset Formula $\omega=\left[\theta\right]_{\times}$
-\end_inset
-
-, 
-\begin_inset Formula $\theta=\left[\theta_{1},\theta_{2},\theta_{3}\right]^{\top}\in\mathbb{R}^{3}$
-\end_inset
-
- and 
-\begin_inset Formula $\left[\cdot\right]_{\times}$
-\end_inset
-
- is the skew symmetric operator defined as 
-\begin_inset Formula 
-\[
-\left[\theta\right]_{\times}=\begin{bmatrix}0 & -\theta_{3} & \theta_{2}\\
-\theta_{3} & 0 & -\theta_{1}\\
--\theta_{2} & \theta_{1} & 0
-\end{bmatrix},
-\]
-
-\end_inset
-
-and 
-\begin_inset Formula 
-\[
-\begin{bmatrix}\rho\\
-\theta
-\end{bmatrix}\in\mathbb{R}^{6}
-\]
-
-\end_inset
-
-which is the Cartesian vector space.
- 
-\end_layout
-
-\begin_layout Standard
-Let 
-\begin_inset Formula $g\in SE\left(3\right)$
-\end_inset
-
- and 
-\begin_inset Formula $u\in\mathfrak{se}\left(3\right)$
-\end_inset
-
-.
- Using an element of the Lie algebra, we can define the infinitesimal generator
- 
-\begin_inset Formula $\xi_{u}:G\to TG$
-\end_inset
-
- as 
-\begin_inset Formula 
-\begin{align*}
-\xi_{u}\left(g\right) & =gu\\
- & =\dot{g}.
-\end{align*}
-
-\end_inset
-
-The discretized state transition function 
-\begin_inset Formula $f:SE\left(3\right)\times\mathbb{R}^{3}\to SE\left(3\right)\times\mathbb{R}^{3}$
-\end_inset
-
- is 
-\begin_inset Formula 
-\begin{align*}
-g_{k} & =\exp\left(\delta_{k}\left(u_{k^{-}}+w_{k}^{g}\right)+\frac{\delta_{k}^{2}}{2}w_{k}^{u}\right)\\
-u_{k} & =u_{k^{-}}+\delta_{k}w_{k}^{u}
-\end{align*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Group Operations
-\end_layout
-
-\begin_layout Standard
-Let 
-\begin_inset Formula $g_{1},g_{2}\in SE\left(3\right)$
-\end_inset
-
-.
- The inversion and group multiplication is matrix inversion and matrix multiplic
-ation as follows
-\begin_inset Formula 
-\begin{align*}
-g_{1}^{-1} & =\begin{bmatrix}R_{1}^{\top} & -R_{1}^{\top}t_{1}\\
-0 & 1
-\end{bmatrix}\\
-g_{1}g_{2} & =\begin{bmatrix}R_{1}R_{2} & R_{1}t_{2}+t_{1}\\
-0 & 1
-\end{bmatrix}.
-\end{align*}
-
-\end_inset
-
- 
-\end_layout
-
-\begin_layout Subsection
-Exponential Map
-\end_layout
-
-\begin_layout Standard
-The exponential map is the matrix exponential and it's inverse is the matrix
- logarithm.
- The matrix exponential is a surjective function; however, by restricting
- the domain to 
-\begin_inset Formula 
-\[
-U=\left\{ u\in\mathfrak{se}\left(3\right)\,\mid\,\left\Vert u\right\Vert <\pi\right\} ,
-\]
-
-\end_inset
-
-it becomes a bijection.
- In this case, the exponential map and its inverse have a simplified form
- 
-\begin_inset Formula 
-\begin{align*}
-\exp\left(u\right) & =\begin{bmatrix}\exp\left(\omega\right) & J_{l}\left(\omega\right)\rho\\
-0 & 1
-\end{bmatrix}\\
-\text{\log}\left(g\right) & =\begin{bmatrix}J_{l}^{-1}\left(\omega\right)t\\
-\log\left(R\right)
-\end{bmatrix}
-\end{align*}
-
-\end_inset
-
-with 
-\begin_inset Formula $g=\exp\left(u\right)$
-\end_inset
-
-,
-\begin_inset Formula 
-\begin{align}
-\phi & =\sqrt{\omega^{\top}\omega}\\
-\exp\left(\omega\right) & =I+\frac{\sin\left(\phi\right)}{\phi}\omega+\frac{1-\cos\left(\phi\right)}{\phi^{2}}\omega^{2}\\
-\phi & =\arccos\left(\frac{\text{trace}\left(R\right)-1}{2}\right)\\
-\log\left(R\right) & =\begin{cases}
-0_{2\times2} & \text{if }\phi=0\\
-\frac{\phi}{2\sin\left(\phi\right)}\left(R-R^{\top}\right) & \text{else}
-\end{cases}\\
-J_{l}\left(\omega\right) & =\begin{cases}
-I & \text{if }\phi=0\\
-I+\frac{1-\cos\left(\phi\right)}{\phi^{2}}\omega+\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\omega^{2} & \text{else}
-\end{cases}\label{eq:V_se3}\\
-J_{l}^{-1}\left(\omega\right) & =\begin{cases}
-I & \text{if }\theta=0\\
-I-\frac{\omega}{2}+\left(\frac{1}{\phi^{2}}-\frac{\phi\sin\left(\phi\right)}{2\phi^{2}\left(1-\cos\left(\phi\right)\right)}\right)\omega^{2} & \text{else}
-\end{cases}
-\end{align}
-
-\end_inset
-
-where 
-\begin_inset Formula $J_{l}$
-\end_inset
-
- is the left Jacobian of 
-\begin_inset Formula $SO\left(3\right)$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Subsection
-Jacobians
-\end_layout
-
-\begin_layout Subsubsection
-Adjoint
-\end_layout
-
-\begin_layout Standard
-The group adjoint representation is
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\[
-\mathbf{Ad}_{g}=\begin{bmatrix}R & \left[t\right]_{\times}R\\
-0_{3\times3} & R
-\end{bmatrix}
-\]
-
-\end_inset
-
-with inverse 
-\begin_inset Formula 
-\[
-\mathbf{Ad}_{g}^{-1}=\begin{bmatrix}R^{\top} & -R^{\top}\left[t\right]_{\times}\\
-0_{3\times3} & R^{\top}
-\end{bmatrix}.
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-The Lie algebra representation is 
-\begin_inset Formula 
-\[
-\mathbf{ad}_{u}=\begin{bmatrix}\omega & \left[\rho\right]_{\times}\\
-0_{3\times3} & \omega
-\end{bmatrix}.
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsubsection
-Left and Right Jacobians
-\end_layout
-
-\begin_layout Standard
-Let 
-\begin_inset Formula $u=\begin{bmatrix}\omega & \rho\\
-0 & 0
-\end{bmatrix}\in\mathfrak{se}\left(3\right)$
-\end_inset
-
- and 
-\begin_inset Formula 
-\begin{align*}
-\phi & =\sqrt{\omega^{\top}\omega}\\
-a_{\phi} & =\frac{\cos\left(\phi\right)-1}{\phi^{2}}\\
-b_{\phi} & =\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\\
-c_{\phi} & =-\frac{1}{\phi^{3}}\sin\left(\phi\right)+2\left(\frac{1-\cos\left(\phi\right)}{\phi^{4}}\right)\\
-d_{\phi} & =-\frac{2}{\phi^{4}}+\frac{3}{\phi^{5}}\sin\left(\phi\right)-\frac{1}{\phi^{4}}\cos\left(\phi\right)\\
-q_{r}\left(\omega\right) & =\left(\left(\omega^{\vee}\right)^{\top}\rho\right)\left(d_{\phi}\omega^{2}+c_{\phi}\omega\right)\\
-q_{l}\left(\omega\right) & =\left(\left(\omega^{\vee}\right)^{\top}\rho\right)\left(d_{\phi}\omega^{2}-c_{\phi}\omega\right)\\
-B_{r}\left(u\right) & =q_{r}\left(\omega\right)+a_{\phi}\left[\rho\right]_{\times}+b_{\phi}\left(\omega\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\omega\right)\\
-B_{l}\left(u\right) & =q_{l}\left(\omega\right)-a_{\phi}\left[\rho\right]_{\times}+b_{\phi}\left(\omega\left[\rho\right]_{\times}+\left[\rho\right]_{\times}\omega\right)\\
-J_{r}\left(\omega\right) & =I+\frac{\cos\left(\phi\right)-1}{\phi^{2}}\omega+\frac{\phi-\sin\left(\phi\right)}{\phi^{3}}\omega^{2}\\
-J_{r}^{-1}\left(\omega\right) & =I+\frac{1}{2}\omega-\frac{\phi\cot\left(\frac{\phi}{2}\right)-2}{2\phi^{2}}\omega^{2}
-\end{align*}
-
-\end_inset
-
-then 
-\begin_inset Formula 
-\begin{align*}
-J_{r}\left(u\right) & =\begin{bmatrix}J_{r}\left(\omega\right) & B_{r}\left(u\right)\\
-0 & J_{r}\left(\omega\right)
-\end{bmatrix}\\
-J_{l}\left(u\right) & =\begin{bmatrix}J_{l}\left(\omega\right) & B_{l}\left(u\right)\\
-0 & J_{l}\left(\omega\right)
-\end{bmatrix}\\
-J_{r}^{-1}\left(u\right) & =\begin{bmatrix}J_{r}^{-1}\left(\omega\right) & -J_{r}^{-1}\left(\omega\right)B_{r}\left(u\right)J_{r}^{-1}\left(\omega\right)\\
-0 & J_{r}^{-1}\left(\omega\right)
-\end{bmatrix}\\
-J_{l}^{-1}\left(u\right) & =\begin{bmatrix}J_{l}^{-1}\left(\omega\right) & -J_{l}^{-1}\left(\omega\right)B_{l}\left(u\right)J_{l}^{-1}\left(\omega\right)\\
-0 & J_{l}^{-1}\left(\omega\right)
-\end{bmatrix}.
-\end{align*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Section
-Terminology and Parameters
-\end_layout
-
-\begin_layout Standard
-The terminology, parameters, and notation used is previous version of R-RANSAC
- have varied which has created confusion and inconsistencies.
- In this section, we hope to solidify certain terminology, parameters and
- notation that are suitable for expanding R-RANSAC to work with Lie Groups,
- and incorporating other improvements we have made to the general algorithm.
-\end_layout
-
-\begin_layout Subsection
-Terminology
-\end_layout
-
-\begin_layout Standard
-R-RANSAC has very specific terminology that we that will facilitate the
- discussion.
- 
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Phenomenon
-\series default
-: Something that produces an observable signal.
- In the case of target tracking, the phenomenon is referred to as a 
-\series bold
-target
-\series default
-, which is an object that exists in physical space.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Measurement Source
-\series default
-: A sensor equipped with an algorithm that captures information from the
- environment and produces meaningful measurements used to observe the target.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Surveillance Region
-\series default
-: The portion of the environment that is observable by the measurement sources.
- There is a local surveillance region (LSR) for each measurement source
- and a global surveillance region (GSR) that is a union of all the local
- surveillance regions.
- 
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Frame of reference
-\series default
-: Consists of an abstract coordinate system and the set of physical reference
- points that uniquely fix (locate and orient) the coordinate system and
- standardize measurements within that frame.
- We will often refer to a frame of reference as just 
-\series bold
-frame
-\series default
-.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Local Frame
-\series default
-: The frame that coincides with a local surveillance region.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Global Frame
-\series default
-: The frame that coincides with the global surveillance region.
- It is possible that the global frame is the same as a local frame.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Sensor Scan
-\series default
-: When a sensor observes its surveillance region and extracts meaningful
- data.
- For example, the sensor scan of a camera occurs when the camera produces
- a new image of its surveillance region.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-False Measurement
-\series default
-: A measurement extracted from a sensor scan that does not correspond to
- a phenomenon of interest.
- For example, motion in a camera can generate false measurements due to
- parallax depending on the algorithm.
- Another example is just noisy sensors.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-True Measurement
-\series default
-: A measurement extracted from a sensor scan that corresponds to a phenomenon
- of interest.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Model
-\series default
-: This is simply a model of the phenomenon.
- In regards to target tracking, a model is referred to as a 
-\series bold
-track
-\series default
-.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Model Hypothesis
-\series default
-: This is a hypothetical model of the phenomenon (i.e.
- a possible model) created by the RANSAC algorithm.
- A model hypothesis that meets certain criteria becomes a model.
- In regards to target tracking, a model hypothesis is referred to as a 
-\series bold
-track
-\series default
- 
-\series bold
-hypothesis
-\series default
-.
- We will often abbreviate the term and mention only 
-\series bold
-hypothesis
-\series default
-.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Model Likelihood
-\series default
-: The probability that a model represents an actual target.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Good
-\series default
- 
-\series bold
-Model
-\series default
-: A model that is deemed very likely to correctly describe a phenomenon,
- based on predefined criteria, becomes a good model.
- In regards to target tracking, a good model is referred to as a 
-\series bold
-good
-\series default
- 
-\series bold
-track
-\series default
-.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Poor
-\series default
- 
-\series bold
-Model
-\series default
-: A model that is not a good model.
- In regards to target tracking, a poor model is referred to as a 
-\series bold
-poor
-\series default
- 
-\series bold
-track
-\series default
-.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Time Window
-\series default
-: An interval of time extending into the past from the current time.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Expired
-\series default
- 
-\series bold
-Measurement
-\series default
-: A measurement that was observed in the past outside the time window.
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Measurement
-\series default
- 
-\series bold
-Source
-\series default
-: An algorithm that takes sensor data and produces a measurement.
- We will often refer to a measurement source as just a source.
-\end_layout
-
-\begin_layout Subsection
-Parameters
-\end_layout
-
-\begin_layout Standard
-There are various parameters used throughout R-RANSAC.
- A parameter can either be a scalar or a tuple.
- In case the context doesn't make it clear, we will specify which one is
- a scalar and a tuple.
- 
-\end_layout
-
-\begin_layout Standard
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-noindent
-\end_layout
-
-\end_inset
-
- RANSAC parameters
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $\ell$
-\end_inset
-
- - max iterations
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $\tau_{E}$
-\end_inset
-
- - If the size of a consensus set is greater than 
-\begin_inset Formula $\tau_{E}$
-\end_inset
-
-, than RANSAC will terminate early.
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $\tau_{I}$
-\end_inset
-
- - RANSAC inlier threshold
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $\tau_{RM}$
-\end_inset
-
- - The minimum size of a track hypothesis's consensus set in order for the
- hypothesis to become a track
-\end_layout
-
-\begin_layout Standard
-Cluster parameters
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $\tau_{CD}$
-\end_inset
-
- - neighborhood distance threshold
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $\tau_{CM}$
-\end_inset
-
- - cluster minimum cardinality threshold
-\end_layout
-
-\begin_layout Standard
-Model Management Parameters
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $\tau_{S}$
-\end_inset
-
- - Similarity merge threshold
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $\tau_{\rho}$
-\end_inset
-
- - Good track threshold
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $\tau_{\alpha}$
-\end_inset
-
-- Missed detection threshold
-\end_layout
-
-\begin_layout Standard
-PDAF
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $P_{D}$
-\end_inset
-
- - Probability of detection
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $P_{G}$
-\end_inset
-
- - Probability of being in the validation region
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $\lambda$
-\end_inset
-
- - The spacial density of false measurements in a local surveillance region
- per sensor scan
-\end_layout
-
-\begin_layout Standard
-Other
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $T_{W}$
-\end_inset
-
- - Time window
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $M$
-\end_inset
-
- - The number of models
 \end_layout
 
 \begin_layout Section
@@ -6899,7 +5304,7 @@ h_{4} & =1-e_{3}\left(\frac{pn^{\top}}{d}\right).
 \end_layout
 
 \begin_layout Proof
-The position and velocity expressed in the NVCF are transformed according
+The position and velocity expressed in the NVCF and are transformed according
  to lemma 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -7099,87 +5504,22 @@ C=\text{diag}\left(\frac{1}{h_{4}},\frac{1}{h_{4}},1,\frac{1}{h_{4}},1\right).
 \end_layout
 
 \begin_layout Section
-PDAF with varying noise covariances
-\end_layout
-
-\begin_layout Standard
-State update
-\begin_inset Formula 
-\[
-x_{k}=x_{k^{-}}+\sum_{i}K_{k,i}\beta_{i}\nu_{i}
-\]
-
-\end_inset
-
-where 
-\begin_inset Formula $\nu_{i}$
-\end_inset
-
- is the innovation term associated with the 
-\begin_inset Formula $i^{th}$
-\end_inset
-
- measurement and 
-\begin_inset Formula 
-\[
-K_{k,i}=\bar{P}_{k}H_{k}^{\top}S_{k,i}^{-1}
-\]
-
-\end_inset
-
-where 
-\begin_inset Formula 
-\[
-S_{k,i}=\left(H_{k}\bar{P}_{k}H_{k}^{\top}+V_{k}R_{k,i}V_{k}^{\top}\right)
-\]
-
-\end_inset
-
-and 
-\begin_inset Formula $R_{k,i}$
-\end_inset
-
- is the measurement noise associated with the 
-\begin_inset Formula $i^{th}$
-\end_inset
-
- measurement.
-\end_layout
-
-\begin_layout Standard
-The covariance update is 
-\begin_inset Formula 
-\[
-P_{k}=\bar{P}_{k}-\sum_{i}\beta_{i}K_{k,i}S_{k,i}K_{k,i}^{\top}+\sum_{i}\left(\beta_{i}K_{k,i}\nu_{i}\nu_{i}^{\top}-\nu\nu^{\top}K_{k,i}^{\top}\right)
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-where 
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\[
-\nu=\sum_{i}\beta_{i}\nu_{i}
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Section
-Probability Lemmas
+Uncertainty Lemmas
 \end_layout
 
 \begin_layout Standard
 In this section we present several lemmas used to calculate the probability
  distribution of random variables used in this paper.
+ For those unfamiliar with representing uncertainty on Lie groups, we refer
+ you to 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Bourmaud2014,Kim2017,Long2013,Bourmaud2013"
+literal "true"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Lemma
@@ -8167,12 +6507,12 @@ name "lem:transition_func_jacobians"
 \begin_inset Formula $2n$
 \end_inset
 
- dimensional states, 
+ dimensional state, 
 \begin_inset Formula $\Delta\in\mathbb{R}$
 \end_inset
 
  denote a time interval and let 
-\begin_inset Formula $f:\left(G\times E\right)\times\mathbb{R}\to G\times E$
+\begin_inset Formula $f:\left(G\times E\right)\times\left(E\times E\right)\times\mathbb{R}\to G\times E$
 \end_inset
 
  be defined as 
@@ -8198,7 +6538,7 @@ name "eq:general_system"
 
 \begin_inset Formula 
 \[
-f\left(x,\Delta\right)=\left(g\text{Exp}\left(U\right),u+\Delta w^{u}\right)
+f\left(x,w,\Delta\right)=\left(g\text{Exp}\left(U\right),u+\Delta w^{u}\right)
 \]
 
 \end_inset
@@ -8233,7 +6573,7 @@ end{subequations}
 \begin_inset Formula $G_{\Delta}$
 \end_inset
 
- denote the matrix Jacobians 
+ denote the Jacobians 
 \begin_inset Formula 
 \[
 F\triangleq\frac{\partial f\left(x_{m_{1}}\right)}{\partial x_{m_{1}}}
@@ -8360,7 +6700,7 @@ The higher order terms
 \begin_inset Formula $\left[\mathbf{Ad}_{\text{Exp}\left(-U\right)}\delta g,J_{r}\left(U\right)\Delta\delta u\right]$
 \end_inset
 
- will be zero 
+ will be zero since 
 \begin_inset Formula $\delta g$
 \end_inset
 

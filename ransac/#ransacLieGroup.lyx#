@@ -3142,7 +3142,7 @@ noprefix "false"
  is 
 \begin_inset Formula 
 \begin{align*}
-p\left(y_{m}\mid x_{k}\right) & \approx\eta\exp\left(-L_{m}^{j}\left(x_{k}\right)\right),
+p\left(y_{m}^{j}\mid x_{k}\right) & \approx\eta\exp\left(-L_{m}^{j}\left(x_{k}\right)\right),
 \end{align*}
 
 \end_inset
@@ -3150,7 +3150,7 @@ p\left(y_{m}\mid x_{k}\right) & \approx\eta\exp\left(-L_{m}^{j}\left(x_{k}\right
 where
 \begin_inset Formula 
 \begin{align*}
-L_{m}\left(x_{k}\right) & =\frac{1}{2}\left(\delta y_{k:m}^{j}\right)^{\top}S_{k:m}^{-1}\delta y_{k:m},
+L_{m}^{j}\left(x_{k}\right) & =\frac{1}{2}\delta y_{k:m}^{\top}S_{k:m}^{-1}\delta y_{k:m},
 \end{align*}
 
 \end_inset
@@ -3159,6 +3159,14 @@ L_{m}\left(x_{k}\right) & =\frac{1}{2}\left(\delta y_{k:m}^{j}\right)^{\top}S_{k
 \begin_inset Formula 
 \[
 \delta y_{m}=y_{m}\ominus h\left(f\left(x_{k},0,\delta_{k:m}\right),0\right)
+\]
+
+\end_inset
+
+ 
+\begin_inset Formula 
+\[
+\hat{x}_{m}=f^{-1}\left(x_{k},0,\delta_{k:m}\right)
 \]
 
 \end_inset
@@ -3197,33 +3205,13 @@ where
 \begin_inset Formula $m$
 \end_inset
 
-, and 
-\begin_inset Formula $j$
-\end_inset
-
- indicates the 
-\begin_inset Formula $j^{th}$
-\end_inset
-
- measurement at time 
-\begin_inset Formula $m$
-\end_inset
-
 .
  To calculate another track hypothesis 
 \begin_inset Formula $x_{k}^{h}$
 \end_inset
 
 , we would repeat the optimization scheme with a different random subset.
- This process is repeated 
-\begin_inset Formula $\ell$
-\end_inset
-
- times or until a hypothetica track reaches a score of 
-\begin_inset Formula $\tau_{RE}$
-\end_inset
-
-.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -3305,7 +3293,7 @@ noprefix "false"
 \end_inset
 
 .
- We define a metric 
+ We defined a metric 
 \begin_inset Formula $d_{I}:N\times N\to\mathbb{R}$
 \end_inset
 
@@ -3318,14 +3306,28 @@ d_{I}\left(y_{m},\hat{y}_{m}\right)=\left(y_{m}\ominus\hat{y}_{m}\right)^{\top}\
 \end_inset
 
 where 
-\begin_inset Formula $y_{m}\in Y_{m}^{c}$
+\begin_inset Formula $y_{m}$
 \end_inset
 
-, and 
-\begin_inset Formula $\hat{y}_{m}=h\left(f\left(x_{k},0,\delta_{k:m}\right),0\right)$
+ is a measurement, from time 
+\begin_inset Formula $m$
 \end_inset
 
- is the estimated measurement.
+, in the cluster from which the hypothetical track was generated, and 
+\begin_inset Formula $\hat{y}_{m}$
+\end_inset
+
+ is the estimated measurement defined in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:observation_inverse_f"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
  The measurement 
 \begin_inset Formula $y_{m}$
 \end_inset
@@ -3369,7 +3371,7 @@ noprefix "false"
 \begin_inset Formula $m$
 \end_inset
 
-, the score would increase by 
+, the score would only increase by 
 \begin_inset Formula $1$
 \end_inset
 
@@ -3389,18 +3391,32 @@ name "subsec:Track-Filtering"
 \end_layout
 
 \begin_layout Standard
-RANSAC uses the best hypotetical track (provided that the hypothetical track
- has a minimum score of 
+RANSAC generates up to 
+\begin_inset Formula $\ell$
+\end_inset
+
+ hypothetical tracks.
+ If the score of a hypothetical track reaches the threshold 
+\begin_inset Formula $\tau_{RE}$
+\end_inset
+
+, then RANSAC terminates generating hypothetical tracks and initializes
+ a track with that hypothetical track.
+ Othewise, RANSAC uses the best hypotetical track (provided that the hypothetica
+l track has a minimum score of 
 \begin_inset Formula $\tau_{RM}$
 \end_inset
 
-) created from a cluster to initialize a new track.
- To initialize a track, we propagate 
+) to initialize a new track.
+ 
+\end_layout
+
+\begin_layout Standard
+To initialize a track, we propagate 
 \begin_inset Formula $x_{k}^{h}$
 \end_inset
 
- back in time to the oldest time step of an inlier measurement, denoted
- 
+ back in time to the oldest time step of an inlier measurement denoted 
 \begin_inset Formula $x_{n}^{h}$
 \end_inset
 
@@ -3422,7 +3438,8 @@ RANSAC uses the best hypotetical track (provided that the hypothetical track
 \end_inset
 
 .
- The inliers are also used to calculate the track's likelihood.
+ This process is called filtering.
+ The inliers are also used to calculate the model likelihood.
  Once the track is initialized, the inliers are added to the track's consensus
  set.
  
