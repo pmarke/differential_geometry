@@ -3389,21 +3389,18 @@ name "subsec:Track-Filtering"
 \end_layout
 
 \begin_layout Standard
-Othewise, RANSAC uses the best hypotetical track (provided that the hypothetical
- track has a minimum score of 
+RANSAC uses the best hypotetical track (provided that the hypothetical track
+ has a minimum score of 
 \begin_inset Formula $\tau_{RM}$
 \end_inset
 
-) to initialize a new track.
- 
-\end_layout
-
-\begin_layout Standard
-To initialize a track, we propagate 
+) created from a cluster to initialize a new track.
+ To initialize a track, we propagate 
 \begin_inset Formula $x_{k}^{h}$
 \end_inset
 
- back in time to the oldest time step of an inlier measurement denoted 
+ back in time to the oldest time step of an inlier measurement, denoted
+ 
 \begin_inset Formula $x_{n}^{h}$
 \end_inset
 
@@ -3425,8 +3422,7 @@ To initialize a track, we propagate
 \end_inset
 
 .
- This process is called filtering.
- The inliers are also used to calculate the model likelihood.
+ The inliers are also used to calculate the track's likelihood.
  Once the track is initialized, the inliers are added to the track's consensus
  set.
  
@@ -3748,9 +3744,9 @@ name "sec:Examples"
 \end_layout
 
 \begin_layout Standard
-In this section we provide three examples of increasing complexity.
- The first example is to show how Lie group framework of R-RANSAC applies
- to Euclidean spaces of 
+In this section we provide two examples.
+ The first example is to show how the Lie group framework of R-RANSAC applies
+ to the Lie group 
 \begin_inset Formula $\mathbb{R}^{n}$
 \end_inset
 
@@ -3758,10 +3754,8 @@ In this section we provide three examples of increasing complexity.
 \begin_inset Formula $n\in\mathbb{N}$
 \end_inset
 
-.
- The second example applies R-RANSAC to tracking targets on an image plane,
- and the third example applies R-RANSAC to tracking UAVs using radar sensors.
- 
+, and the second example applies R-RANSAC to tracking targets on the normalized
+ virtual image plane.
 \end_layout
 
 \begin_layout Subsection
@@ -3773,8 +3767,8 @@ Euclidean Space
 \end_layout
 
 \begin_layout Standard
-This is a brief section to show how the Lie group theory applies to Euclidean
- spaces of 
+This is a brief section to show how the Lie group theory applies to Lie
+ groups of 
 \begin_inset Formula $\mathbb{R}^{n}$
 \end_inset
 
@@ -3867,16 +3861,12 @@ The Jacobians are easily computed and are
 \begin_inset Formula $G_{k}=B_{k}$
 \end_inset
 
- , 
+, 
 \begin_inset Formula $H_{k}=C$
 \end_inset
 
-, 
-\begin_inset Formula $F_{k:m}=CA_{k:m}$
-\end_inset
-
 , and 
-\begin_inset Formula $G_{k:m}=CB_{k:m}$
+\begin_inset Formula $V_{k}=I$
 \end_inset
 
 .
@@ -3908,25 +3898,109 @@ name "subsec:tracking_image_plane"
 \end_layout
 
 \begin_layout Standard
-Suppose we have a camera fixed on a UAV tracking a moving target that is
- restricted to a planar surface.
- Tracking is done in the normalized virtual camera frame because it is invariant
- to pitch and yaw of the UAV and invariant to the camera's intrinsic parameters.
- If the tracking were done in the normalized camera frame, then when the
- UAV pitches or rolls, the motion of the target my no longer fit a constant
- velocity model because the trajectory could be an ellipse in the new frame
- instead of a circle.
- For this purpose, we perform tracking on the normalized virtual image plane
- (NVIP); hence, the global frame is the NVIP, 
-\begin_inset Formula $\mathcal{F}^{n}$
+Suppose we have a camera fixed on a UAV and a target moving with nearly
+ constant velocity on fairly level ground.
+ The only sensor that detects the target is the camera, thus the LSR and
+ the GSR are the same, but the corresponding frames are different.
+ This is because tracking is done in the normalized virtual camera frame
+ (NVCF) on the normalized virtual image plane (NVIP).
+ 
+\end_layout
+
+\begin_layout Standard
+The NVCF is coincident with the image frame, but its axes are scaled by
+ the cameras intrinsic parameters and related by the rotation 
+\begin_inset Formula $R_{c}^{l}=R_{b}^{l}R_{c}^{b}$
 \end_inset
 
-, and the local frame is the camera frame 
+, where 
+\begin_inset Formula $R_{c}^{b}$
+\end_inset
+
+ is the rotation from the camera frame to the body frame of the UAV, and
+ 
+\begin_inset Formula $R_{b}^{l}$
+\end_inset
+
+ is the rotation from the body frame to the body level frame; the body frame
+ is the unrolled and unpitched body frame.
+ By construction, the NVCF is invariant to the camera's intrinsic parameters
+ and the pitch and roll of the UAV.
+ This allows the NVIP to remain parallel to the ground; otherwise, the trajector
+ies of targets would not maintain a constant velocity model on 
+\begin_inset Formula $SE\left(2\right)$
+\end_inset
+
+ and tracking would be difficult if not impossible with extreme changes
+ in pitch or roll.
+ Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:CF_NVIP_relation"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ shows the relation between the camera frame, NVCF, the image plane, and
+ the NVIP.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/CF_relation_NVCF.pdf
+	width 80col%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:CF_NVIP_relation"
+
+\end_inset
+
+The image on the left is a depiction of the camera frame, 
 \begin_inset Formula $\mathcal{F}^{c}$
 \end_inset
 
+, and the image on the right is a depiction of the NVCF, 
+\begin_inset Formula $\mathcal{F}^{n}$
+\end_inset
+
 .
- 
+ The image plane is not necessarily parallel to the ground, but the NVIP
+ is which makes it invariant to the roll and pitch of the UAV.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -3935,20 +4009,13 @@ The volume of the surveillance region is the area of the normalized virtual
  Since the UAV is moving, the global frame is also moving.
  This means that we must provide a transformation so that we can transform
  all measurements and models to the current global frame.
- We do this using the Homography as described in appendix ...
- 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "Ma"
-literal "true"
-
-\end_inset
-
- and the method described in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "White2019"
-literal "true"
+ We do this using the Homography as described in appendix 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Homography"
+plural "false"
+caps "false"
+noprefix "false"
 
 \end_inset
 
@@ -3956,23 +4023,23 @@ literal "true"
 \end_layout
 
 \begin_layout Standard
-The configuration manifold of the target is 
+As previously stated, the configuration manifold of the target is 
 \begin_inset Formula $SE\left(2\right)$
 \end_inset
 
 .
- And the target's state 
+ We can segment the target's state 
 \begin_inset Formula $x_{k}=\left(g_{k},u_{k}\right)\in SE\left(2\right)\times\mathfrak{se}\left(2\right)^{\vee}$
 \end_inset
 
- can be decomposed into
+ further to
 \begin_inset Formula 
 \begin{align*}
 g_{k} & =\begin{bmatrix}R_{k} & t_{k}\\
 0_{1\times2} & 1
 \end{bmatrix}\\
-u_{k} & =\begin{bmatrix}\omega_{k} & \rho_{k}\\
-0_{1\times2} & 1
+u_{k} & =\begin{bmatrix}\rho_{k}\\
+\omega_{k}
 \end{bmatrix},
 \end{align*}
 
@@ -3983,7 +4050,7 @@ where
 \end_inset
 
 , 
-\begin_inset Formula $\omega_{k}\in\mathfrak{se}\left(2\right)$
+\begin_inset Formula $\omega_{k}^{\wedge}\in\mathfrak{se}\left(2\right)$
 \end_inset
 
 , and 
@@ -4017,11 +4084,26 @@ where
 \end_inset
 
 .
- Using point measurements, we proceed to find under what conditions is the
- system observable.
- To do this, we linearize the observation error at different time steps
+ Using point measurements, we proceed to find under what conditions the
+ system is locally observable.
+ For a discussion of observability for nonlinear functions see 
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+Add references
+\end_layout
+
+\end_inset
+
+.
+ Essentially, we linearize the observation error at different time steps
  about an estimated current state 
 \begin_inset Formula $\hat{x}_{k}$
+\end_inset
+
+ and see if we can estimate the local error 
+\begin_inset Formula $\delta x_{k}$
 \end_inset
 
 .
@@ -4029,19 +4111,27 @@ where
 \begin_inset Formula $m$
 \end_inset
 
- is 
+ is defined as
 \begin_inset Formula 
 \[
-y_{m}\ominus h\left(f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),v_{k}\right),
+y_{m}\ominus h\left(f\left(x_{k},w_{k},\delta_{k:m}\right),v_{k}\right),
 \]
 
 \end_inset
 
-and the linearized error at time 
+The linearized error at time 
 \begin_inset Formula $m$
 \end_inset
 
- is 
+ about 
+\begin_inset Formula $x_{k}=\hat{x}_{k}$
+\end_inset
+
+, and 
+\begin_inset Formula $w_{k}=v_{k}=0$
+\end_inset
+
+ is
 \begin_inset Formula 
 \[
 \hat{e}_{k:m}-H_{m}F_{k:m}\delta x_{k},
@@ -4052,42 +4142,28 @@ and the linearized error at time
 where 
 \begin_inset Formula 
 \[
-\hat{e}_{k:m}=y_{m}\ominus h\left(f^{-1}\left(\hat{x}_{k},0,\delta_{k:m}\right),0\right),
+\hat{e}_{k:m}=y_{m}\ominus h\left(f\left(\hat{x}_{k},0,\delta_{k:m}\right),0\right),
 \]
 
 \end_inset
 
 
 \begin_inset Formula 
-\[
-\left.\frac{\partial y_{m}\ominus h\left(f^{-1}\left(x_{k},w_{k},\delta_{k:m}\right),v_{k}\right)}{\partial x_{k}}\right|_{\begin{array}{c}
+\begin{align*}
+H_{m} & =\left.\frac{\partial h\left(x_{m},v_{m}\right)}{\partial x_{k}}\right|_{\begin{array}{c}
 x_{k}=\hat{x}_{k}\\
-v_{k}=0\\
-w_{k}=0
-\end{array}}=H_{m}F_{k:m},
-\]
+v_{k}=0
+\end{array}},\\
+ & =\begin{bmatrix}R_{m} & 0_{2\times4}\end{bmatrix}
+\end{align*}
 
 \end_inset
 
-where 
-\begin_inset Formula $H_{m}$
-\end_inset
-
- is defined in lemma 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "lem:observation_func_jacobians"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-, and 
+ and 
 \begin_inset Formula $F_{k:m}$
 \end_inset
 
- can be composed from the Jacobians in lemma 
+ is defined in lemma 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "lem:transition_func_jacobians"
@@ -4098,34 +4174,7 @@ noprefix "false"
 \end_inset
 
 .
- Using lemma 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "lem:observation_func_jacobians"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-, we get that 
-\begin_inset Formula 
-\begin{align*}
-H_{m} & =\left.J_{l}^{-1}\left(y_{m}\ominus h\left(x_{m},v_{k}\right)\right)\frac{\partial h\left(x_{m},v_{k}\right)}{\partial x_{m}}\right|_{\begin{array}{c}
-x_{m}=\hat{x}_{m}\\
-v_{k}=0
-\end{array}}\\
- & =\begin{bmatrix}R_{k}\exp\left(\delta_{k:m}\omega_{k}\right) & 0_{2\times4}\end{bmatrix}.
-\end{align*}
-
-\end_inset
-
-where 
-\begin_inset Formula $\hat{x}_{m}=f^{-1}\left(x_{k},0,\delta_{k:m}\right)$
-\end_inset
-
-.
- Usine errors from different time steps we get 
+ Using several errors from different time steps we get 
 \begin_inset Formula 
 \[
 \begin{bmatrix}\hat{e}_{k:m^{1}}\\
@@ -4155,13 +4204,14 @@ where
 \end_layout
 
 \begin_layout Standard
-Unfortuneately, the observability matrix is not full rank.
+Unfortunately, the observability matrix is not full rank.
  However, since we are interested in tracking the target we only need to
- be able to estimate the position of the target.
+ be able to accurately estimate the position of the target.
  To do this, we consider two configurations for a constant velocity system.
  In the first configuration the target has a circular trajectory.
  In this case we add the constraints that the target's heading is oriented
- along the body frame velocity, that 
+ along the body frame velocity, i.e.
+ 
 \begin_inset Formula $\rho=\left[\rho_{x},0\right]^{\top}$
 \end_inset
 
@@ -4249,7 +4299,7 @@ Using the constraint that the heading of the UAS is aligned with the translation
 al velocity, we get that 
 \begin_inset Formula 
 \[
-R=\frac{1}{\left\Vert \dot{t}_{k}\right\Vert }\begin{bmatrix}\dot{t}_{k_{x}} & -\dot{t}_{k_{y}}\\
+R_{k}=\frac{1}{\left\Vert \dot{t}_{k}\right\Vert }\begin{bmatrix}\dot{t}_{k_{x}} & -\dot{t}_{k_{y}}\\
 \dot{t}_{k_{y}} & \dot{t}_{k_{x}}
 \end{bmatrix}
 \]
@@ -4279,12 +4329,12 @@ and that
 Note that 
 \begin_inset Formula 
 \[
-\dot{t}_{m}=R_{k}\text{Exp}\left(\delta_{k:m}\dot{\theta}_{k}\right)\rho_{k},
+\dot{t}_{m}\approx R_{k}\text{Exp}\left(\delta_{k:m}\omega_{k}\right)\rho_{k},
 \]
 
 \end_inset
 
-where 
+where we ignored the process noise and 
 \begin_inset Formula $\dot{\theta}_{k}$
 \end_inset
 
@@ -4301,7 +4351,7 @@ z & =R_{k}^{\top}\dot{t}_{m}/\rho_{k}\\
 then 
 \begin_inset Formula 
 \[
-\dot{\theta}_{k}=\text{atan2}\left(z_{y},z_{x}\right)/\delta_{k:m}
+\omega_{k}=\text{atan2}\left(z_{y},z_{x}\right)/\delta_{k:m}
 \]
 
 \end_inset
@@ -4317,7 +4367,12 @@ Hardware Results
 \end_layout
 
 \begin_layout Standard
-blah
+Coming soon...
+ hopefully.
+\end_layout
+
+\begin_layout Section
+Conclusion
 \end_layout
 
 \begin_layout Appendices
@@ -4352,7 +4407,7 @@ noprefix "false"
 \begin_inset Formula $x_{k}^{h}$
 \end_inset
 
- which is later refined using its inlieries via filtering.
+ which is later refined using its inliers via filtering.
  So the hypothetical track produced by the LMLE doesn't have to be super
  refined; therefore, we can simplify the optimization process in different
  ways.
@@ -4851,6 +4906,25 @@ If
 
 \begin_layout Section
 Homography
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Homography"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We build upon the work presented in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "White2019"
+literal "true"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
