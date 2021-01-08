@@ -4480,14 +4480,14 @@ noprefix "false"
  Using several errors from different time steps we get 
 \begin_inset Formula 
 \[
-\begin{bmatrix}\hat{e}_{k:m_{1}}\\
-\hat{e}_{k:m_{2}}\\
+\begin{bmatrix}\hat{e}_{k:m^{1}}\\
+\hat{e}_{k:m^{2}}\\
 \vdots\\
-\hat{e}_{k:m_{n}}
-\end{bmatrix}=\underbrace{\begin{bmatrix}H_{m}F_{k:m_{1}}\\
-H_{m}F_{k:m_{2}}\\
+\hat{e}_{k:m^{n}}
+\end{bmatrix}=\underbrace{\begin{bmatrix}H_{m}F_{k:m^{1}}\\
+H_{m}F_{k:m^{2}}\\
 \vdots\\
-H_{m}F_{k:m_{n}}
+H_{m}F_{k:m^{n}}
 \end{bmatrix}}_{\mathcal{O}}\delta x_{k},
 \]
 
