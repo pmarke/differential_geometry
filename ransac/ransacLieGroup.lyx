@@ -1379,7 +1379,7 @@ end{subequations}
 \begin_inset Formula $\delta_{m_{2}:m_{1}}\in\mathbb{R}$
 \end_inset
 
- is time inteval from 
+ is time interval from 
 \begin_inset Formula $m_{1}$
 \end_inset
 
@@ -2536,7 +2536,7 @@ literal "true"
 \begin_inset Formula $\bar{\mathcal{S}}_{m}\subseteq\mathcal{S}_{m}$
 \end_inset
 
- be the indexinig set of sources that produced associated measurements.
+ be the indexing set of sources that produced associated measurements.
  Then covariance fusion is 
 \begin_inset Formula 
 \[
@@ -4545,7 +4545,7 @@ We can simply estimate
 , then 
 \begin_inset Formula 
 \[
-u_{k}=\left(\sum_{j\in\Lambda}\delta_{k:j}S_{k:j}^{-1}\right)^{-1}\left(\sum_{j\in\Lambda}S_{k:j}^{-1}e_{k:j}\right).
+u_{k}=\left(\sum_{j\in\chi}\delta_{k:j}S_{k:j}^{-1}\right)^{-1}\left(\sum_{j\in\chi}S_{k:j}^{-1}e_{k:j}\right).
 \]
 
 \end_inset
@@ -4554,7 +4554,7 @@ We can simplify the estimation further by setting the covariance terms to
  identity which yields 
 \begin_inset Formula 
 \[
-u_{k}=\frac{1}{\left|\chi\right|}\sum_{j\in\Lambda}e_{k:j}.
+u_{k}=\frac{1}{\left|\chi\right|\delta_{k:j}}\sum_{j\in\Lambda}e_{k:j}.
 \]
 
 \end_inset
@@ -4639,7 +4639,7 @@ equipped with matrix multiplication.
  The Lie algebra is 
 \begin_inset Formula 
 \[
-\mathfrak{se}\left(2\right)=\left\{ \left.\begin{bmatrix}\omega & \rho\\
+\mathfrak{se}\left(2\right)=\left\{ \left.\begin{bmatrix}\omega_{\times} & \rho\\
 0 & 0
 \end{bmatrix}\,\right|\,\omega\in\mathfrak{s0}\left(2\right)\text{ and }\rho\in\mathbb{R}^{2}\right\} ,
 \]
@@ -4651,7 +4651,7 @@ where
 \end_inset
 
 
-\begin_inset Formula $\omega=\left[\theta\right]_{\times}$
+\begin_inset Formula $\omega_{\times}=\left[\omega\right]_{\times}$
 \end_inset
 
 , and 
@@ -4661,8 +4661,8 @@ where
  is the skew symmetric operator defined as 
 \begin_inset Formula 
 \[
-\left[\theta\right]_{\times}=\begin{bmatrix}0 & -\theta\\
-\theta & 0
+\left[\omega\right]_{\times}=\begin{bmatrix}0 & -\omega\\
+\omega & 0
 \end{bmatrix},
 \]
 
@@ -4672,7 +4672,7 @@ and
 \begin_inset Formula 
 \[
 \begin{bmatrix}\rho\\
-\theta
+\omega
 \end{bmatrix}\in\mathbb{R}^{3}
 \]
 
@@ -4911,18 +4911,6 @@ name "sec:Homography"
 \end_layout
 
 \begin_layout Standard
-We build upon the work presented in 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "White2019"
-literal "true"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
 When tracking targets in the normalized virtual image plane (NVIP) we use
  the homography 
 \begin_inset CommandInset citation
@@ -4932,38 +4920,28 @@ literal "false"
 
 \end_inset
 
- to transform the measurements and models from the previous global frame
- 
-\begin_inset Formula $\mathcal{F}^{n-}$
-\end_inset
-
-, normalized virtual camera frame (NVCF), to the current global frame 
-\begin_inset Formula $\mathcal{F}^{n}$
-\end_inset
-
-.
- To transform a model, we transform transform both the state extimate 
-\begin_inset Formula $\hat{x}^{n^{-}}$
+ to transform the measurements and tracks from the previous normalized virtual
+ camera frame (NVCF) to the current NVCF.
+ To transform a track, both the state estimate 
+\begin_inset Formula $\hat{x}$
 \end_inset
 
  and the covariance 
-\begin_inset Formula $P^{n^{-}}$
+\begin_inset Formula $P$
 \end_inset
 
- from 
-\begin_inset Formula $\mathcal{F}^{n^{-}}$
-\end_inset
+ are transformed using the homography.
+ Transforming measurements is similar to transforming the state estimate
+ so we will only discuss how to transform a track.
+ In this section we build upon the work presented in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "White2019"
+literal "true"
 
- to 
-\begin_inset Formula $\mathcal{F}^{n}$
 \end_inset
 
 .
- In addition to transforming the models, we use the homography to transform
- the measurements; however, they are transformed exactly how the state estimate
- is transformed.
- Thus, showing how to transform the models will be sufficient.
- 
 \end_layout
 
 \begin_layout Standard
@@ -5001,16 +4979,9 @@ Let
 \begin_inset Formula $H$
 \end_inset
 
- denote the homography that maps pixels from 
-\begin_inset Formula $\mathcal{F}^{n^{-}}$
-\end_inset
-
- to 
-\begin_inset Formula $\mathcal{F}^{n}$
-\end_inset
-
-.
- It can be decomposed to 
+ denote the homography that maps pixels from the previous to the current
+ NVCF.
+ It can be separated into sub-matrices 
 \begin_inset Formula 
 \[
 H=\begin{bmatrix}H_{1} & h_{2}\\
@@ -5021,208 +4992,6 @@ h_{3}^{\top} & h_{4}
 \end_inset
 
 
-\end_layout
-
-\begin_layout Lemma
-\begin_inset CommandInset label
-LatexCommand label
-name "lem:homography_r2"
-
-\end_inset
-
-We assume directly that the target evolves on the configuration manifold
- 
-\begin_inset Formula $\mathbb{R}^{n}$
-\end_inset
-
-.
- Let 
-\begin_inset Formula $\hat{x}^{n^{-}}=\left[\hat{t}^{n^{-}},\dot{\hat{t}}^{n^{-}}\right]$
-\end_inset
-
- denote the estimated state of the target in the previous frame, and 
-\begin_inset Formula $P^{n^{-}}$
-\end_inset
-
- denote the error covariance, then 
-\begin_inset Formula 
-\begin{align*}
-\hat{t}^{n} & =g\left(H,\hat{t}^{n^{-}}\right),\\
-\dot{\hat{t}}^{n} & =G\left(H,\hat{t}^{n^{-}}\right)\dot{t}^{n^{-}},\\
-P^{n} & =C\left(H,\hat{x}^{n^{-}}\right)P^{n^{-}}C^{\top}\left(H,\hat{x}^{n^{-}}\right)
-\end{align*}
-
-\end_inset
-
-where 
-\begin_inset Formula 
-\begin{align}
-g\left(H,\hat{t}^{n^{-}}\right) & =\frac{H_{1}\hat{t}^{n^{-}}+h_{2}}{h_{3}^{\top}\hat{t}^{n^{-}}+h_{4}},\label{eq:homography_r2_pos}\\
-G\left(H,\hat{t}^{n^{-}}\right) & =\frac{1}{\hat{\eta}}\left(\hat{\eta}H_{1}-\left(H_{1}\hat{t}^{n^{-}}+h_{2}\right)h_{3}^{\top}\right),\label{eq:homography_r2_vel}\\
-C\left(H,\hat{x}^{n^{-}}\right) & =\begin{bmatrix}G\left(H,\hat{t}^{n^{-}}\right) & 0\\
-M\left(H,\hat{x}^{n^{-}}\right) & G\left(H,\hat{t}^{n^{-}}\right)
-\end{bmatrix},\nonumber \\
-M\left(H,\hat{x}^{n^{-}}\right) & =\frac{2\left(H_{1}\hat{t}^{n^{-}}+h_{2}\right)h_{3}^{\top}\hat{\dot{t}}^{n^{-}}h_{3}^{\top}}{\hat{\eta}^{3}}\label{eq:homography_r2_cov}\\
- & -\frac{H_{1}\hat{\dot{t}}^{n^{-}}h_{3}^{\top}\hat{\eta}-H_{1}h_{3}^{\top}\hat{\dot{t}}^{n^{-}}\hat{\eta}}{\hat{\eta}^{3}},\\
-\hat{\eta} & =\left(h_{3}^{\top}\hat{t}^{n^{-}}+h_{4}\right)^{2}.\nonumber 
-\end{align}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Proof
-The homography satisfies the constraint
-\begin_inset Formula 
-\[
-\lambda^{n}\begin{bmatrix}t^{n}\\
-1
-\end{bmatrix}=\lambda^{n^{-}}H\begin{bmatrix}t^{n^{-}}\\
-1
-\end{bmatrix}.
-\]
-
-\end_inset
-
-Expanding it out gives us 
-\begin_inset Formula 
-\[
-\begin{bmatrix}\lambda^{n}t^{n}\\
-\lambda^{n}
-\end{bmatrix}=\lambda^{n^{-}}\begin{bmatrix}H_{1}t^{n^{-}}+h_{2}\\
-h_{3}^{\top}t^{n^{-}}+h_{4}
-\end{bmatrix},
-\]
-
-\end_inset
-
-which indicates that 
-\begin_inset Formula $\lambda^{n}=\lambda^{n^{-}}\left(h_{3}^{\top}t^{n^{-}}+h_{4}\right)$
-\end_inset
-
-.
- We can now substitute in 
-\begin_inset Formula $\lambda^{n^{-}}\left(h_{3}^{\top}t^{n^{-}}+h_{4}\right)$
-\end_inset
-
- for 
-\begin_inset Formula $\lambda^{n}$
-\end_inset
-
- and solve for 
-\begin_inset Formula $t^{n}$
-\end_inset
-
- which gives 
-\begin_inset Formula 
-\[
-t^{n}=\frac{1}{\eta}\left(H_{1}t^{n^{-}}+h_{2}\right)
-\]
-
-\end_inset
-
-where 
-\begin_inset Formula $\eta=h_{3}^{\top}t^{n^{-}}+h_{4}$
-\end_inset
-
-.
- Taking the above equation w.r.t.
- time gives us 
-\begin_inset Formula 
-\begin{align*}
-\frac{\partial g\left(H,t^{n^{-}}\right)}{\partial t} & =\frac{H_{1}}{\eta}-\frac{\left(H_{1}t^{n^{-}}+h_{2}\right)h_{3}^{\top}}{\eta^{2}}\\
- & =\frac{1}{\eta}\left(\eta H_{1}-\left(H_{1}t^{n^{-}}+h_{2}\right)h_{3}^{\top}\right).
-\end{align*}
-
-\end_inset
-
-Since the state of the model is a Gaussian random variable with mean 
-\begin_inset Formula $\hat{x}^{n^{-}}$
-\end_inset
-
- and covariance 
-\begin_inset Formula $P^{n^{-}}$
-\end_inset
-
-, we wish to keep the transformed state and error covariance a Gaussian
- random variable.
- We do this by linearization.
- Let 
-\begin_inset Formula 
-\[
-T\left(H,x^{n^{-}}\right)=\begin{bmatrix}g\left(H,t^{n^{-}}\right)\\
-G\left(H,t^{n^{-}}\right)\dot{t}^{n^{-}}
-\end{bmatrix},
-\]
-
-\end_inset
-
-be the state transformation, then its linearization about 
-\begin_inset Formula $\hat{x}^{n^{-}}$
-\end_inset
-
- is 
-\begin_inset Formula 
-\begin{equation}
-T\left(H,\hat{x}^{n^{-}}\right)+C\left(H,\hat{x}^{n^{-}}\right)\delta x^{n^{-}},\label{eq:homography_r2_linearized}
-\end{equation}
-
-\end_inset
-
-where 
-\begin_inset Formula $C\left(H,\hat{x}^{n^{-}}\right)$
-\end_inset
-
- is defined in 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:homography_r2_cov"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
- and 
-\begin_inset Formula 
-\begin{align*}
-M\left(H,\hat{x}^{n^{-}}\right) & =\left.\frac{\partial G\left(H,t^{n^{-}}\right)\dot{t}^{n^{-}}}{\partial t^{n^{-}}}\right|_{x^{n^{-}}=\hat{x}^{n^{-}}}\\
- & =\frac{-H_{1}\dot{\hat{t}}^{n^{-}}h_{3}^{\top}}{\hat{\eta}^{2}}-\frac{H_{1}h_{3}^{\top}\dot{\hat{t}}^{n^{-}}}{\hat{\eta}^{2}}\\
- & +\frac{2\left(H_{1}\hat{t}^{n^{-}}+h_{2}\right)h_{3}^{\top}\dot{\hat{t}}^{n^{-}}h_{3}^{\top}}{\hat{\eta}^{3}}
-\end{align*}
-
-\end_inset
-
-Thus the mean and covariance of 
-\begin_inset Formula $x^{n}$
-\end_inset
-
- are calculated using it's linearized form shown in equation 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:homography_r2_linearized"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-;
-\begin_inset Formula 
-\begin{align*}
-\text{E}\left[x^{n}\right] & =T\left(H,\hat{x}^{n^{-}}\right)\\
-\text{cov}\left[x^{n}\right] & =C\left(H,\hat{x}^{n^{-}}\right)P^{n^{-}}C^{\top}\left(H,\hat{x}^{n^{-}}\right).
-\end{align*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Proof
-This proof can be trivially extended to transforming a model expressed in
- the image plane.
 \end_layout
 
 \begin_layout Lemma
@@ -5247,20 +5016,20 @@ noprefix "false"
 , and to ensure we can properly transform the model.
  We also suppose directly that the state estimate of the system in the previous
  NVCF is 
-\begin_inset Formula $\hat{x}^{n^{-}}=\left(\hat{g}^{n^{-}},\hat{u}^{n^{-}}\right)$
+\begin_inset Formula $x^{n^{-}}=\left(g^{n^{-}},u^{n^{-}}\right)$
 \end_inset
 
  where 
 \begin_inset Formula 
 \begin{align*}
-\hat{g}^{n^{-}} & =\begin{bmatrix}\hat{R}^{n^{-}} & \hat{t}^{n^{-}}\\
+g^{n^{-}} & =\begin{bmatrix}R^{n^{-}} & t^{n^{-}}\\
 0 & 1
 \end{bmatrix}\\
-\hat{u}^{n^{-}} & =\begin{bmatrix}\hat{\rho}^{n^{-}}\\
-\hat{\omega}^{n^{-}}
+u^{n^{-}} & =\begin{bmatrix}\rho^{n^{-}}\\
+\omega^{n^{-}}
 \end{bmatrix}\\
-\hat{R}^{n^{-}} & =\frac{1}{\left\Vert \dot{\hat{t}}^{n^{-}}\right\Vert }\begin{bmatrix}e_{1}\left(\dot{\hat{t}}^{n^{-}}\right) & e_{2}\left(-\dot{\hat{t}}^{n^{-}}\right)\\
-e_{2}\left(\dot{\hat{t}}^{n^{-}}\right) & e_{1}\left(\dot{\hat{t}}^{n^{-}}\right)
+R^{n^{-}} & =\frac{1}{\left\Vert \dot{t}^{n^{-}}\right\Vert }\begin{bmatrix}e_{1}\left(\dot{t}^{n^{-}}\right) & e_{2}\left(-\dot{t}^{n^{-}}\right)\\
+e_{2}\left(\dot{t}^{n^{-}}\right) & e_{1}\left(\dot{t}^{n^{-}}\right)
 \end{bmatrix},
 \end{align*}
 
@@ -5285,10 +5054,10 @@ where
  component of a tuple, then the model transformation is 
 \begin_inset Formula 
 \begin{align*}
-\hat{R}^{n} & =H_{1}\hat{R}^{n^{-}},\\
-\hat{t}^{n} & =g\left(H,\hat{t}^{n^{-}}\right),\\
-\hat{\rho}^{n} & =\frac{\hat{\rho}^{n^{-}}}{h_{4}},\\
-\hat{\omega}^{n} & =\hat{\omega}^{n^{-}},\\
+R^{n} & =H_{1}R^{n^{-}},\\
+t^{n} & =g\left(H,t^{n^{-}}\right),\\
+\rho^{n} & =\frac{\rho^{n^{-}}}{h_{4}},\\
+\omega^{n} & =\omega^{n^{-}},\\
 P^{n} & =CP^{n^{-}}C^{\top},
 \end{align*}
 
@@ -5297,7 +5066,7 @@ P^{n} & =CP^{n^{-}}C^{\top},
 where 
 \begin_inset Formula 
 \begin{align*}
-g\left(H,\hat{t}^{n^{-}}\right) & =\frac{H_{1}\hat{t}^{n^{-}}+h_{2}}{h_{4}},\\
+g\left(H,t^{n^{-}}\right) & =\frac{H_{1}t^{n^{-}}+h_{2}}{h_{4}},\\
 C & =\text{diag}\left(\frac{1}{h_{4}},\frac{1}{h_{4}},1,\frac{1}{h_{4}},1\right).
 \end{align*}
 
@@ -5322,7 +5091,9 @@ where
 \end_inset
 
  is the normalized vector that points to Earth's core, 
-\begin_inset Formula $R\left(\psi\right)\in SO\left(2\right)$
+\begin_inset Formula $\begin{bmatrix}R\left(\psi\right) & 0_{2\times1}\\
+0_{1\times2} & 1
+\end{bmatrix}\in SO\left(3\right)$
 \end_inset
 
  is the rotation from 
@@ -5333,7 +5104,7 @@ where
 \begin_inset Formula $\mathcal{F}^{n}$
 \end_inset
 
- and is a rotation about 
+ about 
 \begin_inset Formula $n$
 \end_inset
 
@@ -5373,41 +5144,89 @@ h_{4} & =1-e_{3}\left(\frac{pn^{\top}}{d}\right).
 \end_layout
 
 \begin_layout Proof
-The position and velocity expressed in the NVCF and are transformed according
- to lemma 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "lem:homography_r2"
-plural "false"
-caps "false"
-noprefix "false"
+The homography satisfies the constraint
+\begin_inset Formula 
+\[
+\lambda^{n}\begin{bmatrix}t^{n}\\
+1
+\end{bmatrix}=\lambda^{n^{-}}H\begin{bmatrix}t^{n^{-}}\\
+1
+\end{bmatrix}.
+\]
 
 \end_inset
 
-, but under the specified assumptions we can simplify the transformations
- to 
+Expanding it out gives us 
+\begin_inset Formula 
+\[
+\begin{bmatrix}\lambda^{n}t^{n}\\
+\lambda^{n}
+\end{bmatrix}=\lambda^{n^{-}}\begin{bmatrix}H_{1}t^{n^{-}}+h_{2}\\
+h_{4}
+\end{bmatrix},
+\]
+
+\end_inset
+
+which indicates that 
+\begin_inset Formula $\lambda^{n}=\lambda^{n^{-}}h_{4}$
+\end_inset
+
+.
+ We can now substitute in 
+\begin_inset Formula $\lambda^{n^{-}}h_{4}$
+\end_inset
+
+ for 
+\begin_inset Formula $\lambda^{n}$
+\end_inset
+
+ and solve for 
+\begin_inset Formula $t^{n}$
+\end_inset
+
+ which gives 
 \begin_inset Formula 
 \begin{align*}
-g\left(H,t^{n^{-}}\right) & =\frac{H_{1}t^{n^{-}}+h_{2}}{h_{4}},\\
-G\left(H,t^{n^{-}}\right) & =\frac{H_{1}}{h^{4}}.
+t^{n} & =\frac{1}{h_{4}}\left(H_{1}t^{n^{-}}+h_{2}\right)\\
+ & =g\left(H,t^{n^{-}}\right).
 \end{align*}
 
 \end_inset
 
+Taking the above equation w.r.t.
+ time gives us 
+\begin_inset Formula $\dot{t}^{n}$
+\end_inset
+
+ which is
+\begin_inset Formula 
+\begin{align*}
+\dot{t}^{n} & =\frac{\partial g\left(H,t^{n^{-}}\right)}{\partial t^{n^{-}}}\\
+ & =\frac{H_{1}}{h_{4}}\dot{t}^{n^{-}}\\
+ & =G\left(H,t^{n^{-}}\right)\dot{t}^{n^{-}}.
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Proof
 By the definition of the rotation matrix 
-\begin_inset Formula $\hat{R}^{n}$
+\begin_inset Formula $R^{n}$
 \end_inset
 
 , we get 
 \begin_inset Formula 
 \begin{align*}
-\hat{R}^{n} & =\frac{1}{\left\Vert \dot{t}^{n}\right\Vert }\begin{bmatrix}e_{1}\left(\dot{t}^{n}\right) & e_{2}\left(-\dot{t}^{n}\right)\\
+R^{n} & =\frac{1}{\left\Vert \dot{t}^{n}\right\Vert }\begin{bmatrix}e_{1}\left(\dot{t}^{n}\right) & e_{2}\left(-\dot{t}^{n}\right)\\
 e_{2}\left(\dot{t}^{n}\right) & e_{1}\left(\dot{t}^{n}\right)
 \end{bmatrix}\\
- & =\frac{1}{\left\Vert G\dot{t}^{n}\right\Vert }\begin{bmatrix}e_{1}\left(G\dot{t}^{n}\right) & -e_{2}\left(G\dot{t}^{n}\right)\\
-e_{2}\left(G\dot{t}^{n}\right) & e_{1}\left(G\dot{t}^{n}\right)
+ & =\frac{1}{\left\Vert G\dot{t}^{n^{-}}\right\Vert }\begin{bmatrix}e_{1}\left(G\dot{t}^{n^{-}}\right) & -e_{2}\left(G\dot{t}^{n^{-}}\right)\\
+e_{2}\left(G\dot{t}^{n^{-}}\right) & e_{1}\left(G\dot{t}^{n^{-}}\right)
 \end{bmatrix}\\
- & =H_{1}\hat{R}^{n^{-}}.
+ & =H_{1}R^{n^{-}}.
 \end{align*}
 
 \end_inset
@@ -5415,8 +5234,8 @@ e_{2}\left(G\dot{t}^{n}\right) & e_{1}\left(G\dot{t}^{n}\right)
 The velocity in the body frame is 
 \begin_inset Formula 
 \begin{align*}
-\rho^{n} & =\left(\hat{R}^{n}\right)^{-1}G\hat{R}^{n^{-}}\rho^{n^{-}}\\
- & =\left(\hat{R}^{n}\right)^{-1}H_{1}^{-1}\frac{H_{1}}{h^{4}}\rho^{n^{-}}\\
+\rho^{n} & =\left(R^{n}\right)^{-1}GR^{n^{-}}\rho^{n^{-}}\\
+ & =\left(R^{n^{-}}\right)^{-1}H_{1}^{-1}\frac{H_{1}}{h^{4}}\rho^{n^{-}}\\
  & =\frac{\rho^{n^{-}}}{h^{4}}.
 \end{align*}
 
@@ -5465,23 +5284,44 @@ The state
 \end_inset
 
  and calculating the expected value and covariance.
- 
+ Let 
+\begin_inset Formula $T:G\times E\to G\times E$
+\end_inset
+
+ denote the transformation from 
+\begin_inset Formula $x^{n^{-}}$
+\end_inset
+
+ to 
+\begin_inset Formula $x^{n}$
+\end_inset
+
+ using the homography.
+ According to lemma 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "lem:a_posterior"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, 
 \begin_inset Formula 
 \[
-x^{n}\ominus T\left(H,x^{n^{-}}\right)\approx x^{n}\ominus T\left(H,\hat{x}^{n^{-}}\right)-C\delta x^{n^{-}},
+p\left(x^{n}\right)\approx\eta\exp\left(-\frac{1}{2}\left(\delta x^{n}\right)^{\top}P^{n}\delta x^{n}\right)
 \]
 
 \end_inset
 
-Where 
-\begin_inset Formula $C$
-\end_inset
-
- is defined as 
+where 
 \begin_inset Formula 
-\[
-C=-\left.\frac{\partial x^{n}\ominus T\left(H,x^{n^{-}}\right)}{\partial x^{n^{-}}}\right|_{x^{n^{-}}=\hat{x}^{n^{-}}}.
-\]
+\begin{align*}
+\delta x & =x^{n}\ominus T\left(\hat{x}^{n^{-}}\right)\\
+P & =CPC^{\top}\\
+C & =\left.\frac{\partial T\left(x^{n^{-}}\right)}{\partial x^{n^{-}}}\right|_{x=\hat{x}}.
+\end{align*}
 
 \end_inset
 
@@ -5502,9 +5342,7 @@ C_{21} & C_{22}
 The first block is 
 \begin_inset Formula 
 \begin{align*}
-C_{11} & =-\left.\frac{\partial g^{n}\ominus T_{1}\left(H,g^{n^{-}}\right)}{\partial g^{n^{-1}}}\right|_{x^{n^{-}}=\hat{x}^{n^{-}}}\\
- & =\underbrace{J_{1}\left(g^{n}\ominus T_{1}\left(H,g^{n^{-}}\right)\right)}_{I}\left.\frac{\partial T_{1}\left(H,g^{n^{-}}\right)}{g^{n^{-}}}\right|_{x^{n^{-}}=\hat{x}^{n^{-}}}\\
- & =\left.\frac{\partial T_{1}\left(H,g^{n^{-}}\right)}{g^{n^{-}}}\right|_{x^{n^{-}}=\hat{x}^{n^{-}}}\\
+C_{11} & =\left.\frac{\partial T_{1}\left(g^{n^{-}}\right)}{\partial g^{n^{-1}}}\right|_{x^{n^{-}}=\hat{x}^{n^{-}}}\\
  & =\text{diag}\left(\frac{1}{h_{4}},\frac{1}{h_{4}},1\right),
 \end{align*}
 
@@ -5526,9 +5364,7 @@ where
 The off diagonal blocks are both zero matrices, and the last block is 
 \begin_inset Formula 
 \begin{align*}
-C_{22} & =-\left.\frac{\partial u^{n}\ominus T_{2}\left(H,u^{n^{-}}\right)}{\partial u^{n^{-}}}\right|_{x^{n^{-}}=\hat{x}^{n^{-}}}\\
- & =J_{l}\left(u^{n}\ominus T_{2}\left(H,u^{n^{-}}\right)\right)\left.\frac{\partial T_{2}\left(H,u^{n^{-}}\right)}{\partial u^{n^{-}}}\right|_{x^{n^{-}}=\hat{x}^{n^{-}}}\\
- & =\left.\frac{\partial T_{2}\left(H,u^{n^{-}}\right)}{\partial u^{n^{-}}}\right|_{x^{n^{-}}=\hat{x}^{n^{-}}}\\
+C_{22} & =\left.\frac{\partial T_{2}\left(H,u^{n^{-}}\right)}{\partial u^{n^{-}}}\right|_{x^{n^{-}}=\hat{x}^{n^{-}}}\\
  & =\text{diag}\left(\frac{1}{h_{4}},\frac{1}{h^{4}},1\right),
 \end{align*}
 
@@ -5542,13 +5378,13 @@ where
 \begin_inset Formula $T$
 \end_inset
 
- pertaining to transforming the veclocity.
+ pertaining to transforming the velocity.
  The second diagonal term in 
 \begin_inset Formula $C_{22}$
 \end_inset
 
  pertains to the velocity that is perpendicular to the heading which we
- contrain it to be zero; thus, it is not part of the covariance and can
+ constrain it to be zero; thus, it is not part of the covariance and can
  be dropped to get 
 \begin_inset Formula 
 \[

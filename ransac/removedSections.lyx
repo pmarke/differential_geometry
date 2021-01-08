@@ -1339,5 +1339,218 @@ Other
  - The number of models
 \end_layout
 
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Lemma
+\end_layout
+
+\begin_layout Lemma
+\begin_inset CommandInset label
+LatexCommand label
+name "lem:homography_r2"
+
+\end_inset
+
+We assume directly that the target evolves on the configuration manifold
+ 
+\begin_inset Formula $\mathbb{R}^{n}$
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $\hat{x}^{n^{-}}=\left[\hat{t}^{n^{-}},\dot{\hat{t}}^{n^{-}}\right]$
+\end_inset
+
+ denote the estimated state of the target in the previous frame, and 
+\begin_inset Formula $P^{n^{-}}$
+\end_inset
+
+ denote the error covariance, then 
+\begin_inset Formula 
+\begin{align*}
+\hat{t}^{n} & =g\left(H,\hat{t}^{n^{-}}\right),\\
+\dot{\hat{t}}^{n} & =G\left(H,\hat{t}^{n^{-}}\right)\dot{t}^{n^{-}},\\
+P^{n} & =C\left(H,\hat{x}^{n^{-}}\right)P^{n^{-}}C^{\top}\left(H,\hat{x}^{n^{-}}\right)
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula 
+\begin{align}
+g\left(H,\hat{t}^{n^{-}}\right) & =\frac{H_{1}\hat{t}^{n^{-}}+h_{2}}{h_{3}^{\top}\hat{t}^{n^{-}}+h_{4}},\label{eq:homography_r2_pos}\\
+G\left(H,\hat{t}^{n^{-}}\right) & =\frac{1}{\hat{\eta}}\left(\hat{\eta}H_{1}-\left(H_{1}\hat{t}^{n^{-}}+h_{2}\right)h_{3}^{\top}\right),\label{eq:homography_r2_vel}\\
+C\left(H,\hat{x}^{n^{-}}\right) & =\begin{bmatrix}G\left(H,\hat{t}^{n^{-}}\right) & 0\\
+M\left(H,\hat{x}^{n^{-}}\right) & G\left(H,\hat{t}^{n^{-}}\right)
+\end{bmatrix},\nonumber \\
+M\left(H,\hat{x}^{n^{-}}\right) & =\frac{2\left(H_{1}\hat{t}^{n^{-}}+h_{2}\right)h_{3}^{\top}\hat{\dot{t}}^{n^{-}}h_{3}^{\top}}{\hat{\eta}^{3}}\label{eq:homography_r2_cov}\\
+ & -\frac{H_{1}\hat{\dot{t}}^{n^{-}}h_{3}^{\top}\hat{\eta}-H_{1}h_{3}^{\top}\hat{\dot{t}}^{n^{-}}\hat{\eta}}{\hat{\eta}^{3}},\\
+\hat{\eta} & =\left(h_{3}^{\top}\hat{t}^{n^{-}}+h_{4}\right)^{2}.\nonumber 
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Proof
+The homography satisfies the constraint
+\begin_inset Formula 
+\[
+\lambda^{n}\begin{bmatrix}t^{n}\\
+1
+\end{bmatrix}=\lambda^{n^{-}}H\begin{bmatrix}t^{n^{-}}\\
+1
+\end{bmatrix}.
+\]
+
+\end_inset
+
+Expanding it out gives us 
+\begin_inset Formula 
+\[
+\begin{bmatrix}\lambda^{n}t^{n}\\
+\lambda^{n}
+\end{bmatrix}=\lambda^{n^{-}}\begin{bmatrix}H_{1}t^{n^{-}}+h_{2}\\
+h_{3}^{\top}t^{n^{-}}+h_{4}
+\end{bmatrix},
+\]
+
+\end_inset
+
+which indicates that 
+\begin_inset Formula $\lambda^{n}=\lambda^{n^{-}}\left(h_{3}^{\top}t^{n^{-}}+h_{4}\right)$
+\end_inset
+
+.
+ We can now substitute in 
+\begin_inset Formula $\lambda^{n^{-}}\left(h_{3}^{\top}t^{n^{-}}+h_{4}\right)$
+\end_inset
+
+ for 
+\begin_inset Formula $\lambda^{n}$
+\end_inset
+
+ and solve for 
+\begin_inset Formula $t^{n}$
+\end_inset
+
+ which gives 
+\begin_inset Formula 
+\[
+t^{n}=\frac{1}{\eta}\left(H_{1}t^{n^{-}}+h_{2}\right)
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\eta=h_{3}^{\top}t^{n^{-}}+h_{4}$
+\end_inset
+
+.
+ Taking the above equation w.r.t.
+ time gives us 
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial g\left(H,t^{n^{-}}\right)}{\partial t} & =\frac{H_{1}}{\eta}-\frac{\left(H_{1}t^{n^{-}}+h_{2}\right)h_{3}^{\top}}{\eta^{2}}\\
+ & =\frac{1}{\eta}\left(\eta H_{1}-\left(H_{1}t^{n^{-}}+h_{2}\right)h_{3}^{\top}\right).
+\end{align*}
+
+\end_inset
+
+Since the state of the model is a Gaussian random variable with mean 
+\begin_inset Formula $\hat{x}^{n^{-}}$
+\end_inset
+
+ and covariance 
+\begin_inset Formula $P^{n^{-}}$
+\end_inset
+
+, we wish to keep the transformed state and error covariance a Gaussian
+ random variable.
+ We do this by linearization.
+ Let 
+\begin_inset Formula 
+\[
+T\left(H,x^{n^{-}}\right)=\begin{bmatrix}g\left(H,t^{n^{-}}\right)\\
+G\left(H,t^{n^{-}}\right)\dot{t}^{n^{-}}
+\end{bmatrix},
+\]
+
+\end_inset
+
+be the state transformation, then its linearization about 
+\begin_inset Formula $\hat{x}^{n^{-}}$
+\end_inset
+
+ is 
+\begin_inset Formula 
+\begin{equation}
+T\left(H,\hat{x}^{n^{-}}\right)+C\left(H,\hat{x}^{n^{-}}\right)\delta x^{n^{-}},\label{eq:homography_r2_linearized}
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $C\left(H,\hat{x}^{n^{-}}\right)$
+\end_inset
+
+ is defined in 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:homography_r2_cov"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ and 
+\begin_inset Formula 
+\begin{align*}
+M\left(H,\hat{x}^{n^{-}}\right) & =\left.\frac{\partial G\left(H,t^{n^{-}}\right)\dot{t}^{n^{-}}}{\partial t^{n^{-}}}\right|_{x^{n^{-}}=\hat{x}^{n^{-}}}\\
+ & =\frac{-H_{1}\dot{\hat{t}}^{n^{-}}h_{3}^{\top}}{\hat{\eta}^{2}}-\frac{H_{1}h_{3}^{\top}\dot{\hat{t}}^{n^{-}}}{\hat{\eta}^{2}}\\
+ & +\frac{2\left(H_{1}\hat{t}^{n^{-}}+h_{2}\right)h_{3}^{\top}\dot{\hat{t}}^{n^{-}}h_{3}^{\top}}{\hat{\eta}^{3}}
+\end{align*}
+
+\end_inset
+
+Thus the mean and covariance of 
+\begin_inset Formula $x^{n}$
+\end_inset
+
+ are calculated using it's linearized form shown in equation 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:homography_r2_linearized"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+;
+\begin_inset Formula 
+\begin{align*}
+\text{E}\left[x^{n}\right] & =T\left(H,\hat{x}^{n^{-}}\right)\\
+\text{cov}\left[x^{n}\right] & =C\left(H,\hat{x}^{n^{-}}\right)P^{n^{-}}C^{\top}\left(H,\hat{x}^{n^{-}}\right).
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Proof
+This proof can be trivially extended to transforming a model expressed in
+ the image plane.
+\end_layout
+
 \end_body
 \end_document

@@ -950,5 +950,428 @@ where
 
 \end_layout
 
+\begin_layout Section
+Terminology and Parameters
+\end_layout
+
+\begin_layout Standard
+The terminology, parameters, and notation used is previous version of R-RANSAC
+ have varied which has created confusion and inconsistencies.
+ In this section, we hope to solidify certain terminology, parameters and
+ notation that are suitable for expanding R-RANSAC to work with Lie Groups,
+ and incorporating other improvements we have made to the general algorithm.
+\end_layout
+
+\begin_layout Subsection
+Terminology
+\end_layout
+
+\begin_layout Standard
+R-RANSAC has very specific terminology that we that will facilitate the
+ discussion.
+ 
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Phenomenon
+\series default
+: Something that produces an observable signal.
+ In the case of target tracking, the phenomenon is referred to as a 
+\series bold
+target
+\series default
+, which is an object that exists in physical space.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Measurement Source
+\series default
+: A sensor equipped with an algorithm that captures information from the
+ environment and produces meaningful measurements used to observe the target.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Surveillance Region
+\series default
+: The portion of the environment that is observable by the measurement sources.
+ There is a local surveillance region (LSR) for each measurement source
+ and a global surveillance region (GSR) that is a union of all the local
+ surveillance regions.
+ 
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Frame of reference
+\series default
+: Consists of an abstract coordinate system and the set of physical reference
+ points that uniquely fix (locate and orient) the coordinate system and
+ standardize measurements within that frame.
+ We will often refer to a frame of reference as just 
+\series bold
+frame
+\series default
+.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Local Frame
+\series default
+: The frame that coincides with a local surveillance region.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Global Frame
+\series default
+: The frame that coincides with the global surveillance region.
+ It is possible that the global frame is the same as a local frame.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Sensor Scan
+\series default
+: When a sensor observes its surveillance region and extracts meaningful
+ data.
+ For example, the sensor scan of a camera occurs when the camera produces
+ a new image of its surveillance region.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+False Measurement
+\series default
+: A measurement extracted from a sensor scan that does not correspond to
+ a phenomenon of interest.
+ For example, motion in a camera can generate false measurements due to
+ parallax depending on the algorithm.
+ Another example is just noisy sensors.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+True Measurement
+\series default
+: A measurement extracted from a sensor scan that corresponds to a phenomenon
+ of interest.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Model
+\series default
+: This is simply a model of the phenomenon.
+ In regards to target tracking, a model is referred to as a 
+\series bold
+track
+\series default
+.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Model Hypothesis
+\series default
+: This is a hypothetical model of the phenomenon (i.e.
+ a possible model) created by the RANSAC algorithm.
+ A model hypothesis that meets certain criteria becomes a model.
+ In regards to target tracking, a model hypothesis is referred to as a 
+\series bold
+track
+\series default
+ 
+\series bold
+hypothesis
+\series default
+.
+ We will often abbreviate the term and mention only 
+\series bold
+hypothesis
+\series default
+.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Model Likelihood
+\series default
+: The probability that a model represents an actual target.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Good
+\series default
+ 
+\series bold
+Model
+\series default
+: A model that is deemed very likely to correctly describe a phenomenon,
+ based on predefined criteria, becomes a good model.
+ In regards to target tracking, a good model is referred to as a 
+\series bold
+good
+\series default
+ 
+\series bold
+track
+\series default
+.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Poor
+\series default
+ 
+\series bold
+Model
+\series default
+: A model that is not a good model.
+ In regards to target tracking, a poor model is referred to as a 
+\series bold
+poor
+\series default
+ 
+\series bold
+track
+\series default
+.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Time Window
+\series default
+: An interval of time extending into the past from the current time.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Expired
+\series default
+ 
+\series bold
+Measurement
+\series default
+: A measurement that was observed in the past outside the time window.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Measurement
+\series default
+ 
+\series bold
+Source
+\series default
+: An algorithm that takes sensor data and produces a measurement.
+ We will often refer to a measurement source as just a source.
+\end_layout
+
+\begin_layout Subsection
+Parameters
+\end_layout
+
+\begin_layout Standard
+There are various parameters used throughout R-RANSAC.
+ A parameter can either be a scalar or a tuple.
+ In case the context doesn't make it clear, we will specify which one is
+ a scalar and a tuple.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+noindent
+\end_layout
+
+\end_inset
+
+ RANSAC parameters
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\ell$
+\end_inset
+
+ - max iterations
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\tau_{E}$
+\end_inset
+
+ - If the size of a consensus set is greater than 
+\begin_inset Formula $\tau_{E}$
+\end_inset
+
+, than RANSAC will terminate early.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\tau_{I}$
+\end_inset
+
+ - RANSAC inlier threshold
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\tau_{RM}$
+\end_inset
+
+ - The minimum size of a track hypothesis's consensus set in order for the
+ hypothesis to become a track
+\end_layout
+
+\begin_layout Standard
+Cluster parameters
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\tau_{CD}$
+\end_inset
+
+ - neighborhood distance threshold
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\tau_{CM}$
+\end_inset
+
+ - cluster minimum cardinality threshold
+\end_layout
+
+\begin_layout Standard
+Model Management Parameters
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\tau_{S}$
+\end_inset
+
+ - Similarity merge threshold
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\tau_{\rho}$
+\end_inset
+
+ - Good track threshold
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\tau_{\alpha}$
+\end_inset
+
+- Missed detection threshold
+\end_layout
+
+\begin_layout Standard
+PDAF
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $P_{D}$
+\end_inset
+
+ - Probability of detection
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $P_{G}$
+\end_inset
+
+ - Probability of being in the validation region
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\lambda$
+\end_inset
+
+ - The spacial density of false measurements in a local surveillance region
+ per sensor scan
+\end_layout
+
+\begin_layout Standard
+Other
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $T_{W}$
+\end_inset
+
+ - Time window
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $M$
+\end_inset
+
+ - The number of models
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\left(R_{b}^{i},\omega_{b/i}^{b}\right)\bullet\left(R_{c}^{b},\omega_{c/i}^{c}\right)=\left(R_{b}^{i}R_{c}^{b},R_{b}^{c}\omega^{b}+\omega^{c}\right)$
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+x & =\left(g,u\right)=\left(\hat{g}\exp\left(\delta g\right),\hat{u}+\delta u\right)\\
+x & =\left(\hat{g},\hat{u}\right)\bullet\left(\exp\left(\delta g\right),\delta u\right)\\
+ & =\left(\hat{g},\hat{u}\right)\oplus\left(\delta g,\delta u\right)
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+y & =x\exp\left(v\right)\\
+\hat{y} & =\hat{x}\\
+y\ominus\hat{y} & =\left(g\ominus\hat{g},\mathbf{Ad}_{\hat{g}^{-1}g}u-\hat{u}\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
 \end_body
 \end_document
