@@ -1,0 +1,980 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass IEEEtran
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 2
+\use_package amssymb 2
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Representing Uncertainty on Matrix Lie Groups
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Standard
+Often in robotics and many other fields of study we work with processes
+ or signals that have uncertainty.
+ We often model the uncertainty of a random variable 
+\begin_inset Formula $x$
+\end_inset
+
+ using a multivariate Gaussian distribution which which we denote 
+\begin_inset Formula $\mathcal{N}\left(\hat{x},\Sigma\right)$
+\end_inset
+
+ where 
+\begin_inset Formula $\hat{x}\in\mathbb{R}^{n}$
+\end_inset
+
+ is the mean and 
+\begin_inset Formula $\Sigma\in\mathbb{R}^{n\times n}$
+\end_inset
+
+ is the covariance.
+ This is because many random variables we work with can be approximated
+ as Gaussian, and it simplifies many calculations due to the nice properties
+ of Gaussian random variables.
+ 
+\end_layout
+
+\begin_layout Standard
+The probability density function (pdf) of a Gaussian distribution of dimension
+ 
+\begin_inset Formula $n$
+\end_inset
+
+ is defined as 
+\begin_inset Formula 
+\begin{equation}
+p\left(x\right)=\frac{1}{\left(2\pi\right)^{\frac{n}{2}}\det\left(\Sigma\right)}\exp\left(-\frac{1}{2}\left(x-\hat{x}\right)^{\top}\Sigma^{-1}\left(x-\hat{x}\right)\right).\label{eq:Gausssian_pdf}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note that the pdf of a Gaussian random variable is only defined for random
+ variables whose domain is a vector space.
+ So the question we address is how do we extend this to matrix Lie groups.
+\end_layout
+
+\begin_layout Section
+The Error State
+\end_layout
+
+\begin_layout Standard
+In order to extend the Gaussian distribution to Lie groups we need to first
+ look at the problem differently.
+ For a given 
+\begin_inset Formula $x\in\mathbb{R}^{n}$
+\end_inset
+
+ we can write it as 
+\begin_inset Formula 
+\[
+x=\hat{x}+\delta x
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\hat{x}$
+\end_inset
+
+ is the mean of the Gaussian distribution and 
+\begin_inset Formula $\delta x$
+\end_inset
+
+ is the error that describes how far 
+\begin_inset Formula $x$
+\end_inset
+
+ is away from the mean 
+\begin_inset Formula $\hat{x}$
+\end_inset
+
+.
+ Note that 
+\begin_inset Formula $\hat{x}$
+\end_inset
+
+ is not a random variable, but 
+\begin_inset Formula $\delta x$
+\end_inset
+
+ is, and it's pdf is defined as 
+\begin_inset Formula 
+\begin{align*}
+p\left(\delta x\right) & =\frac{1}{\left(2\pi\right)^{\frac{n}{2}}\det\left(\Sigma\right)}\exp\left(-\frac{1}{2}\delta x^{\top}\Sigma^{-1}\delta x\right)\\
+ & =\frac{1}{\left(2\pi\right)^{\frac{n}{2}}\det\left(\Sigma\right)}\exp\left(-\frac{1}{2}\left(x-\hat{x}\right)^{\top}\Sigma^{-1}\left(x-\hat{x}\right)\right).
+\end{align*}
+
+\end_inset
+
+This allows us to contain all the information about the randomness of 
+\begin_inset Formula $x$
+\end_inset
+
+ in 
+\begin_inset Formula $\delta x$
+\end_inset
+
+; thus, by knowing 
+\begin_inset Formula $p\left(\delta x\right)$
+\end_inset
+
+ we know 
+\begin_inset Formula $p\left(x\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Now, instead of looking at 
+\begin_inset Formula $\delta x$
+\end_inset
+
+ as an element of 
+\begin_inset Formula $\mathbb{R}^{n}$
+\end_inset
+
+, start thinking about it as an element of the tangent space 
+\begin_inset Formula $T_{\hat{x}}\mathbb{R}^{n}$
+\end_inset
+
+ as we go through this presentation.
+ The convenient thing about the tangent space of 
+\begin_inset Formula $\mathbb{R}^{n}$
+\end_inset
+
+ is that we can take a vector 
+\begin_inset Formula $v\in T_{p}\mathbb{R}^{n}$
+\end_inset
+
+ at a point 
+\begin_inset Formula $p\in\mathbb{R}^{n}$
+\end_inset
+
+ and simply add them together 
+\begin_inset Formula 
+\[
+p+v.
+\]
+
+\end_inset
+
+This is not the case for any arbitrary matrix Lie group.
+ We will get into this later.
+ For now we will go through the derivation of the extended Kalman filter
+ thinking on 
+\begin_inset Formula $\mathbb{R}^{n}$
+\end_inset
+
+ thinking about 
+\begin_inset Formula $\delta x\in T_{p}\mathbb{R}^{n}$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Section
+Extended Kalman Filter
+\end_layout
+
+\begin_layout Standard
+For the presentation of the extended Kalman filter, suppose we have a system
+ described by 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{subequations}
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "eq:system"
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+x_{k} & =f\left(x_{k^{-}},w_{k},\delta_{k}\right)\\
+y_{k} & =h\left(x_{k},v_{k}\right),
+\end{align*}
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{subequations}
+\end_layout
+
+\end_inset
+
+ where 
+\begin_inset Formula $x_{k}\in\mathbb{R}^{n}$
+\end_inset
+
+ is the state of the system at time 
+\begin_inset Formula $k$
+\end_inset
+
+, 
+\begin_inset Formula $y_{k}\in\mathbb{R}^{m}$
+\end_inset
+
+ is the observation at time 
+\begin_inset Formula $k$
+\end_inset
+
+, 
+\begin_inset Formula $f:\mathbb{R}^{n}\times\mathbb{R}^{n}\times\mathbb{R}\to\mathbb{R}^{n}$
+\end_inset
+
+ is the state transition function, 
+\begin_inset Formula $h:\mathbb{R}^{n}\times\mathbb{R}^{m}\to\mathbb{R}^{m}$
+\end_inset
+
+ is the observation function, 
+\begin_inset Formula $\delta_{k}$
+\end_inset
+
+ is the time interval 
+\begin_inset Formula $k-k^{-}$
+\end_inset
+
+, 
+\begin_inset Formula $w_{k}\sim\mathcal{N}\left(0,Q\right)$
+\end_inset
+
+, 
+\begin_inset Formula $v_{k}\sim\mathcal{N}\left(0,R\right)$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $Y_{k}$
+\end_inset
+
+ denote the set of measurements at time 
+\begin_inset Formula $k$
+\end_inset
+
+ and 
+\begin_inset Formula $Y_{0:k}$
+\end_inset
+
+ denote the set of measurements from the initial time to time 
+\begin_inset Formula $k$
+\end_inset
+
+.
+ We denote the probability of the state conditioned on measurements as 
+\begin_inset Formula $p\left(x_{k}\mid Y_{0:k}\right)=p\left(x_{k}\mid Y_{k},x_{k^{-}}\right)$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+The Kalman filter is used to estimate the state 
+\begin_inset Formula $x_{k}$
+\end_inset
+
+ using the observed measurements 
+\begin_inset Formula $Y_{k}$
+\end_inset
+
+.
+ It does this in two phases: the propagation phase and the update phase.
+ In the propagation phase, the state estimate is propagated in time and
+ in the update phase, the new measurements are used to update the state
+ estimate.
+ 
+\end_layout
+
+\begin_layout Subsection
+Propagate Phase
+\end_layout
+
+\begin_layout Standard
+The update phase consists of calculating 
+\begin_inset Formula $p\left(x_{k}\mid Y_{0:k^{-}}\right)$
+\end_inset
+
+ using the state transition function.
+ If the state transition function 
+\begin_inset Formula $f$
+\end_inset
+
+ defined in 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:system"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ is a multilinear function, then 
+\begin_inset Formula $p\left(x_{k}\mid Y_{0:k^{-}}\right)$
+\end_inset
+
+ will be Gaussian; otherwise, 
+\begin_inset Formula $p\left(x_{k}\mid Y_{0:k^{-}}\right)$
+\end_inset
+
+ might not be Gaussian.
+ However, we can approximate 
+\begin_inset Formula $x_{k}$
+\end_inset
+
+ by linearizing the function 
+\begin_inset Formula $f$
+\end_inset
+
+ and evaluating it at 
+\begin_inset Formula $x_{k^{-}}=\hat{x}_{k^{-}}$
+\end_inset
+
+ and 
+\begin_inset Formula $w_{k}=0$
+\end_inset
+
+.
+ Doing so gives us the approximation 
+\begin_inset Formula 
+\[
+x_{k}\approx f\left(\hat{x}_{k^{-}},0,\delta_{k}\right)+F_{k}\delta x_{k^{-}}+G_{k}w_{k}
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula 
+\begin{align*}
+F_{k} & =\left.\frac{\partial f}{\partial x}\right|_{\begin{matrix}x_{k^{-}}=\hat{x}_{k^{-}}\\
+w_{k}=0
+\end{matrix}}\\
+G_{k} & =\left.\frac{\partial f}{\partial w}\right|_{\begin{matrix}x_{k^{-}}=\hat{x}_{k^{-}}\\
+w_{k}=0
+\end{matrix}}.
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Since a Gaussian distribution is completely described by its mean and covariance
+, we can approximate 
+\begin_inset Formula $p\left(x_{k}\mid Y_{0:k^{-}}\right)$
+\end_inset
+
+ by calculating the mean and covariance of the linearzation.
+ The mean is
+\begin_inset Formula 
+\begin{align*}
+\text{E}\left[x_{k}\right] & \approx\text{E}\left[f\left(\hat{x}_{k^{-}},0,\delta_{k}\right)+F_{k}\delta x_{k^{-}}+G_{k}w_{k}\right]\\
+ & =\text{E}\left[f\left(\hat{x}_{k^{-}},0,\delta_{k}\right)\right]+\text{E}\left[F_{k}\delta x_{k^{-}}\right]+\text{E}\left[G_{k}w_{k}\right]\\
+ & =f\left(\hat{x}_{k^{-}},0,\delta_{k}\right)+F_{k}\text{E}\left[\delta x_{k^{-}}\right]+G_{k}\text{E}\left[w_{k}\right]\\
+ & =f\left(\hat{x}_{k^{-}},0,\delta_{k}\right)\\
+ & =\hat{\bar{x}}_{k},
+\end{align*}
+
+\end_inset
+
+where we recall that 
+\begin_inset Formula $\text{E}\left[\delta x_{k^{-}}\right]=\text{E}\left[w_{k}\right]=0$
+\end_inset
+
+ by definition.
+ The covariance is 
+\begin_inset Formula 
+\begin{align*}
+\text{cov}\left(x_{k}\right) & \approx\text{E}\left[\left(f\left(\hat{x}_{k^{-}},0,\delta_{k}\right)+F_{k}\delta x_{k^{-}}+G_{k}w_{k}-\text{E}\left[x_{k}\right]\right)\left(f\left(\hat{x}_{k^{-}},0,\delta_{k}\right)+F_{k}\delta x_{k^{-}}+G_{k}w_{k}-\text{E}\left[x_{k}\right]\right)^{\top}\right]\\
+ & =\text{E}\left[\left(F_{k}\delta x_{k^{-}}+G_{k}w_{k}\right)\left(F_{k}\delta x_{k^{-}}+G_{k}w_{k}\right)^{\top}\right]\\
+ & =F_{k}\text{E}\left[\left(\delta x_{k^{-}}\right)\left(\delta x_{k^{-}}\right)^{\top}\right]F_{k}^{\top}+G_{k}\text{E}\left[\left(w_{k}\right)\left(w_{k}\right)^{\top}\right]G_{k}^{\top}+F_{k}\text{E}\left[\left(\delta x_{k^{-}}\right)\left(w_{k}\right)^{\top}\right]G_{k}^{\top}+G_{k}\text{E}\left[\left(w_{k}\right)\left(\delta x_{k^{-}}\right)^{\top}\right]F_{k}^{\top}\\
+ & =F_{k}\Sigma_{k^{-}}F_{l}^{\top}+G_{k}QG_{k}^{\top}\\
+ & =\bar{\Sigma}_{k}
+\end{align*}
+
+\end_inset
+
+where we used the fact that 
+\begin_inset Formula $x_{k^{-}}$
+\end_inset
+
+ and 
+\begin_inset Formula $w_{k}$
+\end_inset
+
+ are uncorrelated.
+ 
+\end_layout
+
+\begin_layout Standard
+We can now approximate 
+\begin_inset Formula $p\left(x_{k}\mid Y_{0:k^{-}}\right)$
+\end_inset
+
+ as 
+\begin_inset Formula 
+\[
+p\left(x_{k}\mid Y_{0:k^{-}}\right)\approx\frac{1}{\left(2\pi\right)^{\frac{n}{2}}\det\left(\Sigma_{k}\right)}\exp\left(-\frac{1}{2}\left(x_{k}-\hat{x}_{k}\right)^{\top}\Sigma_{k}^{-1}\left(x_{k}-\hat{x}_{k}\right)\right)
+\]
+
+\end_inset
+
+and 
+\begin_inset Formula $p\left(\delta x_{k}\mid Y_{0:k^{-}}\right)$
+\end_inset
+
+ as 
+\begin_inset Formula 
+\[
+p\left(\delta x_{k}\mid Y_{0:k^{-}}\right)=\frac{1}{\left(2\pi\right)^{\frac{n}{2}}\det\left(\Sigma_{k}\right)}\exp\left(-\frac{1}{2}\left(\delta x_{k}\right)^{\top}\Sigma_{k}^{-1}\left(\delta x_{k}\right)\right).
+\]
+
+\end_inset
+
+Once again, 
+\begin_inset Formula $\delta x_{k}$
+\end_inset
+
+ contains all of the random information about 
+\begin_inset Formula $x_{k}$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+In summary, the propagation step is 
+\begin_inset Formula 
+\begin{align*}
+\hat{\bar{x}}_{k} & =f\left(\hat{x}_{k^{-}},0,\delta_{k}\right)\\
+\bar{\Sigma}_{k} & =F_{k}\Sigma_{k^{-}}F_{l}^{\top}+G_{k}QG_{k}^{\top}.
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Update Phase
+\end_layout
+
+\begin_layout Standard
+In this phase, we are interested in calculating 
+\begin_inset Formula 
+\[
+p\left(x_{k}\mid y_{k},Y_{0:k^{-}}\right)=p\left(x_{k}\mid y_{k},x_{k^{-}}\right),
+\]
+
+\end_inset
+
+According to Bayes rule we get 
+\begin_inset Formula 
+\begin{align*}
+p\left(x_{k}\mid y_{k},Y_{0:k^{-}}\right) & =\frac{p\left(y_{k}\mid x_{k}\right)p\left(x_{k}\mid Y_{0:k^{-}}\right)}{p\left(y_{k}\right)}\\
+ & =\frac{p\left(y_{k}\mid x_{k}\right)p\left(\delta x_{k}\mid Y_{0:k^{-}}\right)}{p\left(y_{k}\right)}.
+\end{align*}
+
+\end_inset
+
+Assuming that the probability 
+\begin_inset Formula $p\left(y_{k}\right)$
+\end_inset
+
+ is unknown we cannot directly calculate 
+\begin_inset Formula $p\left(x_{k}\mid y_{k},Y_{0:k^{-}}\right)$
+\end_inset
+
+.
+ However, we can obtain an estimate by maximizing 
+\begin_inset Formula $p\left(x_{k}\mid y_{k},Y_{0:k^{-}}\right)$
+\end_inset
+
+ over 
+\begin_inset Formula $x_{k}$
+\end_inset
+
+.
+ Since 
+\begin_inset Formula $p\left(y_{k}\right)$
+\end_inset
+
+ does not depend on 
+\begin_inset Formula $x_{k}$
+\end_inset
+
+, we can ignore the term and the maximization problem becomes 
+\begin_inset Formula 
+\[
+\max_{x_{k}}\quad p\left(y_{k}\mid x_{k}\right)p\left(\delta x_{k}\mid Y_{0:k^{-}}\right).
+\]
+
+\end_inset
+
+Since 
+\begin_inset Formula $x_{k}=\hat{x}_{k}+\delta x_{k}$
+\end_inset
+
+ we can write the optimization problem as 
+\begin_inset Formula 
+\[
+\max_{\delta x_{k}}\quad p\left(y_{k}\mid x_{k}\right)p\left(\delta x_{k}\mid Y_{0:k^{-}}\right).
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In order to simplify this maximization problem, we linearize the observation
+ function 
+\begin_inset Formula $h$
+\end_inset
+
+ defined in 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:system"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ in order to approximate 
+\begin_inset Formula $p\left(y_{k}\mid x_{k}\right)$
+\end_inset
+
+ as a Gaussian distribution.
+ The linearization of 
+\begin_inset Formula $h$
+\end_inset
+
+ is 
+\begin_inset Formula 
+\[
+y_{k}\approx h\left(\hat{\bar{x}}_{k},0\right)+H_{k}\delta\bar{x}_{k}+V_{k}v_{k},
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula 
+\begin{align*}
+H_{k} & =\left.\frac{\partial h}{\partial x}\right|_{\hat{x}_{k},0}\\
+V_{k} & =\left.\frac{\partial h}{\partial v}\right|_{\hat{x}_{k},0},
+\end{align*}
+
+\end_inset
+
+thus 
+\begin_inset Formula 
+\[
+p\left(y_{k}\mid x_{k}\right)\approx\frac{1}{\left(2\pi\right)^{\frac{m}{2}}\det\left(\bar{R}_{k}\right)}\exp\left(-\frac{1}{2}\left(y_{k}-\hat{y}_{k}\right)^{\top}\bar{R}_{k}^{-1}\left(y_{k}-\hat{y}_{k}\right)\right),
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula 
+\begin{align*}
+\hat{y}_{k} & =h\left(\hat{\bar{x}}_{k},0\right)+H_{k}\delta\bar{x}_{k}\\
+\bar{R} & =V_{k}RV_{k}^{\top}.
+\end{align*}
+
+\end_inset
+
+Even though 
+\begin_inset Formula $x_{k}$
+\end_inset
+
+ is not a random variable in 
+\begin_inset Formula $p\left(y_{k}\mid x_{k}\right)$
+\end_inset
+
+, we linearized 
+\begin_inset Formula $h$
+\end_inset
+
+ at 
+\begin_inset Formula $\hat{\bar{x}}_{k}$
+\end_inset
+
+ to expose the term 
+\begin_inset Formula $\delta\bar{x}_{k}$
+\end_inset
+
+ which will be needed in the optimization.
+ Using the Gaussian approximation of 
+\begin_inset Formula $p\left(y_{k}\mid x_{k}\right)$
+\end_inset
+
+, the optimization problem becomes 
+\begin_inset Formula 
+\[
+\max_{\delta_{k}}\quad\eta\exp\left(-\frac{1}{2}L_{k}\right)
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\eta$
+\end_inset
+
+ is the normalizing coefficient and 
+\begin_inset Formula 
+\[
+L_{k}=\left(y_{k}-\hat{y}_{k}\right)^{\top}\bar{R}_{k}^{-1}\left(y_{k}-\hat{y}_{k}\right)+\delta\bar{x}_{k}^{\top}\Sigma_{k}^{-1}\delta\bar{x}_{k}.
+\]
+
+\end_inset
+
+We solve the optimization problem by taking the derivative of 
+\begin_inset Formula $L_{k}$
+\end_inset
+
+ w.r.t.
+ 
+\begin_inset Formula $\delta\bar{x}_{k}$
+\end_inset
+
+ setting it to zero and solving for 
+\begin_inset Formula $\delta\bar{x}_{k}.$
+\end_inset
+
+ Doing so yields 
+\begin_inset Formula 
+\begin{align*}
+S & =H_{k}\bar{\Sigma}_{k}H_{k}^{\top}+\bar{R}_{k}\\
+K & =\bar{\Sigma}_{k}H_{k}^{\top}S^{-1}\\
+\nu & =y_{k}-h\left(\hat{\bar{x}}_{k},0\right)\\
+\delta\hat{x}_{k} & =K\nu.
+\end{align*}
+
+\end_inset
+
+Note that 
+\begin_inset Formula $\delta x_{k}$
+\end_inset
+
+ is a random variable with mean 
+\begin_inset Formula $\delta\hat{x}_{k}$
+\end_inset
+
+ and covariance 
+\begin_inset Formula 
+\begin{align*}
+\text{cov}\left[\delta x_{k}\left(\delta x_{k}\right)^{\top}\right] & =\left(I-KH_{k}\right)\bar{\Sigma}_{k}\\
+ & =\Sigma_{k}.
+\end{align*}
+
+\end_inset
+
+By our definition of 
+\begin_inset Formula $x_{k}$
+\end_inset
+
+, the mean and covariance are
+\begin_inset Formula 
+\begin{align*}
+\text{E}\left[x_{k}\right] & =\hat{\bar{x}}_{k}+\delta\hat{x}_{k}\\
+\text{cov}\left[x_{k}\right] & =\Sigma_{k}.
+\end{align*}
+
+\end_inset
+
+In order to make 
+\begin_inset Formula $\delta x_{k}$
+\end_inset
+
+ be zero mean, we add its mean onto 
+\begin_inset Formula $\hat{\bar{x}}_{k}$
+\end_inset
+
+ to get 
+\begin_inset Formula 
+\[
+\hat{x}_{k}=\hat{\bar{x}}_{k}+\delta\hat{x}_{k}.
+\]
+
+\end_inset
+
+In summary, the update phase is 
+\begin_inset Formula 
+\begin{align*}
+\nu & =y_{k}-h\left(\hat{\bar{x}}_{k},0\right)\\
+S & =H_{k}\Sigma_{k}H_{k}^{\top}+\bar{R}_{k}\\
+K & =\Sigma_{k}H_{k}^{\top}S^{-1}\\
+\delta\hat{x}_{k} & =K\nu\\
+\hat{x}_{k} & =\hat{\bar{x}}_{k}+\delta\hat{x}_{k}\\
+\Sigma_{k} & =\left(I-KH_{k}\right)\bar{\Sigma}_{k}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+The Exponential Map; It's Magical
+\end_layout
+
+\begin_layout Standard
+In order to generalize the EKF to arbitrary matrix Lie groups, we need to
+ introduce the real exponential map.
+ 
+\end_layout
+
+\begin_layout Definition
+Let 
+\begin_inset Formula $M$
+\end_inset
+
+ be a complete differential manifold, 
+\begin_inset Formula $\gamma:I\times TM\to M$
+\end_inset
+
+ be a geodesic on 
+\begin_inset Formula $M$
+\end_inset
+
+ such that
+\begin_inset Formula 
+\begin{align*}
+\gamma\left(0,p,v\right) & =p\\
+\gamma'\left(t,p,v\right) & =v,
+\end{align*}
+
+\end_inset
+
+then the exponential map 
+\begin_inset Formula $\exp:TM\to M$
+\end_inset
+
+ is defined as 
+\begin_inset Formula 
+\[
+\exp\left(p,v\right)=\gamma\left(1,p,v\right).
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Example
+Let 
+\begin_inset Formula $G$
+\end_inset
+
+ be a matrix lie group.
+ The exponential map is the matrix exponential.
+ Let 
+\begin_inset Formula $\left(g,v\right)\in TG$
+\end_inset
+
+ then 
+\begin_inset Formula 
+\[
+\exp\left(g,v\right)=g\text{expm}\left(v\right).
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout Example
+For 
+\begin_inset Formula $\mathbb{R}^{n}$
+\end_inset
+
+, the exponential map is simply addition.
+ Let 
+\begin_inset Formula $\left(p,v\right)\in T\mathbb{R}^{n}$
+\end_inset
+
+, then 
+\begin_inset Formula 
+\[
+\exp\left(p,v\right)=p+v.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The exponential map at a point 
+\begin_inset Formula $p$
+\end_inset
+
+ is a local (sometimes global) diffeomorphism between a neighborhood 
+\begin_inset Formula $U\subset M$
+\end_inset
+
+ of 
+\begin_inset Formula $p$
+\end_inset
+
+ and a neighborhood 
+\begin_inset Formula $V\subset T_{p}M$
+\end_inset
+
+ or 
+\begin_inset Formula $0\in T_{p}M$
+\end_inset
+
+.
+ It is denoted 
+\begin_inset Formula $\exp_{p}:T_{p}M\to M$
+\end_inset
+
+.
+ We denote the inverse as 
+\begin_inset Formula $\exp_{p}^{-1}:M\to T_{p}M$
+\end_inset
+
+, which is often denoted as 
+\begin_inset Formula $\log_{p}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Example
+Let 
+\begin_inset Formula $g\in G$
+\end_inset
+
+ be an element of a matrix Lie group, then 
+\begin_inset Formula 
+\begin{align*}
+\exp_{g}\left(v\right) & =g\text{expm}\left(v\right)\\
+ & =g'\\
+\log_{g}\left(g\text{expm}\left(v\right)\right) & =\text{logm}\left(g^{-1}g'\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
