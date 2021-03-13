@@ -5,6 +5,7 @@
 \save_transient_properties true
 \origin unavailable
 \textclass IEEEtran
+\options onecolumn
 \use_default_options true
 \maintain_unincluded_children false
 \language english
@@ -395,7 +396,7 @@ Propagate Phase
 \end_layout
 
 \begin_layout Standard
-The update phase consists of calculating 
+The propagate phase consists of calculating 
 \begin_inset Formula $p\left(x_{k}\mid Y_{0:k^{-}}\right)$
 \end_inset
 
@@ -937,7 +938,7 @@ The exponential map at a point
 \begin_inset Formula $V\subset T_{p}M$
 \end_inset
 
- or 
+ of 
 \begin_inset Formula $0\in T_{p}M$
 \end_inset
 

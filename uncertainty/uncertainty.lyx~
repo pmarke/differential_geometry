@@ -968,7 +968,9 @@ Let
 \begin{align*}
 \exp_{g}\left(v\right) & =g\text{expm}\left(v\right)\\
  & =g'\\
-\log_{g}\left(g\text{expm}\left(v\right)\right) & =\text{logm}\left(g^{-1}g'\right)
+\log_{g}\left(g\text{expm}\left(v\right)\right) & =\text{logm}\left(g^{-1}g'\right)\\
+ & =\text{logm}\left(\text{expm}\left(v\right)\right)\\
+ & =v
 \end{align*}
 
 \end_inset
