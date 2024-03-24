@@ -1,0 +1,1654 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\begin_preamble
+
+\end_preamble
+\use_default_options false
+\maintain_unincluded_children false
+\language english
+\language_package none
+\inputencoding auto
+\fontencoding default
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 0
+\use_package cancel 0
+\use_package esint 1
+\use_package mathdots 0
+\use_package mathtools 0
+\use_package mhchem 0
+\use_package stackrel 0
+\use_package stmaryrd 0
+\use_package undertilde 0
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 0
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\R}[1]{\mathbb{R}^{#1}}
+{\mathbb{R}^{#1}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\Ad}[2]{\text{Ad}_{#2}^{#1}}
+{\text{Ad}_{#2}^{#1}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\ad}[2]{\text{ad}_{#2}^{#1}}
+{\text{ad}_{#2}^{#1}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\SE}[1]{\text{SE}\left(#1\right)}
+{\text{SE}\left(#1\right)}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\se}[1]{\mathfrak{se}\left(#1\right)}
+{\mathfrak{se}\left(#1\right)}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\SO}[1]{\ensuremath{\text{SO}\left(#1\right)}}
+{\ensuremath{\text{SO}\left(#1\right)}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\so}[1]{\mathfrak{so}\left(#1\right)}
+{\mathfrak{so}\left(#1\right)}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\CS}[1]{\mathbf{R}_{#1}}
+{\mathbf{R}_{#1}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\ExpI}[2]{\text{Exp}_{I}^{#1}\left(#2\right)}
+{\text{Exp}_{I}^{#1}\left(#2\right)}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\LogI}[2]{\text{Log}_{I}^{#1}\left(#2\right)}
+{\text{Log}_{I}^{#1}\left(#2\right)}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\jr}[2]{\text{J}_{r}^{#1}\left(#2\right)}
+{\text{J}_{r}^{#1}\left(#2\right)}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\jl}[2]{\text{J}_{l}^{#1}\left(#2\right)}
+{\text{J}_{l}^{#1}\left(#2\right)}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\jrinv}[2]{\text{J}_{r}^{#1^{-1}}\left(#2\right)}
+{\text{J}_{r}^{#1}\left(#2\right)}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\jlinv}[2]{\text{J}_{l}^{#1^{-1}}\left(#2\right)}
+{\text{J}_{l}^{#1}\left(#2\right)}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+\begin_inset Formula $\R n$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:common_lie_groups_Rn"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The Euclidean space of 
+\begin_inset Formula $n$
+\end_inset
+
+-dimension, 
+\begin_inset Formula $\R n$
+\end_inset
+
+, represents points in 
+\begin_inset Formula $n$
+\end_inset
+
+-dimensional space and also represents translations in 
+\begin_inset Formula $n$
+\end_inset
+
+-dimensional space.
+ Its Lie algebra represents all translational velocities in 
+\begin_inset Formula $n$
+\end_inset
+
+-dimensional space.
+ The Lie group 
+\begin_inset Formula $\R n$
+\end_inset
+
+ is the set 
+\begin_inset Formula 
+\[
+\R n\triangleq\left\{ \left[a_{1},a_{2},\ldots,a_{n}\right]^{\top}\mid a_{i}\in\R{}\right\} 
+\]
+
+\end_inset
+
+equipped with matrix addition.
+ Let 
+\begin_inset Formula $a,b,c\in\R n$
+\end_inset
+
+, the group operation and axioms are defined as follows: 
+\begin_inset Formula 
+\begin{align*}
+a+b & =\left[a_{1}+b_{1},a_{2}+b_{2},\ldots,a_{n}+b_{n}\right]^{\top} & \text{group operation}\\
+a+\left(b+c\right) & =\left(a+b\right)+c & \text{associativity}\\
+a^{-1} & =\left[-a_{1},-a_{2},\ldots,-a_{n}\right]^{\top} & \text{inverse}\\
+I & =\left[0,0,\ldots,0\right]^{\top} & \text{identity element}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The corresponding Lie algebra is 
+\begin_inset Formula $\R n$
+\end_inset
+
+, and the corresponding Cartesian algebraic space is 
+\begin_inset Formula $\CS{\R n}\triangleq\R n$
+\end_inset
+
+.
+ The wedge, 
+\begin_inset Formula $\cdot^{\wedge}:\CS{\R n}\to\R n$
+\end_inset
+
+, and vee, 
+\begin_inset Formula $\cdot^{\vee}:\R n\to\CS{\R n}$
+\end_inset
+
+ maps are the identity functions.
+\end_layout
+
+\begin_layout Subsection
+Adjoint
+\end_layout
+
+\begin_layout Standard
+The matrix adjoint of 
+\begin_inset Formula $g\in\R n$
+\end_inset
+
+ and 
+\begin_inset Formula $v\in\CS{\R n}$
+\end_inset
+
+ are 
+\begin_inset Formula 
+\begin{align*}
+\Ad{\R n}g & =I_{n\times n}\\
+\ad{\R n}v & =0_{n\times n},
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $0_{n\times n}$
+\end_inset
+
+ is the 
+\begin_inset Formula $n\times n$
+\end_inset
+
+ zero matrix.
+\end_layout
+
+\begin_layout Subsection
+Exponential Map and Jacobians
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $g\in\R n$
+\end_inset
+
+ and 
+\begin_inset Formula $v\in\CS{\R n}$
+\end_inset
+
+.
+ The exponential and logarithm maps are defined as 
+\begin_inset Formula 
+\begin{align}
+\ExpI{\R n}v & =v\label{eq:clg_exp_rn}\\
+\LogI{\R n}g & =g.
+\end{align}
+
+\end_inset
+
+The left and right Jacobians and their inverses are defined as 
+\begin_inset Formula 
+\begin{align*}
+\jr{\R n}v & =I_{n\times n}\\
+\jl{\R n}v & =I_{n\times n}\\
+J_{r}^{\mathbb{R}^{n^{-1}}}\left(v\right) & =I_{n\times n}\\
+J_{l}^{\mathbb{R}^{n^{-1}}}\left(v\right) & =I_{n\times n},
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $I_{n\times n}$
+\end_inset
+
+ is the 
+\begin_inset Formula $n\times n$
+\end_inset
+
+ identity matrix.
+\end_layout
+
+\begin_layout Section
+SO(2)
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:common_lie_groups_so2"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The special orthogonal group of two dimensions, 
+\begin_inset Formula $\SO 2$
+\end_inset
+
+, represents all rotations and orientations in two dimensional space.
+ Its Lie algebra represents all angular velocities in two dimensional space.
+ The matrix Lie group
+\begin_inset Formula $\SO 2$
+\end_inset
+
+ is the set 
+\begin_inset Formula 
+\[
+\SO 2\triangleq\left\{ R\in\mathbb{R}^{2\times2}\,\mid\,RR^{\top}=I_{2\times2}\text{ and }\det\left(R\right)=1\right\} 
+\]
+
+\end_inset
+
+equipped with matrix multiplication.
+ The inverse operation is the matrix inverse and the identity element is
+ 
+\begin_inset Formula $I_{2\times2}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The corresponding Lie algebra is the set 
+\begin_inset Formula 
+\[
+\so 2\triangleq\left\{ \ssm{1}{\omega}\,\mid\,\omega\in\R{}\right\} ,
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula 
+\begin{equation}
+\ssm{1}{\omega}=\begin{bmatrix}0 & -\omega\\
+\omega & 0
+\end{bmatrix}\label{eq:ssm1}
+\end{equation}
+
+\end_inset
+
+is the skew symmetric operator.
+ The corresponding Cartesian algebraic space is the set 
+\begin_inset Formula 
+\[
+\CS{\SO 2}\triangleq\left\{ \omega\in\mathbb{R}\right\} .
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The wedge, 
+\begin_inset Formula $\cdot^{\wedge}:\CS{\SO 2}\to\so 2$
+\end_inset
+
+, and vee, 
+\begin_inset Formula $\cdot^{\vee}:\so 2\to\CS{\SO 2}$
+\end_inset
+
+ maps are defined as 
+\begin_inset Formula 
+\begin{align*}
+\omega^{\wedge} & =\ssm{1}{\omega}\\
+\left(\ssm{1}{\omega}\right)^{\vee} & =\omega.
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Adjoint
+\end_layout
+
+\begin_layout Standard
+The matrix adjoint of 
+\begin_inset Formula $R\in\SO 2$
+\end_inset
+
+ and 
+\begin_inset Formula $\omega\in\CS{\SO 2}$
+\end_inset
+
+ is 
+\begin_inset Formula 
+\begin{align}
+\Ad{\SO 2}R & =I_{1\times1}\label{eq:Ad_so2}\\
+\ad{\SO 2}{\omega} & =0_{1\times1},\label{eq:ad_so2}
+\end{align}
+
+\end_inset
+
+where 
+\begin_inset Formula $I_{n\times n}$
+\end_inset
+
+ is the 
+\begin_inset Formula $n\times n$
+\end_inset
+
+ identity matrix, and 
+\begin_inset Formula $0_{n\times n}$
+\end_inset
+
+ is the 
+\begin_inset Formula $n\times n$
+\end_inset
+
+ zero matrix.
+\end_layout
+
+\begin_layout Subsection
+Exponential Map and Jacobians
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $R=\begin{bmatrix}R_{11} & R_{12}\\
+R_{21} & R_{22}
+\end{bmatrix}\in\SO 2$
+\end_inset
+
+ and 
+\begin_inset Formula $\omega\in\CS{\SO 2}$
+\end_inset
+
+.
+ The exponential and logarithm maps are defined as 
+\begin_inset Formula 
+\begin{align}
+\ExpI{\SO 2}{\omega} & =\begin{bmatrix}\cos\left(\omega\right) & -\sin\left(\omega\right)\\
+\sin\left(\omega\right) & \cos\left(\omega\right)
+\end{bmatrix}\label{eq:exp_so2}\\
+\LogI{\SO 2}R & =\text{arctan2}\left(R_{21},R_{11}\right).\label{eq:log_so2}
+\end{align}
+
+\end_inset
+
+The left and right Jacobians and their inverses are defined as 
+\begin_inset Formula 
+\begin{align}
+\jr{\SO 2}{\omega} & =I_{1\times1}\label{eq:jr_so2}\\
+\jl{\SO 2}{\omega} & =I_{1\times1}\label{eq:jl_so2}\\
+J_{r}^{SO^{2^{-1}}}\left(\omega\right) & =I_{1\times1}\label{eq:jrinv_so2}\\
+J_{l}^{SO^{2^{-1}}}\left(\omega\right) & =I_{1\times1}.\label{eq:jlinv_so2}
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+SO(3)
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:common_lie_groups_so3"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The special orthogonal group of three dimensions, 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+SO
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+3
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+, is a matrix Lie group used to describe rotations and orientation in three
+ dimensional space, and its Lie algebra is used to describe angular velocities
+ in three dimensional space.
+ The Lie group 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+SO
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+3
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ is the set 
+\begin_inset Formula 
+\[
+\SO 3\triangleq\left\{ R\in\mathbb{R}^{3\times3}\,\mid\,RR^{\top}=I_{3\times3}\text{ and }\det\left(R\right)=1\right\} ,
+\]
+
+\end_inset
+
+equipped with matrix multiplication.
+ The inverse operation is the matrix inverse and the identity element is
+ 
+\begin_inset Formula $I_{3\times3}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The Lie algebra of 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+SO
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+3
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ is 
+\begin_inset Formula 
+\[
+\so 3\triangleq\left\{ \ssm{3}{\omega}\in\R{3\times3}\,\mid\,\omega\in\R 3\right\} ,
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\omega=\left[\omega_{x},\omega_{y},\omega_{z}\right]^{\top}$
+\end_inset
+
+ and 
+\begin_inset Formula 
+\begin{equation}
+\ssm{3}{\omega}=\begin{bmatrix}0 & -\omega_{z} & \omega_{y}\\
+\omega_{z} & 0 & -\omega_{x}\\
+-\omega_{y} & \omega_{x} & 0
+\end{bmatrix}\label{eq:ssm3}
+\end{equation}
+
+\end_inset
+
+is the three dimensional skew symmetric operator.
+ The corresponding Cartesian algebraic space is 
+\begin_inset Formula 
+\[
+\CS{\SO 3}\triangleq\left\{ \omega\in\R 3\right\} .
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The wedge, 
+\begin_inset Formula $\cdot^{\wedge}:\CS{\SO 3}\to\so 3$
+\end_inset
+
+, and vee, 
+\begin_inset Formula $\cdot^{\vee}:\so 3\to\CS{\SO 3}$
+\end_inset
+
+ maps are defined as 
+\begin_inset Formula 
+\begin{align*}
+\omega^{\wedge} & =\ssm{3}{\omega}\\
+\left(\ssm{3}{\omega}\right)^{\vee} & =\omega
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Adjoint
+\end_layout
+
+\begin_layout Standard
+The matrix adjoint of 
+\begin_inset Formula $R\in\SO 3$
+\end_inset
+
+ and 
+\begin_inset Formula $\omega\in\CS{\SO 3}$
+\end_inset
+
+ is 
+\begin_inset Formula 
+\begin{align}
+\Ad{\SO 3}R & =R\label{eq:Ad_so3}\\
+\ad{\SO 3}{\omega} & =\ssm{3}{\omega}.\label{eq:ad_so3}
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Exponential Map and Jacobians
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $R\in\SO 3$
+\end_inset
+
+ and 
+\begin_inset Formula $\omega\in\CS{\SO 3}$
+\end_inset
+
+.
+ The element 
+\begin_inset Formula $\omega$
+\end_inset
+
+ can be written as 
+\begin_inset Formula $\omega=\theta u$
+\end_inset
+
+ where 
+\begin_inset Formula $\theta=\norm{\omega}$
+\end_inset
+
+ and 
+\begin_inset Formula $u=\frac{\omega}{\norm{\omega}}$
+\end_inset
+
+.
+ The exponential and logarithm maps are defined as 
+\begin_inset Formula 
+\begin{align}
+\ExpI{\SO 3}{\omega} & =\begin{cases}
+I+\sin\left(\theta\right)\ssm{3}{u}+\left(1-\cos\left(\theta\right)\right)\left(\ssm{3}{u}\right)^{2} & \text{if }\theta\neq0\\
+I_{3\times3} & \text{else}
+\end{cases}\label{eq:exp_so3}\\
+\LogI{\SO 3}R & =\begin{cases}
+0_{3\times1} & \text{if }R=I_{3\times3}\\
+\varphi\left(R\right)\frac{\left(R-R^{\top}\right)^{\vee}}{2\sin\left(\varphi\left(R\right)\right)} & \text{else}
+\end{cases}\label{eq:log_so3}
+\end{align}
+
+\end_inset
+
+where 
+\begin_inset Formula 
+\[
+\varphi\left(R\right)=\arccos\left(\frac{\text{Tr}\left(R\right)-1}{2}\right),
+\]
+
+\end_inset
+
+and 
+\begin_inset Formula $\text{Tr}\left(R\right)$
+\end_inset
+
+ is the trace of 
+\begin_inset Formula $R$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The left and right Jacobians and their inverses are defined as 
+\begin_inset Formula 
+\begin{align}
+\jr{\SO 3}{\omega} & =I+\frac{\cos\left(\theta\right)-1}{\theta}\ssm{3}{u}+\frac{\theta-\sin\left(\theta\right)}{\theta}\left(\ssm{3}{u}\right)^{2}\label{eq:jr_so3}\\
+\jl{\SO 3}{\omega} & =I+\frac{1-\cos\left(\theta\right)}{\theta}\ssm{3}{u}+\frac{\theta-\sin\left(\theta\right)}{\theta}\left(\ssm{3}{u}\right)^{2}\label{eq:jl_so3}\\
+\jrinv{\SO 3}{\omega} & =I+\frac{1}{2}\ssm{3}{\omega}-\frac{\theta\cot\left(\frac{\theta}{2}\right)-2}{2\theta^{2}}\left(\ssm{3}{\omega}\right)^{2}\label{eq:jrinv_so3}\\
+\jlinv{\SO 3}{\omega} & =I-\frac{1}{2}\ssm{3}{\omega}-\frac{\theta\cot\left(\frac{\theta}{2}\right)-2}{2\theta^{2}}\left(\ssm{3}{\omega}\right)^{2}.\label{eq:jlinv_so3}
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+SE(2)
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:common_lie_groups_se2"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The special Euclidean group of two dimensions, 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+SE
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+2
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+, represents all rotations and translations in two dimensional space.
+ It can also represents all orientations and positions in two dimensional
+ space.
+ Its Lie algebra represents all angular and translational velocities in
+ two dimensional space.
+ The Lie group 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+SE
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+2
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ is the set 
+\begin_inset Formula 
+\[
+SE\left(2\right)=\left\{ \left.\begin{bmatrix}R & p\\
+0_{1\times2} & 1
+\end{bmatrix}\in\R{3\times3}\,\right|\,R\in SO\left(2\right)\text{ and }p\in\mathbb{R}^{2}\right\} 
+\]
+
+\end_inset
+
+equipped with matrix multiplication.
+ The inverse operation is the matrix inverse and the identity element is
+ 
+\begin_inset Formula $I_{3\times3}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The Lie algebra is 
+\begin_inset Formula 
+\[
+\mathfrak{se}\left(2\right)=\left\{ \left.\begin{bmatrix}\ssm{1}{\omega} & \rho\\
+0 & 0
+\end{bmatrix}\in\R{3\times3}\,\right|\,\omega\in\CS{\SO 2}\text{ and }\rho\in\mathbb{R}^{2}\right\} ,
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\ssm{1}{\cdot}$
+\end_inset
+
+ is the skew symmetric operator defined in equation 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:ssm1"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ The corresponding Cartesian algebraic space is 
+\begin_inset Formula 
+\[
+\CS{\SE 2}\triangleq\left\{ \left.\begin{bmatrix}\rho\\
+\omega
+\end{bmatrix}\in\R 3\,\right|\,\omega\in\R{}\text{ and }\rho\in\R 2\right\} .
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The wedge, 
+\begin_inset Formula $\cdot^{\wedge}:\CS{\SE 2}\to\se 2$
+\end_inset
+
+, and vee, 
+\begin_inset Formula $\cdot^{\vee}:\se 2\to\CS{\SE 2}$
+\end_inset
+
+ maps are defined as 
+\begin_inset Formula 
+\begin{align*}
+\begin{bmatrix}\ssm{1}{\omega} & \rho\\
+0 & 0
+\end{bmatrix}^{\vee} & =\begin{bmatrix}\rho\\
+\omega
+\end{bmatrix}\\
+\begin{bmatrix}\rho\\
+\omega
+\end{bmatrix}^{\wedge} & =\begin{bmatrix}\ssm{1}{\omega} & \rho\\
+0 & 0
+\end{bmatrix}.
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Adjoint
+\end_layout
+
+\begin_layout Standard
+The matrix adjoint of 
+\begin_inset Formula $g\in\SE 2$
+\end_inset
+
+ and 
+\begin_inset Formula $v\in\CS{\SE 2}$
+\end_inset
+
+ is 
+\begin_inset Formula 
+\begin{align*}
+\Ad{\SE 2}g & =\begin{bmatrix}R & -\ssm{1}{1}p\\
+0_{1\times2} & 1
+\end{bmatrix}\\
+\ad{\SE 2}v & =\begin{bmatrix}\ssm{1}{\omega} & -\ssm{1}{1}\rho\\
+0_{1\times2} & 0
+\end{bmatrix}.
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Exponential Map and Jacobians
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $g\in\SE 2$
+\end_inset
+
+ and 
+\begin_inset Formula $v\in\CS{\SE 2}$
+\end_inset
+
+.
+ The exponential and logarithm maps are defined as 
+\begin_inset Formula 
+\begin{align}
+\ExpI{\SE 2}v=\begin{bmatrix}\ExpI{\SO 2}{\omega} & V\left(\omega\right)\rho\\
+0_{1\times2} & 1
+\end{bmatrix}\label{eq:exp_se2}\\
+\LogI{\SE 2}g=\begin{bmatrix}V\left(\LogI{\SO 2}R\right)^{-1}p\\
+\LogI{\SO 2}R
+\end{bmatrix},\label{eq:log_se2}
+\end{align}
+
+\end_inset
+
+where 
+\begin_inset Formula $\text{Exp}_{I}^{\SO 2}$
+\end_inset
+
+ and 
+\begin_inset Formula $\text{Log}_{I}^{\SO 2}$
+\end_inset
+
+ are defined in equations 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:exp_so2"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:log_so2"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ and 
+\begin_inset Formula 
+\begin{equation}
+V\left(\omega\right)=\frac{\sin\left(\omega\right)}{\omega}I_{2\times2}+\frac{1-\cos\left(\omega\right)}{\omega}\ssm{1}{1}.\label{eq:clg_v_se2}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The left and right Jacobians and their inverses are defined as 
+\begin_inset Formula 
+\begin{align}
+\jr{\SE 2}v & =\begin{bmatrix}W_{r}\left(\omega\right) & D_{r}\left(\omega\right)\rho\\
+0 & 1
+\end{bmatrix},\label{eq:jr_se2}\\
+\jl{\SE 2}v & =\begin{bmatrix}W_{l}\left(\omega\right) & D_{l}\left(\omega\right)\rho\\
+0 & 1
+\end{bmatrix}\label{eq:jl_se2}\\
+\jr{\SE 2^{-1}}v & =\begin{bmatrix}W_{r}^{-1}\left(\omega\right) & -W_{r}^{-1}\left(\omega\right)D_{r}\left(\omega\right)\rho\\
+0 & 1
+\end{bmatrix}\label{eq:jrinv_se2}\\
+\jl{\SE 2^{-1}}v & =\begin{bmatrix}W_{l}^{-1}\left(\omega\right) & -W_{l}^{-1}\left(\omega\right)D_{l}\left(\omega\right)\rho\\
+0 & 1
+\end{bmatrix}.\label{eq:jlinv_se2}
+\end{align}
+
+\end_inset
+
+where 
+\begin_inset Formula 
+\begin{align*}
+W_{r}\left(\omega\right) & =\frac{\cos\left(\omega\right)-1}{\omega}\left[1\right]_{\times}+\frac{\sin\left(\omega\right)}{\omega}I\\
+D_{r}\left(\omega\right) & =\frac{1-\cos\left(\omega\right)}{\omega^{2}}\left[1\right]_{\times}+\frac{\omega-\sin\left(\omega\right)}{\omega^{2}}I\\
+W_{l}\left(\omega\right) & =\frac{1-\cos\left(\omega\right)}{\omega}\left[1\right]_{\times}+\frac{\sin\left(\omega\right)}{\omega}I\\
+D_{l}\left(\omega\right) & =\frac{\cos\left(\omega\right)-1}{\omega^{2}}\left[1\right]_{\times}+\frac{\omega-\sin\left(\omega\right)}{\omega^{2}}I,
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+SE(3)
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:common_lie_groups_se3"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The special Euclidean group of three dimensions, 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+SE
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+3
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+, represents all rotations and translations in three dimensional space.
+ It can also represents all orientations and positions in three dimensional
+ space.
+ Its Lie algebra represents all angular and translational velocities in
+ three dimensional space.
+ The Lie group 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+SE
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+3
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ is the set 
+\begin_inset Formula 
+\[
+\SE 3\triangleq\left\{ \left.\begin{bmatrix}R & p\\
+0_{1\times3} & 1
+\end{bmatrix}\in\R{4\times4}\,\right|\,R\in\SO 3\text{ and }p\in\R 3\right\} ,
+\]
+
+\end_inset
+
+equipped with matrix multiplication.
+ The inverse operation is the matrix inverse and the identity element is
+ 
+\begin_inset Formula $I_{4\times4}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The Lie algebra of 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+SE
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+3
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ is 
+\begin_inset Formula 
+\[
+\se 3\triangleq\left\{ \left.\begin{bmatrix}\ssm{3}{\omega} & \rho\\
+0 & 0
+\end{bmatrix}\in\R{4\times4}\,\right|\,\omega\in\R 3\text{ and }\rho\in\R 3\right\} ,
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\ssm{3}{\cdot}$
+\end_inset
+
+ is the skew symmetric operator defined in equation 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:ssm3"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ The corresponding Cartesian algebraic space is 
+\begin_inset Formula 
+\[
+\CS{\SE 3}\triangleq\left\{ \left.\begin{bmatrix}\rho\\
+\omega
+\end{bmatrix}\in\R 6\,\right|\,\omega\in\R 3\text{ and }\rho\in\R 3\right\} .
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The wedge, 
+\begin_inset Formula $\cdot^{\wedge}:\CS{\SE 3}\to\se 3$
+\end_inset
+
+, and vee, 
+\begin_inset Formula $\cdot^{\vee}:\se 3\to\CS{\SE 3}$
+\end_inset
+
+ maps are defined as 
+\begin_inset Formula 
+\begin{align*}
+\begin{bmatrix}\ssm{3}{\omega} & \rho\\
+0 & 0
+\end{bmatrix}^{\vee} & =\begin{bmatrix}\rho\\
+\omega
+\end{bmatrix}\\
+\begin{bmatrix}\rho\\
+\omega
+\end{bmatrix}^{\wedge} & =\begin{bmatrix}\ssm{3}{\omega} & \rho\\
+0 & 0
+\end{bmatrix}.
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Adjoint
+\end_layout
+
+\begin_layout Standard
+The matrix adjoint of 
+\begin_inset Formula $g\in\SE{3}$
+\end_inset
+
+ and 
+\begin_inset Formula $v\in\CS{\SE{3}}$
+\end_inset
+
+ is 
+\begin_inset Formula 
+\begin{align*}
+\Ad{\SE{3}}{g} & =\begin{bmatrix}R & \ssm{3}{\rho}R\\
+0_{3\times3} & R
+\end{bmatrix}\\
+\ad{\SE{3}}{v} & =\begin{bmatrix}\ssm{3}{\omega} & \ssm{3}{\rho}\\
+0_{3\times3} & \ssm{3}{\omega}
+\end{bmatrix}.
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Exponential Map and Jacobians
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $g\in\SE{3}$
+\end_inset
+
+ and 
+\begin_inset Formula $v\in\CS{\SE{3}}$
+\end_inset
+
+.
+ The exponential and logarithm maps are defined as 
+\begin_inset Formula 
+\begin{align}
+\ExpI{\SE{3}}{v}=\begin{bmatrix}\ExpI{\SO{3}}{\omega} & \jl{\SO{3}}{\omega}\rho\\
+0_{1\times3} & 1
+\end{bmatrix}\label{eq:exp_se3}\\
+\LogI{\SE{3}}{g}=\begin{bmatrix}\jl{\SO{3}^{-1}}{\LogI{\SO{3}}{R}}p\\
+\LogI{\SO{3}}{R}
+\end{bmatrix},\label{eq:log_se3}
+\end{align}
+
+\end_inset
+
+where 
+\begin_inset Formula $\text{Exp}_{I}^{\SO{3}}$
+\end_inset
+
+ and 
+\begin_inset Formula $\text{Log}_{I}^{\SO{3}}$
+\end_inset
+
+ are defined in equations 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:exp_so3"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:log_so3"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ and 
+\begin_inset Formula $\text{J}_{l}^{\SO{3}}$
+\end_inset
+
+ and 
+\begin_inset Formula $\text{J}_{l}^{\SO{3}^{-1}}$
+\end_inset
+
+ are defined in equations 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:jl_so3"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:jlinv_so3"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The left and right Jacobians and their inverses are defined as 
+\begin_inset Formula 
+\begin{align}
+\jr{\SE{3}}{v} & =\begin{bmatrix}\jr{\SO{3}}{\omega} & B_{r}\left(v\right)\\
+0 & \jr{\SO{3}}{\omega}
+\end{bmatrix}\label{eq:jr_se3}\\
+\jl{\SE{3}}{v} & =\begin{bmatrix}\jl{\SO{3}}{\omega} & B_{l}\left(v\right)\\
+0 & \jl{\SO{3}}{\omega}
+\end{bmatrix}\label{eq:jl_se3}\\
+\jr{\SE{3}^{-1}}{v} & =\begin{bmatrix}\jr{\SO{3}^{-1}}{\omega} & -\jr{\SO{3}^{-1}}{\omega}B_{r}\left(v\right)\jr{\SO{3}^{-1}}{\omega}\\
+0 & \jr{\SO{3}^{-1}}{\omega}
+\end{bmatrix}\label{eq:jrinv_se3}\\
+\jl{\SE{3}^{-1}}{v} & =\begin{bmatrix}\jl{\SO{3}^{-1}}{\omega} & -\jl{\SO{3}^{-1}}{\omega}B_{l}\left(v\right)\jl{\SO{3}^{-1}}{\omega}\\
+0 & \jl{\SO{3}^{-1}}{\omega}
+\end{bmatrix}.\label{eq:jlinv_se3}
+\end{align}
+
+\end_inset
+
+where 
+\begin_inset Formula 
+\begin{align*}
+\theta & =\left\Vert \omega\right\Vert \\
+a_{\theta} & =\frac{\cos\left(\theta\right)-1}{\theta^{2}}\\
+b_{\theta} & =\frac{\theta-\sin\left(\theta\right)}{\theta^{3}}\\
+c_{\theta} & =-\frac{1}{\theta^{3}}\sin\left(\theta\right)+2\left(\frac{1-\cos\left(\theta\right)}{\theta^{4}}\right)\\
+d_{\theta} & =-\frac{2}{\theta^{4}}+\frac{3}{\theta^{5}}\sin\left(\theta\right)-\frac{1}{\theta^{4}}\cos\left(\theta\right)\\
+q_{r}\left(\omega\right) & =\left(\omega^{\top}\rho\right)\left(d_{\theta}\left(\ssm{3}{\omega}\right)^{2}+c_{\theta}\ssm{3}{\omega}\right)\\
+q_{l}\left(\omega\right) & =\left(\omega^{\top}\rho\right)\left(d_{\theta}\left(\ssm{3}{\omega}\right)^{2}-c_{\theta}\ssm{3}{\omega}\right)\\
+B_{r}\left(v\right) & =\left(a_{\theta}\ssm{3}{\rho}+b_{\theta}\left(\ssm{3}{\omega}\ssm{3}{\rho}+\ssm{3}{\rho}\ssm{3}{\omega}\right)+q_{r}\left(\omega\right)\right)\\
+B_{l}\left(v\right) & =\left(-a_{\theta}\ssm{3}{\rho}+b_{\theta}\left(\ssm{3}{\omega}\ssm{3}{\rho}+\ssm{3}{\rho}\ssm{3}{\omega}\right)+q_{l}\left(\omega\right)\right),
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula $\text{J}_{r}^{\SO{3}}$
+\end_inset
+
+, 
+\begin_inset Formula $\text{J}_{l}^{\SO{3}}$
+\end_inset
+
+, 
+\begin_inset Formula $\text{J}_{r}^{\SO{3}^{-1}}$
+\end_inset
+
+ and 
+\begin_inset Formula $\text{J}_{l}^{\SO{3}^{-1}}$
+\end_inset
+
+ are defined in equations 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:jr_so3"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:jl_so3"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:jrinv_so3"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:jlinv_so3"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, and 
+\begin_inset Formula $\ssm{3}{\cdot}$
+\end_inset
+
+ is the skew symmetric matrix operator defined in equation 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:ssm3"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\end_body
+\end_document
