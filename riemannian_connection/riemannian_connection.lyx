@@ -1,0 +1,485 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass IEEEtran
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Section
+Connection
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $\mathfrak{X}\left(M\right)$
+\end_inset
+
+ denote the set of smooth vector fields on 
+\begin_inset Formula $M$
+\end_inset
+
+.
+ An affine connection 
+\begin_inset Formula $\nabla$
+\end_inset
+
+ is a mapping 
+\begin_inset Formula $\nabla:\mathfrak{X}\left(M\right)\times\mathfrak{X}\left(M\right)\to\mathfrak{X}\left(M\right)$
+\end_inset
+
+ with the following properties and 
+\begin_inset Formula $\mathfrak{F}\left(M\right)$
+\end_inset
+
+ be the set of smooth real valued functions 
+\begin_inset Formula $\mathfrak{F}\left(M\right):M\to\mathbb{R}$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $\mathfrak{F}\left(M\right)$
+\end_inset
+
+-linearity in 
+\begin_inset Formula $\eta$
+\end_inset
+
+: 
+\begin_inset Formula $\nabla_{f\eta+g\chi}\xi=f\nabla_{\eta}\xi+g\nabla_{\chi}\xi$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $\mathbb{R}$
+\end_inset
+
+-linearity in 
+\begin_inset Formula $\xi$
+\end_inset
+
+: 
+\begin_inset Formula $\nabla_{\eta}\left(a\xi+b\zeta\right)=a\nabla_{\eta}\xi+b\nabla_{\eta}\zeta$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Product rule 
+\begin_inset Formula $\nabla_{\eta}\left(f\xi\right)=\left(\eta f\right)\xi+f\nabla_{\eta}\xi$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+A connection in local coordinates can be written as 
+\begin_inset Formula 
+\[
+\nabla_{\eta}\xi=\sum_{i,j}\left(\eta^{i}\xi^{j}\nabla_{E_{i}}E_{j}+\eta^{i}\partial_{i}\xi^{j}E_{j}\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Symmetric Connection
+\end_layout
+
+\begin_layout Standard
+Symmetric Connection or Torsion Free 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\nabla_{X}Y-\nabla_{Y}X=\left[X,Y\right]
+\]
+
+\end_inset
+
+let 
+\begin_inset Formula $\left\{ E_{i}\right\} $
+\end_inset
+
+ denote an orthonormal basis of left invariant vector fields and the Lie
+ bracket 
+\begin_inset Formula $\left[E_{i},E_{j}\right]=c_{ij}^{k}E_{k}$
+\end_inset
+
+, then 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\nabla_{X}X=0
+\]
+
+\end_inset
+
+which makes sense since 
+\begin_inset Formula 
+\[
+\exp\left(tX\right)\exp\left(sX\right)=\exp\left(\left(t+s\right)X\right)
+\]
+
+\end_inset
+
+and 
+\begin_inset Formula 
+\begin{align*}
+\nabla_{X+Y}\left(X+Y\right) & =0\\
+\nabla_{X}Y+\nabla_{Y}X & =0
+\end{align*}
+
+\end_inset
+
+using the Torsion free condition 
+\begin_inset Formula 
+\begin{align*}
+\nabla_{X}Y+\nabla_{X}Y & =\left[X,Y\right]\\
+\nabla_{X}Y & =\frac{1}{2}\left[X,Y\right]
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+the connection coeffients satisys
+\begin_inset Formula 
+\[
+\Gamma_{ij}^{k}-\Gamma_{ji}^{k}=c_{ij}^{k}
+\]
+
+\end_inset
+
+and 
+\begin_inset Formula 
+\[
+\Gamma_{ij}^{k}=\frac{1}{2}\left(c_{ij}^{k}-c_{ik}^{j}-c_{jk}^{i}\right)
+\]
+
+\end_inset
+
+thus 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\nabla_{E_{i}}E_{j}=\frac{1}{2}\left[E_{i},E_{j}\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Riemannian Connection
+\end_layout
+
+\begin_layout Theorem
+(Levi-Civita) On a Riemannian manifold 
+\begin_inset Formula $M$
+\end_inset
+
+ there exists a unique affince connection 
+\begin_inset Formula $\nabla$
+\end_inset
+
+ that satisfies 
+\end_layout
+
+\begin_layout Enumerate
+symmetry 
+\begin_inset Formula $\nabla_{X}Y-\nabla_{Y}X=\left[X,Y\right]$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+compatibility 
+\begin_inset Formula $Z\left\langle X,Y\right\rangle =\left\langle \nabla_{Z}X,Y\right\rangle +\left\langle X,\nabla_{Z}Y\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Riemannian connetion on Riemannian submanifolds
+\end_layout
+
+\begin_layout Proposition
+Let 
+\begin_inset Formula $M$
+\end_inset
+
+ be a Riemannian submanifold of a Riemannian manifold 
+\begin_inset Formula $N$
+\end_inset
+
+, let 
+\begin_inset Formula $P_{x}:\mathfrak{X}\left(N\right)\to\mathfrak{X}\left(M\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $\nabla^{M}$
+\end_inset
+
+ and 
+\begin_inset Formula $\nabla^{N}$
+\end_inset
+
+ denote the Riemannian connections on 
+\begin_inset Formula $M$
+\end_inset
+
+ and 
+\begin_inset Formula $N$
+\end_inset
+
+ then 
+\begin_inset Formula 
+\[
+\nabla_{X}^{M}Y=P_{x}\nabla_{X}^{N}Y
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+It follows that when 
+\begin_inset Formula $M$
+\end_inset
+
+ is a Riemannian submanifold of a Euclidean space, then 
+\begin_inset Formula 
+\begin{align*}
+\nabla_{X}^{M}Y & =P_{x}\left(DY\left(x\right)\left[X_{x}\right]\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+for all 
+\begin_inset Formula $X\in T_{x}M$
+\end_inset
+
+ and 
+\begin_inset Formula $Y\in\mathfrak{X}\left(M\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+SO3
+\end_layout
+
+\begin_layout Standard
+In SO3 we have 
+\begin_inset Formula 
+\[
+E_{1}=\begin{bmatrix}0 & 0 & 0\\
+0 & 0 & -1\\
+0 & 1 & 0
+\end{bmatrix},E_{2}=\begin{bmatrix}0 & 0 & 1\\
+0 & 0 & 0\\
+-1 & 0 & 0
+\end{bmatrix},E_{3}=\begin{bmatrix}0 & -1 & 0\\
+1 & 0 & 0\\
+0 & 0 & 0
+\end{bmatrix}
+\]
+
+\end_inset
+
+and 
+\begin_inset Formula 
+\begin{align*}
+\nabla_{E_{1}}E_{1} & =\nabla_{E_{2}}E_{2}=\nabla_{E_{3}}E_{3}=0\\
+\nabla_{E_{1}}E_{2} & =-\nabla_{E_{2}}E_{1}=\frac{1}{2}E_{3}\\
+\nabla_{E_{1}}E_{3} & =-\nabla_{E_{3}}E_{1}=-\frac{1}{2}E_{2}\\
+\nabla_{E_{2}}E_{3} & =-\nabla_{E_{3}}E_{2}=\frac{1}{2}E_{1}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $\eta=E_{1}+E_{2}+E_{3}$
+\end_inset
+
+ and 
+\begin_inset Formula $\xi=\xi^{1}E_{1}+\xi^{2}E_{2}+\xi^{3}E_{3}$
+\end_inset
+
+ and using the formula
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\nabla_{\eta}\xi & =\sum_{i,j}\left(\eta^{i}\xi^{j}\nabla_{E_{i}}E_{j}+\eta^{i}\partial_{i}\xi^{j}E_{j}\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We can expand the term 
+\begin_inset Formula $\sum_{i,j}\eta^{i}\xi^{j}\nabla_{E_{i}}E_{j}$
+\end_inset
+
+ and get 
+\begin_inset Formula 
+\begin{align*}
+\sum_{i,j}\eta^{i}\xi^{j}\nabla_{E_{i}}E_{j} & =\eta^{1}\xi^{1}\nabla_{E_{1}}E_{1}+\eta^{1}\xi^{2}\nabla_{E_{1}}E_{2}+\eta^{1}\xi^{3}\nabla_{E_{1}}E_{3}\\
+ & +\eta^{2}\xi^{1}\nabla_{E_{2}}E_{1}+\eta^{2}\xi^{2}\nabla_{E_{2}}E_{2}+\eta^{2}\xi^{3}\nabla_{E_{2}}E_{3}\\
+ & +\eta^{3}\xi^{1}\nabla_{E_{3}}E_{1}+\eta^{3}\xi^{2}\nabla_{E_{3}}E_{2}+\eta^{3}\xi^{3}\nabla_{E_{3}}E_{3}\\
+ & =\frac{1}{2}\left(\eta^{1}\xi^{2}E_{3}-\eta^{2}\xi^{1}E_{3}-\eta^{1}\xi^{3}E_{2}+\eta^{3}\xi^{1}E_{2}+\eta^{2}\xi^{3}E_{1}-\eta^{3}\xi^{2}E_{1}\right)\\
+ & =\frac{1}{2}\begin{bmatrix}0 & \xi^{3} & -\xi^{2}\\
+-\xi^{3} & 0 & \xi^{1}\\
+\xi^{2} & -\xi^{1} & 0
+\end{bmatrix}\begin{bmatrix}\eta_{1}\\
+\eta_{2}\\
+\eta_{3}
+\end{bmatrix}\\
+ & =-\left[\xi\right]_{\times}\eta
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+expanding out the left hand side we get 
+\begin_inset Formula 
+\begin{align*}
+\sum_{i,j}\eta^{i}\partial_{i}\xi^{j}E_{j} & =\begin{bmatrix}\partial_{1}\xi^{1} & \partial_{2}\xi^{1} & \partial_{3}\xi^{1}\\
+\partial_{1}\xi^{2} & \partial_{2}\xi^{2} & \partial_{3}\xi^{2}\\
+\partial_{1}\xi^{3} & \partial_{2}\xi^{3} & \partial_{3}\xi^{3}
+\end{bmatrix}\eta\\
+ & =H\eta
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where 
+\begin_inset Formula $H$
+\end_inset
+
+ is the typical Hessian.
+ Together we get 
+\begin_inset Formula 
+\begin{align*}
+\nabla_{\eta}\xi & =-\left[\xi\right]_{\times}\eta+H\eta\\
+ & =\left(-\left[\xi\right]_{\times}+H\right)\eta
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

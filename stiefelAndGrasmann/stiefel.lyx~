@@ -1,0 +1,433 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Standard
+The Stiefel manifold of dimensions 
+\begin_inset Formula $n$
+\end_inset
+
+,
+\begin_inset Formula $p$
+\end_inset
+
+ is denoted 
+\begin_inset Formula $S_{n,p}$
+\end_inset
+
+ and defined as 
+\begin_inset Formula 
+\[
+S_{n,p}=\left\{ U\in\mathbb{R}^{n\times p}|U^{\top}U=I_{p}\right\} 
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $I_{p}$
+\end_inset
+
+ is the identity matrix of dimension 
+\begin_inset Formula $p$
+\end_inset
+
+.
+ This means that 
+\begin_inset Formula $U$
+\end_inset
+
+ has 
+\begin_inset Formula $p$
+\end_inset
+
+ orthonormal columns with 
+\begin_inset Formula $n$
+\end_inset
+
+ elements.
+ The special cases of 
+\begin_inset Formula $S_{n,1}$
+\end_inset
+
+ and 
+\begin_inset Formula $S_{n,n}$
+\end_inset
+
+ are the unit sphere and the orthogonal group 
+\begin_inset Formula $O\left(n\right)$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+Taking the derivative of the constraint 
+\begin_inset Formula $U^{\top}U=I_{p}$
+\end_inset
+
+ we get the constraint for the tangent space 
+\begin_inset Formula 
+\begin{align*}
+\frac{d}{dt}U^{\top}U & =\frac{d}{dt}I_{p}\\
+U^{\top}\dot{U}+\dot{U}^{\top}U & =0_{p}
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $\dot{U}\in T_{U}S_{n,p}$
+\end_inset
+
+ is an element of the tanget space at 
+\begin_inset Formula $U$
+\end_inset
+
+.
+ This constraint also tells us that 
+\begin_inset Formula $U^{\top}\dot{U}$
+\end_inset
+
+ is a skew symmetric matrix.
+ The metric is defined as 
+\begin_inset Formula 
+\begin{align*}
+g\left(\dot{U}_{1},\dot{U}_{2}\right) & =\text{tr}\left(\dot{U}_{1}^{\top}\dot{U}_{2}\right)\\
+ & =\left\langle \dot{U}_{1},\dot{U}_{2}\right\rangle 
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The normal space at a point 
+\begin_inset Formula $U$
+\end_inset
+
+ consists of all matrices 
+\begin_inset Formula $N$
+\end_inset
+
+ that satisfy 
+\begin_inset Formula 
+\[
+\left\langle \dot{U}_{i},N\right\rangle =0.
+\]
+
+\end_inset
+
+Let 
+\begin_inset Formula $A$
+\end_inset
+
+ denote a 
+\begin_inset Formula $p\times p$
+\end_inset
+
+ symmetric matrix, then 
+\begin_inset Formula $N$
+\end_inset
+
+ is of the form 
+\begin_inset Formula $N=UA\Rightarrow U^{\top}N=A$
+\end_inset
+
+.
+ To verify this we can plug it into the inner product and get 
+\begin_inset Formula 
+\[
+\text{tr}\left(\dot{U}_{i}^{\top}UA\right)=0.
+\]
+
+\end_inset
+
+Since 
+\begin_inset Formula $J=\dot{U}_{i}^{\top}U$
+\end_inset
+
+ is a skew symmetric matrix (SSM) and 
+\begin_inset Formula $A$
+\end_inset
+
+ is symmetric.
+ 
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $Z\in\mathbb{R}^{n\times p}$
+\end_inset
+
+ then the projection of 
+\begin_inset Formula $Z$
+\end_inset
+
+ onto the normal and tangent spaces are, using the fact that 
+\begin_inset Formula $U^{\top}N=A$
+\end_inset
+
+ ,
+\begin_inset Formula 
+\begin{align*}
+\pi_{N}\left(Z\right) & =U\text{sym}\left(U^{\top}Z\right)\\
+\pi_{T}\left(Z\right) & =Z-U\text{sym}\left(U^{\top}Z\right)\\
+ & =Z-U\left(U^{\top}Z-\text{skew}\left(U^{\top}Z\right)\right)\\
+ & =U\text{skew}\left(U^{\top}Z\right)+Z-UU^{\top}Z\\
+ & =U\text{skew}\left(U^{\top}Z\right)+\left(I-UU^{\top}\right)Z
+\end{align*}
+
+\end_inset
+
+Note that in the case that 
+\begin_inset Formula $p=1$
+\end_inset
+
+, 
+\begin_inset Formula $\text{sym\left(A\right)}=A$
+\end_inset
+
+ and
+\begin_inset Formula $\text{skew}\left(A\right)=0$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+Tangent directions 
+\begin_inset Formula $\dot{U}$
+\end_inset
+
+ at 
+\begin_inset Formula $U$
+\end_inset
+
+ have the general form 
+\begin_inset Formula 
+\begin{align}
+\dot{U} & =US+U_{\perp}B\nonumber \\
+ & =US+\left(I-UU^{\top}\right)C\label{eq:derivative_space}
+\end{align}
+
+\end_inset
+
+where 
+\begin_inset Formula $S$
+\end_inset
+
+ is 
+\begin_inset Formula $p\times p$
+\end_inset
+
+ skew symmetric, 
+\begin_inset Formula $B\in\mathbb{R}^{\left(n-p\right)\times p}$
+\end_inset
+
+ and 
+\begin_inset Formula $C\in\mathbb{R}^{n\times p}$
+\end_inset
+
+, and 
+\begin_inset Formula $U_{\perp}\in\mathbb{R}^{n\times\left(n-p\right)}$
+\end_inset
+
+ such that 
+\begin_inset Formula $UU^{\top}+U_{\perp}U_{\perp}^{\top}=I$
+\end_inset
+
+.
+ Using substitution we can show that 
+\begin_inset Formula $\left(I-UU^{\top}\right)=U_{\perp}U_{\perp}^{\top}$
+\end_inset
+
+ and thus 
+\begin_inset Formula $B=U_{\perp}^{\top}C$
+\end_inset
+
+.
+ Note that in the special case of 
+\begin_inset Formula $p=1$
+\end_inset
+
+, 
+\begin_inset Formula $S=0$
+\end_inset
+
+ and 
+\begin_inset Formula 
+\[
+\dot{U}=U_{\perp}B=\left(I-UU^{\top}\right)C
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+At identity 
+\begin_inset Formula $U=\begin{bmatrix}I_{p}\\
+0_{n-p}
+\end{bmatrix}$
+\end_inset
+
+, the tangent space consists of the matrices 
+\begin_inset Formula 
+\[
+X=\begin{bmatrix}S\\
+B
+\end{bmatrix}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Embedded Geodesic
+\end_layout
+
+\begin_layout Standard
+The geodesic equation for a curve 
+\begin_inset Formula $U\left(t\right)$
+\end_inset
+
+ on the Steifel manifold is defined by the differential equation 
+\begin_inset Formula 
+\[
+\ddot{U}+U\left(\dot{U}^{\top}\dot{U}\right)=0
+\]
+
+\end_inset
+
+ to see this we begin with the condition 
+\begin_inset Formula 
+\[
+U^{\top}U=I_{p}
+\]
+
+\end_inset
+
+ and take two derivatives to get 
+\begin_inset Formula 
+\[
+U^{\top}\ddot{U}+2\dot{U}^{\top}\dot{U}+\ddot{U}^{\top}U=0
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+To be a geodesic, 
+\begin_inset Formula $\ddot{U}\left(t\right)$
+\end_inset
+
+ must be in the normal space at 
+\begin_inset Formula $U\left(t\right)$
+\end_inset
+
+ so that 
+\begin_inset Formula 
+\[
+\ddot{U}\left(t\right)+U\left(t\right)A=0
+\]
+
+\end_inset
+
+for some symmetric matrix 
+\begin_inset Formula $A$
+\end_inset
+
+ since 
+\begin_inset Formula $U\left(t\right)A$
+\end_inset
+
+ is in the normal space.
+ 
+\end_layout
+
+\end_body
+\end_document
